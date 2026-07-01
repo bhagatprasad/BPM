@@ -1,0 +1,15 @@
+﻿CREATE TABLE Roles
+(
+    Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ 
+    Name VARCHAR(100) NOT NULL,
+    Code VARCHAR(50) NOT NULL UNIQUE,
+    Description VARCHAR(255),
+ 
+    IsActive BOOLEAN NOT NULL DEFAULT TRUE,
+ 
+    CreatedBy UUID,
+    CreatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedBy UUID,
+    ModifiedOn TIMESTAMP
+);

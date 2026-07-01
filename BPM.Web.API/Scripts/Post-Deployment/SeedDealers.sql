@@ -1,0 +1,374 @@
+﻿/* MERGE INTO Dealers AS Target
+
+USING
+(
+    VALUES
+    (
+        'ABC Pharma Distributors',
+        'REG001',
+        'TL001',
+        '36ABCDE1234F1Z5',
+        'Ravi Kumar',
+        'abcpharma@gmail.com',
+        '9876543210',
+        '9876543211',
+        'Road No.1',
+        'Madhapur',
+        'Hyderabad',
+        'Telangana',
+        'India',
+        '500081',
+        'https://www.abcpharma.com',
+        TRUE
+    )
+) AS Source
+(
+    DealershipName,
+    RegistrationNumber,
+    TradeLicenseNumber,
+    GSTNumber,
+    ContactPerson,
+    Email,
+    Phone,
+    AlternatePhone,
+    AddressLine1,
+    AddressLine2,
+    City,
+    State,
+    Country,
+    PostalCode,
+    Website,
+    IsActive
+)
+
+ON Target.RegistrationNumber = Source.RegistrationNumber
+
+WHEN MATCHED THEN
+    UPDATE SET
+        DealershipName = Source.DealershipName,
+        TradeLicenseNumber = Source.TradeLicenseNumber,
+        GSTNumber = Source.GSTNumber,
+        ContactPerson = Source.ContactPerson,
+        Email = Source.Email,
+        Phone = Source.Phone,
+        AlternatePhone = Source.AlternatePhone,
+        AddressLine1 = Source.AddressLine1,
+        AddressLine2 = Source.AddressLine2,
+        City = Source.City,
+        State = Source.State,
+        Country = Source.Country,
+        PostalCode = Source.PostalCode,
+        Website = Source.Website,
+        IsActive = Source.IsActive,
+        ModifiedOn = CURRENT_TIMESTAMP
+
+WHEN NOT MATCHED THEN
+    INSERT
+    (
+        DealershipName,
+        RegistrationNumber,
+        TradeLicenseNumber,
+        GSTNumber,
+        ContactPerson,
+        Email,
+        Phone,
+        AlternatePhone,
+        AddressLine1,
+        AddressLine2,
+        City,
+        State,
+        Country,
+        PostalCode,
+        Website,
+        IsActive,
+        CreatedOn
+    )
+    VALUES
+    (
+        Source.DealershipName,
+        Source.RegistrationNumber,
+        Source.TradeLicenseNumber,
+        Source.GSTNumber,
+        Source.ContactPerson,
+        Source.Email,
+        Source.Phone,
+        Source.AlternatePhone,
+        Source.AddressLine1,
+        Source.AddressLine2,
+        Source.City,
+        Source.State,
+        Source.Country,
+        Source.PostalCode,
+        Source.Website,
+        Source.IsActive,
+        CURRENT_TIMESTAMP
+    ); */
+    
+MERGE INTO Dealers AS Target
+
+USING
+(
+    VALUES
+    (
+        'ABC Pharma Distributors',
+        'REG001',
+        'TL001',
+        '36ABCDE1234F1Z5',
+        'Ravi Kumar',
+        'abcpharma@gmail.com',
+        '9876543210',
+        '9876543211',
+        'Road No.1',
+        'Madhapur',
+        'Hyderabad',
+        'Telangana',
+        'India',
+        '500081',
+        'https://www.abcpharma.com',
+        TRUE
+    ),
+    (
+        'XYZ Medical Agencies',
+        'REG002',
+        'TL002',
+        '36XYZAB1234F1Z6',
+        'Ramesh Kumar',
+        'xyzmedical@gmail.com',
+        '9876543212',
+        '9876543213',
+        'MG Road',
+        'Hanamkonda',
+        'Warangal',
+        'Telangana',
+        'India',
+        '506001',
+        'https://www.xyzmedical.com',
+        TRUE
+    ),
+    (
+        'MedCare Pharma',
+        'REG003',
+        'TL003',
+        '37MEDCA1234F1Z7',
+        'Mahesh Reddy',
+        'medcare@gmail.com',
+        '9876543214',
+        '9876543215',
+        'Benz Circle',
+        'Governorpet',
+        'Vijayawada',
+        'Andhra Pradesh',
+        'India',
+        '520010',
+        'https://www.medcare.com',
+        TRUE
+    ),
+    (
+        'Sri Sai Pharma',
+        'REG004',
+        'TL004',
+        '36SRISA1234F1Z8',
+        'Suresh Rao',
+        'srisai@gmail.com',
+        '9876543216',
+        '9876543217',
+        'Main Road',
+        'Tower Circle',
+        'Karimnagar',
+        'Telangana',
+        'India',
+        '505001',
+        'https://www.srisaipharma.com',
+        TRUE
+    ),
+    (
+        'Prime Healthcare',
+        'REG005',
+        'TL005',
+        '36PRIME1234F1Z9',
+        'Praveen Kumar',
+        'prime@gmail.com',
+        '9876543218',
+        '9876543219',
+        'Bus Stand Road',
+        'Armoor',
+        'Nizamabad',
+        'Telangana',
+        'India',
+        '503001',
+        'https://www.primehealth.com',
+        TRUE
+    ),
+    (
+        'Apollo Distributors',
+        'REG006',
+        'TL006',
+        '36APOLL1234F1Z1',
+        'Naveen Kumar',
+        'apollo@gmail.com',
+        '9876543220',
+        '9876543221',
+        'SD Road',
+        'Paradise',
+        'Secunderabad',
+        'Telangana',
+        'India',
+        '500003',
+        'https://www.apollodist.com',
+        TRUE
+    ),
+    (
+        'Care Medical Agencies',
+        'REG007',
+        'TL007',
+        '36CAREM1234F1Z2',
+        'Kiran Kumar',
+        'caremedical@gmail.com',
+        '9876543222',
+        '9876543223',
+        'Wyra Road',
+        'Near Bus Stand',
+        'Khammam',
+        'Telangana',
+        'India',
+        '507001',
+        'https://www.caremedical.com',
+        TRUE
+    ),
+    (
+        'HealthPlus Pharma',
+        'REG008',
+        'TL008',
+        '37HEALT1234F1Z3',
+        'Vinod Kumar',
+        'healthplus@gmail.com',
+        '9876543224',
+        '9876543225',
+        'Lakshmipuram',
+        'Brodipet',
+        'Guntur',
+        'Andhra Pradesh',
+        'India',
+        '522002',
+        'https://www.healthplus.com',
+        TRUE
+    ),
+    (
+        'MedLife Distributors',
+        'REG009',
+        'TL009',
+        '37MEDLI1234F1Z4',
+        'Rajesh Kumar',
+        'medlife@gmail.com',
+        '9876543226',
+        '9876543227',
+        'Beach Road',
+        'MVP Colony',
+        'Visakhapatnam',
+        'Andhra Pradesh',
+        'India',
+        '530017',
+        'https://www.medlife.com',
+        TRUE
+    ),
+    (
+        'Global Pharma Traders',
+        'REG010',
+        'TL010',
+        '37GLOBA1234F1Z5',
+        'Srikanth Kumar',
+        'global@gmail.com',
+        '9876543228',
+        '9876543229',
+        'Air Bypass Road',
+        'Balaji Colony',
+        'Tirupati',
+        'Andhra Pradesh',
+        'India',
+        '517501',
+        'https://www.globalpharma.com',
+        TRUE
+    )
+
+) AS Source
+(
+    DealershipName,
+    RegistrationNumber,
+    TradeLicenseNumber,
+    GSTNumber,
+    ContactPerson,
+    Email,
+    Phone,
+    AlternatePhone,
+    AddressLine1,
+    AddressLine2,
+    City,
+    State,
+    Country,
+    PostalCode,
+    Website,
+    IsActive
+)
+
+ON Target.RegistrationNumber = Source.RegistrationNumber
+
+WHEN MATCHED THEN
+UPDATE SET
+    DealershipName = Source.DealershipName,
+    TradeLicenseNumber = Source.TradeLicenseNumber,
+    GSTNumber = Source.GSTNumber,
+    ContactPerson = Source.ContactPerson,
+    Email = Source.Email,
+    Phone = Source.Phone,
+    AlternatePhone = Source.AlternatePhone,
+    AddressLine1 = Source.AddressLine1,
+    AddressLine2 = Source.AddressLine2,
+    City = Source.City,
+    State = Source.State,
+    Country = Source.Country,
+    PostalCode = Source.PostalCode,
+    Website = Source.Website,
+    IsActive = Source.IsActive,
+    ModifiedOn = CURRENT_TIMESTAMP
+
+WHEN NOT MATCHED THEN
+INSERT
+(
+    DealershipName,
+    RegistrationNumber,
+    TradeLicenseNumber,
+    GSTNumber,
+    ContactPerson,
+    Email,
+    Phone,
+    AlternatePhone,
+    AddressLine1,
+    AddressLine2,
+    City,
+    State,
+    Country,
+    PostalCode,
+    Website,
+    IsActive,
+    CreatedOn
+)
+VALUES
+(
+    Source.DealershipName,
+    Source.RegistrationNumber,
+    Source.TradeLicenseNumber,
+    Source.GSTNumber,
+    Source.ContactPerson,
+    Source.Email,
+    Source.Phone,
+    Source.AlternatePhone,
+    Source.AddressLine1,
+    Source.AddressLine2,
+    Source.City,
+    Source.State,
+    Source.Country,
+    Source.PostalCode,
+    Source.Website,
+    Source.IsActive,
+    CURRENT_TIMESTAMP
+);
