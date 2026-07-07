@@ -1,4 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +23,7 @@ namespace BPM.Web.API.Controllers
             return Ok(dealers);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetDealer(Guid id)
         {
             var dealer = await _dealerService.GetDealerByIdAsync(id);
@@ -35,25 +35,37 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Dealer dealer)
+        public async Task<IActionResult> Create([FromBody] CreateDealerDto dealerDto)
         {
-            var result = await _dealerService.InsertDealerAsync(dealer);
+            var result = await _dealerService.InsertDealerAsync(dealerDto);
+
+            if (!result)
+                return BadRequest("Unable to create dealer.");
 
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(Dealer dealer)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateDealerDto dealerDto)
         {
-            var result = await _dealerService.UpdateDealerAsync(dealer);
+            if (id != dealerDto.Id)
+                return BadRequest("Route Id and Dealer Id do not match.");
+
+            var result = await _dealerService.UpdateDealerAsync(dealerDto);
+
+            if (!result)
+                return NotFound();
 
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _dealerService.DeleteDealerAsync(id);
+
+            if (!result)
+                return NotFound();
 
             return Ok(result);
         }

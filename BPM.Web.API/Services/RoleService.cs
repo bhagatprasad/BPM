@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
 namespace BPM.Web.API.Services
 {
@@ -11,24 +12,37 @@ namespace BPM.Web.API.Services
             _roleRepository = roleRepository;
         }
 
-        public async Task<List<Role>> GetAllRolesAsync()
+        public async Task<List<RoleDto>> GetAllRolesAsync()
         {
-            return await _roleRepository.GetAllRolesAsync();
+            var roles = await _roleRepository.GetAllRolesAsync();
+
+            return roles.ToDto();
         }
 
-        public async Task<Role?> GetRoleByIdAsync(Guid roleId)
+        public async Task<RoleDto?> GetRoleByIdAsync(Guid roleId)
         {
-            return await _roleRepository.GetRoleByIdAsync(roleId);
+            var role = await _roleRepository.GetRoleByIdAsync(roleId);
+
+            return role?.ToDto();
         }
 
-        public async Task<bool> InsertRoleAsync(Role role)
+        public async Task<bool> InsertRoleAsync(CreateRoleDto dto)
         {
+            var role = dto.ToEntity();
+
             return await _roleRepository.InsertRoleAsync(role);
         }
 
-        public async Task<bool> UpdateRoleAsync(Role role)
+        public async Task<bool> UpdateRoleAsync(UpdateRoleDto dto)
         {
-            return await _roleRepository.UpdateRoleAsync(role);
+            var existingRole = await _roleRepository.GetRoleByIdAsync(dto.Id);
+
+            if (existingRole == null)
+                return false;
+
+            dto.MapToEntity(existingRole);
+
+            return await _roleRepository.UpdateRoleAsync(existingRole);
         }
 
         public async Task<bool> DeleteRoleAsync(Guid roleId)
