@@ -1,16 +1,16 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Services
 {
     public interface IDealerService
     {
-        Task<List<Dealer>> GetAllDealersAsync();
+        Task<List<DealerDto>> GetAllDealersAsync();
 
-        Task<Dealer?> GetDealerByIdAsync(Guid dealerId);
+        Task<DealerDto?> GetDealerByIdAsync(Guid dealerId);
 
-        Task<bool> InsertDealerAsync(Dealer dealer);
+        Task<bool> InsertDealerAsync(CreateDealerDto dealer);
 
-        Task<bool> UpdateDealerAsync(Dealer dealer);
+        Task<bool> UpdateDealerAsync(UpdateDealerDto dealer);
 
         Task<bool> DeleteDealerAsync(Guid dealerId);
     }

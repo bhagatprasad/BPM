@@ -1,16 +1,16 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Services
 {
     public interface IRoleService
     {
-        Task<List<Role>> GetAllRolesAsync();
+        Task<List<RoleDto>> GetAllRolesAsync();
 
-        Task<Role?> GetRoleByIdAsync(Guid roleId);
+        Task<RoleDto?> GetRoleByIdAsync(Guid roleId);
 
-        Task<bool> InsertRoleAsync(Role role);
+        Task<bool> InsertRoleAsync(CreateRoleDto role);
 
-        Task<bool> UpdateRoleAsync(Role role);
+        Task<bool> UpdateRoleAsync(UpdateRoleDto role);
 
         Task<bool> DeleteRoleAsync(Guid roleId);
     }
