@@ -1,5 +1,6 @@
 using BPM.Web.API.Models.Data;
 using BPM.Web.API.Repository;
+using BPM.Web.API.Service;
 using BPM.Web.API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IDealerService, DealerService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();
 
+builder.Services.AddScoped<IDrugRepository, DrugRepository>();
+builder.Services.AddScoped<IDrugService,DrugService>();
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
