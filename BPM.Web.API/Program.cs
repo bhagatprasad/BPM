@@ -17,7 +17,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register Services
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDealerService, DealerService>();
+
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IDealerRepository, DealerRepository>();
+
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IDrugService,DrugService>();
 
