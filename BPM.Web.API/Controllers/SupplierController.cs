@@ -1,4 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,8 @@ namespace BPM.Web.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _service.GetAllSuppliersAsync());
+            var suppliers = await _service.GetAllSuppliersAsync();
+            return Ok(suppliers);
         }
 
         [HttpGet("{supplierId:guid}")]
@@ -27,42 +28,72 @@ namespace BPM.Web.API.Controllers
             var supplier = await _service.GetSupplierByIdAsync(supplierId);
 
             if (supplier == null)
-                return NotFound("Supplier not found.");
+                return NotFound(new { message = "Supplier not found." });
 
             return Ok(supplier);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Supplier supplier)
+        public async Task<IActionResult> Create([FromBody] CreateSupplierDto supplierDto)
         {
-            var result = await _service.InsertSupplierAsync(supplier);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (!result)
-                return BadRequest("Failed to create supplier.");
+            try
+            {
+                var result = await _service.InsertSupplierAsync(supplierDto);
 
-            return Ok("Supplier Created Successfully");
+                if (!result)
+                    return BadRequest(new { message = "Failed to create supplier. Supplier code may already exist." });
+
+                return Ok(new { message = "Supplier created successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while creating the supplier.", error = ex.Message });
+            }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Supplier supplier)
+        [HttpPut("{supplierId:guid}")]
+        public async Task<IActionResult> Update(Guid supplierId, [FromBody] UpdateSupplierDto supplierDto)
         {
-            var result = await _service.UpdateSupplierAsync(supplier);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (!result)
-                return NotFound("Supplier not found.");
+            if (supplierDto.Id != supplierId)
+                return BadRequest(new { message = "Supplier ID mismatch." });
 
-            return Ok("Supplier Updated Successfully");
+            try
+            {
+                var result = await _service.UpdateSupplierAsync(supplierDto);
+
+                if (!result)
+                    return NotFound(new { message = "Supplier not found or update failed." });
+
+                return Ok(new { message = "Supplier updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the supplier.", error = ex.Message });
+            }
         }
 
         [HttpDelete("{supplierId:guid}")]
         public async Task<IActionResult> Delete(Guid supplierId)
         {
-            var result = await _service.DeleteSupplierAsync(supplierId);
+            try
+            {
+                var result = await _service.DeleteSupplierAsync(supplierId);
 
-            if (!result)
-                return NotFound("Supplier not found.");
+                if (!result)
+                    return NotFound(new { message = "Supplier not found." });
 
-            return Ok("Supplier Deleted Successfully");
+                return Ok(new { message = "Supplier deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the supplier.", error = ex.Message });
+            }
         }
     }
 }

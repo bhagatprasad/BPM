@@ -1,16 +1,16 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Services
 {
     public interface ISupplierService
     {
-        Task<List<Supplier>> GetAllSuppliersAsync();
+        Task<List<SupplierDto>> GetAllSuppliersAsync();
 
-        Task<Supplier?> GetSupplierByIdAsync(Guid supplierId);
+        Task<SupplierDto?> GetSupplierByIdAsync(Guid supplierId);
 
-        Task<bool> InsertSupplierAsync(Supplier supplier);
+        Task<bool> InsertSupplierAsync(CreateSupplierDto supplierDto);
 
-        Task<bool> UpdateSupplierAsync(Supplier supplier);
+        Task<bool> UpdateSupplierAsync(UpdateSupplierDto supplierDto);
 
         Task<bool> DeleteSupplierAsync(Guid supplierId);
     }
