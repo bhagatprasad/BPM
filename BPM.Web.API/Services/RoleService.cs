@@ -28,6 +28,7 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> InsertRoleAsync(CreateRoleDto dto)
         {
+
             var role = dto.ToEntity();
 
             return await _roleRepository.InsertRoleAsync(role);
