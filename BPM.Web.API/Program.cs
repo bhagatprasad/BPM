@@ -25,6 +25,9 @@ builder.Services.AddScoped<IDealerRepository, DealerRepository>();
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IDrugService,DrugService>();
 
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
+builder.Services.AddScoped<IManufacturerService,ManufacturerService>();
+
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
 
