@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Services;
+﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertUserAsync([FromBody] Models.DTOs.UserCreateDto user)
+        public async Task<IActionResult> InsertUserAsync(UserCreateDto user)
         {
             var result = await _userServiec.InsertUserAsync(user);
 
@@ -30,7 +31,7 @@ namespace BPM.Web.API.Controllers
         }
         [HttpPost]
         [Route("activate")]
-        public async Task<IActionResult> ActivateUserAync([FromBody] Models.DTOs.UserActivateDto userActivateDto)
+        public async Task<IActionResult> ActivateUserAync(UserActivateDto userActivateDto)
         {
             var result = await _userServiec.ActivateUserAync(userActivateDto);
             if (result)
