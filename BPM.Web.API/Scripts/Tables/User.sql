@@ -6,7 +6,7 @@
     LastName VARCHAR(100) NOT NULL,
  
     Email VARCHAR(150) NOT NULL UNIQUE,
-    Phone VARCHAR(20),
+    Phone VARCHAR(20)  NOT NULL UNIQUE,
  
     RoleId UUID NOT NULL,
     DealerId UUID,
