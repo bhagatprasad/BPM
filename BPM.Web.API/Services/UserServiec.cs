@@ -17,6 +17,11 @@ namespace BPM.Web.API.Services
             return await _userRespository.ActivateUserAync(userActivateDto.UserId, userActivateDto.IsActive, userActivateDto.ModifiedBy);
         }
 
+        public async Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto)
+        {
+            return await _userRespository.DeactivateUserAync(userDeactivateDto.UserId,userDeactivateDto.ModifiedBy);
+        }
+
         public async Task<bool> InsertUserAsync(UserCreateDto user)
         {
             var newUser = user.ToEntity();

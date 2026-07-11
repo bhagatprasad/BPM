@@ -7,5 +7,6 @@ namespace BPM.Web.API.Services
     {
         Task<bool> InsertUserAsync(UserCreateDto user);
         Task<bool> ActivateUserAync(UserActivateDto userActivateDto);
+        Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto);
     }
 }

@@ -43,5 +43,19 @@ namespace BPM.Web.API.Controllers
                 return BadRequest(new { message = "Failed to update user activation status." });
             }
         }
+        [HttpPost]
+        [Route("deactivate")]
+        public async Task<IActionResult>DeactivateUserAsync(UserDeactivateDto userDeactivateDto) 
+        {
+          var res=await _userServiec.DeactivateUserAync(userDeactivateDto);
+            if (res)
+            {
+                return Ok(new {message="User deactivation status updated successfully."});
+            }
+            else 
+            {
+                return BadRequest(new { message = "Failed to update user deactivation status." });
+            }
+        }
     }
 }

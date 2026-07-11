@@ -6,5 +6,6 @@ namespace BPM.Web.API.Repository
     {
         Task<bool> InsertUserAsync(User user);
         Task<bool> ActivateUserAync(Guid userId, bool isActive,Guid modifiedBy);
+        Task<bool> DeactivateUserAync(Guid userId,Guid modifiedBy);
     }
 }

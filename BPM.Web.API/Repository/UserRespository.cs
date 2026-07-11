@@ -25,6 +25,18 @@ namespace BPM.Web.API.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> DeactivateUserAync(Guid userId, Guid modifiedBy)
+        {
+            var user=await _context.Users.FindAsync(userId);
+            if (user != null) 
+            {
+                user.IsActive=false;
+                user.ModifiedBy= modifiedBy;
+                user.ModifiedOn= DateTime.UtcNow;
+            }
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> InsertUserAsync(User user)
         {
             _context.Users.Add(user);
