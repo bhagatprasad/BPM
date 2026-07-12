@@ -30,7 +30,7 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpPost]
-        [Route("activate")]
+        [Route("activateuser")]
         public async Task<IActionResult> ActivateUserAync(UserActivateDto userActivateDto)
         {
             var result = await _userServiec.ActivateUserAync(userActivateDto);
@@ -44,49 +44,49 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpPost]
-        [Route("deactivate")]
-        public async Task<IActionResult>DeactivateUserAsync(UserDeactivateDto userDeactivateDto) 
+        [Route("deactivateuser")]
+        public async Task<IActionResult> DeactivateUserAsync(UserDeactivateDto userDeactivateDto)
         {
-          var res=await _userServiec.DeactivateUserAync(userDeactivateDto);
+            var res = await _userServiec.DeactivateUserAync(userDeactivateDto);
             if (res)
             {
-                return Ok(new {message="User deactivation status updated successfully."});
+                return Ok(new { message = "User deactivation status updated successfully." });
             }
-            else 
+            else
             {
                 return BadRequest(new { message = "Failed to update user deactivation status." });
             }
         }
         [HttpPut]
-        [Route("update")]
+        [Route("updateuser")]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto userUpdateDto)
-        { 
-          var result=await _userServiec.UpdateUserAsync(userUpdateDto);
+        {
+            var result = await _userServiec.UpdateUserAsync(userUpdateDto);
             if (result)
             {
                 return Ok(new { message = "User Information updated successfully." });
             }
-            else 
+            else
             {
                 return BadRequest(new { message = "Failed to update user information" });
             }
         }
         [HttpPut]
-        [Route("updaterole")]
-        public async Task<IActionResult>UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
+        [Route("updateuserrole/{userId}")]
+        public async Task<IActionResult> UpdateUserRoleAsync(Guid userId,UserRoleUpdateDto userRoleUpdateDto)
         {
-            var result=await _userServiec.UpdateUserRoleAsync(userRoleUpdateDto);
+            var result = await _userServiec.UpdateUserRoleAsync(userRoleUpdateDto);
             if (result)
             {
                 return Ok(new { message = "User Role Updated Successfully" });
             }
-            else 
+            else
             {
                 return BadRequest(new { message = "Failed to update user role" });
             }
         }
         [HttpPut]
-        [Route("updatedealer")]
+        [Route("updateuserdealer")]
         public async Task<IActionResult> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
         {
             var result = await _userServiec.UpdateUserDealerAsync(userDealerUpdateDto);

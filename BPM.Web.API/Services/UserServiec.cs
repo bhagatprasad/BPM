@@ -38,7 +38,7 @@ namespace BPM.Web.API.Services
         {
             return await _userRespository.UpdateUserRoleAsync(userRoleUpdateDto);
         }
-        public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
+        public async Task<bool> UpdateUserDealerAsync(Guid userId,UserDealerUpdateDto userDealerUpdateDto)
         {
             return await _userRespository.UpdateUserDealerAsync(userDealerUpdateDto);
         }
