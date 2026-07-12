@@ -9,8 +9,8 @@ namespace BPM.Web.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserServiec _userServiec;
-        public UserController(IUserServiec userServiec)
+        private readonly IUserService _userServiec;
+        public UserController(IUserService userServiec)
         {
             _userServiec = userServiec;
         }
@@ -58,10 +58,10 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpPut]
-        [Route("updateuser")]
-        public async Task<IActionResult> UpdateUserAsync(UserUpdateDto userUpdateDto)
+        [Route("updateuser/{userId}")]
+        public async Task<IActionResult> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
         {
-            var result = await _userServiec.UpdateUserAsync(userUpdateDto);
+            var result = await _userServiec.UpdateUserAsync(userId, userUpdateDto);
             if (result)
             {
                 return Ok(new { message = "User Information updated successfully." });
@@ -73,7 +73,7 @@ namespace BPM.Web.API.Controllers
         }
         [HttpPut]
         [Route("updateuserrole/{userId}")]
-        public async Task<IActionResult> UpdateUserRoleAsync(Guid userId,UserRoleUpdateDto userRoleUpdateDto)
+        public async Task<IActionResult> UpdateUserRoleAsync(Guid userId, UserRoleUpdateDto userRoleUpdateDto)
         {
             var result = await _userServiec.UpdateUserRoleAsync(userRoleUpdateDto);
             if (result)

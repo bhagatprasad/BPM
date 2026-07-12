@@ -25,5 +25,19 @@ namespace BPM.Web.API.Models.Mappers
                 CreatedOn = DateTime.UtcNow
             };
         }
+
+        public static User ToEntity(this UserChangePasswordDto dto)
+        {
+            HashSalt passwordHashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
+
+            return new User
+            {
+                Id = dto.UserId,
+                PasswordHash = passwordHashSalt.Hash,
+                PasswordSalt = passwordHashSalt.Salt,
+                ModifiedOn = DateTime.UtcNow,
+                ModifiedBy = dto.ModifiedBy
+            };
+        }
     }
 }
