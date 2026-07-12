@@ -14,12 +14,12 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> ActivateUserAync(UserActivateDto userActivateDto)
         {
-            return await _userRespository.ActivateUserAync(userActivateDto.UserId, userActivateDto.IsActive, userActivateDto.ModifiedBy);
+            return await _userRespository.ActivateUserAync(userActivateDto);
         }
 
         public async Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto)
         {
-            return await _userRespository.DeactivateUserAync(userDeactivateDto.UserId, userDeactivateDto.ModifiedBy);
+            return await _userRespository.DeactivateUserAync(userDeactivateDto);
         }
 
         public async Task<bool> InsertUserAsync(UserCreateDto user)
