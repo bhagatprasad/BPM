@@ -14,35 +14,54 @@ namespace BPM.Web.API.Repository
             _context = context;
         }
 
-      public async Task<bool> ActivateUserAync(UserActivateDto userActivateDto)
+        public async Task<bool> ActivateUserAync(User user)
         {
-            var user = await _context.Users.FindAsync(userActivateDto.UserId);
+            var dbUser = await _context.Users.FindAsync(user.Id);
 
-            if (user != null)
+            if (dbUser == null)
             {
-                user.UserActivateDto(userActivateDto);
+                return false;
             }
+
+            dbUser.IsActive = user.IsActive;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
 
             return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<bool> UpdateUserInfoAsync(UserUpdateDto userUpdateDto)
-        {
-            var user = await _context.Users.FindAsync(userUpdateDto.UserId);
-            if (user != null)
-            {
-                user.UpdateUserInfo(userUpdateDto);
-            }
-            return await _context.SaveChangesAsync() > 0;
 
+        public async Task<bool> UpdateUserInfoAsync(User user)
+        {
+            var dbUser = await _context.Users.FindAsync(user.Id);
+
+            if (dbUser == null)
+            {
+                return false;
+            }
+
+            dbUser.FirstName = user.FirstName;
+            dbUser.LastName = user.LastName;
+            dbUser.Email = user.Email;
+            dbUser.Phone = user.Phone;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
+
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto)
+        public async Task<bool> DeactivateUserAync(User user)
         {
-            var user = await _context.Users.FindAsync(userDeactivateDto.UserId);
-            if (user != null)
+            var dbUser = await _context.Users.FindAsync(user.Id);
+
+            if (dbUser == null)
             {
-                user.UserDeactivateDto(userDeactivateDto);
+                return false;
             }
+
+            dbUser.IsActive = user.IsActive;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
+
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -52,25 +71,37 @@ namespace BPM.Web.API.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-       
 
-        public async Task<bool> UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
+
+        public async Task<bool> UpdateUserRoleAsync(User user)
         {
-            var user = await _context.Users.FindAsync(userRoleUpdateDto.UserId);
-            if (user != null)
+            var dbUser = await _context.Users.FindAsync(user.Id);
+
+            if (dbUser == null)
             {
-                user.UserRoleUpdateDto(userRoleUpdateDto);
+                return false;
             }
+
+            dbUser.RoleId = user.RoleId;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
+
             return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
-        {
-            var user = await _context.Users.FindAsync(userDealerUpdateDto.UserId);
 
-            if (user != null)
+        public async Task<bool> UpdateUserDealerAsync(User user)
+        {
+            var dbUser = await _context.Users.FindAsync(user.Id);
+
+            if (dbUser == null)
             {
-                user.UserDealerUpdateDto(userDealerUpdateDto);
+                return false;
             }
+
+            dbUser.DealerId = user.DealerId;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
+
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -82,9 +113,11 @@ namespace BPM.Web.API.Repository
             {
                 return false;
             }
+            dbUser.PasswordHash = user.PasswordHash;
+            dbUser.PasswordSalt = user.PasswordSalt;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
 
-            dbUser.UpdatePassword(user);
-            
             return await _context.SaveChangesAsync() > 0;
         }
 

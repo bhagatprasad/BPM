@@ -39,46 +39,64 @@ namespace BPM.Web.API.Models.Mappers
                 ModifiedBy = dto.ModifiedBy
             };
         }
-        public static void UpdateUserInfo(this User user, UserUpdateDto dto)
+        public static User ToEntity(this UserUpdateDto dto)
         {
-            user.FirstName = dto.FirstName;
-            user.LastName = dto.LastName;
-            user.Email = dto.Email;
-            user.Phone = dto.Phone;
-            user.ModifiedBy = dto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
+            return new User
+            {
+                Id = dto.UserId,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow,
+            };
+
         }
-        public static void UserActivateDto(this User user, UserActivateDto dto)
+
+        public static User ToEntity(this UserActivateDto dto)
         {
-            user.IsActive = true;
-            user.ModifiedBy = dto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
+            return new User
+            {
+                Id = dto.UserId,
+                IsActive = true,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
         }
-        public static void UserDeactivateDto(this User user, UserDeactivateDto dto)
+
+        public static User ToEntity(this UserDeactivateDto dto)
         {
-            user.IsActive = false;
-            user.ModifiedBy = dto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
+            return new User
+            {
+                Id = dto.UserId,
+                IsActive = false,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
         }
-        public static void UserRoleUpdateDto(this User user, UserRoleUpdateDto dto)
+        public static User ToEntity(this UserRoleUpdateDto dto)
         {
-            user.RoleId = dto.RoleId;
-            user.ModifiedBy = dto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
+            return new User
+            {
+                Id = dto.UserId,
+                RoleId = dto.RoleId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
         }
-        public static void UserDealerUpdateDto(this User user, UserDealerUpdateDto dto)
+
+        public static User ToEntity(this UserDealerUpdateDto dto)
         {
-            user.DealerId = dto.DealerId;
-            user.ModifiedBy = dto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
+            return new User
+            {
+                Id = dto.UserId,
+                DealerId = dto.DealerId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
         }
-        public static void UpdatePassword(this User dbUser,User user) 
-        {
-            dbUser.PasswordHash = user.PasswordHash;
-            dbUser.PasswordSalt = user.PasswordSalt;
-            dbUser.ModifiedBy = user.ModifiedBy;
-            dbUser.ModifiedOn = user.ModifiedOn;
-        }
+
 
 
     }

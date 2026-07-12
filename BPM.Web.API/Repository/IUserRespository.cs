@@ -6,11 +6,11 @@ namespace BPM.Web.API.Repository
     public interface IUserRespository
     {
         Task<bool> InsertUserAsync(User user);
-        Task<bool> ActivateUserAync(UserActivateDto userActivateDto);
-        Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto);
-        Task<bool>UpdateUserInfoAsync(UserUpdateDto userUpdateDto);
-        Task<bool>UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto);
-        Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto);
+        Task<bool> ActivateUserAync(User user);
+        Task<bool> DeactivateUserAync(User user);
+        Task<bool>UpdateUserInfoAsync(User user);
+        Task<bool>UpdateUserRoleAsync(User user);
+        Task<bool> UpdateUserDealerAsync(User user);
         Task<bool> ChangePasswordAsync(User user);
     }
 }

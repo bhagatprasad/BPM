@@ -12,14 +12,19 @@ namespace BPM.Web.API.Services
             _userRespository = userRespository;
         }
 
+
         public async Task<bool> ActivateUserAync(UserActivateDto userActivateDto)
         {
-            return await _userRespository.ActivateUserAync(userActivateDto);
+            var user = userActivateDto.ToEntity();
+
+            return await _userRespository.ActivateUserAync(user);
         }
 
         public async Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto)
         {
-            return await _userRespository.DeactivateUserAync(userDeactivateDto);
+            var user = userDeactivateDto.ToEntity();
+
+            return await _userRespository.DeactivateUserAync(user);
         }
 
         public async Task<bool> InsertUserAsync(UserCreateDto user)
@@ -31,17 +36,25 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
         {
-            return await _userRespository.UpdateUserInfoAsync(userUpdateDto);
+            userUpdateDto.UserId = userId;
+            var user = userUpdateDto.ToEntity();
+            return await _userRespository.UpdateUserInfoAsync(user);
         }
 
         public async Task<bool> UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
         {
-            return await _userRespository.UpdateUserRoleAsync(userRoleUpdateDto);
+            var user = userRoleUpdateDto.ToEntity();
+            return await _userRespository.UpdateUserRoleAsync(user);
+
         }
+
         public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
         {
-            return await _userRespository.UpdateUserDealerAsync(userDealerUpdateDto);
+            var user = userDealerUpdateDto.ToEntity();
+            return await _userRespository.UpdateUserDealerAsync(user);
+
         }
+
         public async Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
         {
             var changedUser = userChangePasswordDto.ToEntity();
