@@ -28,5 +28,23 @@ namespace BPM.Web.API.Services
 
             return await _userRespository.InsertUserAsync(newUser);
         }
+
+        public async Task<bool> UpdateUserAsync(UserUpdateDto userUpdateDto)
+        {
+            return await _userRespository.UpdateUserInfoAsync(userUpdateDto);
+        }
+
+        public async Task<bool> UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
+        {
+            return await _userRespository.UpdateUserRoleAsync(userRoleUpdateDto);
+        }
+        public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
+        {
+            return await _userRespository.UpdateUserDealerAsync(userDealerUpdateDto);
+        }
+        public async Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
+        {
+            return await _userRespository.ChangePasswordAsync(userChangePasswordDto);
+        }
     }
 }

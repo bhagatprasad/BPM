@@ -57,5 +57,59 @@ namespace BPM.Web.API.Controllers
                 return BadRequest(new { message = "Failed to update user deactivation status." });
             }
         }
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> UpdateUserAsync(UserUpdateDto userUpdateDto)
+        { 
+          var result=await _userServiec.UpdateUserAsync(userUpdateDto);
+            if (result)
+            {
+                return Ok(new { message = "User Information updated successfully." });
+            }
+            else 
+            {
+                return BadRequest(new { message = "Failed to update user information" });
+            }
+        }
+        [HttpPut]
+        [Route("updaterole")]
+        public async Task<IActionResult>UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
+        {
+            var result=await _userServiec.UpdateUserRoleAsync(userRoleUpdateDto);
+            if (result)
+            {
+                return Ok(new { message = "User Role Updated Successfully" });
+            }
+            else 
+            {
+                return BadRequest(new { message = "Failed to update user role" });
+            }
+        }
+        [HttpPut]
+        [Route("updatedealer")]
+        public async Task<IActionResult> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
+        {
+            var result = await _userServiec.UpdateUserDealerAsync(userDealerUpdateDto);
+
+            if (result)
+            {
+                return Ok(new { message = "User dealer updated successfully." });
+            }
+
+            return BadRequest(new { message = "Failed to update user dealer." });
+        }
+        [HttpPut]
+        [Route("changepassword")]
+        public async Task<IActionResult> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
+        {
+            var result = await _userServiec.ChangePasswordAsync(userChangePasswordDto);
+
+            if (result)
+            {
+                return Ok(new { message = "Password changed successfully." });
+            }
+
+            return BadRequest(new { message = "Old password is incorrect or user not found." });
+        }
     }
 }
