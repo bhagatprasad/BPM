@@ -11,6 +11,6 @@ namespace BPM.Web.API.Repository
         Task<bool>UpdateUserInfoAsync(UserUpdateDto userUpdateDto);
         Task<bool>UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto);
         Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto);
-        Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto);
+        Task<bool> ChangePasswordAsync(User user);
     }
 }

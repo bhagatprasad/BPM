@@ -11,9 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Configure PostgreSQL
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -23,19 +21,19 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();
 
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
-builder.Services.AddScoped<IDrugService,DrugService>();
+builder.Services.AddScoped<IDrugService, DrugService>();
 
 builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
-builder.Services.AddScoped<IManufacturerService,ManufacturerService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 
-builder.Services.AddScoped<IDrugCategoryRepository,DrugCategoryRepository>();
-builder.Services.AddScoped<IDrugCategoryService,DrugCategoryService>();
+builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
+builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 
 builder.Services.AddScoped<IUserRespository, UserRespository>();
-builder.Services.AddScoped<IUserServiec, UserServiec>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();

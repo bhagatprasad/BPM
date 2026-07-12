@@ -4,10 +4,10 @@ using BPM.Web.API.Repository;
 
 namespace BPM.Web.API.Services
 {
-    public class UserServiec : IUserServiec
+    public class UserService : IUserService
     {
         private readonly IUserRespository _userRespository;
-        public UserServiec(IUserRespository userRespository)
+        public UserService(IUserRespository userRespository)
         {
             _userRespository = userRespository;
         }
@@ -19,7 +19,7 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto)
         {
-            return await _userRespository.DeactivateUserAync(userDeactivateDto.UserId,userDeactivateDto.ModifiedBy);
+            return await _userRespository.DeactivateUserAync(userDeactivateDto.UserId, userDeactivateDto.ModifiedBy);
         }
 
         public async Task<bool> InsertUserAsync(UserCreateDto user)
@@ -29,7 +29,7 @@ namespace BPM.Web.API.Services
             return await _userRespository.InsertUserAsync(newUser);
         }
 
-        public async Task<bool> UpdateUserAsync(UserUpdateDto userUpdateDto)
+        public async Task<bool> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
         {
             return await _userRespository.UpdateUserInfoAsync(userUpdateDto);
         }
@@ -38,13 +38,15 @@ namespace BPM.Web.API.Services
         {
             return await _userRespository.UpdateUserRoleAsync(userRoleUpdateDto);
         }
-        public async Task<bool> UpdateUserDealerAsync(Guid userId,UserDealerUpdateDto userDealerUpdateDto)
+        public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
         {
             return await _userRespository.UpdateUserDealerAsync(userDealerUpdateDto);
         }
         public async Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
         {
-            return await _userRespository.ChangePasswordAsync(userChangePasswordDto);
+            var changedUser = userChangePasswordDto.ToEntity();
+
+            return await _userRespository.ChangePasswordAsync(changedUser);
         }
     }
 }

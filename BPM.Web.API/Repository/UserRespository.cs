@@ -15,7 +15,7 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> ActivateUserAync(Guid userId, bool isActive, Guid modifiedBy)
         {
-           var user =  await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user != null)
             {
@@ -29,12 +29,12 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> DeactivateUserAync(Guid userId, Guid modifiedBy)
         {
-            var user=await _context.Users.FindAsync(userId);
-            if (user != null) 
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
             {
-                user.IsActive=false;
-                user.ModifiedBy= modifiedBy;
-                user.ModifiedOn= DateTime.UtcNow;
+                user.IsActive = false;
+                user.ModifiedBy = modifiedBy;
+                user.ModifiedOn = DateTime.UtcNow;
             }
             return await _context.SaveChangesAsync() > 0;
         }
@@ -47,30 +47,30 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> UpdateUserInfoAsync(UserUpdateDto userUpdateDto)
         {
-            var user=await _context.Users.FindAsync(userUpdateDto.UserId);
-            if (user!=null)
+            var user = await _context.Users.FindAsync(userUpdateDto.UserId);
+            if (user != null)
             {
                 user.FirstName = userUpdateDto.FirstName;
                 user.LastName = userUpdateDto.LastName;
                 user.Email = userUpdateDto.Email;
                 user.Phone = userUpdateDto.Phone;
-                user.ModifiedBy= userUpdateDto.ModifiedBy;
+                user.ModifiedBy = userUpdateDto.ModifiedBy;
                 user.ModifiedOn = DateTime.UtcNow;
             }
-            return await _context.SaveChangesAsync()>0;
+            return await _context.SaveChangesAsync() > 0;
 
         }
 
         public async Task<bool> UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto)
         {
-            var user=await _context.Users.FindAsync(userRoleUpdateDto.UserId);
-            if (user!=null)
+            var user = await _context.Users.FindAsync(userRoleUpdateDto.UserId);
+            if (user != null)
             {
                 user.RoleId = userRoleUpdateDto.RoleId;
-                user.ModifiedBy= userRoleUpdateDto.ModifiedBy;
-                user.ModifiedOn= DateTime.UtcNow;
+                user.ModifiedBy = userRoleUpdateDto.ModifiedBy;
+                user.ModifiedOn = DateTime.UtcNow;
             }
-            return await _context.SaveChangesAsync()>0;
+            return await _context.SaveChangesAsync() > 0;
         }
         public async Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
         {
@@ -85,33 +85,20 @@ namespace BPM.Web.API.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
+        public async Task<bool> ChangePasswordAsync(User user)
         {
-            var user = await _context.Users.FindAsync(userChangePasswordDto.UserId);
+            var dbUser = await _context.Users.FindAsync(user.Id);
 
-            if (user == null)
+            if (dbUser == null)
             {
                 return false;
             }
 
-            bool isPasswordValid = HashSalt.VerifyPassword(
-                userChangePasswordDto.OldPassword,
-                user.PasswordHash,
-                user.PasswordSalt);
-
-            if (!isPasswordValid)
-            {
-                return false;
-            }
-
-            HashSalt hashSalt =
-                HashSalt.GenerateSaltedHash(userChangePasswordDto.NewPassword);
-
-            user.PasswordHash = hashSalt.Hash;
-            user.PasswordSalt = hashSalt.Salt;
-            user.ModifiedBy = userChangePasswordDto.ModifiedBy;
-            user.ModifiedOn = DateTime.UtcNow;
-
+            dbUser.PasswordHash = user.PasswordHash;
+            dbUser.PasswordSalt = user.PasswordSalt;
+            dbUser.ModifiedOn = user.ModifiedOn;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            
             return await _context.SaveChangesAsync() > 0;
         }
 
