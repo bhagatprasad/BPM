@@ -39,5 +39,65 @@ namespace BPM.Web.API.Models.Mappers
                 ModifiedBy = dto.ModifiedBy
             };
         }
+        public static User ToEntity(this UserUpdateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow,
+            };
+
+        }
+
+        public static User ToEntity(this UserActivateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                IsActive = true,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+
+        public static User ToEntity(this UserDeactivateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                IsActive = false,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+        public static User ToEntity(this UserRoleUpdateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                RoleId = dto.RoleId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+
+        public static User ToEntity(this UserDealerUpdateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                DealerId = dto.DealerId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+
+
+
     }
 }

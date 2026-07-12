@@ -86,7 +86,7 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpPut]
-        [Route("updateuserdealer")]
+        [Route("updateuserdealer/{userId}")]
         public async Task<IActionResult> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto)
         {
             var result = await _userServiec.UpdateUserDealerAsync(userDealerUpdateDto);
@@ -99,7 +99,7 @@ namespace BPM.Web.API.Controllers
             return BadRequest(new { message = "Failed to update user dealer." });
         }
         [HttpPut]
-        [Route("changepassword")]
+        [Route("changepassword/{userId}")]
         public async Task<IActionResult> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto)
         {
             var result = await _userServiec.ChangePasswordAsync(userChangePasswordDto);
