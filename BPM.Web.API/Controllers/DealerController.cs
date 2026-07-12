@@ -9,23 +9,28 @@ namespace BPM.Web.API.Controllers
     public class DealerController : ControllerBase
     {
         private readonly IDealerService _dealerService;
+        private readonly ILogger<DealerController> _logger;
 
-        public DealerController(IDealerService dealerService)
+        public DealerController(IDealerService dealerService, ILogger<DealerController> logger)
         {
+
             _dealerService = dealerService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetDealers()
         {
+            _logger.LogInformation("Fetching all dealers.");
             var dealers = await _dealerService.GetAllDealersAsync();
-
+            _logger.LogInformation($"Fetched {dealers.Count} dealers.");
             return Ok(dealers);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetDealer(Guid id)
         {
+            _dealerService.GetDealerByIdAsync(id);
             var dealer = await _dealerService.GetDealerByIdAsync(id);
 
             if (dealer == null)
