@@ -10,35 +10,32 @@ namespace BPM.Web.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _service;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IAccountService service)
+        public AccountController(IAccountService service, ILogger<AccountController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult>AuthenticateAsync(AuthenticateUserDto dto)
+        public async Task<IActionResult> AuthenticateAsync(AuthenticateUserDto dto)
         {
             try
             {
-                var response =
-                    await _service.AuthenticateAsync(dto);
+                _logger.LogInformation($"Authenticating user: {dto.Username}");
 
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "Login Successful",
-                    Data = response
-                });
+                var response = await _service.AuthenticateAsync(dto);
+
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return Unauthorized(new
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
+
+                _logger.LogError(ex, "An error occurred while processing the authentication request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while processing your request.", details = ex.Message });
             }
-         }
+        }
     }
 }

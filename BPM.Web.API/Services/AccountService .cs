@@ -6,50 +6,64 @@ namespace BPM.Web.API.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly IUserRespository _repository;
-
-        public AccountService(IUserRespository repository)
+        private readonly IAccountRepository _accountRepository;
+        public AccountService(IAccountRepository accountRepository)
         {
-            _repository = repository;
+            _accountRepository = accountRepository;
         }
 
-        public async Task<AuthenticateResponseDto> AuthenticateAsync(AuthenticateUserDto dto)
+        public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
         {
-            // Get user by Username (Email) or Phone
-            var user = await _repository.GetUserByUsernameOrPhoneAsync(dto.Username, dto.Phone);
+            AuthResponse authResponse = new AuthResponse();
 
-            if (user == null)
+            var user = await _accountRepository.AuthenticateAsync(dto.Username);
+
+            if (user != null)
             {
-                throw new Exception("User not found.");
+                bool IsPasswordValid = HashSalt.VerifyPassword(dto.Password,  user.PasswordHash, user.PasswordSalt);
+
+                if (IsPasswordValid)
+                {
+                    // retun auth response dto
+
+                    if (user.IsActive)
+                    {
+                        authResponse.IsValidPassword = true;
+                        authResponse.IsValidUser = true;
+                        authResponse.Message = "Login Successful";
+                        authResponse.authenticateResponseDto = new AuthenticateResponseDto()
+                        {
+                            Email = user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            Phone = user.Phone,
+                            RoleId = user.RoleId,
+                            UserId = user.Id,
+                            IsActive = user.IsActive
+                        };
+                    }
+                    else
+                    {
+                        authResponse.IsValidPassword = true;
+                        authResponse.IsValidUser = true;
+                        authResponse.Message = "Login unsuccessful due account is inactive";
+                    }
+                }
+                else
+                {
+                    authResponse.IsValidPassword = false;
+                    authResponse.IsValidUser = true;
+                    authResponse.Message = "Login UnSuccessful,Invalid password";
+                }
+            }
+            else
+            {
+                authResponse.IsValidPassword = false;
+                authResponse.IsValidUser = false;
+                authResponse.Message = "Invalid user, please try with deffernt username";
             }
 
-            if (!user.IsActive)
-            {
-                throw new Exception("User is inactive.");
-            }
-
-            // Verify password
-            bool isValidPassword = HashSalt.VerifyPassword(
-                dto.Password,
-                user.PasswordHash,
-                user.PasswordSalt);
-
-            if (!isValidPassword)
-            {
-                throw new Exception("Invalid password.");
-            }
-
-            // Return authenticated user details
-            return new AuthenticateResponseDto
-            {
-                UserId = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Phone = user.Phone,
-                RoleId = user.RoleId,
-                IsActive = user.IsActive
-            };
+            return authResponse;
         }
     }
 }
