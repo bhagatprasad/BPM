@@ -3,7 +3,6 @@ using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Mappers;
-using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.API.Repository
 {
@@ -122,9 +121,5 @@ namespace BPM.Web.API.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<User> GetUserByUsernameOrPhoneAsync(string username, string phone)
-        {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == username || x.Phone == phone);
-        }
     }
 }
