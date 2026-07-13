@@ -9,76 +9,139 @@ namespace BPM.Web.API.Controllers
     public class DrugController : ControllerBase
     {
         private readonly IDrugService _drugService;
+        private readonly ILogger<DrugController> _logger;
 
-        public DrugController(IDrugService drugservice)
+        public DrugController(IDrugService drugService, ILogger<DrugController> logger)
         {
-            _drugService = drugservice;
+            _drugService = drugService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var drugs = await _drugService.GetAllDrugsAsync();
-            return Ok(drugs);
+            try
+            {
+                _logger.LogInformation("Fetching all drugs.");
+
+                var drugs = await _drugService.GetAllDrugsAsync();
+
+                return Ok(drugs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching all drugs.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
-        [HttpGet("{drugid}")]
-        public async Task<IActionResult> Get(Guid drugid)
+        [HttpGet("{drugId:guid}")]
+        public async Task<IActionResult> Get(Guid drugId)
         {
-            var drug = await _drugService.GetDrugByIdAsync(drugid);
+            try
+            {
+                _logger.LogInformation("Fetching drug with Id {DrugId}", drugId);
 
-            if (drug == null)
-                return NotFound("Drug not found.");
+                var drug = await _drugService.GetDrugByIdAsync(drugId);
 
-            return Ok(drug);
+                if (drug == null)
+                {
+                    return NotFound("Drug not found.");
+                }
+
+                return Ok(drug);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching drug with Id {DrugId}", drugId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Drug drug)
+        public async Task<IActionResult> Create([FromBody] Drug drug)
         {
-            var result = await _drugService.InsertDrugAsync(drug);
+            try
+            {
+                _logger.LogInformation("Creating drug.");
 
-            if (!result)
-                return BadRequest("Failed to create drug.");
+                var result = await _drugService.InsertDrugAsync(drug);
 
-            return Ok("Drug Created Successfully");
+                if (!result)
+                {
+                    return BadRequest("Failed to create drug.");
+                }
+
+                return Ok("Drug Created Successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while creating drug.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Drug drug)
         {
-            if (drug == null)
-                return BadRequest("Invalid request.");
-
-            var result = await _drugService.UpdateDrugAsync(drug);
-
-            if (!result)
-                return NotFound(new
-                {
-                    Message = "Drug not found."
-                });
-
-            return Ok(new
+            try
             {
-                Message = "Drug updated successfully."
-            });
+                _logger.LogInformation("Updating drug.");
+
+                if (drug == null)
+                {
+                    return BadRequest("Invalid request.");
+                }
+
+                var result = await _drugService.UpdateDrugAsync(drug);
+
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        Message = "Drug not found."
+                    });
+                }
+
+                return Ok(new
+                {
+                    Message = "Drug updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating drug with Id {DrugId}", drug.DrugId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpDelete("{drugId:guid}")]
         public async Task<IActionResult> Delete(Guid drugId)
         {
-            var result = await _drugService.DeleteDrugAsync(drugId);
-
-            if (!result)
-                return NotFound(new
-                {
-                    Message = "Drug not found."
-                });
-
-            return Ok(new
+            try
             {
-                Message = "Drug deleted successfully."
-            });
+                _logger.LogInformation("Deleting drug with Id {DrugId}", drugId);
+
+                var result = await _drugService.DeleteDrugAsync(drugId);
+
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        Message = "Drug not found."
+                    });
+                }
+
+                return Ok(new
+                {
+                    Message = "Drug deleted successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting drug with Id {DrugId}", drugId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
     }
 }
