@@ -4,6 +4,6 @@ namespace BPM.Web.API.Services
 {
     public interface IAccountService
     {
-        Task<AuthenticateResponseDto> AuthenticateAsync(AuthenticateUserDto dto);
+        Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto);
     }
 }
