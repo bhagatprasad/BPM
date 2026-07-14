@@ -4,6 +4,6 @@ namespace BPM.Web.API.Repository
 {
     public interface IPurchaseOrderRepository
     {
-        Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder);
+        Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder,List<PurchaseOrderItem> purchaseOrderItems);
     }
 }
