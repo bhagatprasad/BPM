@@ -10,11 +10,20 @@ namespace BPM.Web.API.Repository
         {
             _dbContext = dbContext;
         }
-        public async Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder)
+        public async Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder, List<PurchaseOrderItem> purchaseOrderItems)
         {
-         await _dbContext.PurchaseOrders.AddAsync(purchaseOrder);
-         await _dbContext.SaveChangesAsync();
-        return purchaseOrder;
+            await _dbContext.PurchaseOrders.AddAsync(purchaseOrder);
+            await _dbContext.SaveChangesAsync();
+            foreach (var item in purchaseOrderItems)
+            {
+                item.PurchaseOrderId = purchaseOrder.Id;
+            }
+            await _dbContext.PurchaseOrderItems.AddRangeAsync(purchaseOrderItems);
+            await _dbContext.SaveChangesAsync();
+            return purchaseOrder;
+
         }
+
+
     }
 }

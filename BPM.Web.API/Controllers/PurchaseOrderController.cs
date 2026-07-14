@@ -20,13 +20,13 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePurchaseOrder(PurchaseOrderCreateDto purchaseOrderCreateDto)
+        public async Task<IActionResult> CreatePurchaseOrder(CreatePurchaseOrderDto createPurchaseOrderDto)
         {
             try
             {
                 _logger.LogInformation("Create Purchase Order request received.");
 
-                var result = await _service.CreatePurchaseOrderAsync(purchaseOrderCreateDto);
+                var result = await _service.CreatePurchaseOrderAsync(createPurchaseOrderDto);
 
                 _logger.LogInformation("Purchase Order created successfully.");
 

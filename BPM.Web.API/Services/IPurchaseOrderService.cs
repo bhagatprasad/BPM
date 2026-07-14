@@ -6,6 +6,7 @@ namespace BPM.Web.API.Services
 {
     public interface IPurchaseOrderService
     {
-        Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrderCreateDto purchaseOrderCreateDto);
+        Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto);
+
     }
 }

@@ -10,25 +10,27 @@ namespace BPM.Web.API.Service
     {
         private readonly IPurchaseOrderRepository _repository;
         private readonly ILogger<PurchaseOrderService> _logger;
-
-        public PurchaseOrderService(IPurchaseOrderRepository repository,ILogger<PurchaseOrderService> logger)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrderCreateDto purchaseOrderCreateDto)
+        public async Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto)
         {
             try
             {
                 _logger.LogInformation("Creating Purchase Order.");
 
-                var purchaseOrder = PurchaseOrderMapper.ToEntity(purchaseOrderCreateDto);
+                // var purchaseOrder = PurchaseOrderMapper.ToEntity(purchaseOrderCreateDto);//its helper method
+                var purchaseOrder = createPurchaseOrderDto.ToEntity();//purchaseorder
+
+                var purchaseOrderItems = createPurchaseOrderDto.Items.Select(x => x.ToEntity()).ToList();//purchaseorderitems
 
                 // Temporary PO Number Generation
                 purchaseOrder.PONumber = $"PO-{DateTime.Now:yyyyMM}-{DateTime.Now.Ticks.ToString()[^4..]}";
 
-                var result = await _repository.CreatePurchaseOrderAsync(purchaseOrder);
+                var result = await _repository.CreatePurchaseOrderAsync(purchaseOrder, purchaseOrderItems);
 
                 _logger.LogInformation("Purchase Order created successfully. PO Number: {PONumber}", result.PONumber);
 
@@ -38,7 +40,9 @@ namespace BPM.Web.API.Service
             {
                 _logger.LogError(ex, "Error occurred while creating Purchase Order.");
 
-                throw ex ;
+                throw;
+                //throw; preserves the original exception stack trace.
+                //throw ex; resets the stack trace, making debugging harder.
             }
         }
     }

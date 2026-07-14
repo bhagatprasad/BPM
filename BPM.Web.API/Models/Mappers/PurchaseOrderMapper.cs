@@ -5,7 +5,7 @@ namespace BPM.Web.API.Models.Mappers
 {
     public static class PurchaseOrderMapper
     {
-        public static PurchaseOrder ToEntity(PurchaseOrderCreateDto dto)
+        public static PurchaseOrder ToEntity(this CreatePurchaseOrderDto dto)
         {
             return new PurchaseOrder
             {
@@ -19,7 +19,7 @@ namespace BPM.Web.API.Models.Mappers
                 Remarks = dto.Remarks,
                 InternalNotes = dto.InternalNotes,
 
-                PONumber = string.Empty,     // Will be generated in Service
+                PONumber = string.Empty, // Generated in Service
                 OrderDate = DateTime.UtcNow,
                 Status = "Draft",
 
@@ -33,6 +33,33 @@ namespace BPM.Web.API.Models.Mappers
                 IsActive = true,
 
                 CreatedBy = dto.CreatedBy,
+                CreatedOn = DateTime.UtcNow
+            };
+        }
+
+        public static PurchaseOrderItem ToEntity(this CreatePurchaseOrderItemDto dto)
+        {
+            return new PurchaseOrderItem
+            {
+                DrugId = dto.DrugId,
+                Quantity = dto.Quantity,
+                UnitPrice = dto.UnitPrice,
+
+                DiscountPercentage = dto.DiscountPercentage,
+                DiscountAmount = 0,
+
+                TaxRate = dto.TaxRate,
+                TaxAmount = 0,
+
+                TotalAmount = 0,
+
+                ReceivedQuantity = 0,
+                PendingQuantity = dto.Quantity,
+
+                BatchNumber = dto.BatchNumber,
+                ExpiryDate = dto.ExpiryDate,
+                Remarks = dto.Remarks,
+
                 CreatedOn = DateTime.UtcNow
             };
         }
