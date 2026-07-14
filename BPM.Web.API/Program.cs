@@ -1,3 +1,4 @@
+using BPM.Web.API.GlobalExceptionHandling; 
 using BPM.Web.API.Models.Data;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
@@ -19,8 +20,6 @@ GlobalContext.Properties["LogFileName"] = logPath;
 
 builder.Logging.AddLog4Net("log4net.config");
 
-
-
 #endregion
 
 // Add services to the container.
@@ -33,31 +32,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register Services
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDealerService, DealerService>();
-
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();
-
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IDrugService, DrugService>();
-
 builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
-
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
-
 builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
-
 builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IUserService, UserService>();
-
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -75,17 +66,22 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+app.ConfigureExceptionHandler(logger);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+   
     app.UseDeveloperExceptionPage();
 
-    app.UseSwagger();
+    app.ConfigureExceptionHandler(logger);
 
+    app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "BPM Web API v1");
-        // options.RoutePrefix = string.Empty;
     });
 }
 
