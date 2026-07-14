@@ -1,31 +1,26 @@
-﻿CREATE TABLE Supplier
+﻿CREATE TABLE public.suppliers
 (
-    SupplierId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-
-    SupplierCode VARCHAR(50) NOT NULL UNIQUE,
-    SupplierName VARCHAR(200) NOT NULL,
-
-    ContactPerson VARCHAR(150),
-    Email VARCHAR(150),
-    Phone VARCHAR(20),
-    AlternatePhone VARCHAR(20),
-
-    GSTNumber VARCHAR(20),
-    DrugLicenseNumber VARCHAR(100),
-
-    AddressLine1 VARCHAR(200),
-    AddressLine2 VARCHAR(200),
-    City VARCHAR(100),
-    State VARCHAR(100),
-    Country VARCHAR(100),
-    PostalCode VARCHAR(10),
-
-    Website VARCHAR(200),
-
-    IsActive BOOLEAN NOT NULL DEFAULT TRUE,
-
-    CreatedBy UUID,
-    CreatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedBy UUID,
-    ModifiedOn TIMESTAMP
-);
+    supplierid uuid NOT NULL DEFAULT gen_random_uuid(),
+    suppliercode character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    suppliername character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    contactperson character varying(150) COLLATE pg_catalog."default",
+    email character varying(150) COLLATE pg_catalog."default",
+    phone character varying(20) COLLATE pg_catalog."default",
+    alternatephone character varying(20) COLLATE pg_catalog."default",
+    gstnumber character varying(20) COLLATE pg_catalog."default",
+    druglicensenumber character varying(100) COLLATE pg_catalog."default",
+    addressline1 character varying(200) COLLATE pg_catalog."default",
+    addressline2 character varying(200) COLLATE pg_catalog."default",
+    city character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    country character varying(100) COLLATE pg_catalog."default",
+    postalcode character varying(10) COLLATE pg_catalog."default",
+    website character varying(200) COLLATE pg_catalog."default",
+    isactive boolean NOT NULL DEFAULT true,
+    createdby uuid,
+    createdon timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modifiedby uuid,
+    modifiedon timestamp without time zone,
+    CONSTRAINT suppliers_pkey PRIMARY KEY (supplierid),
+    CONSTRAINT suppliers_suppliercode_key UNIQUE (suppliercode)
+)
