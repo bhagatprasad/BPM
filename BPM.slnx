@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="BPM.Web.API/BPM.Web.API.csproj" />
+  <Project Path="BPM.Web.Distributor.UI/BPM.Web.Distributor.UI.csproj" Id="00e42427-5ae3-4efd-bee7-a942767977a6" />
 </Solution>
