@@ -46,6 +46,8 @@ builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
