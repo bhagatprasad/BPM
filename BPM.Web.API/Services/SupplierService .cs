@@ -2,11 +2,9 @@
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
-using Microsoft.Extensions.Logging;
 
 namespace BPM.Web.API.Services
 {
-
     public class SupplierService : ISupplierService
     {
         private readonly ISupplierRepository _repository;
@@ -22,12 +20,15 @@ namespace BPM.Web.API.Services
         {
             try
             {
+                _logger.LogInformation("Retrieving all suppliers");
+
                 var suppliers = await _repository.GetAllSuppliersAsync();
+
                 return suppliers.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all suppliers");
+                _logger.LogError(ex, "Error occurred while retrieving all suppliers");
                 throw;
             }
         }
@@ -36,12 +37,21 @@ namespace BPM.Web.API.Services
         {
             try
             {
+                _logger.LogInformation("Retrieving supplier with Id {SupplierId}", supplierId);
+
                 var supplier = await _repository.GetSupplierByIdAsync(supplierId);
-                return supplier?.ToDto();
+
+                if (supplier == null)
+                {
+                    _logger.LogWarning("Supplier not found with Id {SupplierId}", supplierId);
+                    return null;
+                }
+
+                return supplier.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting supplier with ID: {SupplierId}", supplierId);
+                _logger.LogError(ex, "Error occurred while retrieving supplier with Id {SupplierId}", supplierId);
                 throw;
             }
         }
@@ -50,25 +60,29 @@ namespace BPM.Web.API.Services
         {
             try
             {
-                // Validate if supplier code already exists
+                _logger.LogInformation("Creating supplier");
+
                 if (await SupplierCodeExistsAsync(supplierDto.SupplierCode))
                 {
-                    throw new InvalidOperationException($"Supplier code '{supplierDto.SupplierCode}' already exists");
+                    _logger.LogWarning("Supplier code {SupplierCode} already exists", supplierDto.SupplierCode);
+                    return false;
                 }
 
                 var supplier = supplierDto.ToEntity();
-                var success = await _repository.InsertSupplierAsync(supplier);
 
-                if (!success)
+                var result = await _repository.InsertSupplierAsync(supplier);
+
+                if (!result)
                 {
-                    throw new InvalidOperationException("Failed to insert supplier");
+                    _logger.LogWarning("Failed to create supplier");
+                    return false;
                 }
 
-                return success;
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inserting supplier with code: {SupplierCode}", supplierDto.SupplierCode);
+                _logger.LogError(ex, "Error occurred while creating supplier");
                 throw;
             }
         }
@@ -77,31 +91,40 @@ namespace BPM.Web.API.Services
         {
             try
             {
-                // Get existing supplier
+                _logger.LogInformation("Updating supplier");
+
                 var existingSupplier = await _repository.GetSupplierByIdAsync(supplierDto.Id);
+
                 if (existingSupplier == null)
                 {
-                    _logger.LogWarning("Supplier with ID: {SupplierId} not found for update", supplierDto.Id);
+                    _logger.LogWarning("Supplier not found with Id {SupplierId}", supplierDto.Id);
                     return false;
                 }
 
-                // Check if supplier code is being changed and if new code already exists
                 if (existingSupplier.SupplierCode != supplierDto.SupplierCode)
                 {
                     if (await SupplierCodeExistsAsync(supplierDto.SupplierCode, supplierDto.Id))
                     {
-                        _logger.LogWarning("Supplier code '{SupplierCode}' already exists", supplierDto.SupplierCode);
+                        _logger.LogWarning("Supplier code {SupplierCode} already exists", supplierDto.SupplierCode);
                         return false;
                     }
                 }
 
-                // Map DTO to existing entity
                 supplierDto.MapToEntity(existingSupplier);
-                return await _repository.UpdateSupplierAsync(existingSupplier);
+
+                var result = await _repository.UpdateSupplierAsync(existingSupplier);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to update supplier");
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating supplier with ID: {SupplierId}", supplierDto.Id);
+                _logger.LogError(ex, "Error occurred while updating supplier with Id {SupplierId}", supplierDto.Id);
                 throw;
             }
         }
@@ -110,34 +133,53 @@ namespace BPM.Web.API.Services
         {
             try
             {
+                _logger.LogInformation("Deleting supplier with Id {SupplierId}", supplierId);
+
                 var supplier = await _repository.GetSupplierByIdAsync(supplierId);
+
                 if (supplier == null)
                 {
-                    _logger.LogWarning("Supplier with ID: {SupplierId} not found for deletion", supplierId);
+                    _logger.LogWarning("Supplier not found with Id {SupplierId}", supplierId);
                     return false;
                 }
 
-                return await _repository.DeleteSupplierAsync(supplierId);
+                var result = await _repository.DeleteSupplierAsync(supplierId);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to delete supplier");
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting supplier with ID: {SupplierId}", supplierId);
+                _logger.LogError(ex, "Error occurred while deleting supplier with Id {SupplierId}", supplierId);
                 throw;
             }
         }
 
-        // Additional methods for validation
         public async Task<SupplierDto?> GetSupplierByCodeAsync(string supplierCode)
         {
             try
             {
+                _logger.LogInformation("Retrieving supplier with Code {SupplierCode}", supplierCode);
+
                 var suppliers = await _repository.GetAllSuppliersAsync();
                 var supplier = suppliers.FirstOrDefault(s => s.SupplierCode == supplierCode);
-                return supplier?.ToDto();
+
+                if (supplier == null)
+                {
+                    _logger.LogWarning("Supplier not found with Code {SupplierCode}", supplierCode);
+                    return null;
+                }
+
+                return supplier.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting supplier by code: {SupplierCode}", supplierCode);
+                _logger.LogError(ex, "Error occurred while retrieving supplier with Code {SupplierCode}", supplierCode);
                 throw;
             }
         }
@@ -146,13 +188,16 @@ namespace BPM.Web.API.Services
         {
             try
             {
+                _logger.LogInformation("Retrieving active suppliers");
+
                 var suppliers = await _repository.GetAllSuppliersAsync();
                 var activeSuppliers = suppliers.Where(s => s.IsActive).ToList();
+
                 return activeSuppliers.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting active suppliers");
+                _logger.LogError(ex, "Error occurred while retrieving active suppliers");
                 throw;
             }
         }
@@ -161,25 +206,36 @@ namespace BPM.Web.API.Services
         {
             try
             {
+                _logger.LogInformation("Updating supplier status");
+
                 var supplier = await _repository.GetSupplierByIdAsync(supplierId);
+
                 if (supplier == null)
                 {
-                    _logger.LogWarning("Supplier with ID: {SupplierId} not found for status toggle", supplierId);
+                    _logger.LogWarning("Supplier not found with Id {SupplierId}", supplierId);
                     return false;
                 }
 
                 supplier.IsActive = isActive;
                 supplier.ModifiedOn = DateTime.UtcNow;
-                return await _repository.UpdateSupplierAsync(supplier);
+
+                var result = await _repository.UpdateSupplierAsync(supplier);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to update supplier status");
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error toggling supplier status for ID: {SupplierId}", supplierId);
+                _logger.LogError(ex, "Error occurred while updating supplier status with Id {SupplierId}", supplierId);
                 throw;
             }
         }
 
-        // Helper method to check if supplier code exists
         private async Task<bool> SupplierCodeExistsAsync(string supplierCode, Guid? excludeId = null)
         {
             var allSuppliers = await _repository.GetAllSuppliersAsync();

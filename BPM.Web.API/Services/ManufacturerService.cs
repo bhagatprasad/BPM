@@ -7,46 +7,125 @@ namespace BPM.Web.API.Services
     public class ManufacturerService : IManufacturerService
     {
         private readonly IManufacturerRepository _manufacturerRepository;
+        private readonly ILogger<ManufacturerService> _logger;
 
-        public ManufacturerService(IManufacturerRepository manufacturerRepository)
+        public ManufacturerService(IManufacturerRepository manufacturerRepository, ILogger<ManufacturerService> logger)
         {
             _manufacturerRepository = manufacturerRepository;
+            _logger = logger;
         }
 
         public async Task<List<ManufacturerDto>> GetAllManufacturersAsync()
         {
-            var manufacturers = await _manufacturerRepository.GetAllManufacturersAsync();
+            try
+            {
+                _logger.LogInformation("Retrieving all manufacturers");
 
-            return manufacturers.ToDto();
+                var manufacturers = await _manufacturerRepository.GetAllManufacturersAsync();
+
+                return manufacturers.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving manufacturers");
+                throw;
+            }
         }
 
         public async Task<ManufacturerDto?> GetManufacturerByIdAsync(Guid manufacturerId)
         {
-            var manufacturer = await _manufacturerRepository.GetManufacturerByIdAsync(manufacturerId);
+            try
+            {
+                _logger.LogInformation("Retrieving manufacturer with Id {ManufacturerId}", manufacturerId);
 
-            if (manufacturer == null)
-                return null;
+                var manufacturer = await _manufacturerRepository.GetManufacturerByIdAsync(manufacturerId);
 
-            return manufacturer.ToDto();
+                if (manufacturer == null)
+                {
+                    _logger.LogWarning("Manufacturer not found with Id {ManufacturerId}", manufacturerId);
+                    return null;
+                }
+
+                return manufacturer.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving manufacturer with Id {ManufacturerId}", manufacturerId);
+                throw;
+            }
         }
 
         public async Task<bool> InsertManufacturerAsync(CreateManufacturerDto manufacturerDto)
         {
-            var manufacturer = manufacturerDto.ToEntity();
+            try
+            {
+                _logger.LogInformation("Creating manufacturer");
 
-            return await _manufacturerRepository.InsertManufacturerAsync(manufacturer);
+                var manufacturer = manufacturerDto.ToEntity();
+
+                var result = await _manufacturerRepository.InsertManufacturerAsync(manufacturer);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to create manufacturer");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while creating manufacturer");
+                throw;
+            }
         }
 
         public async Task<bool> UpdateManufacturerAsync(UpdateManufacturerDto manufacturerDto)
         {
-            var manufacturer = manufacturerDto.ToEntity();
+            try
+            {
+                _logger.LogInformation("Updating manufacturer");
 
-            return await _manufacturerRepository.UpdateManufacturerAsync(manufacturer);
+                var manufacturer = manufacturerDto.ToEntity();
+
+                var result = await _manufacturerRepository.UpdateManufacturerAsync(manufacturer);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Manufacturer not found for update");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating manufacturer");
+                throw;
+            }
         }
 
         public async Task<bool> DeleteManufacturerAsync(Guid manufacturerId)
         {
-            return await _manufacturerRepository.DeleteManufacturerAsync(manufacturerId);
+            try
+            {
+                _logger.LogInformation("Deleting manufacturer with Id {ManufacturerId}", manufacturerId);
+
+                var result = await _manufacturerRepository.DeleteManufacturerAsync(manufacturerId);
+
+                if (!result)
+                {
+                    _logger.LogWarning("Manufacturer not found for deletion with Id {ManufacturerId}", manufacturerId);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting manufacturer with Id {ManufacturerId}", manufacturerId);
+                throw;
+            }
         }
     }
 }

@@ -9,65 +9,127 @@ namespace BPM.Web.API.Controllers
     public class ManufacturerController : ControllerBase
     {
         private readonly IManufacturerService _manufacturerService;
+        private readonly ILogger<ManufacturerController> _logger;
 
-        public ManufacturerController(IManufacturerService manufacturerService)
+        public ManufacturerController(IManufacturerService manufacturerService, ILogger<ManufacturerController> logger)
         {
             _manufacturerService = manufacturerService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetManufacturers()
         {
-            var manufacturers = await _manufacturerService.GetAllManufacturersAsync();
+            try
+            {
+                _logger.LogInformation("Fetching all manufacturers.");
 
-            return Ok(manufacturers);
+                var manufacturers = await _manufacturerService.GetAllManufacturersAsync();
+
+                return Ok(manufacturers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching all manufacturers.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetManufacturer(Guid id)
         {
-            var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(id);
+            try
+            {
+                _logger.LogInformation("Fetching manufacturer with Id {ManufacturerId}", id);
 
-            if (manufacturer == null)
-                return NotFound();
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(id);
 
-            return Ok(manufacturer);
+                if (manufacturer == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(manufacturer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching manufacturer with Id {ManufacturerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateManufacturerDto manufacturerDto)
         {
-            var result = await _manufacturerService.InsertManufacturerAsync(manufacturerDto);
+            try
+            {
+                _logger.LogInformation("Creating manufacturer.");
 
-            if (!result)
-                return BadRequest("Unable to create manufacturer.");
+                var result = await _manufacturerService.InsertManufacturerAsync(manufacturerDto);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return BadRequest("Unable to create manufacturer.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while creating manufacturer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateManufacturerDto manufacturerDto)
         {
-            if (id != manufacturerDto.Id)
-                return BadRequest("Route Id and Manufacturer Id do not match.");
+            try
+            {
+                _logger.LogInformation("Updating manufacturer.");
 
-            var result = await _manufacturerService.UpdateManufacturerAsync(manufacturerDto);
+                if (id != manufacturerDto.Id)
+                {
+                    return BadRequest("Route Id and Manufacturer Id do not match.");
+                }
 
-            if (!result)
-                return NotFound();
+                var result = await _manufacturerService.UpdateManufacturerAsync(manufacturerDto);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating manufacturer with Id {ManufacturerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _manufacturerService.DeleteManufacturerAsync(id);
+            try
+            {
+                _logger.LogInformation("Deleting manufacturer with Id {ManufacturerId}", id);
 
-            if (!result)
-                return NotFound();
+                var result = await _manufacturerService.DeleteManufacturerAsync(id);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting manufacturer with Id {ManufacturerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
     }
 }
