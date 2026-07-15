@@ -11,7 +11,10 @@ namespace BPM.Web.API.Service
     {
         private readonly IPurchaseOrderRepository _repository;
         private readonly ILogger<PurchaseOrderService> _logger;
-        public PurchaseOrderService(IPurchaseOrderRepository repository, ILogger<PurchaseOrderService> logger)
+
+        public PurchaseOrderService(
+            IPurchaseOrderRepository repository,
+            ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -23,12 +26,11 @@ namespace BPM.Web.API.Service
             {
                 _logger.LogInformation("Creating Purchase Order.");
 
-                // var purchaseOrder = PurchaseOrderMapper.ToEntity(purchaseOrderCreateDto);//its helper method
-                var purchaseOrder = createPurchaseOrderDto.ToEntity();//purchaseorder
+                var purchaseOrder = createPurchaseOrderDto.ToEntity();
+                var purchaseOrderItems = createPurchaseOrderDto.Items
+                    .Select(x => x.ToEntity())
+                    .ToList();
 
-                var purchaseOrderItems = createPurchaseOrderDto.Items.Select(x => x.ToEntity()).ToList();//purchaseorderitems
-
-                // Temporary PO Number Generation
                 purchaseOrder.PONumber = $"PO-{DateTime.Now:yyyyMM}-{DateTime.Now.Ticks.ToString()[^4..]}";
 
                 var result = await _repository.CreatePurchaseOrderAsync(purchaseOrder, purchaseOrderItems);
@@ -40,29 +42,6 @@ namespace BPM.Web.API.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating Purchase Order.");
-
-                throw;
-                //throw; preserves the original exception stack trace.
-                //throw ex; resets the stack trace, making debugging harder.
-            }
-        }
-
-        public async Task<PurchaseOrderResponseDto?> GetPurchaseOrderByIdAsync(Guid id)
-        {
-            try
-            {
-                _logger.LogInformation("Fetching purchase order with id: {Id}", id);
-                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(id);
-                if (purchaseOrder == null)
-                {
-                    _logger.LogWarning("Purchase order not found with Id: {Id}", id);
-                    return null;
-                }
-                return purchaseOrder.ToDto();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching purchase order with id: {Id}", id);
                 throw;
             }
         }
@@ -90,51 +69,25 @@ namespace BPM.Web.API.Service
             }
         }
 
-
-
-
-    }
-        }
-
         public async Task<PurchaseOrderResponseDto?> GetPurchaseOrderByIdAsync(Guid id)
         {
             try
             {
-                _logger.LogInformation("Fetching purchase order with id: {Id}", id);
+                _logger.LogInformation("Fetching purchase order with Id: {Id}", id);
+
                 var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(id);
+
                 if (purchaseOrder == null)
                 {
                     _logger.LogWarning("Purchase order not found with Id: {Id}", id);
                     return null;
                 }
+
                 return purchaseOrder.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching purchase order with id: {Id}", id);
-                throw;
-            }
-        }
-
-        public async Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync()
-        {
-            try
-            {
-                _logger.LogInformation("Fetching all purchase orders.");
-
-                var purchaseOrders = await _repository.GetPurchaseOrdersAllAsync();
-
-                if (!purchaseOrders.Any())
-                {
-                    _logger.LogWarning("No purchase orders found.");
-                    return Enumerable.Empty<PurchaseOrderResponseDto>();
-                }
-
-                return purchaseOrders.Select(po => po.ToDto()).ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching purchase orders.");
+                _logger.LogError(ex, "Error occurred while fetching purchase order with Id: {Id}", id);
                 throw;
             }
         }

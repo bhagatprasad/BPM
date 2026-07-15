@@ -64,66 +64,28 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult>GetPurchaseOrderById(Guid id)
+        public async Task<IActionResult> GetPurchaseOrderById(Guid id)
         {
             try
             {
-                _logger.LogInformation("Fetching purchase order with id: {Id}",id);
-                var purchaseorder = await _service.GetPurchaseOrderByIdAsync(id);
-                if (purchaseorder==null)
+                _logger.LogInformation("Fetching purchase order with Id: {Id}", id);
+
+                var purchaseOrder = await _service.GetPurchaseOrderByIdAsync(id);
+
+                if (purchaseOrder == null)
                 {
-                    _logger.LogWarning("Purchase order not found with Id: {Id}",id);
-                    return NotFound("Purchase Order Not Found");
+                    _logger.LogWarning("Purchase order not found with Id: {Id}", id);
+                    return NotFound("Purchase Order Not Found.");
                 }
-                return Ok(purchaseorder);
+
+                return Ok(purchaseOrder);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,"Error occurred while fetching purchase order.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase order");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetPurchaseOrdersAll()
-        {
-            try
-            {
-                _logger.LogInformation("Fetching all purchase orders.");
-
-                var purchaseOrders = await _service.GetPurchaseOrdersAllAsync();
-
-                _logger.LogInformation("Purchase orders fetched successfully.");
-
-                return Ok(purchaseOrders);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching purchase orders.");
+                _logger.LogError(ex, "Error occurred while fetching purchase order.");
 
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while fetching purchase orders.");
-            }
-        }
-
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult>GetPurchaseOrderById(Guid id)
-        {
-            try
-            {
-                _logger.LogInformation("Fetching purchase order with id: {Id}",id);
-                var purchaseorder = await _service.GetPurchaseOrderByIdAsync(id);
-                if (purchaseorder==null)
-                {
-                    _logger.LogWarning("Purchase order not found with Id: {Id}",id);
-                    return NotFound("Purchase Order Not Found");
-                }
-                return Ok(purchaseorder);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,"Error occurred while fetching purchase order.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase order");
+                    "An error occurred while fetching purchase order.");
             }
         }
 

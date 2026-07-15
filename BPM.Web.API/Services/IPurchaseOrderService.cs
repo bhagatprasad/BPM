@@ -10,8 +10,6 @@ namespace BPM.Web.API.Services
         Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync();
         Task<PurchaseOrderResponseDto> GetPurchaseOrderByIdAsync(Guid id);
-        Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync();
-        Task<PurchaseOrderResponseDto> GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
 
     }
