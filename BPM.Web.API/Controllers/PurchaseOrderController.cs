@@ -64,23 +64,48 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult>GetPurchaseOrderById(Guid id)
+        public async Task<IActionResult> GetPurchaseOrderById(Guid id)
         {
             try
             {
-                _logger.LogInformation("Fetching purchase order with id: {Id}",id);
-                var purchaseorder = await _service.GetPurchaseOrderByIdAsync(id);
-                if (purchaseorder==null)
+                _logger.LogInformation("Fetching purchase order with Id: {Id}", id);
+
+                var purchaseOrder = await _service.GetPurchaseOrderByIdAsync(id);
+
+                if (purchaseOrder == null)
                 {
-                    _logger.LogWarning("Purchase order not found with Id: {Id}",id);
-                    return NotFound("Purchase Order Not Found");
+                    _logger.LogWarning("Purchase order not found with Id: {Id}", id);
+                    return NotFound("Purchase Order Not Found.");
                 }
-                return Ok(purchaseorder);
+
+                return Ok(purchaseOrder);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,"Error occurred while fetching purchase order.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase order");
+                _logger.LogError(ex, "Error occurred while fetching purchase order.");
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "An error occurred while fetching purchase order.");
+            }
+        }
+
+        [HttpGet("dealer/{dealerId:guid}")]
+        public async Task<IActionResult> GetPurchaseOrdersByDealer(Guid dealerId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching purchase orders for Dealer Id: {DealerId}", dealerId);
+
+                var purchaseOrders = await _service.GetPurchaseOrdersByDealerAsync(dealerId);
+
+                return Ok(purchaseOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DealerId}", dealerId);
+
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "An error occurred while fetching purchase orders.");
             }
         }
     }
