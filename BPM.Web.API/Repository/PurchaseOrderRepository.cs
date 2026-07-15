@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.API.Repository
 {
@@ -24,6 +25,14 @@ namespace BPM.Web.API.Repository
 
         }
 
+        public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id)
+        {
+            return await _dbContext.PurchaseOrders.FirstOrDefaultAsync(po=>po.Id==id && po.IsActive);
+        }
 
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
+        {
+            return await _dbContext.PurchaseOrders.Where(po=>po.IsActive).OrderByDescending(po=>po.CreatedOn).ToListAsync();
+        }
     }
 }
