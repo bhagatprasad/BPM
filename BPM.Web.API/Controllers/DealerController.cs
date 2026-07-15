@@ -13,7 +13,6 @@ namespace BPM.Web.API.Controllers
 
         public DealerController(IDealerService dealerService, ILogger<DealerController> logger)
         {
-
             _dealerService = dealerService;
             _logger = logger;
         }
@@ -21,58 +20,116 @@ namespace BPM.Web.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDealers()
         {
-            _logger.LogInformation("Fetching all dealers.");
-            var dealers = await _dealerService.GetAllDealersAsync();
-            _logger.LogInformation($"Fetched {dealers.Count} dealers.");
-            return Ok(dealers);
+            try
+            {
+                _logger.LogInformation("Fetching all dealers.");
+
+                var dealers = await _dealerService.GetAllDealersAsync();
+
+                return Ok(dealers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching all dealers.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetDealer(Guid id)
         {
-            _dealerService.GetDealerByIdAsync(id);
-            var dealer = await _dealerService.GetDealerByIdAsync(id);
+            try
+            {
+                _logger.LogInformation("Fetching dealer with Id {DealerId}", id);
 
-            if (dealer == null)
-                return NotFound();
+                var dealer = await _dealerService.GetDealerByIdAsync(id);
 
-            return Ok(dealer);
+                if (dealer == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(dealer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching dealer with Id {DealerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateDealerDto dealerDto)
         {
-            var result = await _dealerService.InsertDealerAsync(dealerDto);
+            try
+            {
+                _logger.LogInformation("Creating dealer.");
 
-            if (!result)
-                return BadRequest("Unable to create dealer.");
+                var result = await _dealerService.InsertDealerAsync(dealerDto);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return BadRequest("Unable to create dealer.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while creating dealer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateDealerDto dealerDto)
         {
-            if (id != dealerDto.Id)
-                return BadRequest("Route Id and Dealer Id do not match.");
+            try
+            {
+                _logger.LogInformation("Updating dealer.");
 
-            var result = await _dealerService.UpdateDealerAsync(dealerDto);
+                if (id != dealerDto.Id)
+                {
+                    return BadRequest("Route Id and Dealer Id do not match.");
+                }
 
-            if (!result)
-                return NotFound();
+                var result = await _dealerService.UpdateDealerAsync(dealerDto);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating dealer with Id {DealerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _dealerService.DeleteDealerAsync(id);
+            try
+            {
+                _logger.LogInformation("Deleting dealer with Id {DealerId}", id);
 
-            if (!result)
-                return NotFound();
+                var result = await _dealerService.DeleteDealerAsync(id);
 
-            return Ok(result);
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting dealer with Id {DealerId}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
         }
     }
 }

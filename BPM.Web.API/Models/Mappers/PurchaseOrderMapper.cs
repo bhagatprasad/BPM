@@ -1,0 +1,67 @@
+﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.Entities;
+
+namespace BPM.Web.API.Models.Mappers
+{
+    public static class PurchaseOrderMapper
+    {
+        public static PurchaseOrder ToEntity(this CreatePurchaseOrderDto dto)
+        {
+            return new PurchaseOrder
+            {
+                SupplierId = dto.SupplierId,
+                DealerId = dto.DealerId,
+
+                ExpectedDeliveryDate = dto.ExpectedDeliveryDate,
+
+                PaymentTerms = dto.PaymentTerms,
+                DeliveryTerms = dto.DeliveryTerms,
+                Remarks = dto.Remarks,
+                InternalNotes = dto.InternalNotes,
+
+                PONumber = string.Empty, // Generated in Service
+                OrderDate = DateTime.UtcNow,
+                Status = "Draft",
+
+                SubTotal = 0,
+                TaxAmount = 0,
+                DiscountAmount = 0,
+                TotalAmount = 0,
+
+                CurrencyCode = "INR",
+
+                IsActive = true,
+
+                CreatedBy = dto.CreatedBy,
+                CreatedOn = DateTime.UtcNow
+            };
+        }
+
+        public static PurchaseOrderItem ToEntity(this CreatePurchaseOrderItemDto dto)
+        {
+            return new PurchaseOrderItem
+            {
+                DrugId = dto.DrugId,
+                Quantity = dto.Quantity,
+                UnitPrice = dto.UnitPrice,
+
+                DiscountPercentage = dto.DiscountPercentage,
+                DiscountAmount = 0,
+
+                TaxRate = dto.TaxRate,
+                TaxAmount = 0,
+
+                TotalAmount = 0,
+
+                ReceivedQuantity = 0,
+                PendingQuantity = dto.Quantity,
+
+                BatchNumber = dto.BatchNumber,
+                ExpiryDate = dto.ExpiryDate,
+                Remarks = dto.Remarks,
+
+                CreatedOn = DateTime.UtcNow
+            };
+        }
+    }
+}

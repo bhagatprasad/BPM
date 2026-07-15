@@ -18,6 +18,8 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<DrugCategory>DrugCategories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderItem>PurchaseOrderItems { get; set; }
     }
 }
 

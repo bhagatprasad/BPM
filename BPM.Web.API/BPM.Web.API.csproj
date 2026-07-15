@@ -24,7 +24,6 @@
 	<!-- Copy log4net.config to the output directory -->
 	<ItemGroup>
 		<PackageReference Include="log4net" Version="3.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>
