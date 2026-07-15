@@ -1,18 +1,24 @@
 ﻿using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Repository;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BPM.Web.API.Services
 {
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        public string _tokenKey { get; }
         private readonly ILogger<AccountService> _logger;
 
-        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger)
+        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration)
         {
             _accountRepository = accountRepository;
             _logger = logger;
+            _tokenKey = configuration.GetValue<string>("Jwt:Key");
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -33,6 +39,31 @@ namespace BPM.Web.API.Services
                     {
                         if (user.IsActive)
                         {
+                            // Generate JWT token
+                            var tokenhandler = new JwtSecurityTokenHandler();
+
+                            var tokenkey = Encoding.ASCII.GetBytes(_tokenKey);
+
+                            var tokenDescriptor = new SecurityTokenDescriptor
+                            {
+                                Subject = new ClaimsIdentity(new Claim[]
+                                {
+                                  new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                                  new Claim(ClaimTypes.Name, dto.Username),
+                                  new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                                }),
+                                Expires = DateTime.UtcNow.AddHours(1),
+                                SigningCredentials = new SigningCredentials(
+                                    new SymmetricSecurityKey(tokenkey),
+                                    SecurityAlgorithms.HmacSha256Signature)
+                            };
+
+                            var token = tokenhandler.CreateToken(tokenDescriptor);
+
+                            var writtoken = tokenhandler.WriteToken(token);
+
+
+                            authResponse.JwtToken = writtoken;
                             authResponse.IsValidPassword = true;
                             authResponse.IsValidUser = true;
                             authResponse.Message = "Login Successful";
