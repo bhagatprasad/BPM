@@ -1,4 +1,4 @@
-using BPM.Web.API.GlobalExceptionHandling; 
+using BPM.Web.API.GlobalExceptionHandling;
 using BPM.Web.API.Models.Data;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
@@ -6,8 +6,6 @@ using BPM.Web.API.Services;
 using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -33,34 +31,42 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register Services
+#region  Register Services
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDealerService, DealerService>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IDealerRepository, DealerRepository>();
-builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IDrugService, DrugService>();
-builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
-builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
-builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+#endregion
 
-var usedGenaratesTokenKey = builder.Configuration.GetValue<string>("Jwt:Key");
+#region Register Repositories
 
-builder.Services.AddScoped<IAccountRepository>(x => new AccountRepository(x.GetRequiredService<ApplicationDbContext>(),usedGenaratesTokenKey));
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IDealerRepository, DealerRepository>();
+builder.Services.AddScoped<IDrugRepository, DrugRepository>();
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
+builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
+builder.Services.AddScoped<IUserRespository, UserRespository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 
-var key = Encoding.ASCII.GetBytes(usedGenaratesTokenKey);
+#endregion
+
+var tokenKey = builder.Configuration.GetValue<string>("Jwt:Key");
+
+var key = Encoding.ASCII.GetBytes(tokenKey);
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+})
+    .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -72,9 +78,7 @@ builder.Services.AddAuthentication(options =>
 
 });
 
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
-builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -102,7 +106,7 @@ app.ConfigureExceptionHandler(logger);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-   
+
     app.UseDeveloperExceptionPage();
 
     app.ConfigureExceptionHandler(logger);

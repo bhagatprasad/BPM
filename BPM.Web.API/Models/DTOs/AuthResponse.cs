@@ -6,7 +6,6 @@
         public bool IsValidUser { get; set; }
         public bool IsValidPassword { get; set; }
         public string JwtToken { get; set; }
-        public bool IsActive {  get; set; }
         public AuthenticateResponseDto authenticateResponseDto { get; set; }
     }
 }

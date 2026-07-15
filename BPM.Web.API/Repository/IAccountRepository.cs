@@ -1,13 +1,9 @@
-﻿using BPM.Web.API.Models.DTOs;
-using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.Entities;
 
 namespace BPM.Web.API.Repository
 {
     public interface IAccountRepository
     {
         Task<User> AuthenticateAsync(string username);
-
-        Task<AuthResponse> AuthenticateUser(string username, string password);
-        Task<AuthenticateResponseDto> GenarateUserClaims(AuthResponse authResponse);
     }
 }
