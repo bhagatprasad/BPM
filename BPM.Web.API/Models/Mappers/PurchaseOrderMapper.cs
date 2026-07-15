@@ -1,4 +1,5 @@
 ﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
 
 namespace BPM.Web.API.Models.Mappers
@@ -61,6 +62,27 @@ namespace BPM.Web.API.Models.Mappers
                 Remarks = dto.Remarks,
 
                 CreatedOn = DateTime.UtcNow
+            };
+        }
+        public static PurchaseOrderResponseDto ToDto(this PurchaseOrder purchaseOrder)
+        {
+            return new PurchaseOrderResponseDto
+            {
+                Id = purchaseOrder.Id,
+                PONumber = purchaseOrder.PONumber,
+                SupplierId = purchaseOrder.SupplierId,
+                DealerId = purchaseOrder.DealerId,
+                OrderDate = purchaseOrder.OrderDate,
+                ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate,
+                ActualDeliveryDate = purchaseOrder.ActualDeliveryDate,
+                Status = purchaseOrder.Status,
+                SubTotal = purchaseOrder.SubTotal,
+                TaxAmount = purchaseOrder.TaxAmount,
+                DiscountAmount = purchaseOrder.DiscountAmount,
+                TotalAmount = purchaseOrder.TotalAmount,
+                PaymentTerms = purchaseOrder.PaymentTerms,
+                DeliveryTerms = purchaseOrder.DeliveryTerms,
+                Remarks = purchaseOrder.Remarks
             };
         }
     }
