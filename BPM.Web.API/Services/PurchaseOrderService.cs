@@ -45,5 +45,71 @@ namespace BPM.Web.API.Service
                 //throw ex; resets the stack trace, making debugging harder.
             }
         }
+
+        public async Task<PurchaseOrderResponseDto?> GetPurchaseOrderByIdAsync(Guid id)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching purchase order with id: {Id}", id);
+                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(id);
+                if (purchaseOrder == null)
+                {
+                    _logger.LogWarning("Purchase order not found with Id: {Id}", id);
+                    return null;
+                }
+                return purchaseOrder.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching purchase order with id: {Id}", id);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching all purchase orders.");
+
+                var purchaseOrders = await _repository.GetPurchaseOrdersAllAsync();
+
+                if (!purchaseOrders.Any())
+                {
+                    _logger.LogWarning("No purchase orders found.");
+                    return Enumerable.Empty<PurchaseOrderResponseDto>();
+                }
+
+                return purchaseOrders.Select(po => po.ToDto()).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching purchase orders.");
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching purchase orders for Dealer Id: {DealerId}", dealerId);
+
+                var purchaseOrders = await _repository.GetPurchaseOrdersByDealerAsync(dealerId);
+
+                if (!purchaseOrders.Any())
+                {
+                    _logger.LogWarning("No purchase orders found for Dealer Id: {DealerId}", dealerId);
+                    return Enumerable.Empty<PurchaseOrderResponseDto>();
+                }
+
+                return purchaseOrders.Select(po => po.ToDto()).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DealerId}", dealerId);
+                throw;
+            }
+        }
     }
 }

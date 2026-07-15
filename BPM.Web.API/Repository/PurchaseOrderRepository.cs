@@ -25,5 +25,17 @@ namespace BPM.Web.API.Repository
         }
 
 
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
+        {
+            return await _dbContext.PurchaseOrders.Where(po=>po.IsActive).OrderByDescending(po=>po.CreatedOn).ToListAsync();
+        }
+
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
+        {
+           return await _dbContext.PurchaseOrders
+                .Where(po => po.DealerId == dealerId && po.IsActive)
+                .ToListAsync();
+        }
+    
     }
 }
