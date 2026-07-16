@@ -13,12 +13,14 @@ namespace BPM.Web.API.Services
         private readonly IAccountRepository _accountRepository;
         public string _tokenKey { get; }
         private readonly ILogger<AccountService> _logger;
+        private readonly IUserLoginHistoryRepository _loginHistoryRepository;
 
-        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration)
+        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository)
         {
             _accountRepository = accountRepository;
             _logger = logger;
             _tokenKey = configuration.GetValue<string>("Jwt:Key");
+            _loginHistoryRepository = loginHistoryRepository;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)

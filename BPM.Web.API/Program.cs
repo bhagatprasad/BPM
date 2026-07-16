@@ -93,6 +93,8 @@ builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
+
 #endregion
 
 #region JWT Authentication
