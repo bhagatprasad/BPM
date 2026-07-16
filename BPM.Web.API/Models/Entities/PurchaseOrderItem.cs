@@ -70,5 +70,6 @@ namespace BPM.Web.API.Models.Entities
 
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
+        public PurchaseOrder PurchaseOrder { get; set; }
     }
 }
