@@ -40,10 +40,7 @@
                     </thead>
 
                     <tbody>
-
-                        @for (drug of drugs; track drug.drugId; let i = $index) {
-
-                        <tr>
+                        <tr *ngFor="let drug of drugs; let i = index">
 
                             <td>{{ i + 1 }}</td>
                             <td>{{ drug.drugCode }}</td>
@@ -56,44 +53,21 @@
                             <td>{{ drug.scheduleType }}</td>
                             <td>{{ drug.packing }}</td>
                             <td>{{ drug.strength }}</td>
-
                             <td>
-
-                                @if(drug.isActive){
-
-                                <span class="badge bg-success">
-
+                                <span *ngIf="drug.isActive" class="badge bg-success">
                                     Active
-
                                 </span>
 
-                                }
-
-                                @else {
-
-                                <span class="badge bg-danger">
-
+                                <span *ngIf="!drug.isActive" class="badge bg-danger">
                                     Inactive
-
                                 </span>
-
-                                }
-
                             </td>
-
                             <td>
-
                                 {{ drug.createdOn | date:'dd-MM-yyyy' }}
-
                             </td>
-
                         </tr>
 
-                        }
-
-                        @empty {
-
-                        <tr>
+                        <tr *ngIf="drugs.length === 0">
 
                             <td colspan="13" class="text-center text-danger">
 
@@ -102,9 +76,6 @@
                             </td>
 
                         </tr>
-
-                        }
-
                     </tbody>
 
                 </table>

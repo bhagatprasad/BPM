@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
 {
-    [Table("drugs")]
+    [Table("drug")]
     public class Drug
     {
         [Key]
