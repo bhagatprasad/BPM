@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DrugCatalogService } from '../../services/drugcatelog.service';
 import { drugCatelog } from '../../models/drug-catelog';
 import { CommonModule } from '@angular/common';
@@ -20,7 +20,9 @@ export class DrugsCatelogComponent implements OnInit {
   isLoading: boolean = false;
   error: string | null = null;
 
-  constructor(private drugCatalogService: DrugCatalogService) { }
+  constructor(private drugCatalogService: DrugCatalogService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.fetchDrugsCatalog();
@@ -40,6 +42,7 @@ export class DrugsCatelogComponent implements OnInit {
           this.drugsCatalogs = response || [];
           this.filteredDrugs = [...this.drugsCatalogs];
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error fetching drugs:', error);
@@ -47,6 +50,7 @@ export class DrugsCatelogComponent implements OnInit {
           this.drugsCatalogs = [];
           this.filteredDrugs = [];
           this.isLoading = false;
+          this.cdr.detectChanges();
         }
       });
   }
