@@ -31,5 +31,6 @@
         public string? DeliveryTerms { get; set; }
 
         public string? Remarks { get; set; }
+        public List<PurchaseOrderItemResponseDto> PurchaseOrderItemResponse { get; set; }
     }
 }

@@ -99,5 +99,7 @@ namespace BPM.Web.API.Models.Entities
 
         //[ForeignKey(nameof(ModifiedBy))]
         //public virtual User? ModifiedUser { get; set; }
+
+        public virtual List<PurchaseOrderItem> PurchaseOrderItems { get; set; }
     }
 }
