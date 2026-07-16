@@ -8,7 +8,5 @@ namespace BPM.Web.API.Repository
         Task<IEnumerable<PurchaseOrder>>GetPurchaseOrdersAllAsync();
         Task<PurchaseOrder?>GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
-
-
     }
 }

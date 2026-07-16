@@ -16,6 +16,7 @@ namespace BPM.Web.API.Repository
         public async Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder, List<PurchaseOrderItem> purchaseOrderItems)
         {
             await _dbContext.PurchaseOrders.AddAsync(purchaseOrder);
+
             await _dbContext.SaveChangesAsync();
 
             foreach (var item in purchaseOrderItems)
@@ -31,21 +32,20 @@ namespace BPM.Web.API.Repository
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
         {
-            return await _dbContext.PurchaseOrders
-                .Where(po => po.IsActive)
-                .OrderByDescending(po => po.CreatedOn)
-                .ToListAsync();
+            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.PurchaseOrderItems).OrderByDescending(po => po.CreatedOn).ToListAsync();
         }
 
         public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id)
         {
             return await _dbContext.PurchaseOrders
+                .Include(po => po.PurchaseOrderItems)
                 .FirstOrDefaultAsync(po => po.Id == id && po.IsActive);
         }
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
         {
             return await _dbContext.PurchaseOrders
+                .Include(po => po.PurchaseOrderItems)
                 .Where(po => po.DealerId == dealerId && po.IsActive)
                 .ToListAsync();
         }

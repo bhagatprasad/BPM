@@ -82,7 +82,36 @@ namespace BPM.Web.API.Models.Mappers
                 TotalAmount = purchaseOrder.TotalAmount,
                 PaymentTerms = purchaseOrder.PaymentTerms,
                 DeliveryTerms = purchaseOrder.DeliveryTerms,
-                Remarks = purchaseOrder.Remarks
+                Remarks = purchaseOrder.Remarks,
+
+                PurchaseOrderItemResponse = purchaseOrder.PurchaseOrderItems?
+                    .Select(x => x.ToDto())
+                    .ToList() ?? new List<PurchaseOrderItemResponseDto>()
+            };
+        }
+        public static PurchaseOrderItemResponseDto ToDto(this PurchaseOrderItem item)
+        {
+            return new PurchaseOrderItemResponseDto
+            {
+                Id = item.Id,
+                PurchaseOrderId = item.PurchaseOrderId,
+                DrugId = item.DrugId,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                DiscountPercentage = item.DiscountPercentage,
+                DiscountAmount = item.DiscountAmount,
+                TaxRate = item.TaxRate,
+                TaxAmount = item.TaxAmount,
+                TotalAmount = item.TotalAmount,
+                ReceivedQuantity = item.ReceivedQuantity,
+                PendingQuantity = item.PendingQuantity,
+                BatchNumber = item.BatchNumber,
+                ExpiryDate = item.ExpiryDate,
+                Remarks = item.Remarks,
+                CreatedBy = item.CreatedBy,
+                CreatedOn = item.CreatedOn,
+                ModifiedBy = item.ModifiedBy,
+                ModifiedOn = item.ModifiedOn
             };
         }
     }
