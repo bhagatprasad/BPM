@@ -1,8 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { SidenavComponent } from './common/sidenav';
 import { CartService } from './services/cart.service';
-import { count } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +12,15 @@ import { count } from 'rxjs';
 export class App implements OnInit {
   protected readonly title = signal('BPM.Web.Dealer.UI');
   cartCount: number = 0;
-  constructor(private cartService: CartService) {}
+  //constructor
+  constructor(
+    private cartService: CartService,
+    private router: Router,
+  ) {}
 
+  goToCart(): void {
+    this.router.navigate(['./cart']);
+  }
   ngOnInit(): void {
     this.cartService.cartCount$.subscribe((count) => {
       this.cartCount = count;
