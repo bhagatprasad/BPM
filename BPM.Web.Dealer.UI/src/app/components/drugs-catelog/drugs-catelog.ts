@@ -3,6 +3,7 @@ import { DrugCatalogService } from '../../services/drugcatelog.service';
 import { drugCatelog } from '../../models/drug-catelog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-drugs-catelog',
@@ -12,7 +13,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './drugs-catelog.css',
 })
 export class DrugsCatelogComponent implements OnInit {
-
   drugsCatalogs: drugCatelog[] = [];
   filteredDrugs: drugCatelog[] = [];
   viewMode: 'grid' | 'list' = 'grid';
@@ -20,9 +20,11 @@ export class DrugsCatelogComponent implements OnInit {
   isLoading: boolean = false;
   error: string | null = null;
 
-  constructor(private drugCatalogService: DrugCatalogService,
-    private cdr: ChangeDetectorRef
-  ) { }
+  constructor(
+    private drugCatalogService: DrugCatalogService,
+    private cartService: CartService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.fetchDrugsCatalog();
@@ -32,27 +34,26 @@ export class DrugsCatelogComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     console.log('Fetching drugs catalog...');
-    
-    this.drugCatalogService.getDrugsCatalogAsync().subscribe(
-      {
-        next: (response: drugCatelog[]) => {
-          console.log('Drugs fetched successfully:', response);
-          console.log('Number of drugs:', response?.length);
-          
-          this.drugsCatalogs = response || [];
-          this.filteredDrugs = [...this.drugsCatalogs];
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error fetching drugs:', error);
-          this.error = 'Failed to load drugs. Please try again.';
-          this.drugsCatalogs = [];
-          this.filteredDrugs = [];
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+
+    this.drugCatalogService.getDrugsCatalogAsync().subscribe({
+      next: (response: drugCatelog[]) => {
+        console.log('Drugs fetched successfully:', response);
+        console.log('Number of drugs:', response?.length);
+
+        this.drugsCatalogs = response || [];
+        this.filteredDrugs = [...this.drugsCatalogs];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error fetching drugs:', error);
+        this.error = 'Failed to load drugs. Please try again.';
+        this.drugsCatalogs = [];
+        this.filteredDrugs = [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   filterDrugs(): void {
@@ -62,20 +63,21 @@ export class DrugsCatelogComponent implements OnInit {
     }
 
     const search = this.searchTerm.toLowerCase().trim();
-    this.filteredDrugs = this.drugsCatalogs.filter(drug => 
-      drug.drugName?.toLowerCase().includes(search) ||
-      drug.drugCode?.toLowerCase().includes(search) ||
-      drug.genericName?.toLowerCase().includes(search) ||
-      drug.brandName?.toLowerCase().includes(search) ||
-      drug.manufacturer?.toLowerCase().includes(search) ||
-      drug.category?.toLowerCase().includes(search)
+    this.filteredDrugs = this.drugsCatalogs.filter(
+      (drug) =>
+        drug.drugName?.toLowerCase().includes(search) ||
+        drug.drugCode?.toLowerCase().includes(search) ||
+        drug.genericName?.toLowerCase().includes(search) ||
+        drug.brandName?.toLowerCase().includes(search) ||
+        drug.manufacturer?.toLowerCase().includes(search) ||
+        drug.category?.toLowerCase().includes(search),
     );
   }
 
   sortDrugs(event: any): void {
     const sortBy = event.target.value;
-    
-    switch(sortBy) {
+
+    switch (sortBy) {
       case 'name':
         this.filteredDrugs.sort((a, b) => (a.drugName || '').localeCompare(b.drugName || ''));
         break;
@@ -102,9 +104,22 @@ export class DrugsCatelogComponent implements OnInit {
       alert('This drug is currently inactive and cannot be added to cart.');
       return;
     }
-    
-    console.log('Add to cart:', drug);
-    alert(`${drug.drugName} will be added to cart. (Cart functionality coming soon!)`);
+    this.cartService.addToCart({
+      drugId: drug.drugId,
+      drugCode: drug.drugCode,
+      drugName: drug.drugName,
+      genericName: drug.genericName,
+      manufacturer: drug.manufacturer,
+      brandName: drug.brandName,
+      category: drug.category,
+      packing: drug.packing,
+      strength: drug.strength,
+      quantity: 1,
+    });
+
+    console.log(this.cartService.getCartItems());
+    console.log('Cart Count:', this.cartService.getCartCount());
+    console.log(`${drug.drugName} will be added to cart Successfully.`);
   }
 
   viewDrug(drug: drugCatelog): void {
@@ -120,7 +135,7 @@ export class DrugsCatelogComponent implements OnInit {
   deleteDrug(drug: drugCatelog): void {
     if (confirm(`Are you sure you want to delete ${drug.drugName}?`)) {
       console.log('Delete drug:', drug);
-      this.drugsCatalogs = this.drugsCatalogs.filter(d => d.drugId !== drug.drugId);
+      this.drugsCatalogs = this.drugsCatalogs.filter((d) => d.drugId !== drug.drugId);
       this.filterDrugs();
       alert(`${drug.drugName} has been deleted.`);
     }
