@@ -5,5 +5,6 @@ namespace BPM.Web.API.Repository
     public interface IAccountRepository
     {
         Task<User> AuthenticateAsync(string username);
+        Task UpdateUserAsync(User user);
     }
 }

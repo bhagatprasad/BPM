@@ -38,5 +38,32 @@ namespace BPM.Web.API.Controllers
             }
         }
 
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+        {
+            try
+            {
+                var result = await _service.ResetPasswordAsync(dto);
+
+                if (!result)
+                    return BadRequest("User not found.");
+
+                return Ok(new
+                {
+                    Message = "Password updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.ToString());
+
+                return StatusCode(500, new
+                {
+                    Message = ex.Message,
+                    InnerException = ex.InnerException?.Message
+                });
+            }
+        }
+
     }
 }
