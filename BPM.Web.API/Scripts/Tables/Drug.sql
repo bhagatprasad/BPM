@@ -16,6 +16,7 @@
     createdon timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modifiedby uuid,
     modifiedon timestamp without time zone,
+    imageurl text,
     CONSTRAINT drug_pkey PRIMARY KEY (drugid),
     CONSTRAINT drug_drugcode_key UNIQUE (drugcode)
 )

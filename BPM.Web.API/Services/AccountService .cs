@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Repository;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -108,6 +109,18 @@ namespace BPM.Web.API.Services
 
                     _logger.LogWarning("Invalid username {Username}", dto.Username);
                 }
+
+
+                //
+                UserLoginHistory obj = new UserLoginHistory();
+                obj.UserId = user != null ? user.Id : Guid.Empty;
+                obj.Username = dto.Username;
+                obj.CreatedOn = DateTime.UtcNow;
+                obj.FailureReason = authResponse.Message;
+                obj.LoginTime = DateTime.UtcNow;
+                obj.IsLoginSuccessful = authResponse.IsValidPassword && authResponse.IsValidUser && user != null && user.IsActive;
+
+                await _loginHistoryRepository.AddAsync(obj);
 
                 return authResponse;
             }
