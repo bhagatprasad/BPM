@@ -15,11 +15,19 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> AddAsync(UserLoginHistory loginHistory)
         {
-            loginHistory.CreatedOn = DateTime.UtcNow;
+            try
+            {
+                loginHistory.Id = Guid.NewGuid();
+                loginHistory.CreatedOn = DateTime.UtcNow;
 
-            _context.UserLoginHistorys.Add(loginHistory);
+                await _context.UserLoginHistorys.AddAsync(loginHistory);
 
-            return await _context.SaveChangesAsync() > 0;
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception(ex.InnerException?.Message ?? ex.Message, ex);
+            }
         }
 
         public async Task<List<UserLoginHistory>> GetAllAsync()

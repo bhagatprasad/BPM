@@ -14,7 +14,7 @@ namespace BPM.Web.API.Models.Entities
         public Guid? UserId { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(500)]
         [Column("username")]
         public string Username { get; set; } = string.Empty;
 
@@ -31,18 +31,18 @@ namespace BPM.Web.API.Models.Entities
         [Column("failure_reason")]
         public string? FailureReason { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(250)]
         [Column("ip_address")]
         public string? IpAddress { get; set; }
 
         [Column("user_agent")]
         public string? UserAgent { get; set; }
 
-        [MaxLength(100)]
+        [MaxLength(250)]
         [Column("browser_name")]
         public string? BrowserName { get; set; }
 
-        [MaxLength(100)]
+        [MaxLength(200)]
         [Column("operating_system")]
         public string? OperatingSystem { get; set; }
 
@@ -54,7 +54,7 @@ namespace BPM.Web.API.Models.Entities
         [Column("location")]
         public string? Location { get; set; }
 
-        [MaxLength(150)]
+        [MaxLength(550)]
         [Column("jwt_token_id")]
         public string? JwtTokenId { get; set; }
 
