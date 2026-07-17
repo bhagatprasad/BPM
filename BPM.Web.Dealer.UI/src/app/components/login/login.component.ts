@@ -16,7 +16,8 @@ export class LoginComponent {
 
   loginObj = {
     username: '',
-    password: ''
+    password: '',
+    JwtToken: ''
   };
 
   rememberMe = false;
@@ -42,6 +43,7 @@ export class LoginComponent {
       next: (res: any) => {
 
         if (res.jwtToken) {
+          localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
           // Navigate to drugs catalog
           this.router.navigateByUrl('/drugs-catalog');
         } else {

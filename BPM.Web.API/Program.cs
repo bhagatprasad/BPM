@@ -82,6 +82,7 @@ builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddHttpContextAccessor();
 #endregion
 
 #region Register Repositories
