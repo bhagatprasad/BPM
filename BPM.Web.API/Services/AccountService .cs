@@ -8,6 +8,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BPM.Web.API.Services
@@ -32,11 +33,9 @@ namespace BPM.Web.API.Services
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
         {
-            bool isLoginSuccessful = false;
-            string? failureReason = null;
-            var jwtId = Guid.NewGuid().ToString();
-            Guid sessionId = Guid.NewGuid();
             AuthResponse authResponse = new AuthResponse();
+            UserLoginHistory loginHistory = null;
+
             try
             {
                 _logger.LogInformation("Login attempt for Username {Username}", dto.Username);
@@ -52,31 +51,45 @@ namespace BPM.Web.API.Services
                         if (user.IsActive)
                         {
                             // Generate JWT token
-                            var tokenhandler = new JwtSecurityTokenHandler();
-
-                            var tokenkey = Encoding.ASCII.GetBytes(_tokenKey);
+                            var tokenHandler = new JwtSecurityTokenHandler();
+                            var tokenKey = Encoding.ASCII.GetBytes(_tokenKey);
 
                             var tokenDescriptor = new SecurityTokenDescriptor
                             {
                                 Subject = new ClaimsIdentity(new Claim[]
                                 {
-                                  new Claim(JwtRegisteredClaimNames.Jti, jwtId),
-                                  new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                                  new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
-                                  new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                            new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
+                            new Claim(ClaimTypes.Role, user.RoleId.ToString())
                                 }),
                                 Expires = DateTime.UtcNow.AddHours(1),
                                 SigningCredentials = new SigningCredentials(
-                                    new SymmetricSecurityKey(tokenkey),
+                                    new SymmetricSecurityKey(tokenKey),
                                     SecurityAlgorithms.HmacSha256Signature)
                             };
 
-                            var token = tokenhandler.CreateToken(tokenDescriptor);
+                            var token = tokenHandler.CreateToken(tokenDescriptor);
+                            var jwtToken = tokenHandler.WriteToken(token);
 
-                            var writtoken = tokenhandler.WriteToken(token);
+                            // Generate refresh token
+                            var refreshToken = GenerateRefreshToken();
 
+                            // Save refresh token to database
+                            //await _refreshTokenRepository.AddAsync(new RefreshToken
+                            //{
+                            //    Token = refreshToken,
+                            //    UserId = user.Id,
+                            //    Expires = DateTime.UtcNow.AddDays(7),
+                            //    Created = DateTime.UtcNow,
+                            //    CreatedByIp = GetIpAddress(),
+                            //    IsRevoked = false,
+                            //    IsUsed = false,
+                            //    JwtTokenId = Guid.NewGuid().ToString()
+                            //});
 
-                            authResponse.JwtToken = writtoken;
+                            // Set response
+                            authResponse.JwtToken = jwtToken;
+                            authResponse.RefreshToken = refreshToken;
                             authResponse.IsValidPassword = true;
                             authResponse.IsValidUser = true;
                             authResponse.Message = "Login Successful";
@@ -119,65 +132,121 @@ namespace BPM.Web.API.Services
 
                     _logger.LogWarning("Invalid username {Username}", dto.Username);
                 }
-                var context = _httpContextAccessor.HttpContext;
 
-                var ipAddress = context?.Connection.RemoteIpAddress?.ToString();
+                // Create login history entry
+                loginHistory = CreateLoginHistory(dto.Username, user?.Id, authResponse);
 
-                var userAgent = context?.Request.Headers["User-Agent"].ToString();
+                // Save login history outside the try-catch to ensure it's tracked
+                await _loginHistoryRepository.AddAsync(loginHistory);
 
-                string browser = "Unknown";
-
-                if (userAgent.Contains("Chrome"))
-                    browser = "Chrome";
-                else if (userAgent.Contains("Firefox"))
-                    browser = "Firefox";
-                else if (userAgent.Contains("Edge"))
-                    browser = "Edge";
-                else if (userAgent.Contains("Mozilla"))
-                    browser = "Mozilla";
-                    
-                var operatingSystem = "Unknown";
-                if (userAgent.Contains("Windows"))
-                    operatingSystem = "Windows";
-                else if (userAgent.Contains("Android"))
-                    operatingSystem = "Android";
-                else if (userAgent.Contains("Mac"))
-                    operatingSystem = "macOS";
-                else if (userAgent.Contains("Linux"))
-                    operatingSystem = "Linux";
-
-                await _loginHistoryRepository.AddAsync(new UserLoginHistory
-                {
-                    UserId = user?.Id,
-                    Username = dto.Username,
-                    LoginTime = DateTime.UtcNow,
-                    IsLoginSuccessful = true,
-                    FailureReason = failureReason,
-                    IpAddress = ipAddress,
-                    UserAgent = userAgent,
-                    BrowserName = browser,
-                    DeviceName = Environment.MachineName,
-                    OperatingSystem = operatingSystem,
-                    SessionId = sessionId,
-                    JwtTokenId = jwtId
-                });
                 return authResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while authenticating Username {Username}", dto.Username);
-                await _loginHistoryRepository.AddAsync(new UserLoginHistory
+
+                // Create failure login history
+                var failureHistory = new UserLoginHistory
                 {
                     Username = dto.Username,
                     LoginTime = DateTime.UtcNow,
                     IsLoginSuccessful = false,
-                    FailureReason = "Authentication Exception",
-                    SessionId = sessionId,
+                    FailureReason = ex.Message,
+                    IpAddress = GetIpAddress(),
+                    UserAgent = GetUserAgent(),
+                    BrowserName = GetBrowserName(),
+                    OperatingSystem = GetOperatingSystem(),
+                    DeviceName = Environment.MachineName,
+                    SessionId = Guid.NewGuid(),
+                    JwtTokenId = Guid.NewGuid().ToString(),
                     CreatedOn = DateTime.UtcNow
-                });
+                };
 
+                await _loginHistoryRepository.AddAsync(failureHistory);
                 throw;
             }
+        }
+
+        // Helper methods
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        private string GetIpAddress()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            return context?.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+        }
+
+        private string GetUserAgent()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            return context?.Request.Headers["User-Agent"].ToString() ?? "Unknown";
+        }
+
+        private string GetBrowserName()
+        {
+            var userAgent = GetUserAgent();
+
+            if (userAgent.Contains("Chrome", StringComparison.OrdinalIgnoreCase))
+                return "Chrome";
+            if (userAgent.Contains("Firefox", StringComparison.OrdinalIgnoreCase))
+                return "Firefox";
+            if (userAgent.Contains("Edge", StringComparison.OrdinalIgnoreCase))
+                return "Edge";
+            if (userAgent.Contains("Safari", StringComparison.OrdinalIgnoreCase))
+                return "Safari";
+            if (userAgent.Contains("Opera", StringComparison.OrdinalIgnoreCase))
+                return "Opera";
+            if (userAgent.Contains("Mozilla", StringComparison.OrdinalIgnoreCase))
+                return "Mozilla";
+
+            return "Unknown";
+        }
+
+        private string GetOperatingSystem()
+        {
+            var userAgent = GetUserAgent();
+
+            if (userAgent.Contains("Windows", StringComparison.OrdinalIgnoreCase))
+                return "Windows";
+            if (userAgent.Contains("Android", StringComparison.OrdinalIgnoreCase))
+                return "Android";
+            if (userAgent.Contains("Mac OS", StringComparison.OrdinalIgnoreCase))
+                return "macOS";
+            if (userAgent.Contains("Linux", StringComparison.OrdinalIgnoreCase))
+                return "Linux";
+            if (userAgent.Contains("iPhone", StringComparison.OrdinalIgnoreCase) ||
+                userAgent.Contains("iPad", StringComparison.OrdinalIgnoreCase))
+                return "iOS";
+
+            return "Unknown";
+        }
+
+        private UserLoginHistory CreateLoginHistory(string username, Guid? userId, AuthResponse authResponse)
+        {
+            var isSuccessful = !string.IsNullOrEmpty(authResponse.JwtToken);
+
+            return new UserLoginHistory
+            {
+                UserId = userId,
+                Username = username,
+                LoginTime = DateTime.UtcNow,
+                IsLoginSuccessful = isSuccessful,
+                FailureReason = isSuccessful ? null : authResponse.Message,
+                IpAddress = GetIpAddress(),
+                UserAgent = GetUserAgent(),
+                BrowserName = GetBrowserName(),
+                OperatingSystem = GetOperatingSystem(),
+                DeviceName = Environment.MachineName,
+                SessionId = Guid.NewGuid(),
+                JwtTokenId = Guid.NewGuid().ToString(),
+                CreatedOn = DateTime.UtcNow
+            };
         }
     }
 }
