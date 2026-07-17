@@ -8,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
   
+  onLogout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  }
 }

@@ -1,20 +1,24 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home';
 import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog';
-
+import { LoginComponent } from './components/login/login';
+import { authenticationGuard } from './guards/authentication-guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    component: HomeComponent
+    path: 'login',
+    component: LoginComponent
   },
- {
+  {
     path: 'drugs-catelog',
-    component: DrugsCatelogComponent
+    component: DrugsCatelogComponent,
+    canActivate: [authenticationGuard]
   }
+  
+ 
 ];
