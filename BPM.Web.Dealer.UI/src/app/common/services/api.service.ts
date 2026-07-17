@@ -13,6 +13,9 @@ type HttpMethod = BodylessMethod | BodyMethod;
   providedIn: 'root'
 })
 export class ApiService {
+  post(arg0: string, loginObj: { username: string; password: string; }) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private http: HttpClient) {}
 
   send<TResponse>(method: BodylessMethod, url: string): Observable<TResponse>;

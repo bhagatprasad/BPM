@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&display=swap");
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f6f5f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.form-container {
+  width: 420px;
+}
+
+form {
+  background: #fff;
+  padding: 50px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.social-container {
+  margin: 20px 0;
+}
+
+.social-container a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  color: #333;
+  text-decoration: none;
+}
+
+span {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: none;
+  background: #eee;
+  font-family: inherit;
+  border-radius: 5px;
+}
+
+a {
+  display: inline-block;
+  margin: 15px 0;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background: #2193b0;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #6dd5ed;
+}

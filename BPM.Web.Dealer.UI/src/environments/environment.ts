@@ -6,7 +6,12 @@ export const environment = {
         Drug:
         {
             GetAllDrugs: 'drug',
+        },
+        login:
+        {
+            login: 'login',
         }
+        
     }
 
 } 
