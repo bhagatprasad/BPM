@@ -42,11 +42,8 @@ export class LoginComponent {
     this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
 
-        if (res.JwtToken) {
-            localStorage.setItem('accounntService', res.JwtToken);
-
-    // Optional: Store user information
-    localStorage.setItem('username', this.loginObj.username);
+        if (res.jwtToken) {
+          localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
           // Navigate to drugs catalog
           this.router.navigateByUrl('/drugs-catalog');
         } else {
