@@ -15,4 +15,5 @@ export interface drugCatelog {
     createdOn: Date;
     modifiedBy?: string;
     modifiedOn?: Date;
+    imageUrl?: string;
 }

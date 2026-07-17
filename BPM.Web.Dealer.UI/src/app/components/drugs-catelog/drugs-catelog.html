@@ -69,10 +69,22 @@
                     <!-- Drug Image/Icon -->
                     <div class="card-img-top text-center bg-light py-4 position-relative">
                         <div class="drug-icon-wrapper">
-                            <span class="drug-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                  style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto;">
-                                {{ drug.drugName?.charAt(0) || 'D' }}
-                            </span>
+                            <!-- Image with fallback to initial letter -->
+                            <div *ngIf="drug.imageUrl; else initialLetter" 
+                                 class="drug-image-wrapper"
+                                 style="width: 80px; height: 80px; margin: 0 auto; border-radius: 50%; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <img [src]="drug.imageUrl" 
+                                     [alt]="drug.drugName"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     >
+                            </div>
+                            <ng-template #initialLetter>
+                                <span class="drug-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                      style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto;">
+                                    {{ drug.drugName?.charAt(0) || 'D' }}
+                                </span>
+                            </ng-template>
                         </div>
                         <span class="badge position-absolute top-0 end-0 m-2" 
                               [ngClass]="{
@@ -222,10 +234,22 @@
                         <td>{{ i + 1 }}</td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 40px; height: 40px;">
-                                    {{ drug.drugName?.charAt(0) || 'D' }}
+                                <!-- Image with fallback to initial letter -->
+                                <div *ngIf="drug.imageUrl; else listInitialLetter"
+                                     class="avatar-sm rounded-circle overflow-hidden"
+                                     style="width: 40px; height: 40px; flex-shrink: 0; border: 1px solid #dee2e6;">
+                                    <img [src]="drug.imageUrl" 
+                                         [alt]="drug.drugName"
+                                         class="w-100 h-100"
+                                         style="object-fit: cover;"
+                                       >
                                 </div>
+                                <ng-template #listInitialLetter>
+                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px; flex-shrink: 0;">
+                                        {{ drug.drugName?.charAt(0) || 'D' }}
+                                    </div>
+                                </ng-template>
                                 <div>
                                     <p class="fw-semibold mb-0">{{ drug.drugName }}</p>
                                     <p class="text-muted small mb-0">{{ drug.drugCode }}</p>
