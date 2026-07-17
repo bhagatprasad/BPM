@@ -2,8 +2,11 @@
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -15,22 +18,28 @@ namespace BPM.Web.API.Services
         public string _tokenKey { get; }
         private readonly ILogger<AccountService> _logger;
         private readonly IUserLoginHistoryRepository _loginHistoryRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository)
+        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _accountRepository = accountRepository;
             _logger = logger;
             _tokenKey = configuration.GetValue<string>("Jwt:Key");
             _loginHistoryRepository = loginHistoryRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
         {
+            bool isLoginSuccessful = false;
+            string? failureReason = null;
+            var jwtId = Guid.NewGuid().ToString();
+            Guid sessionId = Guid.NewGuid();
+            AuthResponse authResponse = new AuthResponse();
             try
             {
                 _logger.LogInformation("Login attempt for Username {Username}", dto.Username);
-
-                AuthResponse authResponse = new AuthResponse();
 
                 var user = await _accountRepository.AuthenticateAsync(dto.Username);
 
@@ -51,8 +60,9 @@ namespace BPM.Web.API.Services
                             {
                                 Subject = new ClaimsIdentity(new Claim[]
                                 {
+                                  new Claim(JwtRegisteredClaimNames.Jti, jwtId),
                                   new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                                  new Claim(ClaimTypes.Name, dto.Username),
+                                  new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
                                   new Claim(ClaimTypes.Role, user.RoleId.ToString())
                                 }),
                                 Expires = DateTime.UtcNow.AddHours(1),
@@ -109,24 +119,63 @@ namespace BPM.Web.API.Services
 
                     _logger.LogWarning("Invalid username {Username}", dto.Username);
                 }
+                var context = _httpContextAccessor.HttpContext;
 
+                var ipAddress = context?.Connection.RemoteIpAddress?.ToString();
 
-                //
-                UserLoginHistory obj = new UserLoginHistory();
-                obj.UserId = user != null ? user.Id : Guid.Empty;
-                obj.Username = dto.Username;
-                obj.CreatedOn = DateTime.UtcNow;
-                obj.FailureReason = authResponse.Message;
-                obj.LoginTime = DateTime.UtcNow;
-                obj.IsLoginSuccessful = authResponse.IsValidPassword && authResponse.IsValidUser && user != null && user.IsActive;
+                var userAgent = context?.Request.Headers["User-Agent"].ToString();
 
-                await _loginHistoryRepository.AddAsync(obj);
+                string browser = "Unknown";
 
+                if (userAgent.Contains("Chrome"))
+                    browser = "Chrome";
+                else if (userAgent.Contains("Firefox"))
+                    browser = "Firefox";
+                else if (userAgent.Contains("Edge"))
+                    browser = "Edge";
+                else if (userAgent.Contains("Mozilla"))
+                    browser = "Mozilla";
+                    
+                var operatingSystem = "Unknown";
+                if (userAgent.Contains("Windows"))
+                    operatingSystem = "Windows";
+                else if (userAgent.Contains("Android"))
+                    operatingSystem = "Android";
+                else if (userAgent.Contains("Mac"))
+                    operatingSystem = "macOS";
+                else if (userAgent.Contains("Linux"))
+                    operatingSystem = "Linux";
+
+                await _loginHistoryRepository.AddAsync(new UserLoginHistory
+                {
+                    UserId = user?.Id,
+                    Username = dto.Username,
+                    LoginTime = DateTime.UtcNow,
+                    IsLoginSuccessful = true,
+                    FailureReason = failureReason,
+                    IpAddress = ipAddress,
+                    UserAgent = userAgent,
+                    BrowserName = browser,
+                    DeviceName = Environment.MachineName,
+                    OperatingSystem = operatingSystem,
+                    SessionId = sessionId,
+                    JwtTokenId = jwtId
+                });
                 return authResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while authenticating Username {Username}", dto.Username);
+                await _loginHistoryRepository.AddAsync(new UserLoginHistory
+                {
+                    Username = dto.Username,
+                    LoginTime = DateTime.UtcNow,
+                    IsLoginSuccessful = false,
+                    FailureReason = "Authentication Exception",
+                    SessionId = sessionId,
+                    CreatedOn = DateTime.UtcNow
+                });
+
                 throw;
             }
         }
