@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home';
-import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog';
-import { LoginComponent } from './components/login/login';
 import { authenticationGuard } from './guards/authentication-guard';
+import { LoginComponent } from './components/login/login.component';
+import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog';
 
 export const routes: Routes = [
   {
@@ -15,10 +14,12 @@ export const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'drugs-catelog',
+    path: 'drugs-catalog',
     component: DrugsCatelogComponent,
     canActivate: [authenticationGuard]
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
-  
- 
 ];
