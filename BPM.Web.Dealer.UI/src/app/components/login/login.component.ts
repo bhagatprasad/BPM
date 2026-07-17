@@ -16,7 +16,8 @@ export class LoginComponent {
 
   loginObj = {
     username: '',
-    password: ''
+    password: '',
+    JwtToken: ''
   };
 
   rememberMe = false;
@@ -41,7 +42,11 @@ export class LoginComponent {
     this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
 
-        if (res.jwtToken) {
+        if (res.JwtToken) {
+            localStorage.setItem('accounntService', res.JwtToken);
+
+    // Optional: Store user information
+    localStorage.setItem('username', this.loginObj.username);
           // Navigate to drugs catalog
           this.router.navigateByUrl('/drugs-catalog');
         } else {
