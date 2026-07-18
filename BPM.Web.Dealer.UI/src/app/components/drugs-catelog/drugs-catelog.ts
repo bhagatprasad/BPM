@@ -114,6 +114,7 @@ export class DrugsCatelogComponent implements OnInit {
       category: drug.category,
       packing: drug.packing,
       strength: drug.strength,
+      imageUrl: drug.imageUrl,
       quantity: 1,
     });
 

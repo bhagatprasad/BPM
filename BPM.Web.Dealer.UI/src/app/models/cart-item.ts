@@ -9,4 +9,5 @@ export interface CartItem {
   packing?: string;
   strength?: string;
   quantity: number;
+  imageUrl?: string;
 }
