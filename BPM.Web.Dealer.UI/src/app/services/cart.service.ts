@@ -42,4 +42,30 @@ export class CartService {
   getCartCount(): number {
     return this.cartItems.reduce((total, item) => total + item.quantity, 0);
   }
+  removeFromCart(drugId: string): void {
+    this.cartItems = this.cartItems.filter((item) => item.drugId !== drugId);
+    localStorage.setItem(this.CART_KEY, JSON.stringify(this.cartItems));
+    this.cartCountSubject.next(this.getCartCount());
+  }
+  increaseQuantity(drugId: string): void {
+    const item = this.cartItems.find((a) => a.drugId === drugId);
+    if (item) {
+      item.quantity++;
+      localStorage.setItem(this.CART_KEY, JSON.stringify(this.cartItems));
+      this.cartCountSubject.next(this.getCartCount());
+    }
+  }
+  decreaseQuantity(drugId: string): void {
+    const item = this.cartItems.find((b) => b.drugId === drugId);
+    if (item) {
+      if (item.quantity > 1) {
+        item.quantity--;
+      } else {
+        this.removeFromCart(drugId);
+        return;
+      }
+      localStorage.setItem(this.CART_KEY, JSON.stringify(this.cartItems));
+      this.cartCountSubject.next(this.getCartCount());
+    }
+  }
 }
