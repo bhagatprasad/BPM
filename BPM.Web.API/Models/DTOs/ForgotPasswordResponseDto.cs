@@ -1,6 +1,6 @@
 ﻿namespace BPM.Web.API.Models.DTOs
 {
-    public class IdentifyUserResponseDto
+    public  class ForgotPasswordResponseDto
     {
         public bool Success { get; set; }
         public Guid? UserId { get; set; }

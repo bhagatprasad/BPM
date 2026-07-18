@@ -1,6 +1,6 @@
 ﻿namespace BPM.Web.API.Models.DTOs
 {
-    public class IdentifyUserDto
+    public class ForgotPasswordDto
     {
         public string Username { get; set; }
     }

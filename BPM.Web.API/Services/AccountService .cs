@@ -171,9 +171,6 @@ namespace BPM.Web.API.Services
        
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
-            if (dto.NewPassword != dto.ConfirmPassword)
-                return false;
-
             var user = await _accountRepository.GetUserByIdAsync(dto.UserId);
 
             if (user == null)
@@ -191,20 +188,20 @@ namespace BPM.Web.API.Services
             return true;
         }
 
-        public async Task<IdentifyUserResponseDto> IdentifyUserAsync(IdentifyUserDto dto)
+        public async Task<ForgotPasswordResponseDto> IdentifyUserAsync(ForgotPasswordDto dto)
         {
-            var user = await _accountRepository.GetUserByUsernameAsync(dto.Username);
+            var user = await _accountRepository.AuthenticateAsync(dto.Username);
 
             if (user == null)
             {
-                return new IdentifyUserResponseDto
+                return new ForgotPasswordResponseDto
                 {
                     Success = false,
                     Message = "User not found"
                 };
             }
 
-            return new IdentifyUserResponseDto
+            return new ForgotPasswordResponseDto
             {
                 Success = true,
                 UserId = user.Id,

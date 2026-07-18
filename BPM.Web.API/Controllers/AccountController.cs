@@ -45,14 +45,6 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogInformation("Resetting user password.");
 
-                if (dto.NewPassword != dto.ConfirmPassword)
-                {
-                    return BadRequest(new
-                    {
-                        Message = "New Password and Confirm Password do not match."
-                    });
-                }
-
                 var result = await _service.ResetPasswordAsync(dto);
                 if (!result)
                 {
@@ -80,8 +72,8 @@ namespace BPM.Web.API.Controllers
         }
 
 
-        [HttpPost("identify-user")]
-        public async Task<IActionResult> IdentifyUser(IdentifyUserDto dto)
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
         {
             try
             {
