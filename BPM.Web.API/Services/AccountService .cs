@@ -167,6 +167,27 @@ namespace BPM.Web.API.Services
             }
         }
 
+
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            var user = await _accountRepository.AuthenticateAsync(dto.Username);
+
+            if (user == null)
+                return false;
+
+            var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
+
+            user.PasswordHash = hashSalt.Hash;
+            user.PasswordSalt = hashSalt.Salt;
+
+            user.ModifiedBy = user.Id;
+            user.ModifiedOn = DateTime.UtcNow;
+
+            await _accountRepository.UpdateUserAsync(user);
+
+            return true;
+        }
         // Helper methods
         private string GenerateRefreshToken()
         {

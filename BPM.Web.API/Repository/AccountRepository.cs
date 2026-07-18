@@ -17,5 +17,14 @@ namespace BPM.Web.API.Repository
 
             return user;
         }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            _context.Attach(user);
+            _context.Entry(user).Property(x => x.PasswordHash).IsModified = true;
+            _context.Entry(user).Property(x => x.PasswordSalt).IsModified = true;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
