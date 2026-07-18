@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h3>Shopping Cart</h3>
+  <table class="table table-bordered table-striped" *ngIf="cartItems.length > 0">
+    <thead>
+      <tr>
+        <th>Drug Code</th>
+        <th>Drug Name</th>
+        <th>Manufacturer</th>
+        <th>Packing</th>
+        <th>Strength</th>
+        <th>Quantity</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of cartItems">
+        <td>{{ item.drugCode }}</td>
+        <td>{{ item.drugName }}</td>
+        <td>{{ item.manufacturer }}</td>
+        <td>{{ item.packing }}</td>
+        <td>{{ item.strength }}</td>
+        <td>
+          <button class="=btn btn-sm btn-outline-secondary" (click)="decrease(item.drugId)">
+            -
+          </button>
+          <span class="mx-2">{{ item.quantity }}</span>
+          <button class="=btn btn-sm btn-outline-primary" (click)="increase(item.drugId)">+</button>
+        </td>
+
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="removeItem(item.drugId)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="cartItems.length === 0" class="alert alert-info">Your cart is empty.</div>
+</div>
