@@ -168,10 +168,10 @@ namespace BPM.Web.API.Services
         }
 
 
-
+       
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
-            var user = await _accountRepository.AuthenticateAsync(dto.Username);
+            var user = await _accountRepository.GetUserByIdAsync(dto.UserId);
 
             if (user == null)
                 return false;
@@ -180,7 +180,6 @@ namespace BPM.Web.API.Services
 
             user.PasswordHash = hashSalt.Hash;
             user.PasswordSalt = hashSalt.Salt;
-
             user.ModifiedBy = user.Id;
             user.ModifiedOn = DateTime.UtcNow;
 
@@ -188,6 +187,30 @@ namespace BPM.Web.API.Services
 
             return true;
         }
+
+        public async Task<ForgotPasswordResponseDto> IdentifyUserAsync(ForgotPasswordDto dto)
+        {
+            var user = await _accountRepository.AuthenticateAsync(dto.Username);
+
+            if (user == null)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "User not found"
+                };
+            }
+
+            return new ForgotPasswordResponseDto
+            {
+                Success = true,
+                UserId = user.Id,
+                Message = "User found"
+            };
+        }
+
+
+
         // Helper methods
         private string GenerateRefreshToken()
         {
