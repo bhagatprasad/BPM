@@ -43,24 +43,52 @@ namespace BPM.Web.API.Controllers
         {
             try
             {
-                var result = await _service.ResetPasswordAsync(dto);
+                _logger.LogInformation("Resetting user password.");
 
+                var result = await _service.ResetPasswordAsync(dto);
                 if (!result)
-                    return BadRequest("User not found.");
+                {
+                    return BadRequest(new
+                    {
+                        Message = "User not found."
+                    });
+                }
 
                 return Ok(new
                 {
-                    Message = "Password updated successfully."
+                    Message = "Password reset successful."
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.ToString());
+                _logger.LogError(ex, "Error occurred while resetting password.");
 
-                return StatusCode(500, new
+                return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
-                    Message = ex.Message,
-                    InnerException = ex.InnerException?.Message
+                    Message = "An error occurred while resetting the password.",
+                    Details = ex.Message
+                });
+            }
+        }
+
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Identifying user: {Username}", dto.Username);
+                var result = await _service.IdentifyUserAsync(dto);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while identifying user.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    Message = "An error occurred while identifying the user.",
+                    Details = ex.Message
                 });
             }
         }
