@@ -1,105 +1,205 @@
 <div class="login-wrapper">
-  <section class="auth-card">
-    <!-- Brand/Logo Section -->
-    <div class="auth-brand">
-      <span class="brand-icon">
-        <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
-      </span>
-      <h3 class="fw-bold">adminHMD</h3>
-      <small class="text-muted">Sign in to your admin workspace.</small>
-    </div>
-    
-    <!-- Visual Image -->
-    <div class="auth-visual">
-      <img src="assets/images/png/dasher-ui-bootstrap-5.jpg" alt="adminHMD dashboard interface">
-    </div>
+  <div class="auth-container">
+    <!-- Left Side - Image Section (60%) -->
+    <div class="auth-image-section">
+      <div class="image-overlay">
+        <div class="image-content">
+          <div class="brand-large">
+            <div class="brand-icon-large">
+              <i class="bi bi-hexagon-fill"></i>
+              <i class="bi bi-grid-1x2-fill"></i>
+            </div>
+            <h1 class="brand-name">admin<span>HMD</span></h1>
+            <p class="brand-tagline">Enterprise Admin Dashboard</p>
+          </div>
+          
+          <div class="image-features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Secure Access</h4>
+                <p>Enterprise-grade security with end-to-end encryption</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Real-time Analytics</h4>
+                <p>Monitor your business performance in real-time</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Team Collaboration</h4>
+                <p>Work seamlessly with your team members</p>
+              </div>
+            </div>
+          </div>
 
-    <!-- Login Form -->
-    <form #loginForm="ngForm" (ngSubmit)="onLogin()" novalidate>
-      <!-- Header -->
-      <div class="form-header">
-        <p class="eyebrow">Secure Access</p>
-        <h1 class="h4">Login</h1>
-        <p class="text-muted">Sign in to your admin workspace.</p>
-      </div>
-
-      <!-- Username field -->
-      <div class="form-group">
-        <label class="form-label" for="username">Username</label>
-        <input 
-          class="form-control" 
-          id="username" 
-          type="text" 
-          placeholder="rahgu@gmail.com"
-          required
-          [(ngModel)]="loginObj.username" 
-          name="username"
-          #username="ngModel"
-          [class.is-invalid]="username.invalid && username.touched">
-        <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
-          Enter a valid username.
+          <div class="testimonial">
+            <div class="testimonial-quote">
+              <i class="bi bi-quote"></i>
+              <p>"The best admin dashboard solution for modern businesses"</p>
+            </div>
+            <div class="testimonial-author">
+              <img src="https://via.placeholder.com/40" alt="User" class="author-avatar">
+              <div>
+                <strong>John Doe</strong>
+                <span>CEO, TechCorp</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <!-- Password field -->
-      <div class="form-group">
-        <div class="d-flex justify-content-between align-items-center">
-          <label class="form-label mb-0" for="loginPassword">Password</label>
-          <a class="small fw-semibold text-primary text-decoration-none" href="forgot-password.html">Forgot?</a>
-        </div>
-        <input 
-          class="form-control" 
-          id="loginPassword" 
-          type="password" 
-          placeholder="Enter your password"
-          minlength="6" 
-          required
-          [(ngModel)]="loginObj.password" 
-          name="password"
-          #password="ngModel"
-          [class.is-invalid]="password.invalid && password.touched">
-        <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
-          <span *ngIf="password.errors?.['required']">Password is required.</span>
-          <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</span>
-        </div>
-      </div>
-
-      <!-- Remember me checkbox -->
-      <div class="form-check">
-        <input 
-          class="form-check-input" 
-          type="checkbox" 
-          id="rememberMe"
-          [(ngModel)]="rememberMe" 
-          name="rememberMe">
-        <label class="form-check-label" for="rememberMe">Remember me</label>
-      </div>
-
-      <!-- Error message display -->
-      <div *ngIf="errorMessage" class="alert alert-danger">
-        <i class="bi bi-exclamation-triangle-fill me-1"></i>
-        {{ errorMessage }}
-      </div>
-
-      <!-- Submit button -->
-      <button 
-        class="btn btn-primary" 
-        type="submit"
-        [disabled]="loginForm.invalid || isLoading">
-        <i *ngIf="!isLoading" class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
-        <span *ngIf="!isLoading">Sign In</span>
-        <span *ngIf="isLoading">
-          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-          Signing in...
-        </span>
-      </button>
-    </form>
-
-    <!-- Footer -->
-    <div class="auth-footer">
-      <p class="text-center">
-        New here? <a href="register.html">Create an account</a>
-      </p>
+      <img src="assets/images/png/dasher-ui-bootstrap-5.jpg" alt="Dashboard Interface" class="auth-image">
     </div>
-  </section>
+
+    <!-- Right Side - Login Form (40%) -->
+    <div class="auth-form-section">
+      <div class="auth-card">
+        <!-- Form Header -->
+        <div class="form-header">
+          <div class="welcome-badge">
+            <i class="bi bi-arrow-right-circle"></i>
+            <span>Sign in to continue</span>
+          </div>
+          <h1 class="h2 fw-bold">Welcome Back</h1>
+          <p class="text-muted">Sign in to manage your workspace and access all features</p>
+        </div>
+
+        <!-- Login Form -->
+        <form #loginForm="ngForm" (ngSubmit)="onLogin()" novalidate>
+          <!-- Username field -->
+          <div class="form-group">
+            <label class="form-label" for="username">Email or Username</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-envelope"></i>
+              </span>
+              <input 
+                class="form-control" 
+                id="username" 
+                type="text" 
+                placeholder="Enter your email or username"
+                required
+                [(ngModel)]="loginObj.username" 
+                name="username"
+                #username="ngModel"
+                [class.is-invalid]="username.invalid && username.touched">
+            </div>
+            <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
+              <i class="bi bi-exclamation-circle me-1"></i>Please enter your username or email.
+            </div>
+          </div>
+
+          <!-- Password field -->
+          <div class="form-group">
+            <div class="d-flex justify-content-between align-items-center">
+              <label class="form-label" for="loginPassword">Password</label>
+              <a class="forgot-link" href="forgot-password.html">Forgot password?</a>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-lock"></i>
+              </span>
+              <input 
+                class="form-control" 
+                id="loginPassword" 
+                [type]="showPassword ? 'text' : 'password'" 
+                placeholder="Enter your password"
+                minlength="6" 
+                required
+                [(ngModel)]="loginObj.password" 
+                name="password"
+                #password="ngModel"
+                [class.is-invalid]="password.invalid && password.touched">
+              <button type="button" class="btn btn-outline-secondary password-toggle" (click)="togglePasswordVisibility()">
+                <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
+              <span *ngIf="password.errors?.['required']">
+                <i class="bi bi-exclamation-circle me-1"></i>Password is required.
+              </span>
+              <span *ngIf="password.errors?.['minlength']">
+                <i class="bi bi-exclamation-circle me-1"></i>Password must be at least 6 characters.
+              </span>
+            </div>
+          </div>
+
+          <!-- Remember me checkbox -->
+          <div class="form-options">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="rememberMe"
+                [(ngModel)]="rememberMe" 
+                name="rememberMe">
+              <label class="form-check-label" for="rememberMe">Keep me signed in</label>
+            </div>
+            <a href="#" class="text-muted small">Privacy policy</a>
+          </div>
+
+          <!-- Error message display -->
+          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+          </div>
+
+          <!-- Submit button -->
+          <button 
+            class="btn btn-primary btn-lg w-100" 
+            type="submit"
+            [disabled]="loginForm.invalid || isLoading">
+            <span *ngIf="!isLoading">
+              Sign In
+              <i class="bi bi-arrow-right-circle ms-2"></i>
+            </span>
+            <span *ngIf="isLoading">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Signing in...
+            </span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>or continue with</span>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login">
+          <button type="button" class="social-btn">
+            <i class="bi bi-google"></i>
+            <span>Google</span>
+          </button>
+          <button type="button" class="social-btn">
+            <i class="bi bi-microsoft"></i>
+            <span>Microsoft</span>
+          </button>
+          <button type="button" class="social-btn">
+            <i class="bi bi-github"></i>
+            <span>GitHub</span>
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="auth-footer">
+          <p>
+            Don't have an account? 
+            <a href="register.html" class="fw-bold text-primary text-decoration-none">Sign up now</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

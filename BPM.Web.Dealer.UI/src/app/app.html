@@ -1,13 +1,10 @@
 <!-- Show login page when NOT authenticated -->
-<div class="login-page" *ngIf="!(isAuthenticated$ | async)">
-  <div class="login-container">
-    <div class="login-box">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
+<div class="login-page" *ngIf="(isAuthenticated$ | async) === false">
+  <router-outlet></router-outlet>
 </div>
 
-<div class="admin-shell" *ngIf="(isAuthenticated$ | async)">
+<!-- Show admin shell when authenticated -->
+<div class="admin-shell" *ngIf="(isAuthenticated$ | async) === true">
   <div class="sidebar-backdrop" data-sidebar-close></div>
   <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
     <app-sidenav></app-sidenav>
@@ -79,7 +76,6 @@
           </div>
           <button class="icon-button position-relative ms-1" type="button" title="Shopping Cart" (click)="goToCart()">
             <i class="bi bi-cart3"></i>
-
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {{ cartCount }}
             </span>

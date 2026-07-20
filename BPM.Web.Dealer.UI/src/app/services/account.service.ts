@@ -18,7 +18,6 @@ export class AccountService {
   }
 
   async isAuthenticated(): Promise<boolean> {
-
     const loggedData = localStorage.getItem('AuthenticatedUserResponse');
 
     if (!loggedData) {
@@ -26,8 +25,6 @@ export class AccountService {
     }
 
     const authResponse = JSON.parse(loggedData);
-
     return !!authResponse?.jwtToken;
   }
-
 }

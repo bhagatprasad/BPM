@@ -5,10 +5,15 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authResponse = loggeddata ? JSON.parse(loggeddata) : null;
   const token = authResponse?.jwtToken;
 
-  const newReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return next(newReq); 
+  // Only add Authorization header if token exists
+  if (token) {
+    const newReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return next(newReq);
+  }
+  
+  return next(req);
 };
