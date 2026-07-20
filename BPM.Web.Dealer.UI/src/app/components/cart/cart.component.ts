@@ -29,4 +29,7 @@ export class CartComponent implements OnInit {
     this.cartService.decreaseQuantity(drugId);
     this.cartItems = this.cartService.getCartItems();
   }
+  get totalQuantity(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }
 }
