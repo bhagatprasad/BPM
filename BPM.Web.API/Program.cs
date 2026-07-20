@@ -82,6 +82,8 @@ builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<IDrugUomService, DrugUomService>();
+builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
 builder.Services.AddHttpContextAccessor();
 #endregion
 
@@ -94,6 +96,8 @@ builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<IDrugUomRepository, DrugUomRepository>();
+builder.Services.AddScoped<IPackagingMasterRepository, PackagingMasterRepository>();
 builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
 
 #endregion
