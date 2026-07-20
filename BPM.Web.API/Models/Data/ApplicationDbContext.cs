@@ -20,6 +20,8 @@ namespace BPM.Web.API.Models.Data
         public DbSet<User> Users { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderItem>PurchaseOrderItems { get; set; }
+        public DbSet<DrugUom> DrugUoms { get; set; }
+        public DbSet<PackagingMaster> PackagingMasters { get; set; }
 
         public DbSet<UserLoginHistory> UserLoginHistorys { get; set; }
 
