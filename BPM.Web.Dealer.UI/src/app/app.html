@@ -1,4 +1,13 @@
-<div class="admin-shell">
+<!-- Show login page when NOT authenticated -->
+<div class="login-page" *ngIf="!(isAuthenticated$ | async)">
+  <div class="login-container">
+    <div class="login-box">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<div class="admin-shell" *ngIf="(isAuthenticated$ | async)">
   <div class="sidebar-backdrop" data-sidebar-close></div>
   <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
     <app-sidenav></app-sidenav>
@@ -65,7 +74,7 @@
               <li>
                 <hr class="dropdown-divider" />
               </li>
-              <li><a class="dropdown-item" href="login.html">Sign out</a></li>
+              <li><a class="dropdown-item" (click)="logout()">Sign out</a></li>
             </ul>
           </div>
           <button class="icon-button position-relative ms-1" type="button" title="Shopping Cart" (click)="goToCart()">
@@ -79,7 +88,7 @@
       </div>
     </nav>
     <main class="dashboard-content">
-      <router-outlet />
+      <router-outlet></router-outlet>
     </main>
 
     <footer class="admin-footer">
