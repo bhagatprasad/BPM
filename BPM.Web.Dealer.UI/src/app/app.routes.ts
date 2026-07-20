@@ -26,7 +26,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog';
-import { CartComponent } from './components/cart/cart';
+import { CartComponent } from './components/cart/cart.component';
 import { authenticationGuard } from './guards/authentication-guard';
 
 export const routes: Routes = [
