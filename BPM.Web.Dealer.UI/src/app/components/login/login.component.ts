@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -8,11 +8,11 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // Add CommonModule for *ngIf
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   loginObj = {
     username: '',
@@ -23,14 +23,41 @@ export class LoginComponent {
   rememberMe = false;
   isLoading = false;
   errorMessage = '';
+  showPassword = false;
 
   constructor(
     public accountService: AccountService,
     private router: Router
   ) { }
 
+  ngOnInit(): void {
+    // Check if user is already authenticated
+    const loggedData = localStorage.getItem('AuthenticatedUserResponse');
+    if (loggedData) {
+      try {
+        const authResponse = JSON.parse(loggedData);
+        if (authResponse?.jwtToken) {
+          this.router.navigateByUrl('/drugs-catalog');
+          return;
+        }
+      } catch (e) {
+        // Invalid data, continue to login
+      }
+    }
+
+    // Load saved username if exists
+    const savedUsername = localStorage.getItem('savedUsername');
+    if (savedUsername) {
+      this.loginObj.username = savedUsername;
+      this.rememberMe = true;
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   onLogin(): void {
-    // Validate inputs
     if (!this.loginObj.username || !this.loginObj.password) {
       this.errorMessage = 'Please enter both username and password.';
       return;
@@ -41,16 +68,17 @@ export class LoginComponent {
 
     this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
+        console.log('Login response:', res);
 
         if (res.jwtToken) {
           localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
-          // Navigate to drugs catalog
-          this.router.navigateByUrl('/drugs-catalog');
+          window.dispatchEvent(new Event('storage'));
+          window.location.href = '/drugs-catalog';
         } else {
           this.errorMessage = 'Invalid username or password. Please try again.';
           console.error(this.errorMessage, res);
+          this.isLoading = false;
         }
-        this.isLoading = false;
       },
 
       error: (err: HttpErrorResponse) => {
@@ -72,14 +100,5 @@ export class LoginComponent {
         }
       }
     });
-  }
-
-  // Optional: Load saved username on init
-  ngOnInit(): void {
-    const savedUsername = localStorage.getItem('savedUsername');
-    if (savedUsername) {
-      this.loginObj.username = savedUsername;
-      this.rememberMe = true;
-    }
   }
 }
