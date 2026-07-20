@@ -9,7 +9,15 @@
   "projects": {
     "BPM.Web.Dealer.UI": {
       "projectType": "application",
-      "schematics": {},
+       "schematics": {
+        "@schematics/angular:component":
+         {
+           "type": "component",
+            "standalone": true,
+             "skipTests": true,
+               "style": "css"
+          }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
