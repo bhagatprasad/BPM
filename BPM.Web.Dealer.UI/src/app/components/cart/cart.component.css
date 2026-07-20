@@ -1,3 +1,7 @@
+/* ===========================
+   Cart Item
+=========================== */
+
 .cart-item {
     display: flex;
     align-items: center;
@@ -7,16 +11,18 @@
     background: #fff;
     border: 1px solid #dee2e6;
     border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
     transition: all .3s ease;
 }
 
 .cart-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
 }
 
-/* Image */
+/* ===========================
+   Cart Image
+=========================== */
 
 .cart-image {
     width: 100px;
@@ -40,28 +46,24 @@
     object-fit: cover;
 }
 
-/* Placeholder */
-
 .drug-icon {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     background: #0d6efd;
     color: #fff;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     font-size: 34px;
     font-weight: 700;
-
     box-shadow: 0 4px 10px rgba(0,0,0,.15);
-
     user-select: none;
 }
 
-/* Details */
+/* ===========================
+   Cart Details
+=========================== */
 
 .cart-details {
     flex: 1;
@@ -82,13 +84,16 @@
     color: #212529;
 }
 
-/* Actions */
+/* ===========================
+   Cart Actions
+=========================== */
 
 .cart-actions {
     width: 170px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 18px;
 }
 
 .qty-box {
@@ -96,7 +101,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     border: 1px solid #dee2e6;
     border-radius: 30px;
     padding: 8px 10px;
@@ -119,14 +123,96 @@
     margin-top: 15px;
 }
 
-.cart-footer {
-    margin-top: 25px;
-    text-align: right;
+/* ===========================
+   Cart Scroll
+=========================== */
+
+.cart-items {
+    height: 650px;
+    overflow-y: auto;
 }
 
-.cart-footer .btn {
-    min-width: 200px;
+.cart-items::-webkit-scrollbar {
+    width: 8px;
+}
+
+.cart-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+    background: #b5b5b5;
     border-radius: 10px;
-    font-size: 18px;
+}
+
+.cart-items::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* ===========================
+   Order Summary
+=========================== */
+
+.order-summary {
+    height: 650px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 20px;
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.summary-header h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.summary-item h6 {
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.summary-item small {
+    color: #6c757d;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.summary-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.summary-footer .btn {
+    height: 48px;
+    font-size: 17px;
     font-weight: 600;
 }
