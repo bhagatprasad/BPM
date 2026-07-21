@@ -9,14 +9,13 @@
   "projects": {
     "BPM.Web.Dealer.UI": {
       "projectType": "application",
-       "schematics": {
-        "@schematics/angular:component":
-         {
-           "type": "component",
-            "standalone": true,
-             "skipTests": true,
-               "style": "css"
-          }
+      "schematics": {
+        "@schematics/angular:component": {
+          "type": "component",
+          "standalone": true,
+          "skipTests": true,
+          "style": "css"
+        }
       },
       "root": "",
       "sourceRoot": "src",
@@ -42,12 +41,11 @@
             "styles": [
               "src/assets/css/bootstrap.min.css",
               "src/assets/vendors/bootstrap-icons/bootstrap-icons.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "src/styles.scss",
+              "node_modules/@iqx-limited/ngx-toastr/toastr.scss"
             ],
-            "scripts": [
-              "src/assets/js/bootstrap.bundle.min.js",
-              "src/assets/js/main.js"
-            ]
+            "scripts": ["src/assets/js/bootstrap.bundle.min.js", "src/assets/js/main.js"]
           },
           "configurations": {
             "production": {
