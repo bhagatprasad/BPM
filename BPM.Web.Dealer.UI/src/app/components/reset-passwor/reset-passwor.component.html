@@ -1,0 +1,142 @@
+<div class="reset-password-container">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0 text-center">Reset Password</h3>
+    </div>
+    
+    <div class="card-body">
+      <!-- Token validation -->
+      <div *ngIf="!isValidToken" class="alert alert-warning text-center">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p class="mb-0">Validating your reset link...</p>
+      </div>
+
+      <!-- Reset form -->
+      <form #resetForm="ngForm" (ngSubmit)="onSubmit(resetForm)" *ngIf="isValidToken">
+        <p class="text-muted text-center mb-4">
+          Enter your new password below.
+        </p>
+
+        <!-- Password Field -->
+        <div class="mb-3">
+          <label for="password" class="form-label">New Password</label>
+          <div class="input-group">
+            <input 
+              type="{{ showPassword ? 'text' : 'password' }}" 
+              id="password"
+              class="form-control" 
+              placeholder="Enter new password"
+              name="password"
+              [(ngModel)]="password"
+              #passwordField="ngModel"
+              required
+              minlength="6"
+              autocomplete="new-password">
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary"
+              (click)="togglePasswordVisibility()">
+              <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+            </button>
+          </div>
+          
+          <!-- Password Validation Errors -->
+          <div *ngIf="passwordField.invalid && passwordField.touched" class="text-danger mt-1 small">
+            <div *ngIf="passwordField.errors?.['required']">
+              <i class="fas fa-times-circle"></i> Password is required
+            </div>
+            <div *ngIf="passwordField.errors?.['minlength']">
+              <i class="fas fa-times-circle"></i> Password must be at least 6 characters
+            </div>
+          </div>
+          
+          <!-- Password strength indicator -->
+          <div *ngIf="password && password.length > 0" class="mt-2">
+            <div class="progress" style="height: 5px;">
+              <div 
+                class="progress-bar" 
+                [class.bg-success]="password.length >= 6"
+                [class.bg-warning]="password.length >= 4 && password.length < 6"
+                [class.bg-danger]="password.length < 4"
+                role="progressbar" 
+                [style.width]="(password.length / 10) * 100 + '%'">
+              </div>
+            </div>
+            <small class="text-muted">
+              Password strength: 
+              <span [class.text-danger]="password.length < 4"
+                    [class.text-warning]="password.length >= 4 && password.length < 6"
+                    [class.text-success]="password.length >= 6">
+                {{ password.length < 4 ? 'Weak' : password.length < 6 ? 'Medium' : 'Strong' }}
+              </span>
+            </small>
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <div class="input-group">
+            <input 
+              type="{{ showConfirmPassword ? 'text' : 'password' }}" 
+              id="confirmPassword"
+              class="form-control" 
+              placeholder="Confirm your password"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              #confirmPasswordField="ngModel"
+              required>
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary"
+              (click)="toggleConfirmPasswordVisibility()">
+              <i class="fas {{ showConfirmPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+            </button>
+          </div>
+          
+          <!-- Confirm Password Validation Errors -->
+          <div *ngIf="confirmPasswordField.invalid && confirmPasswordField.touched" class="text-danger mt-1 small">
+            <div *ngIf="confirmPasswordField.errors?.['required']">
+              <i class="fas fa-times-circle"></i> Please confirm your password
+            </div>
+          </div>
+          
+          <!-- Password mismatch error (custom) -->
+          <div *ngIf="password && confirmPassword && password !== confirmPassword && confirmPasswordField.touched" 
+               class="text-danger mt-1 small">
+            <i class="fas fa-times-circle"></i> Passwords do not match
+          </div>
+          
+          <!-- Success indicator -->
+          <div *ngIf="password && confirmPassword && password === confirmPassword && password.length >= 6" 
+               class="text-success mt-1 small">
+            <i class="fas fa-check-circle"></i> Passwords match
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-4">
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-lg"
+            [disabled]="resetForm.invalid || isSubmitting || password !== confirmPassword">
+            <span *ngIf="isSubmitting">
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              Resetting...
+            </span>
+            <span *ngIf="!isSubmitting">
+              <i class="fas fa-key me-2"></i> Reset Password
+            </span>
+          </button>
+        </div>
+
+        <!-- Back to login -->
+        <div class="text-center mt-3">
+          <a routerLink="/login" class="text-decoration-none">
+            <i class="fas fa-arrow-left me-1"></i> Back to Login
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

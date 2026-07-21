@@ -11,7 +11,7 @@ export class AccountService {
 
   authenticateAsync(loginObj: any): Observable<any> {
     return this.apiService.send<any>(
-      'POST',
+      'POST',  
       'Account/authenticate',
       loginObj
     );
@@ -19,12 +19,39 @@ export class AccountService {
 
   async isAuthenticated(): Promise<boolean> {
     const loggedData = localStorage.getItem('AuthenticatedUserResponse');
-
-    if (!loggedData) {
-      return false;
-    }
-
+    if (!loggedData) return false;
     const authResponse = JSON.parse(loggedData);
     return !!authResponse?.jwtToken;
+  }
+
+  forgotPassword(data: { email: string }): Observable<any> {
+    return this.apiService.send<any>(
+      'POST',  
+      'Account/forgot-password',
+      data
+    );
+  }
+
+  resetPassword(token: string, data: { password: string }): Observable<any> {
+    return this.apiService.send<any>(
+      'PUT', 
+      `Account/reset-password/${token}`,
+      data
+    );
+  }
+  validateResetToken(token: string): Observable<any> {
+   
+    return this.apiService.send<any>(
+      'POST', 
+      ' ',
+      { token }  
+    );
+  }
+  changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
+    return this.apiService.send<any>(
+      'POST',  
+      '',
+      data
+    );
   }
 }
