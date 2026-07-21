@@ -19,6 +19,10 @@ namespace BPM.Web.API.Models.Entities
         public Guid DrugId { get; set; }
 
         [Required]
+        [Column("packagingid")]
+        public Guid PackagingId { get; set; }
+
+        [Required]
         [Column("quantity")]
         public int Quantity { get; set; }
 

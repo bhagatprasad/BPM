@@ -50,6 +50,13 @@
               <p><strong>Packing:</strong> {{ item.packing }}</p>
 
               <p><strong>Strength:</strong> {{ item.strength }}</p>
+              <p><strong>Package:</strong> {{ item.packageName }}</p>
+              <p><strong>Display Name:</strong> {{ item.displayName }}</p>
+              <p>
+                <strong>Item Total:</strong> ₹{{
+                  (item.packagePrice ?? 0) * item.quantity | number
+                }}
+              </p>
             </div>
 
             <!-- Actions -->
@@ -118,11 +125,11 @@
           <hr />
 
           <div class="summary-item">
-            <span class="dot bg-warning"></span>
+            <span class="dot bg-success"></span>
 
             <div>
-              <h6>Discount</h6>
-              <small>Will be applied</small>
+              <h6>SubTotal</h6>
+              <small>{{ subtotal | number }}</small>
             </div>
           </div>
 
@@ -132,26 +139,28 @@
             <span class="dot bg-primary"></span>
 
             <div>
-              <h6>GST</h6>
-              <small>Calculated at Checkout</small>
+              <h6>GST (12%)</h6>
+              <small>₹{{ gst | number: '1.2-2' }}</small>
             </div>
           </div>
 
           <hr />
 
           <div class="summary-item">
-            <span class="dot bg-success"></span>
+            <span class="dot bg-dark"></span>
 
             <div>
-              <h6>Delivery</h6>
-              <small>Free Delivery</small>
+              <h6><strong>Grand Total</strong></h6>
+              <small
+                ><strong>₹{{ grandTotal | number: '1.2-2' }}</strong></small
+              >
             </div>
           </div>
         </div>
 
         <!-- Footer -->
         <div class="summary-footer">
-          <button class="btn btn-success w-100">
+          <button class="btn btn-success w-100" (click)="placeOrder()">
             <i class="bi bi-cart-check me-2"></i>
             Place Order
           </button>

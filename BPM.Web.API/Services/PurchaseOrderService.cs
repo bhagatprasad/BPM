@@ -20,7 +20,7 @@ namespace BPM.Web.API.Service
             _logger = logger;
         }
 
-        public async Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto)
+        public async Task<PurchaseOrderResponseDto> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto)
         {
             try
             {
@@ -31,13 +31,35 @@ namespace BPM.Web.API.Service
                     .Select(x => x.ToEntity())
                     .ToList();
 
-                purchaseOrder.PONumber = $"PO-{DateTime.Now:yyyyMM}-{DateTime.Now.Ticks.ToString()[^4..]}";
+                purchaseOrder.PONumber = $"PO-{DateTime.UtcNow:yyyyMM}-{DateTime.UtcNow.Ticks.ToString()[^4..]}";
+                foreach (var item in purchaseOrderItems)
+                {
+                    var subTotal = item.UnitPrice * item.Quantity;
+
+                    item.DiscountAmount = subTotal * item.DiscountPercentage / 100;
+
+                    var amountAfterDiscount = subTotal - item.DiscountAmount;
+
+                    item.TaxAmount = amountAfterDiscount * item.TaxRate / 100;
+
+                    item.TotalAmount = amountAfterDiscount + item.TaxAmount;
+
+                    item.PendingQuantity = item.Quantity;
+                }
+
+                purchaseOrder.SubTotal = purchaseOrderItems.Sum(x => x.UnitPrice * x.Quantity);
+
+                purchaseOrder.DiscountAmount = purchaseOrderItems.Sum(x => x.DiscountAmount);
+
+                purchaseOrder.TaxAmount = purchaseOrderItems.Sum(x => x.TaxAmount);
+
+                purchaseOrder.TotalAmount = purchaseOrderItems.Sum(x => x.TotalAmount);
 
                 var result = await _repository.CreatePurchaseOrderAsync(purchaseOrder, purchaseOrderItems);
 
                 _logger.LogInformation("Purchase Order created successfully. PO Number: {PONumber}", result.PONumber);
 
-                return result;
+                return result.ToDto();
             }
             catch (Exception ex)
             {

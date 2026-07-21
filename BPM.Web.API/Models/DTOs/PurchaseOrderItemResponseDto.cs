@@ -7,6 +7,7 @@
         public Guid PurchaseOrderId { get; set; }
 
         public Guid DrugId { get; set; }
+        public Guid PackagingId { get; set; }
 
         public string? DrugName { get; set; }
 

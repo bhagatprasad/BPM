@@ -8,6 +8,10 @@ export interface CartItem {
   category?: string;
   packing?: string;
   strength?: string;
+  packageName?: string;
+  packagePrice?: number;
+  packagingId?: string;
+  displayName?: string;
   quantity: number;
   imageUrl?: string;
 }
