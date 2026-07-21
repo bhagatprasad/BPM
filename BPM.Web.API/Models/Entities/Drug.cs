@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
@@ -32,7 +31,7 @@ namespace BPM.Web.API.Models.Entities
         public string? Category { get; set; }
 
         [Column("hsncode")]
-        public string? HSNCode { get; set; }
+        public string? HsnCode { get; set; }
 
         [Column("scheduletype")]
         public string? ScheduleType { get; set; }
@@ -60,5 +59,12 @@ namespace BPM.Web.API.Models.Entities
 
         [Column("imageurl")]
         public string? ImageUrl { get; set; }
+
+        // Navigation Properties
+        public virtual ICollection<DrugUom> DrugUoms { get; set; }
+            = new List<DrugUom>();
+
+        public virtual ICollection<DrugPackaging> DrugPackagings { get; set; }
+            = new List<DrugPackaging>();
     }
 }

@@ -1,6 +1,7 @@
-﻿using BPM.Web.API.Models.Entities;
-using BPM.Web.API.Service;
+﻿using BPM.Web.API.Service;
 using Microsoft.AspNetCore.Mvc;
+using BPM.Web.API.Models.Mappers;
+using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Controllers
 {
@@ -26,7 +27,7 @@ namespace BPM.Web.API.Controllers
 
                 var drugs = await _drugService.GetAllDrugsAsync();
 
-                return Ok(drugs);
+                return Ok(DrugMapper.ToDtoList(drugs));
             }
             catch (Exception ex)
             {
@@ -49,7 +50,7 @@ namespace BPM.Web.API.Controllers
                     return NotFound("Drug not found.");
                 }
 
-                return Ok(drug);
+                return Ok(DrugMapper.ToDto(drug));
             }
             catch (Exception ex)
             {
@@ -59,11 +60,13 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Drug drug)
+        public async Task<IActionResult> Create([FromBody] CreateDrugDto dto)
         {
             try
             {
                 _logger.LogInformation("Creating drug.");
+
+                var drug = DrugMapper.ToEntity(dto);
 
                 var result = await _drugService.InsertDrugAsync(drug);
 
@@ -82,16 +85,13 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Drug drug)
+        public async Task<IActionResult> Update([FromBody] UpdateDrugDto dto)
         {
             try
             {
                 _logger.LogInformation("Updating drug.");
 
-                if (drug == null)
-                {
-                    return BadRequest("Invalid request.");
-                }
+                var drug = DrugMapper.ToEntity(dto);
 
                 var result = await _drugService.UpdateDrugAsync(drug);
 
@@ -110,7 +110,8 @@ namespace BPM.Web.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating drug with Id {DrugId}", drug.DrugId);
+                _logger.LogError(ex, "Error occurred while updating drug with Id {DrugId}", dto.DrugId);
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
