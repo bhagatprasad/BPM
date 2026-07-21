@@ -7,5 +7,7 @@ namespace BPM.Web.API.Services
         Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto);
         Task<bool> ResetPasswordAsync(ResetPasswordDto dto);
         Task<ForgotPasswordResponseDto> IdentifyUserAsync(ForgotPasswordDto dto);
+
+        Task<AuthResponse> RefreshTokenAsync(string refreshToken);
     }
 }

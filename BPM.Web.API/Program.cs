@@ -87,6 +87,7 @@ builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
 builder.Services.AddScoped<IDrugFormService, DrugFormService>();
 builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHostedService<RefreshTokenCleanupService>();
 #endregion
 
 #region Register Repositories
@@ -104,6 +105,8 @@ builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryReposito
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
 builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
 #endregion
 
 #region JWT Authentication

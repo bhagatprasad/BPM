@@ -26,6 +26,10 @@ namespace BPM.Web.API.Models.Data
         public DbSet<DrugPackaging> DrugPackagings { get; set; }
         public DbSet<UserLoginHistory> UserLoginHistorys { get; set; }
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+
+
     }
 }
 
