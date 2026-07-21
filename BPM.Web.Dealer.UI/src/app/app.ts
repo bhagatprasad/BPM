@@ -2,16 +2,23 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 import { SidenavComponent } from './common/sidenav';
 import { CartService } from './services/cart.service';
 import { AccountService } from './services/account.service';
-import { BehaviorSubject } from 'rxjs';
+import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-indicator-component/spinner-loading-indicator-component.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidenavComponent, NgIf, AsyncPipe],
+  imports: [
+    RouterOutlet, 
+    SidenavComponent, 
+    NgIf, 
+    AsyncPipe,
+    SpinnerLoadingIndicatorComponent  // 👈 Add this
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -31,7 +38,7 @@ export class App implements OnInit {
 
   async ngOnInit(): Promise<void> {
     // Check authentication status on init
-    await this.checkAuthStatus(); // ✅ Added 'await' here
+    await this.checkAuthStatus();
 
     // Subscribe to cart count
     this.cartService.cartCount$.subscribe((count) => {
