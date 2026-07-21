@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
 })
 export class AccountService {
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) { }
 
   authenticateAsync(loginObj: any): Observable<any> {
     return this.apiService.send<any>(
-      'POST',  
+      'POST',
       'Account/authenticate',
       loginObj
     );
@@ -24,33 +24,34 @@ export class AccountService {
     return !!authResponse?.jwtToken;
   }
 
-  forgotPassword(data: { email: string }): Observable<any> {
+  forgotPassword(data: any): Observable<any> {
     return this.apiService.send<any>(
-      'POST',  
+      'POST',
       'Account/forgot-password',
       data
     );
   }
 
-  resetPassword(token: string, data: { password: string }): Observable<any> {
+  resetPassword(data: any
+  ): Observable<any> {
     return this.apiService.send<any>(
-      'PUT', 
-      `Account/reset-password/${token}`,
+      'POST',
+      'Account/reset-password',
       data
     );
   }
   validateResetToken(token: string): Observable<any> {
-   
+
     return this.apiService.send<any>(
-      'POST', 
-      ' ',
-      { token }  
+      'POST',
+      'Account/validate-reset-token',
+      { token }
     );
   }
   changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
     return this.apiService.send<any>(
-      'POST',  
-      '',
+      'POST',
+      'Account/change-password',
       data
     );
   }
