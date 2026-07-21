@@ -18,6 +18,19 @@ namespace BPM.Web.API.Repository
             return user;
         }
 
+        public async Task<RefreshToken?> GetByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.RefreshTokens
+                .FirstOrDefaultAsync(x => x.RefreshTokenValue == refreshToken);
+        }
+
+        public async Task<bool> UpdateAsync(RefreshToken token)
+        {
+            _context.RefreshTokens.Update(token);
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task UpdateUserAsync(User user)
         {
             _context.Attach(user);
