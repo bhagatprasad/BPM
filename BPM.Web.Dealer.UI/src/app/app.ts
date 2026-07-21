@@ -17,7 +17,7 @@ import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-i
     SidenavComponent, 
     NgIf, 
     AsyncPipe,
-    SpinnerLoadingIndicatorComponent  // 👈 Add this
+    SpinnerLoadingIndicatorComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -29,6 +29,9 @@ export class App implements OnInit {
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   firstName: string = '';
   lastName: string = '';
+  
+  // Define public routes that don't require authentication
+  private publicRoutes = ['/login', '/forgot-password', '/reset-password'];
 
   constructor(
     private cartService: CartService,
@@ -75,8 +78,8 @@ export class App implements OnInit {
         if (authResponse?.jwtToken) {
           isAuth = true;
           // Set first name and last name from auth response
-          this.firstName = authResponse.authenticateResponseDto.firstName || '';
-          this.lastName = authResponse.authenticateResponseDto.lastName || '';
+          this.firstName = authResponse.authenticateResponseDto?.firstName || '';
+          this.lastName = authResponse.authenticateResponseDto?.lastName || '';
         }
       } catch (e) {
         isAuth = false;
@@ -90,14 +93,18 @@ export class App implements OnInit {
     
     this.isAuthenticated$.next(isAuth);
     
+    const currentUrl = this.router.url;
+    const isPublicRoute = this.publicRoutes.some(route => currentUrl.includes(route));
+    
     // Redirect logic
-    if (isAuth && this.router.url === '/login') {
+    if (isAuth && currentUrl === '/login') {
       // If authenticated and on login page, redirect to drugs-catalog
       this.router.navigateByUrl('/drugs-catalog');
-    } else if (!isAuth && this.router.url !== '/login') {
-      // If not authenticated and not on login page, redirect to login
+    } else if (!isAuth && !isPublicRoute) {
+      // If not authenticated and NOT on a public route, redirect to login
       this.router.navigateByUrl('/login');
     }
+    // If not authenticated but on a public route (login, forgot-password, reset-password), allow access
   }
 
   getFullName(): string {

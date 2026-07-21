@@ -4,8 +4,9 @@ import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog'
 import { CartComponent } from './components/cart/cart.component';
 import { authenticationGuard } from './guards/authentication-guard';
 import { loginGuard } from './guards/login.guard';
-import { ForgetPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './components/reset-passwor/reset-passwor.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+
 
 export const routes: Routes = [
   {
@@ -20,11 +21,13 @@ export const routes: Routes = [
   },
   {
     path: 'forgot-password',
-    component: ForgetPasswordComponent
+    component: ForgotPasswordComponent,
+    // No guard needed - App component handles public routes
   },
   {
-    path: 'reset-password/:token',
-    component: ResetPasswordComponent
+    path: 'reset-password',
+    component: ResetPasswordComponent,
+    // No guard needed - App component handles public routes
   },
   {
     path: 'drugs-catalog',

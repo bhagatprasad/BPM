@@ -3,13 +3,9 @@ using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace BPM.Web.API.Services
@@ -303,29 +299,11 @@ namespace BPM.Web.API.Services
             var jwtId = Guid.NewGuid().ToString();
 
             var accessToken = GenerateJwt(user, jwtId);
-
-            var newRefreshToken = RefreshTokenHelper.GenerateRefreshToken();
-
-            token.IsRevoked = true;
-            token.RevokedOn = DateTime.UtcNow;
-            token.ReplacedByToken = newRefreshToken;
-
-            await _refreshTokenRepository.UpdateAsync(token);
-
-            await _refreshTokenRepository.CreateAsync(new RefreshToken
-            {
-                UserId = user.Id,
-                RefreshTokenValue = newRefreshToken,
-                JwtTokenId = jwtId,
-                CreatedOn = DateTime.UtcNow,
-                ExpiresOn = DateTime.UtcNow.AddDays(7),
-                IsRevoked = false
-            });
-
+           
             return new AuthResponse
             {
                 JwtToken = accessToken,
-                RefreshToken = newRefreshToken
+                RefreshToken = refreshToken
             };
         }
 
