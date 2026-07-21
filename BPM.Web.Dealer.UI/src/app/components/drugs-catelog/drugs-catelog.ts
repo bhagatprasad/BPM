@@ -4,6 +4,9 @@ import { drugCatelog } from '../../models/drug-catelog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
+import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
+
+
 
 @Component({
   selector: 'app-drugs-catelog',
@@ -24,6 +27,7 @@ export class DrugsCatelogComponent implements OnInit {
     private drugCatalogService: DrugCatalogService,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
+    private spinnerService:SpinnerLoadingService
   ) {}
 
   ngOnInit(): void {
@@ -33,16 +37,18 @@ export class DrugsCatelogComponent implements OnInit {
   fetchDrugsCatalog(): void {
     this.isLoading = true;
     this.error = null;
-    console.log('Fetching drugs catalog...');
+   this.spinnerService.loadingOn();
 
     this.drugCatalogService.getDrugsCatalogAsync().subscribe({
       next: (response: drugCatelog[]) => {
+        
         console.log('Drugs fetched successfully:', response);
         console.log('Number of drugs:', response?.length);
 
         this.drugsCatalogs = response || [];
         this.filteredDrugs = [...this.drugsCatalogs];
         this.isLoading = false;
+        this.spinnerService.loadingOff();
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -51,6 +57,7 @@ export class DrugsCatelogComponent implements OnInit {
         this.drugsCatalogs = [];
         this.filteredDrugs = [];
         this.isLoading = false;
+        this.spinnerService.loadingOff();
         this.cdr.detectChanges();
       },
     });
@@ -114,6 +121,7 @@ export class DrugsCatelogComponent implements OnInit {
       category: drug.category,
       packing: drug.packing,
       strength: drug.strength,
+      imageUrl: drug.imageUrl,
       quantity: 1,
     });
 

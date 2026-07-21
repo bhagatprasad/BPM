@@ -1,15 +1,18 @@
-<div class="admin-shell">
+<!-- Show login page when NOT authenticated -->
+<div class="login-page" *ngIf="(isAuthenticated$ | async) === false">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Show admin shell when authenticated -->
+<div class="admin-shell" *ngIf="(isAuthenticated$ | async) === true">
   <div class="sidebar-backdrop" data-sidebar-close></div>
   <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
     <app-sidenav></app-sidenav>
 
     <div class="sidebar-user">
-      <img
-        class="avatar-img avatar-md sidebar-user-avatar"
-        src="../assets/images/avatar/avatar.jpg"
-        alt="Admin Hasan"
-      />
-      <strong>Admin Prasadh</strong>
+      <img class="avatar-img avatar-md sidebar-user-avatar" src="../assets/images/avatar/avatar.jpg"
+        alt="{{ getFullName() }}" />
+      <strong>{{ getFullName() }}</strong>
       <small>Active Workspace</small>
     </div>
 
@@ -22,46 +25,20 @@
   <div class="admin-main">
     <nav class="navbar admin-navbar navbar-expand bg-white">
       <div class="container-fluid px-3 px-lg-4">
-        <button
-          class="sidebar-toggle"
-          type="button"
-          data-sidebar-toggle
-          aria-controls="adminSidebar"
-          aria-expanded="true"
-          aria-label="Toggle sidebar"
-        >
+        <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar"
+          aria-expanded="true" aria-label="Toggle sidebar">
           <span></span>
           <span></span>
           <span></span>
         </button>
-
-        <form class="d-none d-md-flex ms-3 flex-grow-1" role="search">
-          <input
-            class="form-control search-input"
-            type="search"
-            placeholder="Search users, orders, reports"
-            aria-label="Search"
-          />
-        </form>
-
         <div class="navbar-actions ms-auto">
-          <button
-            class="icon-button theme-toggle"
-            type="button"
-            data-theme-toggle
-            aria-label="Switch color theme"
-            title="Switch color theme"
-          >
+          <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"
+            title="Switch color theme">
             <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
           </button>
           <div class="dropdown">
-            <button
-              class="icon-button"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              aria-label="Notifications"
-            >
+            <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+              aria-label="Notifications">
               <span class="notification-dot"></span>
               <i class="bi bi-bell" aria-hidden="true"></i>
             </button>
@@ -83,18 +60,10 @@
           </div>
 
           <div class="dropdown">
-            <button
-              class="profile-button dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img
-                class="avatar-img avatar-sm"
-                src="../assets/images/avatar/avatar.jpg"
-                alt="Admin Hasan"
-              />
-              <span class="profile-name d-none d-sm-inline">Admin Prasadh</span>
+            <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <img class="avatar-img avatar-sm" src="../assets/images/avatar/avatar.jpg" alt="{{ getFullName() }}" />
+              <span class="profile-name d-none d-sm-inline">{{ getFullName() }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="profile.html">Profile</a></li>
@@ -102,20 +71,12 @@
               <li>
                 <hr class="dropdown-divider" />
               </li>
-              <li><a class="dropdown-item" href="login.html">Sign out</a></li>
+              <li><a class="dropdown-item" (click)="logout()">Sign out</a></li>
             </ul>
           </div>
-          <button
-            class="icon-button position-relative ms-1"
-            type="button"
-            title="Shopping Cart"
-            (click)="goToCart()"
-          >
+          <button class="icon-button position-relative ms-1" type="button" title="Shopping Cart" (click)="goToCart()">
             <i class="bi bi-cart3"></i>
-
-            <span
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            >
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {{ cartCount }}
             </span>
           </button>
@@ -123,17 +84,14 @@
       </div>
     </nav>
     <main class="dashboard-content">
-      <router-outlet />
+      <router-outlet></router-outlet>
     </main>
 
     <footer class="admin-footer">
       <div class="container-fluid px-3 px-lg-4">
-        <span
-          >Copyright 2026 BPM Medical <br />
+        <span>Copyright 2026 BPM Medical <br />
           Developed by
-          <a target="_blank" class="fw-bold text-success" href="https://github.com/bhagatprasad/BPM"
-            >Betalen tech</a
-          >
+          <a target="_blank" class="fw-bold text-success" href="https://github.com/bhagatprasad/BPM">Betalen tech</a>
           • Distributed by
           <a target="_blank" class="fw-bold text-success" href="https://betalen.in">Betalen</a>
         </span>
@@ -141,3 +99,8 @@
     </footer>
   </div>
 </div>
+
+<!-- 👇 Add Spinner Loading Indicator - Works for both authenticated and unauthenticated states -->
+<app-spinner-loading-indicator 
+  [detectRouteTransitions]="true">
+</app-spinner-loading-indicator>

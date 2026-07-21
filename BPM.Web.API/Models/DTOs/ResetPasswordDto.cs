@@ -2,7 +2,7 @@
 {
     public class ResetPasswordDto
     {
-        public string Username { get; set; }
+        public Guid UserId { get; set; }
         public string NewPassword { get; set; }
     }
 }

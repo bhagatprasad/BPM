@@ -9,7 +9,14 @@
   "projects": {
     "BPM.Web.Dealer.UI": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "type": "component",
+          "standalone": true,
+          "skipTests": true,
+          "style": "css"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -34,7 +41,8 @@
             "styles": [
               "src/assets/css/bootstrap.min.css",
               "src/assets/vendors/bootstrap-icons/bootstrap-icons.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "src/assets/css/toastr.css"
             ],
             "scripts": [
               "src/assets/js/bootstrap.bundle.min.js",

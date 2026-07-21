@@ -82,6 +82,10 @@ builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<IDrugUomService, DrugUomService>();
+builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
+builder.Services.AddScoped<IDrugFormService, DrugFormService>();
+builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<RefreshTokenCleanupService>();
 #endregion
@@ -95,7 +99,12 @@ builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<IDrugUomRepository, DrugUomRepository>();
+builder.Services.AddScoped<IPackagingMasterRepository, PackagingMasterRepository>();
 builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
+builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 #endregion
