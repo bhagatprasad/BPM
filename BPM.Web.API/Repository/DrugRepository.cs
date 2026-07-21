@@ -18,6 +18,8 @@ namespace BPM.Web.API.Repository
         public async Task<List<Drug>> GetAllDrugsAsync()
         {
             return await _context.Drugs
+                .Include(x => x.DrugUoms)
+                .Include(x => x.DrugPackagings)
                 .OrderBy(x => x.DrugName)
                 .ToListAsync();
         }
@@ -25,6 +27,8 @@ namespace BPM.Web.API.Repository
         public async Task<Drug?> GetDrugByIdAsync(Guid drugId)
         {
             return await _context.Drugs
+                .Include(x => x.DrugUoms)
+                .Include(x => x.DrugPackagings)
                 .FirstOrDefaultAsync(x => x.DrugId == drugId);
         }
 
@@ -53,7 +57,7 @@ namespace BPM.Web.API.Repository
             existing.BrandName = drug.BrandName;
             existing.Manufacturer = drug.Manufacturer;
             existing.Category = drug.Category;
-            existing.HSNCode = drug.HSNCode;
+            existing.HsnCode = drug.HsnCode;
             existing.ScheduleType = drug.ScheduleType;
             existing.Packing = drug.Packing;
             existing.Strength = drug.Strength;
