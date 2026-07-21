@@ -1,7 +1,9 @@
 ﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Repository;
 using BPM.Web.API.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BPM.Web.API.Controllers
 {
@@ -11,7 +13,6 @@ namespace BPM.Web.API.Controllers
     {
         private readonly IAccountService _service;
         private readonly ILogger<AccountController> _logger;
-
         public AccountController(IAccountService service, ILogger<AccountController> logger)
         {
             _service = service;
@@ -91,6 +92,42 @@ namespace BPM.Web.API.Controllers
                     Details = ex.Message
                 });
             }
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto request)
+        {
+            var response = await _service.RefreshTokenAsync(request.RefreshToken);
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(string refreshToken)
+        {
+            var token = await _service.GetByTokenAsync(refreshToken);
+
+            if (token == null)
+                return NotFound();
+
+            token.IsRevoked = true;
+            token.RevokedOn = DateTime.UtcNow;
+
+            await _service.UpdateAsync(token);
+
+            return Ok("Logout Successful");
+        }
+
+        [Authorize]
+        [HttpPost("logout-all")]
+        public async Task<IActionResult> LogoutAll()
+        {
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            await _service.RevokeAllAsync(userId);
+
+            return Ok("Logged out from all devices.");
         }
 
     }

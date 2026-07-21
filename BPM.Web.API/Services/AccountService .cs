@@ -1,14 +1,11 @@
-﻿using BPM.Web.API.Helpes;
+﻿using BPM.Web.API.Helpers;
+using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace BPM.Web.API.Services
@@ -20,22 +17,24 @@ namespace BPM.Web.API.Services
         private readonly ILogger<AccountService> _logger;
         private readonly IUserLoginHistoryRepository _loginHistoryRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
         public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository)
         {
             _accountRepository = accountRepository;
             _logger = logger;
             _tokenKey = configuration.GetValue<string>("Jwt:Key");
             _loginHistoryRepository = loginHistoryRepository;
             _httpContextAccessor = httpContextAccessor;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
         {
             AuthResponse authResponse = new AuthResponse();
             UserLoginHistory loginHistory = null;
-
+            var jwtId = Guid.NewGuid().ToString();
             try
             {
                 _logger.LogInformation("Login attempt for Username {Username}", dto.Username);
@@ -58,11 +57,12 @@ namespace BPM.Web.API.Services
                             {
                                 Subject = new ClaimsIdentity(new Claim[]
                                 {
-                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                            new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
-                            new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                                    new Claim(JwtRegisteredClaimNames.Jti, jwtId),
+                                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                                    new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
+                                    new Claim(ClaimTypes.Role, user.RoleId.ToString())
                                 }),
-                                Expires = DateTime.UtcNow.AddHours(1),
+                                Expires = DateTime.UtcNow.AddMinutes(3),
                                 SigningCredentials = new SigningCredentials(
                                     new SymmetricSecurityKey(tokenKey),
                                     SecurityAlgorithms.HmacSha256Signature)
@@ -72,24 +72,24 @@ namespace BPM.Web.API.Services
                             var jwtToken = tokenHandler.WriteToken(token);
 
                             // Generate refresh token
-                            var refreshToken = GenerateRefreshToken();
+                            var generatedRefreshToken = RefreshTokenHelper.GenerateRefreshToken();
 
-                            // Save refresh token to database
-                            //await _refreshTokenRepository.AddAsync(new RefreshToken
-                            //{
-                            //    Token = refreshToken,
-                            //    UserId = user.Id,
-                            //    Expires = DateTime.UtcNow.AddDays(7),
-                            //    Created = DateTime.UtcNow,
-                            //    CreatedByIp = GetIpAddress(),
-                            //    IsRevoked = false,
-                            //    IsUsed = false,
-                            //    JwtTokenId = Guid.NewGuid().ToString()
-                            //});
+                            await _refreshTokenRepository.CreateAsync(new RefreshToken
+                            {
+                                UserId = user.Id,
+                                RefreshTokenValue = generatedRefreshToken,
+                                JwtTokenId = Guid.NewGuid().ToString(),
+                                CreatedOn = DateTime.UtcNow,
+                                ExpiresOn = DateTime.UtcNow.AddDays(7),
+                                IsRevoked = false,
+                                IpAddress = GetIpAddress(),
+                                UserAgent = GetUserAgent(),
+                                CreatedBy = user.Id
+                            });
 
                             // Set response
                             authResponse.JwtToken = jwtToken;
-                            authResponse.RefreshToken = refreshToken;
+                            authResponse.RefreshToken = generatedRefreshToken;
                             authResponse.IsValidPassword = true;
                             authResponse.IsValidUser = true;
                             authResponse.Message = "Login Successful";
@@ -158,7 +158,7 @@ namespace BPM.Web.API.Services
                     OperatingSystem = GetOperatingSystem(),
                     DeviceName = Environment.MachineName,
                     SessionId = Guid.NewGuid(),
-                    JwtTokenId = Guid.NewGuid().ToString(),
+                    JwtTokenId = jwtId,
                     CreatedOn = DateTime.UtcNow
                 };
 
@@ -168,7 +168,7 @@ namespace BPM.Web.API.Services
         }
 
 
-       
+
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
             var user = await _accountRepository.GetUserByIdAsync(dto.UserId);
@@ -208,18 +208,6 @@ namespace BPM.Web.API.Services
                 Message = "User found"
             };
         }
-
-
-
-        // Helper methods
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
-
         private string GetIpAddress()
         {
             var context = _httpContextAccessor.HttpContext;
@@ -291,6 +279,75 @@ namespace BPM.Web.API.Services
                 JwtTokenId = Guid.NewGuid().ToString(),
                 CreatedOn = DateTime.UtcNow
             };
+        }
+
+        public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
+        {
+            var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
+            if (token == null)
+                throw new Exception("Invalid Refresh Token");
+
+            if (token.IsRevoked)
+                throw new Exception("Refresh Token Revoked");
+
+            if (token.ExpiresOn <= DateTime.UtcNow)
+                throw new Exception("Refresh Token Expired");
+
+            var user = await _accountRepository.GetUserByIdAsync(token.UserId);
+
+            var jwtId = Guid.NewGuid().ToString();
+
+            var accessToken = GenerateJwt(user, jwtId);
+           
+            return new AuthResponse
+            {
+                JwtToken = accessToken,
+                RefreshToken = refreshToken
+            };
+        }
+
+        private string GenerateJwt(User user, string jwtId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var key = Encoding.ASCII.GetBytes(_tokenKey);
+
+            var descriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+            new Claim(JwtRegisteredClaimNames.Jti, jwtId),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Role, user.RoleId.ToString())
+        }),
+
+                Expires = DateTime.UtcNow.AddHours(1),
+
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(descriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<RefreshToken?> GetByTokenAsync(string refreshToken)
+        {
+            return await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+        }
+
+        public async Task<bool> UpdateAsync(RefreshToken token)
+        {
+            return await _refreshTokenRepository.UpdateAsync(token);
+        }
+
+        public async Task<bool> RevokeAllAsync(Guid userId)
+        {
+            return await _refreshTokenRepository.RevokeAllAsync(userId);
         }
     }
 }

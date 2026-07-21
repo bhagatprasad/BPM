@@ -2,16 +2,23 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 import { SidenavComponent } from './common/sidenav';
 import { CartService } from './services/cart.service';
 import { AccountService } from './services/account.service';
-import { BehaviorSubject } from 'rxjs';
+import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-indicator-component/spinner-loading-indicator-component.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidenavComponent, NgIf, AsyncPipe],
+  imports: [
+    RouterOutlet, 
+    SidenavComponent, 
+    NgIf, 
+    AsyncPipe,
+    SpinnerLoadingIndicatorComponent
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -22,6 +29,9 @@ export class App implements OnInit {
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   firstName: string = '';
   lastName: string = '';
+  
+  // Define public routes that don't require authentication
+  private publicRoutes = ['/login', '/forgot-password', '/reset-password'];
 
   constructor(
     private cartService: CartService,
@@ -31,7 +41,7 @@ export class App implements OnInit {
 
   async ngOnInit(): Promise<void> {
     // Check authentication status on init
-    await this.checkAuthStatus(); // ✅ Added 'await' here
+    await this.checkAuthStatus();
 
     // Subscribe to cart count
     this.cartService.cartCount$.subscribe((count) => {
@@ -68,8 +78,8 @@ export class App implements OnInit {
         if (authResponse?.jwtToken) {
           isAuth = true;
           // Set first name and last name from auth response
-          this.firstName = authResponse.authenticateResponseDto.firstName || '';
-          this.lastName = authResponse.authenticateResponseDto.lastName || '';
+          this.firstName = authResponse.authenticateResponseDto?.firstName || '';
+          this.lastName = authResponse.authenticateResponseDto?.lastName || '';
         }
       } catch (e) {
         isAuth = false;
@@ -83,14 +93,18 @@ export class App implements OnInit {
     
     this.isAuthenticated$.next(isAuth);
     
+    const currentUrl = this.router.url;
+    const isPublicRoute = this.publicRoutes.some(route => currentUrl.includes(route));
+    
     // Redirect logic
-    if (isAuth && this.router.url === '/login') {
+    if (isAuth && currentUrl === '/login') {
       // If authenticated and on login page, redirect to drugs-catalog
       this.router.navigateByUrl('/drugs-catalog');
-    } else if (!isAuth && this.router.url !== '/login') {
-      // If not authenticated and not on login page, redirect to login
+    } else if (!isAuth && !isPublicRoute) {
+      // If not authenticated and NOT on a public route, redirect to login
       this.router.navigateByUrl('/login');
     }
+    // If not authenticated but on a public route (login, forgot-password, reset-password), allow access
   }
 
   getFullName(): string {

@@ -6,6 +6,7 @@ import { AccountService } from '../../services/account.service';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Subscription } from 'rxjs';
+import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 
 @Component({
   selector: 'app-login',
@@ -30,22 +31,29 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     public accountService: AccountService,
     private router: Router,
-    private toastr: ToastrService // ✅ Changed from 'toaster' to 'toastr'
-  ) { }
+    private toastr: ToastrService,
+    private spinnerService: SpinnerLoadingService
+  ) { 
+    console.log('LoginComponent constructor');
+  }
 
   ngOnInit(): void {
+    console.log('LoginComponent ngOnInit');
+    
     // Check if user is already authenticated
-    this.toastr.info('Checking authentication status...', 'Info');
     const loggedData = localStorage.getItem('AuthenticatedUserResponse');
+    console.log('Logged data:', loggedData);
+    
     if (loggedData) {
       try {
         const authResponse = JSON.parse(loggedData);
         if (authResponse?.jwtToken) {
+          console.log('User already logged in, redirecting to drugs-catalog');
           this.router.navigateByUrl('/drugs-catalog');
           return;
         }
       } catch (e) {
-        // Invalid data, continue to login
+        console.error('Error parsing auth data:', e);
       }
     }
 
@@ -58,18 +66,50 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Clean up subscription to prevent memory leaks
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
+    this.spinnerService.loadingOff();
   }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
+  // UPDATED: Navigate to forgot password with debugging
+  onForgotPassword(): void {
+    console.log('🔵 onForgotPassword() called');
+    console.log('Current URL:', this.router.url);
+    
+    // Try to navigate
+    this.router.navigate(['/forgot-password']).then(
+      (success) => {
+        console.log('✅ Navigation result:', success);
+        if (!success) {
+          console.error('❌ Navigation failed - trying alternative');
+          // Alternative navigation
+          this.router.navigateByUrl('/forgot-password').then(
+            (success2) => {
+              console.log('✅ Alternative navigation result:', success2);
+              if (!success2) {
+                // Last resort - use window.location
+                console.log('🔄 Using window.location fallback');
+                window.location.href = '/forgot-password';
+              }
+            }
+          );
+        }
+      },
+      (error) => {
+        console.error('❌ Navigation error:', error);
+        // Last resort
+        console.log('🔄 Using window.location fallback due to error');
+        window.location.href = '/forgot-password';
+      }
+    );
+  }
+
   onLogin(): void {
-    // Prevent multiple submissions
     if (this.isLoading) {
       return;
     }
@@ -82,8 +122,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.spinnerService.loadingOn();
 
-    // Unsubscribe from previous subscription if exists
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
@@ -91,10 +131,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loginSubscription = this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
         this.isLoading = false;
+        this.spinnerService.loadingOff();
         console.log('Login response:', res);
 
         if (res.jwtToken) {
-          // Save username if remember me is checked
           if (this.rememberMe) {
             localStorage.setItem('savedUsername', this.loginObj.username);
           } else {
@@ -103,8 +143,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
           this.toastr.success('Login successful!', 'Success');
-          
-          // Use router navigation instead of window.location
+
           setTimeout(() => {
             this.router.navigateByUrl('/drugs-catalog');
           }, 500);
@@ -116,6 +155,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         console.error('Login failed', err);
         this.isLoading = false;
+        this.spinnerService.loadingOff();
 
         let errorMsg = 'Login failed. Please try again.';
         if (err.status === 0) {

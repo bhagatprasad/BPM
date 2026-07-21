@@ -8,5 +8,9 @@ namespace BPM.Web.API.Repository
         Task UpdateUserAsync(User user);
         Task<User> GetUserByUsernameAsync(string username);
         Task<User> GetUserByIdAsync(Guid userId);
+
+        Task<RefreshToken?> GetByRefreshTokenAsync(string refreshToken);
+
+        Task<bool> UpdateAsync(RefreshToken refreshToken);
     }
 }
