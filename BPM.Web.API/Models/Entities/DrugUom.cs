@@ -10,41 +10,69 @@ namespace BPM.Web.API.Models.Entities
         [Column("uomid")]
         public Guid UomId { get; set; }
 
-        [Required]
         [Column("drugid")]
         public Guid DrugId { get; set; }
 
-        [Required]
         [Column("uom_code")]
         [MaxLength(20)]
         public string UomCode { get; set; } = string.Empty;
 
-        [Required]
         [Column("uom_name")]
         [MaxLength(100)]
         public string UomName { get; set; } = string.Empty;
 
-        [Required]
         [Column("uom_type")]
-        [MaxLength(20)]
+        [MaxLength(30)]
         public string UomType { get; set; } = string.Empty;
 
+        [Column("parent_uomid")]
+        public Guid? ParentUomId { get; set; }
+
+        [Column("quantity_per_parent")]
+        public int? QuantityPerParent { get; set; }
+
         [Column("conversion_factor")]
-        public decimal? ConversionFactor { get; set; }
+        public decimal ConversionFactor { get; set; } = 1;
 
         [Column("is_base_unit")]
         public bool IsBaseUnit { get; set; }
 
+        [Column("is_purchase_uom")]
+        public bool IsPurchaseUom { get; set; }
+
+        [Column("is_sales_uom")]
+        public bool IsSalesUom { get; set; } = true;
+
+        [Column("is_inventory_uom")]
+        public bool IsInventoryUom { get; set; } = true;
+
+        [Column("display_order")]
+        public int DisplayOrder { get; set; } = 1;
+
+        [Column("remarks")]
+        [MaxLength(250)]
+        public string? Remarks { get; set; }
+
         [Column("isactive")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Column("createdby")]
         public Guid? CreatedBy { get; set; }
 
         [Column("createdon")]
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
-        // Navigation Property
-        public Drug? Drug { get; set; }
+        [Column("modifiedby")]
+        public Guid? ModifiedBy { get; set; }
+
+        [Column("modifiedon")]
+        public DateTime? ModifiedOn { get; set; }
+
+        // Navigation Properties
+        [ForeignKey(nameof(DrugId))]
+        public virtual Drug? Drug { get; set; }
+
+        [ForeignKey(nameof(ParentUomId))]
+        public virtual DrugUom? ParentUom { get; set; }
     }
 }

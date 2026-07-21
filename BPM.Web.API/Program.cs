@@ -84,6 +84,8 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IDrugUomService, DrugUomService>();
 builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
+builder.Services.AddScoped<IDrugFormService, DrugFormService>();
+builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddHttpContextAccessor();
 #endregion
 
@@ -99,7 +101,9 @@ builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 builder.Services.AddScoped<IDrugUomRepository, DrugUomRepository>();
 builder.Services.AddScoped<IPackagingMasterRepository, PackagingMasterRepository>();
 builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
-
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
+builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 #endregion
 
 #region JWT Authentication
