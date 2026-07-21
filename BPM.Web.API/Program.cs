@@ -83,6 +83,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHostedService<RefreshTokenCleanupService>();
 #endregion
 
 #region Register Repositories
@@ -95,6 +96,7 @@ builder.Services.AddScoped<IUserRespository, UserRespository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 #endregion
 

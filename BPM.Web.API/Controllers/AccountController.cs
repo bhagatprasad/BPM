@@ -1,7 +1,10 @@
 ﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Repository;
 using BPM.Web.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BPM.Web.API.Controllers
 {
@@ -11,11 +14,13 @@ namespace BPM.Web.API.Controllers
     {
         private readonly IAccountService _service;
         private readonly ILogger<AccountController> _logger;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public AccountController(IAccountService service, ILogger<AccountController> logger)
+        public AccountController(IAccountService service, ILogger<AccountController> logger, IRefreshTokenRepository refreshTokenRepository)
         {
             _service = service;
             _logger = logger;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         [HttpPost("authenticate")]
@@ -63,6 +68,44 @@ namespace BPM.Web.API.Controllers
                     InnerException = ex.InnerException?.Message
                 });
             }
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto request)
+        {
+            var response =
+                await _service.RefreshTokenAsync(request.RefreshToken);
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(string refreshToken)
+        {
+            var token = await _refreshTokenRepository
+                .GetByTokenAsync(refreshToken);
+
+            if (token == null)
+                return NotFound();
+
+            token.IsRevoked = true;
+            token.RevokedOn = DateTime.UtcNow;
+
+            await _refreshTokenRepository.UpdateAsync(token);
+
+            return Ok("Logout Successful");
+        }
+
+        [Authorize]
+        [HttpPost("logout-all")]
+        public async Task<IActionResult> LogoutAll()
+        {
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            await _refreshTokenRepository.RevokeAllAsync(userId);
+
+            return Ok("Logged out from all devices.");
         }
 
     }

@@ -23,6 +23,10 @@ namespace BPM.Web.API.Models.Data
 
         public DbSet<UserLoginHistory> UserLoginHistorys { get; set; }
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+
+
     }
 }
 
