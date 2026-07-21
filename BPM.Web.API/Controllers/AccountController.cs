@@ -2,7 +2,6 @@
 using BPM.Web.API.Repository;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -14,13 +13,10 @@ namespace BPM.Web.API.Controllers
     {
         private readonly IAccountService _service;
         private readonly ILogger<AccountController> _logger;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-
-        public AccountController(IAccountService service, ILogger<AccountController> logger, IRefreshTokenRepository refreshTokenRepository)
+        public AccountController(IAccountService service, ILogger<AccountController> logger)
         {
             _service = service;
             _logger = logger;
-            _refreshTokenRepository = refreshTokenRepository;
         }
 
         [HttpPost("authenticate")]
@@ -101,8 +97,7 @@ namespace BPM.Web.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto request)
         {
-            var response =
-                await _service.RefreshTokenAsync(request.RefreshToken);
+            var response = await _service.RefreshTokenAsync(request.RefreshToken);
 
             return Ok(response);
         }
@@ -111,8 +106,7 @@ namespace BPM.Web.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(string refreshToken)
         {
-            var token = await _refreshTokenRepository
-                .GetByTokenAsync(refreshToken);
+            var token = await _service.GetByTokenAsync(refreshToken);
 
             if (token == null)
                 return NotFound();
@@ -120,7 +114,7 @@ namespace BPM.Web.API.Controllers
             token.IsRevoked = true;
             token.RevokedOn = DateTime.UtcNow;
 
-            await _refreshTokenRepository.UpdateAsync(token);
+            await _service.UpdateAsync(token);
 
             return Ok("Logout Successful");
         }
@@ -131,7 +125,7 @@ namespace BPM.Web.API.Controllers
         {
             var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-            await _refreshTokenRepository.RevokeAllAsync(userId);
+            await _service.RevokeAllAsync(userId);
 
             return Ok("Logged out from all devices.");
         }
