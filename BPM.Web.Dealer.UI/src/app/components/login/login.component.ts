@@ -6,6 +6,8 @@ import { AccountService } from '../../services/account.service';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Subscription } from 'rxjs';
+import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
+
 
 @Component({
   selector: 'app-login',
@@ -30,7 +32,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     public accountService: AccountService,
     private router: Router,
-    private toastr: ToastrService // ✅ Changed from 'toaster' to 'toastr'
+    private toastr: ToastrService,
+    private spinnerService: SpinnerLoadingService
+     
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +66,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
+    // Hide spinner if component is destroyed while loading
+    this.spinnerService.loadingOff(); // 👈 Ensure spinner is hidden
   }
 
   togglePasswordVisibility(): void {
@@ -82,6 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.spinnerService.loadingOn(); // 👈 Show spinner when login starts
 
     // Unsubscribe from previous subscription if exists
     if (this.loginSubscription) {
@@ -91,6 +98,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loginSubscription = this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
         this.isLoading = false;
+        this.spinnerService.loadingOff(); // 👈 Hide spinner on success
         console.log('Login response:', res);
 
         if (res.jwtToken) {
@@ -116,6 +124,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         console.error('Login failed', err);
         this.isLoading = false;
+        this.spinnerService.loadingOff(); // 👈 Hide spinner on error
 
         let errorMsg = 'Login failed. Please try again.';
         if (err.status === 0) {
