@@ -20,6 +20,8 @@ export class App implements OnInit {
   protected readonly title = signal('BPM.Web.Dealer.UI');
   cartCount: number = 0;
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  firstName: string = '';
+  lastName: string = '';
 
   constructor(
     private cartService: CartService,
@@ -29,7 +31,7 @@ export class App implements OnInit {
 
   async ngOnInit(): Promise<void> {
     // Check authentication status on init
-    await this.checkAuthStatus();
+    await this.checkAuthStatus(); // ✅ Added 'await' here
 
     // Subscribe to cart count
     this.cartService.cartCount$.subscribe((count) => {
@@ -46,8 +48,8 @@ export class App implements OnInit {
     // Listen to route changes to protect login route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.checkAuthStatus();
+    ).subscribe(async () => {
+      await this.checkAuthStatus();
       
       // If user is authenticated and tries to access login page, redirect to drugs-catalog
       if (this.isAuthenticated$.value && this.router.url === '/login') {
@@ -65,10 +67,18 @@ export class App implements OnInit {
         const authResponse = JSON.parse(loggedData);
         if (authResponse?.jwtToken) {
           isAuth = true;
+          // Set first name and last name from auth response
+          this.firstName = authResponse.authenticateResponseDto.firstName || '';
+          this.lastName = authResponse.authenticateResponseDto.lastName || '';
         }
       } catch (e) {
         isAuth = false;
+        this.firstName = '';
+        this.lastName = '';
       }
+    } else {
+      this.firstName = '';
+      this.lastName = '';
     }
     
     this.isAuthenticated$.next(isAuth);
@@ -83,9 +93,22 @@ export class App implements OnInit {
     }
   }
 
+  getFullName(): string {
+    if (this.firstName && this.lastName) {
+      return `${this.firstName} ${this.lastName}`;
+    } else if (this.firstName) {
+      return this.firstName;
+    } else if (this.lastName) {
+      return this.lastName;
+    }
+    return 'User';
+  }
+
   logout() {
     localStorage.removeItem('AuthenticatedUserResponse');
     this.isAuthenticated$.next(false);
+    this.firstName = '';
+    this.lastName = '';
     this.router.navigate(['/login']);
   }
 

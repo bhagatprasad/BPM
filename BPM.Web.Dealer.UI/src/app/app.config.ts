@@ -4,11 +4,22 @@ import{provideHttpClient, withInterceptors} from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { tokenInterceptor } from './interceptor/token-interceptor';
+import { provideToastr } from '@iqx-limited/ngx-toastr';
+
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([tokenInterceptor]))
+    provideHttpClient(withInterceptors([tokenInterceptor])),
+     provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      closeButton: true,
+      progressBar: true,
+    }),
+  
   ]
 };

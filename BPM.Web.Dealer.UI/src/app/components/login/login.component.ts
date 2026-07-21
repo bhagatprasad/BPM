@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public accountService: AccountService,
-    private router: Router
+    private router: Router,
+    private toaster:ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +76,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
           window.dispatchEvent(new Event('storage'));
           window.location.href = '/drugs-catalog';
+          this.toaster.success('Login successful!', 'Success');
         } else {
           this.errorMessage = 'Invalid username or password. Please try again.';
           console.error(this.errorMessage, res);
@@ -83,6 +86,7 @@ export class LoginComponent implements OnInit {
 
       error: (err: HttpErrorResponse) => {
         console.error('Login failed', err);
+        this.errorMessage = 'Login failed. Please try again.';
         this.isLoading = false;
 
         if (err.status === 0) {
