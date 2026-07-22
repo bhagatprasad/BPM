@@ -26,7 +26,7 @@ export class App implements OnInit {
 
 
 
-  protected readonly title = signal('BPM.Web.Dealer.UI');
+  protected readonly title = signal('BPM Medicals');
   cartCount: number = 0;
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   firstName: string = '';
