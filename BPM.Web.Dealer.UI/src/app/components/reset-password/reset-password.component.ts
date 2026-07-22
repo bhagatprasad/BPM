@@ -74,7 +74,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
-    this.loadingService.loadingOff();
+    this.loadingService.show();
   }
 
   togglePasswordVisibility(): void {
@@ -111,7 +111,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
     this.isSubmitting = true;
     this.errorMessage = '';
-    this.loadingService.loadingOn();
+    this.loadingService.show();
 
     if (this.resetSubscription) {
       this.resetSubscription.unsubscribe();
@@ -128,14 +128,14 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     this.resetSubscription = this.accountService.resetPassword(postData).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
-        this.loadingService.loadingOff();
+        this.loadingService.hide();
         this.toastr.success(res.message || 'Password reset successfully!', 'Success');
         console.log('✅ Reset password response:', res);
         this.router.navigate(['/login']);
       },
       error: (err: HttpErrorResponse) => {
         this.isSubmitting = false;
-        this.loadingService.loadingOff();
+        this.loadingService.hide();
 
         console.error('❌ Reset password error:', err);
 

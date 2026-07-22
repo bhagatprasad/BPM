@@ -8,11 +8,11 @@ export class SpinnerLoadingService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
-  loadingOn() {
+  show() {
     this.loadingSubject.next(true);
   }
 
-  loadingOff() {
+  hide() {
     this.loadingSubject.next(false);
   }
 }

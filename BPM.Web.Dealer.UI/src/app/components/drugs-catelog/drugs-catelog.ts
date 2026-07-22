@@ -37,7 +37,7 @@ export class DrugsCatelogComponent implements OnInit {
   fetchDrugsCatalog(): void {
     this.isLoading = true;
     this.error = null;
-   this.spinnerService.loadingOn();
+   this.spinnerService.show();
 
     this.drugCatalogService.getDrugsCatalogAsync().subscribe({
       next: (response: drugCatelog[]) => {
@@ -48,7 +48,7 @@ export class DrugsCatelogComponent implements OnInit {
         this.drugsCatalogs = response || [];
         this.filteredDrugs = [...this.drugsCatalogs];
         this.isLoading = false;
-        this.spinnerService.loadingOff();
+        this.spinnerService.hide();
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -57,7 +57,7 @@ export class DrugsCatelogComponent implements OnInit {
         this.drugsCatalogs = [];
         this.filteredDrugs = [];
         this.isLoading = false;
-        this.spinnerService.loadingOff();
+        this.spinnerService.hide();
         this.cdr.detectChanges();
       },
     });

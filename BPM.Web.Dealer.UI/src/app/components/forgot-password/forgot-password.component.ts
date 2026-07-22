@@ -49,7 +49,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     if (this.forgotPasswordSubscription) {
       this.forgotPasswordSubscription.unsubscribe();
     }
-    this.loadingService.loadingOff();
+    this.loadingService.hide();
   }
 
   onSubmit(form: NgForm) {
@@ -60,7 +60,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isSubmitting = true;
     this.errorMessage = '';
-    this.loadingService.loadingOn();
+    this.loadingService.show();
 
     if (this.forgotPasswordSubscription) {
       this.forgotPasswordSubscription.unsubscribe();
@@ -75,7 +75,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     this.forgotPasswordSubscription = this.accountService.forgotPassword(postData).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
-        this.loadingService.loadingOff();
+        this.loadingService.hide();
 
         console.log('✅ Forgot password response:', res);
 
@@ -106,7 +106,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       },
       error: (err: HttpErrorResponse) => {
         this.isSubmitting = false;
-        this.loadingService.loadingOff();
+        this.loadingService.hide();
 
         let errorMsg = 'Failed to send reset email. Please try again.';
         if (err.status === 0) {
