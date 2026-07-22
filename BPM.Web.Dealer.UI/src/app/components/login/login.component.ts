@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
-    this.spinnerService.loadingOff();
+    this.spinnerService.hide();
   }
 
   togglePasswordVisibility(): void {
@@ -122,7 +122,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
-    this.spinnerService.loadingOn();
+    this.spinnerService.show();
 
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
@@ -131,7 +131,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loginSubscription = this.accountService.authenticateAsync(this.loginObj).subscribe({
       next: (res: any) => {
         this.isLoading = false;
-        this.spinnerService.loadingOff();
+        this.spinnerService.hide();
         console.log('Login response:', res);
 
         if (res.jwtToken) {
@@ -155,7 +155,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         console.error('Login failed', err);
         this.isLoading = false;
-        this.spinnerService.loadingOff();
+        this.spinnerService.hide();
 
         let errorMsg = 'Login failed. Please try again.';
         if (err.status === 0) {

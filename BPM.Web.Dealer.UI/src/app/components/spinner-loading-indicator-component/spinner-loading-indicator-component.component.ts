@@ -36,9 +36,9 @@ export class SpinnerLoadingIndicatorComponent implements OnInit {
     if (this.detectRouteTransitions) {
       this.router.events.subscribe((event: any) => {
         if (event instanceof RouteConfigLoadStart) {
-          this.loadingService.loadingOn();
+          this.loadingService.show();
         } else if (event instanceof RouteConfigLoadEnd) {
-          this.loadingService.loadingOff();
+          this.loadingService.hide();
         }
       });
     }

@@ -24,11 +24,15 @@ import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-i
 })
 export class App implements OnInit {
 
+
+
   protected readonly title = signal('BPM.Web.Dealer.UI');
   cartCount: number = 0;
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   firstName: string = '';
   lastName: string = '';
+  dealerShipName: string ='';
+
   
   // Define public routes that don't require authentication
   private publicRoutes = ['/login', '/forgot-password', '/reset-password'];
@@ -80,6 +84,8 @@ export class App implements OnInit {
           // Set first name and last name from auth response
           this.firstName = authResponse.authenticateResponseDto?.firstName || '';
           this.lastName = authResponse.authenticateResponseDto?.lastName || '';
+          this.dealerShipName = authResponse.authenticateResponseDto?.dealerInfo?.dealershipName || '';
+          
         }
       } catch (e) {
         isAuth = false;
@@ -117,6 +123,17 @@ export class App implements OnInit {
     }
     return 'User';
   }
+
+  getDealerName() {
+    if(this.dealerShipName)
+    {
+      return `${this.dealerShipName}`;
+    }
+    else 
+    {
+      return ` `;
+    }
+}
 
   logout() {
     localStorage.removeItem('AuthenticatedUserResponse');
