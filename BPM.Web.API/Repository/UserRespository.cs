@@ -66,13 +66,12 @@ namespace BPM.Web.API.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> InsertUserAsync(User user)
+        public async Task<User> InsertUserAsync(User user)
         {
             _context.Users.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            return user;
         }
-
-
 
         public async Task<bool> UpdateUserRoleAsync(User user)
         {

@@ -18,9 +18,9 @@ namespace BPM.Web.API.Services
         private readonly IUserLoginHistoryRepository _loginHistoryRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-
+        private readonly IDealerService _dealerService;
         public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
-            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository)
+            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService)
         {
             _accountRepository = accountRepository;
             _logger = logger;
@@ -28,6 +28,7 @@ namespace BPM.Web.API.Services
             _loginHistoryRepository = loginHistoryRepository;
             _httpContextAccessor = httpContextAccessor;
             _refreshTokenRepository = refreshTokenRepository;
+            _dealerService = dealerService;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -50,26 +51,7 @@ namespace BPM.Web.API.Services
                         if (user.IsActive)
                         {
                             // Generate JWT token
-                            var tokenHandler = new JwtSecurityTokenHandler();
-                            var tokenKey = Encoding.ASCII.GetBytes(_tokenKey);
-
-                            var tokenDescriptor = new SecurityTokenDescriptor
-                            {
-                                Subject = new ClaimsIdentity(new Claim[]
-                                {
-                                    new Claim(JwtRegisteredClaimNames.Jti, jwtId),
-                                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                                    new Claim(ClaimTypes.Name, dto.Username ?? string.Empty),
-                                    new Claim(ClaimTypes.Role, user.RoleId.ToString())
-                                }),
-                                Expires = DateTime.UtcNow.AddMinutes(3),
-                                SigningCredentials = new SigningCredentials(
-                                    new SymmetricSecurityKey(tokenKey),
-                                    SecurityAlgorithms.HmacSha256Signature)
-                            };
-
-                            var token = tokenHandler.CreateToken(tokenDescriptor);
-                            var jwtToken = tokenHandler.WriteToken(token);
+                            string jwtToken = GenerateJwt(user, jwtId);
 
                             // Generate refresh token
                             var generatedRefreshToken = RefreshTokenHelper.GenerateRefreshToken();
@@ -101,8 +83,15 @@ namespace BPM.Web.API.Services
                                 Phone = user.Phone,
                                 RoleId = user.RoleId,
                                 UserId = user.Id,
-                                IsActive = user.IsActive
+                                IsActive = user.IsActive,
+                                DealerId = user.DealerId
                             };
+
+                            if (user.DealerId != null)
+                            {
+                                var dealerInfo = await _dealerService.GetDealerByIdAsync(user.DealerId.Value);
+                                authResponse.authenticateResponseDto.DealerInfo = dealerInfo;
+                            }
 
                             _logger.LogInformation("User {Username} logged in successfully", dto.Username);
                         }
@@ -171,6 +160,12 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
+
+            //before resetting the password, check if the password already used in previous 5 passwords
+            //inject passwordhsotry service 
+            // verify with current password matches any one password which is already used in previous 5 passwords
+
+
             var user = await _accountRepository.GetUserByIdAsync(dto.UserId);
 
             if (user == null)
@@ -299,7 +294,7 @@ namespace BPM.Web.API.Services
             var jwtId = Guid.NewGuid().ToString();
 
             var accessToken = GenerateJwt(user, jwtId);
-           
+
             return new AuthResponse
             {
                 JwtToken = accessToken,
@@ -317,17 +312,17 @@ namespace BPM.Web.API.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim(JwtRegisteredClaimNames.Jti, jwtId),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.Role, user.RoleId.ToString())
-        }),
+                    new Claim(JwtRegisteredClaimNames.Jti, jwtId),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                }),
 
                 Expires = DateTime.UtcNow.AddHours(1),
 
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(descriptor);
