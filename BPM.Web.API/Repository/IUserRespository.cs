@@ -5,7 +5,7 @@ namespace BPM.Web.API.Repository
 {
     public interface IUserRespository
     {
-        Task<bool> InsertUserAsync(User user);
+        Task<User> InsertUserAsync(User user);
         Task<bool> ActivateUserAync(User user);
         Task<bool> DeactivateUserAync(User user);
         Task<bool>UpdateUserInfoAsync(User user);
