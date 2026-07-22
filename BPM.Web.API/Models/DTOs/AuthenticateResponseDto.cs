@@ -12,9 +12,13 @@
 
         public string Phone { get; set; }
 
+        public Guid? DealerId { get; set; }
+
         public Guid RoleId { get; set; }
 
         public bool IsActive { get; set; }
+
+        public DealerDto DealerInfo { get; set; }
 
     }
 }

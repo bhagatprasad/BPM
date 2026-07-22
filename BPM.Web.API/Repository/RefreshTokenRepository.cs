@@ -15,7 +15,17 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> CreateAsync(RefreshToken token)
         {
+
+            var activeTokens = await _context.RefreshTokens.Where(x => x.UserId == token.UserId && !x.IsRevoked).ToListAsync();
+
+            foreach (var t in activeTokens)
+            {
+                t.IsRevoked = true;
+                t.RevokedOn = DateTime.UtcNow;
+            }
+
             await _context.RefreshTokens.AddAsync(token);
+
             return await _context.SaveChangesAsync() > 0;
         }
 

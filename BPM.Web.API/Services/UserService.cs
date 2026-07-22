@@ -73,14 +73,16 @@ namespace BPM.Web.API.Services
 
                 var newUser = user.ToEntity();
 
+
+                //first 
                 var result = await _userRespository.InsertUserAsync(newUser);
 
-                if (!result)
+                if (result == null)
                 {
                     _logger.LogWarning("Failed to create user");
                     return false;
                 }
-
+                //create a password history new records with using userid,passwordhash and password salt 
                 return true;
             }
             catch (Exception ex)
