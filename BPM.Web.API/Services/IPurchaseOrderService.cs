@@ -7,7 +7,7 @@ namespace BPM.Web.API.Services
 {
     public interface IPurchaseOrderService
     {
-        Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto);
+        Task<PurchaseOrderResponseDto> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync();
         Task<PurchaseOrderResponseDto> GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId);

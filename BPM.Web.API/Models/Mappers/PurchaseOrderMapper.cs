@@ -43,6 +43,7 @@ namespace BPM.Web.API.Models.Mappers
             return new PurchaseOrderItem
             {
                 DrugId = dto.DrugId,
+                PackagingId = dto.PackagingId,
                 Quantity = dto.Quantity,
                 UnitPrice = dto.UnitPrice,
 
@@ -96,6 +97,7 @@ namespace BPM.Web.API.Models.Mappers
                 Id = item.Id,
                 PurchaseOrderId = item.PurchaseOrderId,
                 DrugId = item.DrugId,
+                PackagingId = item.PackagingId,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
                 DiscountPercentage = item.DiscountPercentage,

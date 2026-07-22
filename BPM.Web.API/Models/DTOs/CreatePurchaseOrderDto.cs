@@ -34,6 +34,9 @@ namespace BPM.Web.API.Models.DTOs
         public Guid DrugId { get; set; }
 
         [Required]
+        public Guid PackagingId { get; set; }
+
+        [Required]
         public int Quantity { get; set; }
 
         [Required]

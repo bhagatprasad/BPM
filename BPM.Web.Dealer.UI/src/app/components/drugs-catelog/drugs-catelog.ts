@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DrugCatalogService } from '../../services/drugcatelog.service';
-import { drugCatelog } from '../../models/drug-catelog';
+import { drugCatelog, DrugPackaging } from '../../models/drug-catelog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
@@ -111,6 +111,11 @@ export class DrugsCatelogComponent implements OnInit {
       alert('This drug is currently inactive and cannot be added to cart.');
       return;
     }
+    const selectedPackage = this.selectedPackages[drug.drugId];
+    if (!selectedPackage) {
+      alert('Please select a package.');
+      return;
+    }
     this.cartService.addToCart({
       drugId: drug.drugId,
       drugCode: drug.drugCode,
@@ -121,6 +126,10 @@ export class DrugsCatelogComponent implements OnInit {
       category: drug.category,
       packing: drug.packing,
       strength: drug.strength,
+      packageName: selectedPackage.packageUomName,
+      packagePrice: selectedPackage.packagePrice,
+      packagingId: selectedPackage.packagingId,
+      displayName: selectedPackage.displayName,
       imageUrl: drug.imageUrl,
       quantity: 1,
     });
@@ -152,5 +161,10 @@ export class DrugsCatelogComponent implements OnInit {
   addNewDrug(): void {
     console.log('Add new drug');
     alert('Opening add drug form...');
+  }
+
+  selectedPackages: { [drugId: string]: DrugPackaging } = {};
+  selectPackage(drugId: string, pkg: DrugPackaging): void {
+    this.selectedPackages[drugId] = pkg;
   }
 }
