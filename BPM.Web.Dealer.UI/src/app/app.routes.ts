@@ -6,6 +6,7 @@ import { authenticationGuard } from './guards/authentication-guard';
 import { loginGuard } from './guards/login.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 export const routes: Routes = [
@@ -28,6 +29,11 @@ export const routes: Routes = [
     path: 'reset-password',
     component: ResetPasswordComponent,
     // No guard needed - App component handles public routes
+  },
+  {
+    path:'Profile',
+    component: ProfileComponent,
+   canActivate: [authenticationGuard]
   },
   {
     path: 'drugs-catalog',
