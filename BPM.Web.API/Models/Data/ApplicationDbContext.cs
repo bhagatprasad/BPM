@@ -25,8 +25,8 @@ namespace BPM.Web.API.Models.Data
         public DbSet<PackagingMaster> PackagingMasters { get; set; }
         public DbSet<DrugPackaging> DrugPackagings { get; set; }
         public DbSet<UserLoginHistory> UserLoginHistorys { get; set; }
-
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<UserPasswordHistory> UserPasswordHistories { get; set; }
 
 
 
