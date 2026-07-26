@@ -1,50 +1,37 @@
 ﻿CREATE TABLE public.purchaseorderitems
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
-
     purchaseorderid uuid NOT NULL,
-
     drugid uuid NOT NULL,
-
     quantity integer NOT NULL,
-
     unitprice numeric(18,2) NOT NULL,
-
     discountpercentage numeric(5,2) NOT NULL DEFAULT 0,
-
     discountamount numeric(18,2) NOT NULL DEFAULT 0,
-
     taxrate numeric(5,2) NOT NULL DEFAULT 0,
-
     taxamount numeric(18,2) NOT NULL DEFAULT 0,
-
     totalamount numeric(18,2) NOT NULL,
-
     receivedquantity integer NOT NULL DEFAULT 0,
-
     pendingquantity integer NOT NULL DEFAULT 0,
-
-    batchnumber character varying(100),
-
-    expirydate timestamp,
-
-    remarks character varying(500),
-
+    batchnumber character varying(100) COLLATE pg_catalog."default",
+    expirydate timestamp without time zone,
+    remarks character varying(500) COLLATE pg_catalog."default",
     createdby uuid,
-
-    createdon timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+    createdon timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modifiedby uuid,
-
-    modifiedon timestamp,
-
+    modifiedon timestamp without time zone,
+    packagingid uuid NOT NULL,
     CONSTRAINT purchaseorderitems_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_purchaseorderitems_drug FOREIGN KEY (drugid)
+        REFERENCES public.drug (drugid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_purchaseorderitems_purchaseorder FOREIGN KEY (purchaseorderid)
+        REFERENCES public.purchaseorders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-    CONSTRAINT fk_purchaseorderitems_purchaseorder
-        FOREIGN KEY (purchaseorderid)
-        REFERENCES public.purchaseorders(id),
+TABLESPACE pg_default;
 
-    CONSTRAINT fk_purchaseorderitems_drug
-        FOREIGN KEY (drugid)
-        REFERENCES public.drug(drugid)
-);
+ALTER TABLE IF EXISTS public.purchaseorderitems
+    OWNER to neondb_owner;
