@@ -12,10 +12,5 @@ export const environment = {
     PurchaseOrder: {
       CreatePurchaseOrder: 'PurchaseOrder/CreatePurchaseOrder',
     },
-    User:{
-      updateUserProfile:'User',
-    }
   },
 };
-
-
