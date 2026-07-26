@@ -111,6 +111,7 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
 builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
 
 #endregion
 

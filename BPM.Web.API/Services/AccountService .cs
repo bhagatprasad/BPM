@@ -19,8 +19,9 @@ namespace BPM.Web.API.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDealerService _dealerService;
+        private readonly IUserPasswordHistoryRepository _userPasswordHistoryRepository;
         public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
-            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService)
+            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository)
         {
             _accountRepository = accountRepository;
             _logger = logger;
@@ -29,6 +30,7 @@ namespace BPM.Web.API.Services
             _httpContextAccessor = httpContextAccessor;
             _refreshTokenRepository = refreshTokenRepository;
             _dealerService = dealerService;
+            _userPasswordHistoryRepository = userPasswordHistoryRepository;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -160,17 +162,39 @@ namespace BPM.Web.API.Services
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
-
-            //before resetting the password, check if the password already used in previous 5 passwords
-            //inject passwordhsotry service 
-            // verify with current password matches any one password which is already used in previous 5 passwords
-
-
             var user = await _accountRepository.GetUserByIdAsync(dto.UserId);
 
             if (user == null)
                 return false;
 
+            // Get last 5 passwords
+            var passwordHistory = await _userPasswordHistoryRepository
+                .GetLastFivePasswordsAsync(user.Id);
+
+            // Verify against previous passwords
+            foreach (var history in passwordHistory)
+            {
+                bool isPasswordUsed = HashSalt.VerifyPassword(
+                    dto.NewPassword,
+                    history.PasswordHash,
+                    history.PasswordSalt);
+
+                if (isPasswordUsed)
+                {
+                    throw new Exception("You cannot reuse any of your last 5 passwords.");
+                }
+            }
+
+            // Save current password to history
+            await _userPasswordHistoryRepository.AddAsync(new UserPasswordHistory
+            {
+                UserId = user.Id,
+                PasswordHash = user.PasswordHash,
+                PasswordSalt = user.PasswordSalt,
+                CreatedOn = DateTime.UtcNow
+            });
+
+            // Generate new hash and salt
             var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
 
             user.PasswordHash = hashSalt.Hash;
@@ -179,6 +203,9 @@ namespace BPM.Web.API.Services
             user.ModifiedOn = DateTime.UtcNow;
 
             await _accountRepository.UpdateUserAsync(user);
+
+            // Keep only latest 5 passwords
+            await _userPasswordHistoryRepository.DeleteOldPasswordsAsync(user.Id);
 
             return true;
         }
@@ -214,7 +241,7 @@ namespace BPM.Web.API.Services
             var context = _httpContextAccessor.HttpContext;
             return context?.Request.Headers["User-Agent"].ToString() ?? "Unknown";
         }
-
+         
         private string GetBrowserName()
         {
             var userAgent = GetUserAgent();
