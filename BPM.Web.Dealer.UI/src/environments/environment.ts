@@ -13,5 +13,10 @@ export const environment = {
       CreatePurchaseOrder: 'PurchaseOrder/CreatePurchaseOrder',
       FetchPurchaseOrderByDealer: 'PurchaseOrder/FetchPurchaseOrderByDealer',
     },
+    User:{
+      updateUserProfile:'User',
+    }
   },
 };
+
+

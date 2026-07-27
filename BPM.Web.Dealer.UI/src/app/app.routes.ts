@@ -6,6 +6,7 @@ import { authenticationGuard } from './guards/authentication-guard';
 import { loginGuard } from './guards/login.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { MyOrdersComponent } from './components/my-orders/my-orders.component';
 
 export const routes: Routes = [
