@@ -30,6 +30,11 @@ export const routes: Routes = [
     // No guard needed - App component handles public routes
   },
   {
+    path:'profile',
+    component: ProfileComponent,
+   canActivate: [authenticationGuard]
+  },
+  {
     path: 'drugs-catalog',
     component: DrugsCatelogComponent,
     canActivate: [authenticationGuard],

@@ -13,9 +13,9 @@ import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-i
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterOutlet, 
-    SidenavComponent, 
-    NgIf, 
+    RouterOutlet,
+    SidenavComponent,
+    NgIf,
     AsyncPipe,
     SpinnerLoadingIndicatorComponent
   ],
@@ -31,9 +31,9 @@ export class App implements OnInit {
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   firstName: string = '';
   lastName: string = '';
-  dealerShipName: string ='';
+  dealerShipName: string = '';
 
-  
+
   // Define public routes that don't require authentication
   private publicRoutes = ['/login', '/forgot-password', '/reset-password'];
 
@@ -64,7 +64,7 @@ export class App implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(async () => {
       await this.checkAuthStatus();
-      
+
       // If user is authenticated and tries to access login page, redirect to drugs-catalog
       if (this.isAuthenticated$.value && this.router.url === '/login') {
         this.router.navigateByUrl('/drugs-catalog');
@@ -75,7 +75,7 @@ export class App implements OnInit {
   private async checkAuthStatus(): Promise<void> {
     const loggedData = localStorage.getItem('AuthenticatedUserResponse');
     let isAuth = false;
-    
+
     if (loggedData) {
       try {
         const authResponse = JSON.parse(loggedData);
@@ -85,7 +85,7 @@ export class App implements OnInit {
           this.firstName = authResponse.authenticateResponseDto?.firstName || '';
           this.lastName = authResponse.authenticateResponseDto?.lastName || '';
           this.dealerShipName = authResponse.authenticateResponseDto?.dealerInfo?.dealershipName || '';
-          
+
         }
       } catch (e) {
         isAuth = false;
@@ -96,12 +96,12 @@ export class App implements OnInit {
       this.firstName = '';
       this.lastName = '';
     }
-    
+
     this.isAuthenticated$.next(isAuth);
-    
+
     const currentUrl = this.router.url;
     const isPublicRoute = this.publicRoutes.some(route => currentUrl.includes(route));
-    
+
     // Redirect logic
     if (isAuth && currentUrl === '/login') {
       // If authenticated and on login page, redirect to drugs-catalog
@@ -125,15 +125,16 @@ export class App implements OnInit {
   }
 
   getDealerName() {
-    if(this.dealerShipName)
-    {
+    if (this.dealerShipName) {
       return `${this.dealerShipName}`;
     }
-    else 
-    {
+    else {
       return ` `;
     }
-}
+  }
+  gotoprofile() {
+    this.router.navigate(['/profile']);
+  }
 
   logout() {
     localStorage.removeItem('AuthenticatedUserResponse');
