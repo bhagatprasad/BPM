@@ -7,18 +7,18 @@ import { loginGuard } from './guards/login.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
-
+import { MyOrdersComponent } from './components/my-orders/my-orders.component';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [loginGuard]
+    canActivate: [loginGuard],
   },
   {
     path: 'forgot-password',
@@ -31,22 +31,27 @@ export const routes: Routes = [
     // No guard needed - App component handles public routes
   },
   {
-    path:'Profile',
+    path:'profile',
     component: ProfileComponent,
    canActivate: [authenticationGuard]
   },
   {
     path: 'drugs-catalog',
     component: DrugsCatelogComponent,
-    canActivate: [authenticationGuard]
+    canActivate: [authenticationGuard],
   },
   {
     path: 'cart',
     component: CartComponent,
-    canActivate: [authenticationGuard]
+    canActivate: [authenticationGuard],
+  },
+  {
+    path: 'my-orders',
+    component: MyOrdersComponent,
+    canActivate: [authenticationGuard],
   },
   {
     path: '**',
-    redirectTo: 'login'
-  }
+    redirectTo: 'login',
+  },
 ];

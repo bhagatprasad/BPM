@@ -47,10 +47,14 @@ export class CartComponent implements OnInit {
   }
   placeOrder(): void {
     const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
+    console.log(auth.authenticateResponseDto);
 
     const request = {
       supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
-      dealerId: '6d32cd25-aa93-4625-ae69-7e8bdd9caf87',
+
+      // supplierId: auth.authenticateResponseDto.supplierId,
+      //dealerId: '6d32cd25-aa93-4625-ae69-7e8bdd9caf87',
+      dealerId: auth.authenticateResponseDto.dealerId,
 
       expectedDeliveryDate: new Date().toISOString(),
 

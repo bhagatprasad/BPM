@@ -10,8 +10,11 @@
     <app-sidenav></app-sidenav>
 
     <div class="sidebar-user">
-      <img class="avatar-img avatar-md sidebar-user-avatar" src="../assets/images/avatar/avatar.jpg"
-        alt="{{ getFullName() }}" />
+      <img
+        class="avatar-img avatar-md sidebar-user-avatar"
+        src="../assets/images/avatar/avatar.jpg"
+        alt="{{ getFullName() }}"
+      />
       <strong>{{ getFullName() }}</strong>
       <small>Active Workspace</small>
     </div>
@@ -25,26 +28,47 @@
   <div class="admin-main">
     <nav class="navbar admin-navbar navbar-expand bg-white">
       <div class="container-fluid px-3 px-lg-4">
-        <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar"
-          aria-expanded="true" aria-label="Toggle sidebar">
+        <button
+          class="sidebar-toggle"
+          type="button"
+          data-sidebar-toggle
+          aria-controls="adminSidebar"
+          aria-expanded="true"
+          aria-label="Toggle sidebar"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
-        <div> <button class="profile-button " type="button" 
-              aria-expanded="false">
-              <img class="avatar-img avatar-sm" src="../assets/images/avatar/avatar.jpg" alt="{{ getDealerName() }}" />
-              <span class="profile-name d-none d-sm-inline">{{ getDealerName() }}</span>
-            </button></div>
-        
+        <div>
+          <button class="profile-button" type="button" aria-expanded="false">
+            <img
+              class="avatar-img avatar-sm"
+              src="../assets/images/avatar/avatar.jpg"
+              alt="{{ getDealerName() }}"
+            />
+            <span class="profile-name d-none d-sm-inline">{{ getDealerName() }}</span>
+          </button>
+        </div>
+
         <div class="navbar-actions ms-auto">
-          <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"
-            title="Switch color theme">
+          <button
+            class="icon-button theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Switch color theme"
+            title="Switch color theme"
+          >
             <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
           </button>
           <div class="dropdown">
-            <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-              aria-label="Notifications">
+            <button
+              class="icon-button"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              aria-label="Notifications"
+            >
               <span class="notification-dot"></span>
               <i class="bi bi-bell" aria-hidden="true"></i>
             </button>
@@ -66,13 +90,21 @@
           </div>
 
           <div class="dropdown">
-            <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <img class="avatar-img avatar-sm" src="../assets/images/avatar/avatar.jpg" alt="{{ getFullName() }}" />
+            <button
+              class="profile-button dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img
+                class="avatar-img avatar-sm"
+                src="../assets/images/avatar/avatar.jpg"
+                alt="{{ getFullName() }}"
+              />
               <span class="profile-name d-none d-sm-inline">{{ getFullName() }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+              <li><a class="dropdown-item" (click)="gotoprofile()">Profile</a></li>
               <li><a class="dropdown-item" href="settings.html">Account settings</a></li>
               <li>
                 <hr class="dropdown-divider" />
@@ -80,9 +112,16 @@
               <li><a class="dropdown-item" (click)="logout()">Sign out</a></li>
             </ul>
           </div>
-          <button class="icon-button position-relative ms-1" type="button" title="Shopping Cart" (click)="goToCart()">
+          <button
+            class="icon-button position-relative ms-1"
+            type="button"
+            title="Shopping Cart"
+            (click)="goToCart()"
+          >
             <i class="bi bi-cart3"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <span
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            >
               {{ cartCount }}
             </span>
           </button>
@@ -95,9 +134,12 @@
 
     <footer class="admin-footer">
       <div class="container-fluid px-3 px-lg-4">
-        <span>Copyright 2026 BPM Medical <br />
+        <span
+          >Copyright 2026 BPM Medical <br />
           Developed by
-          <a target="_blank" class="fw-bold text-success" href="https://github.com/bhagatprasad/BPM">Betalen tech</a>
+          <a target="_blank" class="fw-bold text-success" href="https://github.com/bhagatprasad/BPM"
+            >Betalen tech</a
+          >
           • Distributed by
           <a target="_blank" class="fw-bold text-success" href="https://betalen.in">Betalen</a>
         </span>
@@ -107,6 +149,4 @@
 </div>
 
 <!-- 👇 Add Spinner Loading Indicator - Works for both authenticated and unauthenticated states -->
-<app-spinner-loading-indicator 
-  [detectRouteTransitions]="true">
-</app-spinner-loading-indicator>
+<app-spinner-loading-indicator [detectRouteTransitions]="true"> </app-spinner-loading-indicator>

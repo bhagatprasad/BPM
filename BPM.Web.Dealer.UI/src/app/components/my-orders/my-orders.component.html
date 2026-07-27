@@ -1,0 +1,66 @@
+<h3 class="mb-1">My Purchase Orders</h3>
+<p class="text-muted mb-4">Manage and track your purchase orders.</p>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h6>Total Orders</h6>
+        <h3>{{ totalOrders }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h6>Draft Orders</h6>
+        <h3>{{ draftOrders }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h6>Total Order Value</h6>
+        <h3>₹{{ totalOrderValue | number: '1.2-2' }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-md-2">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search Orders..."
+      [(ngModel)]="searchText"
+      (input)="filterOrders()"
+    />
+  </div>
+
+  <div class="col-md-2">
+    <select class="form-select" [(ngModel)]="selectedStatus" (change)="filterOrders()">
+      <option value="All">All</option>
+      <option value="Draft">Draft</option>
+      <option value="Submitted">Submitted</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+      <option value="Delivered">Delivered</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
+  </div>
+</div>
+<smart-grid
+  #grid
+  *ngIf="orders.length > 0"
+  [dataSource]="filteredOrders"
+  [dataSourceSettings]="dataSourceSettings"
+  [columns]="columns"
+  [sorting]="{ enabled: true }"
+  style="width: 100%; height: 400px"
+>
+</smart-grid>
+
+<div *ngIf="orders.length === 0">No orders available</div>
