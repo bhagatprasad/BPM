@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
 {
-    [Table("drugcategories")]
+    [Table("drug_categories")]
     public class DrugCategory
     {
         [Key]

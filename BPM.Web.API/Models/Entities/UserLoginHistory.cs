@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
 {
-    [Table("userloginhistory")]
+    [Table("user_login_history")]
     public class UserLoginHistory
     {
         [Key]

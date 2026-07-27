@@ -1,4 +1,4 @@
-﻿CREATE TABLE public.drugcategories
+﻿CREATE TABLE public.drug_categories
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
 
