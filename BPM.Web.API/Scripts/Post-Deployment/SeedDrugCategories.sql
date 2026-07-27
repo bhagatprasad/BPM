@@ -1,4 +1,4 @@
-﻿MERGE INTO DrugCategories AS Target
+﻿MERGE INTO drug_categories AS Target
 
 USING
 (

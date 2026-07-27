@@ -1,4 +1,4 @@
-﻿CREATE TABLE public.purchaseorders
+﻿CREATE TABLE public.purchase_orders
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     ponumber character varying(20) COLLATE pg_catalog."default" NOT NULL,

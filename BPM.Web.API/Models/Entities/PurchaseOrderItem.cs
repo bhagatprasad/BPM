@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
 {
-    [Table("purchaseorderitems")]
+    [Table("purchase_order_items")]
     public class PurchaseOrderItem
     {
         [Key]

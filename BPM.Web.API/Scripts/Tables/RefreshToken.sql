@@ -1,4 +1,4 @@
-﻿CREATE TABLE RefreshToken
+﻿CREATE TABLE refresh_tokens
 (
     id UUID NOT NULL DEFAULT gen_random_uuid(),
     userid UUID NOT NULL,

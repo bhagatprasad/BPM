@@ -1,4 +1,4 @@
-﻿CREATE TABLE public.purchaseorderitems
+﻿CREATE TABLE public.purchase_order_items
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     purchaseorderid uuid NOT NULL,
@@ -26,12 +26,12 @@
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT fk_purchaseorderitems_purchaseorder FOREIGN KEY (purchaseorderid)
-        REFERENCES public.purchaseorders (id) MATCH SIMPLE
+        REFERENCES public.purchase_orders (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.purchaseorderitems
+ALTER TABLE IF EXISTS public.purchase_order_items
     OWNER to neondb_owner;

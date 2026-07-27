@@ -1,4 +1,4 @@
-﻿CREATE TABLE userloginhistory
+﻿CREATE TABLE user_login_history
 (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
