@@ -30,6 +30,15 @@ constructor(private apiService: ApiService) {}
       data
     );
   }
+  updateUserProfilePatch(userId: string, data: Partial<UpdateUserRequest>): Observable<UpdateUserResponse> {
+    const endpoint = `User/updateuser/${userId}`;
+    
+    return this.apiService.send<UpdateUserResponse>(
+      'PATCH',
+      endpoint,
+      data
+    );
+  }
 
   
 }

@@ -21,6 +21,7 @@ export interface DealerInfo {
 }
 
 export interface AuthenticateResponse {
+  authenticateResponseDto: any;
   dealerId: string;
   dealerInfo: DealerInfo;
   email: string;

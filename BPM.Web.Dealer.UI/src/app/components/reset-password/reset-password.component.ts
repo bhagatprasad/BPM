@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,10 +16,16 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit, OnDestroy {
+  // Add these inputs for profile mode
+  @Input() userIdFromParent: string = '';
+  @Input() isProfileMode: boolean = false;
+  @Output() passwordResetSuccess = new EventEmitter<boolean>();
+
   resetData = {
     userId: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    confirmReset: false // New confirmation field
   };
 
   showPassword = false;
@@ -44,11 +50,19 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('🔵 ResetPasswordComponent ngOnInit');
 
-    // Get userId from query parameters
+    // If in profile mode, use userId from parent
+    if (this.isProfileMode && this.userIdFromParent) {
+      this.resetData.userId = this.userIdFromParent;
+      this.isValidLink = true;
+      console.log('✅ Profile mode: userId set to:', this.userIdFromParent);
+      this.toastr.info('Enter your new password', 'Change Password');
+      return;
+    }
+
+    // Standalone mode - get userId from query parameters
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       console.log('📧 All query params:', params);
 
-      // FIX: Check for both 'userId' and 'userid' (case insensitive)
       const userId = params['userId'] || params['userid'];
 
       console.log('📧 UserId from query params:', userId);
@@ -91,6 +105,13 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Check if confirmation is checked
+    if (!this.resetData.confirmReset) {
+      this.errorMessage = 'Please confirm that you want to reset your password';
+      this.toastr.warning('Please confirm password reset', 'Warning');
+      return;
+    }
+
     if (this.resetData.newPassword !== this.resetData.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
       this.toastr.warning('Passwords do not match', 'Warning');
@@ -129,9 +150,17 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.isSubmitting = false;
         this.loadingService.hide();
+        this.passwordReset = true;
         this.toastr.success(res.message || 'Password reset successfully!', 'Success');
         console.log('✅ Reset password response:', res);
-        this.router.navigate(['/login']);
+        
+        // Emit success event for profile mode
+        this.passwordResetSuccess.emit(true);
+
+        // If standalone mode, navigate to login
+        if (!this.isProfileMode) {
+          this.router.navigate(['/login']);
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.isSubmitting = false;
@@ -168,6 +197,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   isFormValid(): boolean {
     return this.isValidLink &&
       this.resetData.newPassword.length >= 6 &&
-      this.resetData.newPassword === this.resetData.confirmPassword;
+      this.resetData.newPassword === this.resetData.confirmPassword &&
+      this.resetData.confirmReset === true;
   }
 }
