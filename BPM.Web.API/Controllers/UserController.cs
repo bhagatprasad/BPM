@@ -99,12 +99,12 @@ namespace BPM.Web.API.Controllers
 
                 var result = await _userServiec.UpdateUserAsync(userId, userUpdateDto);
 
-                if (result)
+                if (result != null)
                 {
-                    return Ok(new { message = "User information updated successfully." });
+                    return Ok(new { data = result, message = "User information updated successfully." });
                 }
 
-                return BadRequest(new { message = "Failed to update user information." });
+                return BadRequest(new { data = result, message = "Failed to update user information." });
             }
             catch (Exception ex)
             {

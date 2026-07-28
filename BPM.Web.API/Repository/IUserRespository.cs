@@ -8,10 +8,12 @@ namespace BPM.Web.API.Repository
         Task<User> InsertUserAsync(User user);
         Task<bool> ActivateUserAync(User user);
         Task<bool> DeactivateUserAync(User user);
-        Task<bool>UpdateUserInfoAsync(User user);
-        Task<bool>UpdateUserRoleAsync(User user);
+        Task<bool> UpdateUserInfoAsync(User user);
+        Task<bool> UpdateUserRoleAsync(User user);
         Task<bool> UpdateUserDealerAsync(User user);
         Task<bool> ChangePasswordAsync(User user);
+        Task<User> GetUserByIdAsync(Guid userId);
+        Task<List<User>> GetAllUsersAsync();
         Task<User> GetUserByUsernameOrPhoneAsync(string username, string phone);
     }
 }

@@ -1,6 +1,6 @@
 /* ========== PROFILE WRAPPER ========== */
 .profile-wrapper {
-  max-width: 1000px;
+  max-width: 100% !important;
   margin: 0 auto;
   background: #f8f6f2;
   border-radius: 16px;
