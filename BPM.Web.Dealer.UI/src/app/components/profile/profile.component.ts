@@ -17,7 +17,7 @@ import { ToastrService } from '@iqx-limited/ngx-toastr';
 })
 export class ProfileComponent implements OnInit {
   userData: any = null;
-  
+  isAdmin: boolean = false;
   // Tab management
   activeTab: string = 'personal';
 
@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit {
       try {
         this.userData = JSON.parse(storedData);
         console.log('Full userData:', this.userData);
-        
+
         if (this.userData.authenticateResponseDto) {
           console.log('Using authenticateResponseDto data');
           this.populateFormData();
@@ -100,7 +100,7 @@ export class ProfileComponent implements OnInit {
   populateFormData(): void {
     if (this.userData && this.userData.authenticateResponseDto) {
       const dto = this.userData.authenticateResponseDto;
-      
+
       // Populate user section from the main DTO
       this.userSection = {
         firstName: dto.firstName || '',
@@ -131,6 +131,11 @@ export class ProfileComponent implements OnInit {
           tradeLicenseNumber: dto.dealerInfo.tradeLicenseNumber || '',
           website: dto.dealerInfo.website || ''
         };
+      }
+      if (dto.roleInfo) {
+        if (dto.roleInfo.name === "Administrator") {
+          this.isAdmin = true;
+        }
       }
     }
   }
@@ -222,14 +227,14 @@ export class ProfileComponent implements OnInit {
         if (this.userSection.phone !== this.originalUserData.phone) {
           patchData.phone = this.userSection.phone.trim();
         }
-        
+
         // If no changes, show message and exit
         if (Object.keys(patchData).length === 0) {
           this.isLoading = false;
           this.toastr.info('No changes to save', 'Info');
           return;
         }
-        
+
         updateObservable = this.userService.updateUserProfilePatch(userId, patchData);
         break;
       case 'POST':
@@ -242,14 +247,14 @@ export class ProfileComponent implements OnInit {
       .pipe(
         catchError(error => {
           console.error(`❌ ${this.updateMethod} Update error:`, error);
-          
+
           // If current method fails with 405, try POST as fallback
           if (error.status === 405 && this.updateMethod !== 'POST') {
             console.log(`🔄 ${this.updateMethod} not allowed, trying POST as fallback...`);
             this.updateMethod = 'POST';
             return this.userService.updateUserProfile(userId, updateData);
           }
-          
+
           // If POST also fails or other error
           this.errorMessage = error.message || 'Unable to update profile. Please try again later.';
           this.toastr.error(this.errorMessage, 'Error');
@@ -262,14 +267,14 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (response: UpdateUserResponse) => {
           console.log('✅ Update response:', response);
-          
-          if (response && response.success) {
+
+          if (response && response.data) {
             // Update the DTO data
             if (this.userData && this.userData.authenticateResponseDto) {
-              this.userData.authenticateResponseDto.firstName = response.firstName || updateData.firstName;
-              this.userData.authenticateResponseDto.lastName = response.lastName || updateData.lastName;
-              this.userData.authenticateResponseDto.email = response.email || updateData.email;
-              this.userData.authenticateResponseDto.phone = response.phone || updateData.phone;
+              this.userData.authenticateResponseDto.firstName = response.data.firstName || updateData.firstName;
+              this.userData.authenticateResponseDto.lastName = response.data.lastName || updateData.lastName;
+              this.userData.authenticateResponseDto.email = response.data.email || updateData.email;
+              this.userData.authenticateResponseDto.phone = response.data.phone || updateData.phone;
             }
 
             localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(this.userData));
@@ -352,13 +357,13 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (response: UpdateUserResponse) => {
           console.log('✅ Update response:', response);
-          
-          if (response && response.success) {
+
+          if (response) {
             if (this.userData && this.userData.authenticateResponseDto) {
-              this.userData.authenticateResponseDto.firstName = response.firstName || updateData.firstName;
-              this.userData.authenticateResponseDto.lastName = response.lastName || updateData.lastName;
-              this.userData.authenticateResponseDto.email = response.email || updateData.email;
-              this.userData.authenticateResponseDto.phone = response.phone || updateData.phone;
+              this.userData.authenticateResponseDto.firstName = response.data?.firstName || updateData.firstName;
+              this.userData.authenticateResponseDto.lastName = response.data?.lastName || updateData.lastName;
+              this.userData.authenticateResponseDto.email = response.data?.email || updateData.email;
+              this.userData.authenticateResponseDto.phone = response.data?.phone || updateData.phone;
             }
 
             localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(this.userData));
@@ -372,7 +377,7 @@ export class ProfileComponent implements OnInit {
               this.successMessage = '';
             }, 5000);
           } else {
-            this.errorMessage = response.message || 'Failed to update profile';
+            this.errorMessage ='Failed to update profile';
             this.toastr.error(this.errorMessage, 'Error');
           }
         },

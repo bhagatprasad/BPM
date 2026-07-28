@@ -54,6 +54,19 @@ namespace BPM.Web.API.Models.Mappers
 
         }
 
+        public static UserDto ToEntity(this User dto)
+        {
+            return new UserDto
+            {
+                UserId = dto.Id,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                Phone = dto.Phone
+            };
+
+        }
+
         public static User ToEntity(this UserActivateDto dto)
         {
             return new User
