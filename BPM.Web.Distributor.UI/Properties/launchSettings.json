@@ -13,11 +13,13 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      "launchUrl": "Account/Login",
       "applicationUrl": "http://localhost:5177",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
+    }
+  },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
