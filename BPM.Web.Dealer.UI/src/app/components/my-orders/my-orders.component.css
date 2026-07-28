@@ -70,72 +70,22 @@ h3 {
   flex-shrink: 0;
 }
 
-/* ===========================
-   Search Controls
-=========================== */
-
-.form-control,
-.form-select,
 .btn {
   height: 42px;
   border-radius: 8px;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: #0d6efd;
-  box-shadow: none;
-}
-
-/* ===========================
-   Smart Grid
-=========================== */
-
-smart-grid {
-  display: block;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-/* Header */
-
-.smart-grid-header {
-  font-size: 14px;
-  font-weight: 600;
-  background: #f8f9fa;
-  color: #343a40;
-}
-
-/* Rows */
-
-.smart-grid-row {
-  height: 48px;
-}
-
-.smart-grid-cell {
-  min-height: 48px;
-  line-height: 48px;
-  padding: 0 12px !important;
-}
-
-/* Hover */
-
-.smart-grid-row:hover .smart-grid-cell {
-  background: #f5f9ff !important;
-  transition: .2s;
-}
-
 /* Action Icons */
 
 .view-order,
-.print-order {
+.pdf-order {
   cursor: pointer;
   font-size: 18px;
   transition: transform .2s ease;
 }
 
 .view-order:hover,
-.print-order:hover {
+.pdf-order:hover {
   transform: scale(1.15);
 }
 
@@ -187,8 +137,21 @@ smart-grid {
   }
 }
 smart-grid {
-    --smart-grid-row-height: 40px;
-     --smart-grid-column-header-background: #f8f9fa;
-    --smart-grid-column-header-font-size: 15px;
-    --smart-grid-column-header-font-weight: 600;
+    --smart-grid-row-height: 55px;
+    --smart-grid-column-header-height:55px;
+    --smart-grid-column-header-background: #F8F9FA;
+    --smart-grid-column-header-font-size: 18px;
+    --smart-grid-column-header-font-weight: 700;
+    --smart-grid-border:#f60e0e;
+    border-radius: 10px;
+}
+
+:host ::ng-deep smart-grid-column {
+    color: #212529 !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+:host ::ng-deep smart-grid-column .smart-label {
+    color: #212529 !important;
 }
