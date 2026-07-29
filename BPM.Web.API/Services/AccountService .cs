@@ -210,28 +210,22 @@ namespace BPM.Web.API.Services
                 }
             }
 
+            // Generate new hash and salt
             var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
 
-
-            // Save current password to history
-            //await _userPasswordHistoryRepository.AddAsync(new UserPasswordHistory
-            //{
-            //    UserId = user.Id,
-            //    PasswordHash = hashSalt.Hash,
-            //    PasswordSalt = hashSalt.Salt,
-            //    CreatedOn = DateTime.UtcNow
-            //});
-
-            await _rabbitMQPublisher.PublishMessageAsync<UserPasswordHistory>(new UserPasswordHistory
+            // Save current password to history BEFORE updating
+            var currentPasswordHistory = new UserPasswordHistory
             {
                 UserId = user.Id,
                 PasswordHash = user.PasswordHash,
                 PasswordSalt = user.PasswordSalt,
                 CreatedOn = DateTime.UtcNow
-            }, "PasswordHistoryQueue");
+            };
 
-            // Generate new hash and salt
+            // Use retry mechanism for reliability
+            await _rabbitMQPublisher.PublishMessageWithRetryAsync(currentPasswordHistory, "PasswordHistoryQueue");
 
+            // Update user with new password
             user.PasswordHash = hashSalt.Hash;
             user.PasswordSalt = hashSalt.Salt;
             user.ModifiedBy = user.Id;
