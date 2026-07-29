@@ -1,10 +1,12 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class DrugUomController : ControllerBase

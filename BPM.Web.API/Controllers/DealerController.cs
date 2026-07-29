@@ -1,12 +1,14 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
+    [Authorize(Roles = "Dealer,Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class DealerController : ControllerBase
+    public class DealerController : BaseController
     {
         private readonly IDealerService _dealerService;
         private readonly ILogger<DealerController> _logger;
