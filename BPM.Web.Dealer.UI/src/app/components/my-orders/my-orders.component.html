@@ -57,52 +57,14 @@
       </div>
     </div>
   </div>
-  <!-- =================== Section 2 : Search & Filters =================== -->
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white">
-      <h5 class="mb-0">🔍 Search & Filters</h5>
-    </div>
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search Orders..."
-            [(ngModel)]="searchText"
-            (input)="filterOrders()"
-          />
-        </div>
-        <div class="col-md-3">
-          <select class="form-select" [(ngModel)]="selectedStatus" (change)="filterOrders()">
-            <option value="All">All Status</option>
-            <option value="Draft">Draft</option>
-            <option value="Submitted">Submitted</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-outline-secondary w-100"
-            (click)="searchText = ''; selectedStatus = 'All'; filterOrders()"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- =================== Section 3 : Purchase Order List =================== -->
+  <!-- =================== Section 2 : Purchase Order List =================== -->
   <div class="card shadow-sm">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
       <h5 class="mb-0">📋 Purchase Order List</h5>
 
       <div>
-        <button class="btn btn-outline-primary btn-sm me-2">Refresh</button>
+        <button class="btn btn-outline-primary btn-sm me-2" (click)="loadOrders()">Refresh</button>
 
         <button class="btn btn-outline-success btn-sm me-2">Export</button>
 
@@ -114,10 +76,13 @@
         class="p-3"
         #grid
         *ngIf="orders.length > 0"
-        [dataSource]="filteredOrders"
+        [dataSource]="orders"
         [dataSourceSettings]="dataSourceSettings"
         [columns]="columns"
         [sorting]="{ enabled: true }"
+        [filtering]="filtering_grid"
+        [appearance]="appearancegrid"
+        [selection]="selectiongrid"
         style="width: 100%; height: 400px"
       >
       </smart-grid>
