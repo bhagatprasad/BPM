@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BPM.Web.API.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class DrugController : ControllerBase

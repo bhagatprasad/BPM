@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class PackagingMasterController : ControllerBase
