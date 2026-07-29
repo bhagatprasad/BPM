@@ -1,8 +1,5 @@
-﻿using BPM.Web.API.Helpes;
-using BPM.Web.API.Models.Data;
-using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
-using BPM.Web.API.Models.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.API.Repository
@@ -124,6 +121,16 @@ namespace BPM.Web.API.Repository
         public async Task<User> GetUserByUsernameOrPhoneAsync(string username, string phone)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == username || x.Phone == phone);
+        }
+
+        public async Task<User> GetUserByIdAsync(Guid userId)
+        {
+            return await _context.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
         }
     }
 }

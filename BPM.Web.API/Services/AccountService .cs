@@ -20,8 +20,10 @@ namespace BPM.Web.API.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDealerService _dealerService;
         private readonly IUserPasswordHistoryRepository _userPasswordHistoryRepository;
+        private readonly IRoleService _roleService;
         public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
-            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository)
+            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository,
+            IRoleService roleService)
         {
             _accountRepository = accountRepository;
             _logger = logger;
@@ -31,6 +33,7 @@ namespace BPM.Web.API.Services
             _refreshTokenRepository = refreshTokenRepository;
             _dealerService = dealerService;
             _userPasswordHistoryRepository = userPasswordHistoryRepository;
+            _roleService = roleService;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -93,6 +96,16 @@ namespace BPM.Web.API.Services
                             {
                                 var dealerInfo = await _dealerService.GetDealerByIdAsync(user.DealerId.Value);
                                 authResponse.authenticateResponseDto.DealerInfo = dealerInfo;
+                            }
+
+                            if (user.RoleId != null)
+                            {
+                                var roleInfo = await _roleService.GetRoleByIdAsync(user.RoleId);
+                               
+                                if (roleInfo != null)
+                                {
+                                    authResponse.authenticateResponseDto.RoleInfo = roleInfo;
+                                }
                             }
 
                             _logger.LogInformation("User {Username} logged in successfully", dto.Username);
@@ -241,7 +254,7 @@ namespace BPM.Web.API.Services
             var context = _httpContextAccessor.HttpContext;
             return context?.Request.Headers["User-Agent"].ToString() ?? "Unknown";
         }
-         
+
         private string GetBrowserName()
         {
             var userAgent = GetUserAgent();

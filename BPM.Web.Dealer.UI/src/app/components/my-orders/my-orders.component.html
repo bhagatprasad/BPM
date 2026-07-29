@@ -1,66 +1,211 @@
-<h3 class="mb-1">My Purchase Orders</h3>
-<p class="text-muted mb-4">Manage and track your purchase orders.</p>
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="mb-4">
+    <h3 class="mb-1">My Purchase Orders</h3>
+    <p class="text-muted mb-0">Manage and track your purchase orders.</p>
+  </div>
 
-<div class="row mb-4">
-  <div class="col-md-4">
-    <div class="card shadow-sm">
-      <div class="card-body text-center">
-        <h6>Total Orders</h6>
-        <h3>{{ totalOrders }}</h3>
+  <!-- =================== Section 1 : Order Summary =================== -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">📊 Order Summary</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <!-- Total Orders -->
+        <div class="col-md-4">
+          <div class="card h-100 summary-card">
+            <div class="card-body d-flex align-items-center">
+              <div class="summary-icon bg-primary text-white">📦</div>
+
+              <div class="ms-3">
+                <h6 class="text-muted mb-1">Total Orders</h6>
+                <h3 class="mb-0">{{ totalOrders }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Draft Orders -->
+        <div class="col-md-4">
+          <div class="card h-100 summary-card">
+            <div class="card-body d-flex align-items-center">
+              <div class="summary-icon bg-warning text-dark">📝</div>
+
+              <div class="ms-3">
+                <h6 class="text-muted mb-1">Draft Orders</h6>
+                <h3 class="mb-0">{{ draftOrders }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Order Value -->
+        <div class="col-md-4">
+          <div class="card h-100 summary-card">
+            <div class="card-body d-flex align-items-center">
+              <div class="summary-icon bg-success text-white">💰</div>
+
+              <div class="ms-3">
+                <h6 class="text-muted mb-1">Total Order Value</h6>
+                <h3 class="mb-0">₹{{ totalOrderValue | number: '1.2-2' }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  <!-- =================== Section 2 : Search & Filters =================== -->
 
-  <div class="col-md-4">
-    <div class="card shadow-sm">
-      <div class="card-body text-center">
-        <h6>Draft Orders</h6>
-        <h3>{{ draftOrders }}</h3>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">🔍 Search & Filters</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search Orders..."
+            [(ngModel)]="searchText"
+            (input)="filterOrders()"
+          />
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="selectedStatus" (change)="filterOrders()">
+            <option value="All">All Status</option>
+            <option value="Draft">Draft</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button
+            class="btn btn-outline-secondary w-100"
+            (click)="searchText = ''; selectedStatus = 'All'; filterOrders()"
+          >
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   </div>
+  <!-- =================== Section 3 : Purchase Order List =================== -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">📋 Purchase Order List</h5>
 
-  <div class="col-md-4">
-    <div class="card shadow-sm">
-      <div class="card-body text-center">
-        <h6>Total Order Value</h6>
-        <h3>₹{{ totalOrderValue | number: '1.2-2' }}</h3>
+      <div>
+        <button class="btn btn-outline-primary btn-sm me-2">Refresh</button>
+
+        <button class="btn btn-outline-success btn-sm me-2">Export</button>
+
+        <button class="btn btn-primary btn-sm">+ New Order</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <smart-grid
+        class="p-3"
+        #grid
+        *ngIf="orders.length > 0"
+        [dataSource]="filteredOrders"
+        [dataSourceSettings]="dataSourceSettings"
+        [columns]="columns"
+        [sorting]="{ enabled: true }"
+        style="width: 100%; height: 400px"
+      >
+      </smart-grid>
+
+      <div *ngIf="orders.length === 0" class="text-center text-muted py-4">
+        No purchase orders available.
       </div>
     </div>
   </div>
 </div>
-<div class="row mb-3">
-  <div class="col-md-2">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Search Orders..."
-      [(ngModel)]="searchText"
-      (input)="filterOrders()"
-    />
-  </div>
 
-  <div class="col-md-2">
-    <select class="form-select" [(ngModel)]="selectedStatus" (change)="filterOrders()">
-      <option value="All">All</option>
-      <option value="Draft">Draft</option>
-      <option value="Submitted">Submitted</option>
-      <option value="Approved">Approved</option>
-      <option value="Rejected">Rejected</option>
-      <option value="Delivered">Delivered</option>
-      <option value="Cancelled">Cancelled</option>
-    </select>
-  </div>
-</div>
-<smart-grid
-  #grid
-  *ngIf="orders.length > 0"
-  [dataSource]="filteredOrders"
-  [dataSourceSettings]="dataSourceSettings"
-  [columns]="columns"
-  [sorting]="{ enabled: true }"
-  style="width: 100%; height: 400px"
+<!-- View Purchase Order Modal -->
+<div
+  class="modal fade show"
+  *ngIf="showViewModal"
+  style="display: block; background: rgba(0, 0, 0, 0.5)"
 >
-</smart-grid>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Purchase Order Details</h5>
 
-<div *ngIf="orders.length === 0">No orders available</div>
+        <button type="button" class="btn-close" (click)="showViewModal = false"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">PO Number</label>
+            <div>{{ selectedOrder?.poNumber }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Status</label>
+            <div>{{ selectedOrder?.status }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Order Date</label>
+            <div>{{ selectedOrder?.orderDate | date: 'dd-MMM-yyyy' }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Expected Delivery</label>
+            <div>{{ selectedOrder?.expectedDeliveryDate | date: 'dd-MMM-yyyy' }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Supplier</label>
+            <div>{{ selectedOrder?.supplierId }}</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Dealer</label>
+            <div>{{ selectedOrder?.dealerId }}</div>
+          </div>
+        </div>
+
+        <hr />
+
+        <h6>Amount Summary</h6>
+
+        <table class="table table-bordered">
+          <tr>
+            <th>Sub Total</th>
+            <td>{{ selectedOrder?.subTotal }}</td>
+          </tr>
+
+          <tr>
+            <th>Tax</th>
+            <td>{{ selectedOrder?.taxAmount }}</td>
+          </tr>
+
+          <tr>
+            <th>Discount</th>
+            <td>{{ selectedOrder?.discountAmount }}</td>
+          </tr>
+
+          <tr>
+            <th>Total</th>
+            <td>{{ selectedOrder?.totalAmount }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showViewModal = false">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-export interface User {}
+export interface User { }
 
 export interface DealerInfo {
   addressLine1: string;
@@ -21,6 +21,7 @@ export interface DealerInfo {
 }
 
 export interface AuthenticateResponse {
+  authenticateResponseDto: any;
   dealerId: string;
   dealerInfo: DealerInfo;
   email: string;
@@ -45,13 +46,13 @@ export interface UpdateUserRequest {
 }
 
 export interface UpdateUserResponse {
-  success: boolean;
-  message: string;
-  data?: any;
+  message?: string;
+  data?: userDto;
+}
+export interface userDto {
   userId?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   phone?: string;
 }
-

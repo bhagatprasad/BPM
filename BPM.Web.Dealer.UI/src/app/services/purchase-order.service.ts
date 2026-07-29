@@ -46,4 +46,12 @@ export class PurchaseOrderService {
       `${environment.UrlConstants.PurchaseOrder.FetchPurchaseOrderByDealer}/${dealerId}`,
     );
   }
+
+  //fetch order by purchaseorderbyid
+  getPurchaseOrderById(id: string): Observable<any> {
+    return this.apiService.send<any>(
+      'GET',
+      `${environment.UrlConstants.PurchaseOrder.FetchPurchaseOrderById}/${id}`,
+    );
+  }
 }

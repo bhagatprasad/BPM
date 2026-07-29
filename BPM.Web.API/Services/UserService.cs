@@ -92,7 +92,7 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<bool> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
+        public async Task<UserDto> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
         {
             try
             {
@@ -104,13 +104,18 @@ namespace BPM.Web.API.Services
 
                 var result = await _userRespository.UpdateUserInfoAsync(user);
 
-                if (!result)
+                var dbUser = await _userRespository.GetUserByIdAsync(userId);
+
+                if (dbUser == null)
                 {
                     _logger.LogWarning("Failed to update user");
-                    return false;
+                    return null;
                 }
 
-                return true;
+                UserDto userUpdateResponse = dbUser.ToEntity();
+
+                return userUpdateResponse;
+
             }
             catch (Exception ex)
             {
