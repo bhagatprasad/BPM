@@ -1,5 +1,8 @@
 using BPM.Web.API.GlobalExceptionHandling;
 using BPM.Web.API.Models.Data;
+using BPM.Web.API.RabbitMQ;
+using BPM.Web.API.RabbitMQ.Publisher;
+using BPM.Web.API.RabbitMQ.Subscriber;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 using BPM.Web.API.Services;
@@ -75,7 +78,8 @@ builder.Services.AddCors(options =>
 // Configure PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.Configure<RabbitMQSettings>(
+    builder.Configuration.GetSection("RabbitMQ"));
 #region Register Services
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDealerService, DealerService>();
@@ -92,7 +96,17 @@ builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
 builder.Services.AddScoped<IDrugFormService, DrugFormService>();
 builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHostedService<RefreshTokenCleanupService>();
+//builder.Services.AddHostedService<RefreshTokenCleanupService>();
+builder.Services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
+//builder.Services.AddHostedService<RabbitMQSubscriber>();
+//builder.Services.AddHostedService<PasswordHistorySubscriber>();
+
+//builder.Services.AddHostedService<UserLoginHistorySubscriber>();
+
+//builder.Services.AddHostedService<RefreshTokenSubscriber>();
+builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
+
+
 #endregion
 
 #region Register Repositories
@@ -112,7 +126,7 @@ builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
 builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
-
+//builder.Services.AddHostedService<PasswordHistorySubscriber>();
 #endregion
 
 #region JWT Authentication
