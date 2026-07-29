@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace BPM.Web.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase

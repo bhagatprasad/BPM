@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BPM.Web.API.Controllers
 {

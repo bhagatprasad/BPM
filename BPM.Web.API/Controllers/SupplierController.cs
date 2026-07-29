@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
