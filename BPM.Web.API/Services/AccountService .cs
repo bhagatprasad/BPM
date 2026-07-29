@@ -2,6 +2,7 @@
 using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
+using BPM.Web.API.RabbitMQ.Publisher;
 using BPM.Web.API.Repository;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,6 +14,7 @@ namespace BPM.Web.API.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IRabbitMQPublisher _rabbitMQPublisher;
         public string _tokenKey { get; }
         private readonly ILogger<AccountService> _logger;
         private readonly IUserLoginHistoryRepository _loginHistoryRepository;
@@ -21,11 +23,12 @@ namespace BPM.Web.API.Services
         private readonly IDealerService _dealerService;
         private readonly IUserPasswordHistoryRepository _userPasswordHistoryRepository;
         private readonly IRoleService _roleService;
-        public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
+        public AccountService(IAccountRepository accountRepository, IRabbitMQPublisher rabbitMQPublisher, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
             IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository,
             IRoleService roleService)
         {
             _accountRepository = accountRepository;
+            _rabbitMQPublisher = rabbitMQPublisher;
             _logger = logger;
             _tokenKey = configuration.GetValue<string>("Jwt:Key");
             _loginHistoryRepository = loginHistoryRepository;
@@ -61,7 +64,20 @@ namespace BPM.Web.API.Services
                             // Generate refresh token
                             var generatedRefreshToken = RefreshTokenHelper.GenerateRefreshToken();
 
-                            await _refreshTokenRepository.CreateAsync(new RefreshToken
+                            //await _refreshTokenRepository.CreateAsync(new RefreshToken
+                            //{
+                            //    UserId = user.Id,
+                            //    RefreshTokenValue = generatedRefreshToken,
+                            //    JwtTokenId = Guid.NewGuid().ToString(),
+                            //    CreatedOn = DateTime.UtcNow,
+                            //    ExpiresOn = DateTime.UtcNow.AddDays(7),
+                            //    IsRevoked = false,
+                            //    IpAddress = GetIpAddress(),
+                            //    UserAgent = GetUserAgent(),
+                            //    CreatedBy = user.Id
+                            //});
+
+                            await _rabbitMQPublisher.PublishMessageAsync<RefreshToken>(new RefreshToken
                             {
                                 UserId = user.Id,
                                 RefreshTokenValue = generatedRefreshToken,
@@ -72,7 +88,7 @@ namespace BPM.Web.API.Services
                                 IpAddress = GetIpAddress(),
                                 UserAgent = GetUserAgent(),
                                 CreatedBy = user.Id
-                            });
+                            }, "RefreshTokenQueue");
 
                             // Set response
                             authResponse.JwtToken = jwtToken;
@@ -101,7 +117,7 @@ namespace BPM.Web.API.Services
                             if (user.RoleId != null)
                             {
                                 var roleInfo = await _roleService.GetRoleByIdAsync(user.RoleId);
-                               
+
                                 if (roleInfo != null)
                                 {
                                     authResponse.authenticateResponseDto.RoleInfo = roleInfo;
@@ -181,16 +197,12 @@ namespace BPM.Web.API.Services
                 return false;
 
             // Get last 5 passwords
-            var passwordHistory = await _userPasswordHistoryRepository
-                .GetLastFivePasswordsAsync(user.Id);
+            var passwordHistory = await _userPasswordHistoryRepository.GetLastFivePasswordsAsync(user.Id);
 
             // Verify against previous passwords
             foreach (var history in passwordHistory)
             {
-                bool isPasswordUsed = HashSalt.VerifyPassword(
-                    dto.NewPassword,
-                    history.PasswordHash,
-                    history.PasswordSalt);
+                bool isPasswordUsed = HashSalt.VerifyPassword(dto.NewPassword, history.PasswordHash, history.PasswordSalt);
 
                 if (isPasswordUsed)
                 {
@@ -198,27 +210,28 @@ namespace BPM.Web.API.Services
                 }
             }
 
-            // Save current password to history
-            await _userPasswordHistoryRepository.AddAsync(new UserPasswordHistory
+            // Generate new hash and salt
+            var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
+
+            // Save current password to history BEFORE updating
+            var currentPasswordHistory = new UserPasswordHistory
             {
                 UserId = user.Id,
                 PasswordHash = user.PasswordHash,
                 PasswordSalt = user.PasswordSalt,
                 CreatedOn = DateTime.UtcNow
-            });
+            };
 
-            // Generate new hash and salt
-            var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
+            // Use retry mechanism for reliability
+            await _rabbitMQPublisher.PublishMessageWithRetryAsync(currentPasswordHistory, "PasswordHistoryQueue");
 
+            // Update user with new password
             user.PasswordHash = hashSalt.Hash;
             user.PasswordSalt = hashSalt.Salt;
             user.ModifiedBy = user.Id;
             user.ModifiedOn = DateTime.UtcNow;
 
             await _accountRepository.UpdateUserAsync(user);
-
-            // Keep only latest 5 passwords
-            await _userPasswordHistoryRepository.DeleteOldPasswordsAsync(user.Id);
 
             return true;
         }
