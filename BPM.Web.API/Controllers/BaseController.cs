@@ -3,8 +3,6 @@ using System.Security.Claims;
 
 namespace BPM.Web.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class BaseController : ControllerBase
     {
         protected Guid UserId

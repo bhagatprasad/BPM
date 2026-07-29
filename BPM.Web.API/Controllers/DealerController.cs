@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
-    [Authorize(Roles = "Dealer,Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class DealerController : BaseController
