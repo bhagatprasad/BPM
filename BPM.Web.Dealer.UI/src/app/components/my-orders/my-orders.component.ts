@@ -1,8 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { CommonModule } from '@angular/common';
-import { GridModule } from 'smart-webcomponents-angular/grid';
+import { GridModule, GridComponent } from 'smart-webcomponents-angular/grid';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-orders',
@@ -11,10 +12,12 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
 })
-export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  constructor(private purchaseOrderServive: PurchaseOrderService, private ngZone: NgZone, private cdr: ChangeDetectorRef) { }
-
+export class MyOrdersComponent implements OnInit {
+  constructor(
+    private purchaseOrderServive: PurchaseOrderService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+  ) {}
 
   orders: any[] = [];
 
@@ -25,15 +28,22 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedOrder: any = null;
   showViewModal = false;
 
+  isLoading = false;
+
+  @ViewChild('grid', { static: false })
+  grid!: GridComponent;
+
   dataSourceSettings = {
     id: 'id',
     dataFields: [
       { name: 'id', dataType: 'string' },
       { name: 'poNumber', dataType: 'string' },
       { name: 'orderDate', dataType: 'date' },
-      { name: 'status', dataType: 'string' },
-      { name: 'supplierId', dataType: 'string' },
+      { name: 'expectedDeliveryDate', dataType: 'date' },
+      { name: 'subTotal', dataType: 'number' },
+      { name: 'taxAmount', dataType: 'number' },
       { name: 'totalAmount', dataType: 'number' },
+      { name: 'status', dataType: 'string' },
     ],
   };
 
@@ -41,42 +51,50 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       label: 'PO Number',
       dataField: 'poNumber',
-      align: 'center',
+      align: 'left',
       cellsAlign: 'center',
       dataType: 'string',
     },
+    {
+      label: 'Order Date',
+      dataField: 'orderDate',
+      align: 'left',
+      cellsAlign: 'center',
+      cellsFormat: 'dd-MMM-yyyy',
+    },
+    {
+      label: 'Expected Delivery',
+      width: 208,
+      dataField: 'expectedDeliveryDate',
+      align: 'left',
+      cellsAlign: 'center',
+      cellsFormat: 'dd-MMM-yyyy',
+    },
 
     {
-      label: 'Supplier',
-      dataField: 'supplierId',
-      width: 320,
+      label: 'Sub Total',
+      dataField: 'subTotal',
       align: 'left',
-      cellsAlign: 'left',
-
-      dataType: 'string',
+      cellsAlign: 'center',
+      dataType: 'number',
+      formatFunction: this.currencyFormatter,
+    },
+    {
+      label: 'Tax Amount',
+      dataField: 'taxAmount',
+      align: 'left',
+      cellsAlign: 'center',
+      dataType: 'number',
+      formatFunction: this.currencyFormatter,
     },
     // { label: 'Total Amount', dataField: 'totalAmount', dataType: 'number', cellsFormat: 'c2' },//its showed dollor symbol
     {
       label: 'Total Amount',
       dataField: 'totalAmount',
-      align: 'right',
-      cellsAlign: 'right',
-      dataType: 'number',
-      formatFunction(settings: any) {
-        settings.value =
-          '₹' +
-          Number(settings.value).toLocaleString('en-IN', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-      },
-    },
-    {
-      label: 'Order Date',
-      dataField: 'orderDate',
-      align: 'center',
+      align: 'left',
       cellsAlign: 'center',
-      cellsFormat: 'dd-MMM-yyyy',
+      dataType: 'number',
+      formatFunction: this.currencyFormatter,
     },
     {
       label: 'Status',
@@ -151,6 +169,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOrders(): void {
+    this.isLoading = true;
     const authData = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
 
     const dealerId = authData.authenticateResponseDto.dealerId;
@@ -165,11 +184,12 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.draftOrders = this.orders.filter((x) => x.status === 'Draft').length;
 
         this.totalOrderValue = this.orders.reduce((sum, order) => sum + order.totalAmount, 0);
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
-
       error: (error) => {
         console.error(error);
+        this.isLoading = false;
       },
     });
   }
@@ -179,6 +199,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (response) => {
         this.selectedOrder = response;
         this.showViewModal = true;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
@@ -186,36 +207,34 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private clickHandler = (event: any) => {
-    const target = event.target as HTMLElement;
-    const id = target.getAttribute('data-id');
+  onCellClick(event: any): void {
+    const target = event.detail.originalEvent.target as HTMLElement;
 
-    if (!id) return;
+    if (!target) {
+      return;
+    }
+
+    const id = event.detail.id;
+
+    if (!id) {
+      return;
+    }
 
     if (target.classList.contains('view-order')) {
-      this.ngZone.run(() => {
-        this.viewOrder(id);
-      });
+      this.viewOrder(id);
+      console.log('👁️ purchase_orders id: ', id);
     }
 
     if (target.classList.contains('pdf-order')) {
-      this.ngZone.run(() => {
-        this.downloadPdf(id);
-      });
+      this.downloadPdf(id);
+      console.log(id);
     }
-  };
+  }
+
   downloadPdf(id: string): void {
     console.log('Download PDF:', id);
 
     // We'll connect the backend API here later.
-  }
-
-  ngAfterViewInit(): void {
-    document.addEventListener('click', this.clickHandler);
-  }
-
-  ngOnDestroy(): void {
-    document.removeEventListener('click', this.clickHandler);
   }
   appearancegrid = {
     showColumnHeaderLines: true,
@@ -236,4 +255,57 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   filtering_grid = {
     enabled: true,
   };
+
+  navigateToDrugCatalog(): void {
+    this.router.navigate(['/drugs-catalog']);
+  }
+
+  currencyFormatter(settings: any) {
+    settings.value =
+      '₹' +
+      Number(settings.value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+  }
+
+  exportData(): void {
+    if (!this.orders.length) {
+      return;
+    }
+    const headers = [
+      'PO Number',
+      'Order Date',
+      'Expected Delivery',
+      'Sub Total',
+      'Tax Amount',
+      'Total Amount',
+      'Status',
+    ];
+
+    const rows = this.orders.map((order) => [
+      order.poNumber,
+      new Date(order.orderDate).toLocaleDateString('en-GB'),
+      new Date(order.expectedDeliveryDate).toLocaleDateString('en-GB'),
+      order.subTotal,
+      order.taxAmount,
+      order.totalAmount,
+      order.status,
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((row) => row.join('    '))].join('\n');
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    const today = new Date().toISOString().split('T')[0];
+    link.download = `PurchaseOrders_${today}.csv`;
+    // link.download = `PurchaseOrders_${today}.txt`;
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+  }
 }
