@@ -17,54 +17,42 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region Configure Logging
-
-// Clear default providers
+// ============================================================
+// LOGGING CONFIGURATION
+// ============================================================
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Setup log4net with daily rolling
 var log4netConfigFile = new FileInfo("log4net.config");
-
-// Ensure log4net is configured
 if (!log4netConfigFile.Exists)
 {
-    throw new FileNotFoundException("log4net.config file not found. Please ensure it exists in the project root.");
+    throw new FileNotFoundException("log4net.config file not found.");
 }
 
-// Create Logs directory if it doesn't exist
 var logDirectory = Path.Combine(builder.Environment.ContentRootPath, "Logs");
 if (!Directory.Exists(logDirectory))
 {
     Directory.CreateDirectory(logDirectory);
 }
 
-// Set dynamic log file path
-// This will create: Logs/AppLog.txt (current day) and Logs/AppLog.txt.2026-07-15 (previous days)
 var logPath = Path.Combine(logDirectory, "AppLog.txt");
 GlobalContext.Properties["LogFileName"] = logPath;
-
-// Configure log4net
 XmlConfigurator.Configure(log4netConfigFile);
-
-// Add log4net provider - CORRECTED: Use ILoggerFactory
 builder.Logging.AddLog4Net();
 
-// Optional: Log application startup
 var startupLogger = builder.Services.BuildServiceProvider()
     .GetRequiredService<ILogger<Program>>();
 startupLogger.LogInformation($"Application starting. Log file path: {logPath}");
 
-#endregion
-
-// Add services to the container
+// ============================================================
+// SERVICES
+// ============================================================
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -75,41 +63,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.Configure<RabbitMQSettings>(
     builder.Configuration.GetSection("RabbitMQ"));
-#region Register Services
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IDealerService, DealerService>();
-builder.Services.AddScoped<IDrugService, DrugService>();
-builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
-builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
-builder.Services.AddScoped<ISupplierService, SupplierService>();
-builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
-builder.Services.AddScoped<IDrugUomService, DrugUomService>();
-builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
-builder.Services.AddScoped<IDrugFormService, DrugFormService>();
-builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
-builder.Services.AddHttpContextAccessor();
-//builder.Services.AddHostedService<RefreshTokenCleanupService>();
-builder.Services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
-//builder.Services.AddHostedService<RabbitMQSubscriber>();
-//builder.Services.AddHostedService<PasswordHistorySubscriber>();
 
-//builder.Services.AddHostedService<UserLoginHistorySubscriber>();
-
-//builder.Services.AddHostedService<RefreshTokenSubscriber>();
-builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
-
-
-#endregion
-
-#region Register Repositories
+// Repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
@@ -126,10 +86,38 @@ builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
 builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
-//builder.Services.AddHostedService<PasswordHistorySubscriber>();
-#endregion
 
-#region JWT Authentication
+// Services
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDealerService, DealerService>();
+builder.Services.AddScoped<IDrugService, DrugService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<IDrugUomService, DrugUomService>();
+builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
+builder.Services.AddScoped<IDrugFormService, DrugFormService>();
+builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
+
+// RabbitMQ
+builder.Services.AddSingleton<RabbitMQPublisher>();
+builder.Services.AddSingleton<IRabbitMQPublisher>(sp => sp.GetRequiredService<RabbitMQPublisher>());
+builder.Services.AddHostedService<PasswordHistorySubscriber>();
+builder.Services.AddHostedService<UserLoginHistorySubscriber>();
+builder.Services.AddHostedService<RefreshTokenSubscriber>();
+
+// Health Checks
+builder.Services.AddHealthChecks().AddCheck<RabbitMQHealthCheck>("rabbitmq");
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddEndpointsApiExplorer();
+
+// ============================================================
+// JWT AUTHENTICATION
+// ============================================================
 var tokenKey = builder.Configuration.GetValue<string>("Jwt:Key");
 if (string.IsNullOrEmpty(tokenKey))
 {
@@ -153,10 +141,10 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false
     };
 });
-#endregion
 
-#region Configure Swagger
-builder.Services.AddEndpointsApiExplorer();
+// ============================================================
+// SWAGGER
+// ============================================================
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -171,7 +159,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // Add JWT Authentication to Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token",
@@ -196,17 +183,18 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-#endregion
 
+// ============================================================
+// BUILD APP
+// ============================================================
 var app = builder.Build();
 
-#region Configure Middleware
-
-// Configure exception handling
+// ============================================================
+// MIDDLEWARE
+// ============================================================
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 app.ConfigureExceptionHandler(logger);
 
-// Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -218,17 +206,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAngular");
-
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 
-// Log successful startup
+app.MapControllers();
+app.MapHealthChecks("/health");
+
 var startupLogger2 = app.Services.GetRequiredService<ILogger<Program>>();
 startupLogger2.LogInformation("Application started successfully");
-
-#endregion
 
 app.Run();
