@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { CommonModule } from '@angular/common';
 import { GridModule } from 'smart-webcomponents-angular/grid';
@@ -12,6 +12,10 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './my-orders.component.css',
 })
 export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  constructor(private purchaseOrderServive: PurchaseOrderService, private ngZone: NgZone, private cdr: ChangeDetectorRef) { }
+
+
   orders: any[] = [];
 
   totalOrders = 0;
@@ -142,11 +146,6 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  constructor(
-    private purchaseOrderServive: PurchaseOrderService,
-    private ngZone: NgZone,
-  ) {}
-
   ngOnInit(): void {
     this.loadOrders();
   }
@@ -166,6 +165,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.draftOrders = this.orders.filter((x) => x.status === 'Draft').length;
 
         this.totalOrderValue = this.orders.reduce((sum, order) => sum + order.totalAmount, 0);
+        this.cdr.detectChanges();
       },
 
       error: (error) => {

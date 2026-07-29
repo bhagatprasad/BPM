@@ -7,23 +7,18 @@ import { UpdateUserRequest, UpdateUserResponse } from '../models/user-profile';
   providedIn: 'root'
 })
 export class UserService {
-constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) { }
 
-  
+
   updateUserProfile(userId: string, data: UpdateUserRequest): Observable<UpdateUserResponse> {
     // Replace {userId} in the endpoint with actual userId
-    const endpoint = `User/updateuser/${userId}`;
-    
-    return this.apiService.send<UpdateUserResponse>(
-      'POST',
-      endpoint,
-      data
-    );
+    const endpoint = `user/updateuser/${userId}`;
+    return this.apiService.send<UpdateUserResponse>('PUT', endpoint, data);
   }
 
-   updateUserProfilePut(userId: string, data: UpdateUserRequest): Observable<UpdateUserResponse> {
-    const endpoint = `User/updateuser/${userId}`;
-    
+  updateUserProfilePut(userId: string, data: UpdateUserRequest): Observable<UpdateUserResponse> {
+    const endpoint = `user/updateuser/${userId}`;
+
     return this.apiService.send<UpdateUserResponse>(
       'PUT',
       endpoint,
@@ -31,8 +26,8 @@ constructor(private apiService: ApiService) {}
     );
   }
   updateUserProfilePatch(userId: string, data: Partial<UpdateUserRequest>): Observable<UpdateUserResponse> {
-    const endpoint = `User/updateuser/${userId}`;
-    
+    const endpoint = `user/updateuser/${userId}`;
+
     return this.apiService.send<UpdateUserResponse>(
       'PATCH',
       endpoint,
@@ -40,6 +35,6 @@ constructor(private apiService: ApiService) {}
     );
   }
 
-  
+
 }
 
