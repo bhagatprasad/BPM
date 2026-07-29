@@ -39,10 +39,12 @@ export interface AuthenticateResponse {
 }
 
 export interface UpdateUserRequest {
+  userId: string,
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
+  modifiedBy: string
 }
 
 export interface UpdateUserResponse {
