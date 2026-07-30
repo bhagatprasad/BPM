@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using BPM.Web.API.CustomFilters;
 
 namespace BPM.Web.API.Controllers
 {
+    [BPMAuthorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class DrugController : ControllerBase
+    public class DrugController : BaseController
     {
         private readonly IDrugService _drugService;
         private readonly ILogger<DrugController> _logger;

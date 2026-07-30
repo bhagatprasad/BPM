@@ -210,28 +210,22 @@ namespace BPM.Web.API.Services
                 }
             }
 
+            // Generate new hash and salt
             var hashSalt = HashSalt.GenerateSaltedHash(dto.NewPassword);
 
-
-            // Save current password to history
-            //await _userPasswordHistoryRepository.AddAsync(new UserPasswordHistory
-            //{
-            //    UserId = user.Id,
-            //    PasswordHash = hashSalt.Hash,
-            //    PasswordSalt = hashSalt.Salt,
-            //    CreatedOn = DateTime.UtcNow
-            //});
-
-            await _rabbitMQPublisher.PublishMessageAsync<UserPasswordHistory>(new UserPasswordHistory
+            // Save current password to history BEFORE updating
+            var currentPasswordHistory = new UserPasswordHistory
             {
                 UserId = user.Id,
                 PasswordHash = user.PasswordHash,
                 PasswordSalt = user.PasswordSalt,
                 CreatedOn = DateTime.UtcNow
-            }, "PasswordHistoryQueue");
+            };
 
-            // Generate new hash and salt
+            // Use retry mechanism for reliability
+            await _rabbitMQPublisher.PublishMessageWithRetryAsync(currentPasswordHistory, "PasswordHistoryQueue");
 
+            // Update user with new password
             user.PasswordHash = hashSalt.Hash;
             user.PasswordSalt = hashSalt.Salt;
             user.ModifiedBy = user.Id;
@@ -367,15 +361,27 @@ namespace BPM.Web.API.Services
 
             var key = Encoding.ASCII.GetBytes(_tokenKey);
 
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, jwtId),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Name, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                new Claim("UserId", user.Id.ToString()), 
+                new Claim("FullName", $"{user.FirstName} {user.LastName}".Trim())
+            };
+
+            if (!string.IsNullOrEmpty(user.LastName))
+            {
+                claims.Add(new Claim(ClaimTypes.Surname, user.LastName));
+            }
+
+
             var descriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Jti, jwtId),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.RoleId.ToString())
-                }),
+                Subject = new ClaimsIdentity(claims),
 
                 Expires = DateTime.UtcNow.AddHours(1),
 

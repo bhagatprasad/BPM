@@ -1,15 +1,15 @@
-﻿using BPM.Web.API.Models.DTOs.Packaging;
-using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.DTOs.Packaging;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Service;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
+    [BPMAuthorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PackagingMasterController : ControllerBase
+    public class PackagingMasterController :  BaseController
     {
         private readonly IPackagingMasterService _packagingMasterService;
         private readonly ILogger<PackagingMasterController> _logger;
@@ -26,6 +26,8 @@ namespace BPM.Web.API.Controllers
         {
             try
             {
+                var currentUser = UserId;
+
                 _logger.LogInformation("Fetching all Packaging.");
 
                 var data = await _packagingMasterService.GetAllAsync();
