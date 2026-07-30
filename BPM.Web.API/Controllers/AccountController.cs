@@ -10,7 +10,7 @@ namespace BPM.Web.API.Controllers
     [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
         private readonly IAccountService _service;
         private readonly ILogger<AccountController> _logger;

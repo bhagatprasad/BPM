@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
+    [BPMAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
