@@ -9,7 +9,7 @@ namespace BPM.Web.API.Controllers
     [BPMAuthorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PurchaseOrderController : ControllerBase
+    public class PurchaseOrderController : BaseController
     {
         private readonly IPurchaseOrderService _service;
         private readonly ILogger<PurchaseOrderController> _logger;

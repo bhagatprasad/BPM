@@ -2,13 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using System.Text;
 
 namespace BPM.Web.API.CustomFilters
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.All | AttributeTargets.Method)]
     public class BPMAuthorize : Attribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationFilterContext filterContext)
@@ -35,12 +37,16 @@ namespace BPM.Web.API.CustomFilters
                         var identity = new ClaimsIdentity(jwtToken.Claims, "jwt");
                         filterContext.HttpContext.User = new ClaimsPrincipal(identity);
 
-                        // Store User Information in HttpContext.Items
+                        // Store User Information in HttpContext.Items with fallback claims
                         filterContext.HttpContext.Items["AccessToken"] = authToken;
-                        filterContext.HttpContext.Items["UserId"] = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                        filterContext.HttpContext.Items["Email"] = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-                        filterContext.HttpContext.Items["Role"] = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-                        filterContext.HttpContext.Items["UserName"] = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+                        filterContext.HttpContext.Items["UserId"] = jwtToken.Claims
+                            .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier || x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+                        filterContext.HttpContext.Items["Email"] = jwtToken.Claims
+                            .FirstOrDefault(x => x.Type == ClaimTypes.Email || x.Type == JwtRegisteredClaimNames.Email)?.Value;
+                        filterContext.HttpContext.Items["Role"] = jwtToken.Claims
+                            .FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+                        filterContext.HttpContext.Items["Name"] = jwtToken.Claims
+                            .FirstOrDefault(x => x.Type == ClaimTypes.Name || x.Type == JwtRegisteredClaimNames.Name)?.Value;
 
                         filterContext.HttpContext.Response.Headers.Add("Authorization", authToken);
                         filterContext.HttpContext.Response.Headers.Add("AuthStatus", "Authorized");
@@ -55,8 +61,11 @@ namespace BPM.Web.API.CustomFilters
 
                         filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
-                        filterContext.HttpContext.Response.HttpContext.Features
-                            .Get<IHttpResponseFeature>().ReasonPhrase = "Unauthorized";
+                        var responseFeature = filterContext.HttpContext.Features.Get<IHttpResponseFeature>();
+                        if (responseFeature != null)
+                        {
+                            responseFeature.ReasonPhrase = "Unauthorized";
+                        }
 
                         filterContext.Result = new JsonResult(new
                         {
@@ -71,7 +80,11 @@ namespace BPM.Web.API.CustomFilters
                 {
                     filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
-                    filterContext.HttpContext.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "Authorization Token Required";
+                    var responseFeature = filterContext.HttpContext.Features.Get<IHttpResponseFeature>();
+                    if (responseFeature != null)
+                    {
+                        responseFeature.ReasonPhrase = "Authorization Token Required";
+                    }
 
                     filterContext.Result = new JsonResult(new
                     {
@@ -114,8 +127,11 @@ namespace BPM.Web.API.CustomFilters
             var jwtSecurityToken = handler.ReadJwtToken(token);
 
             var tokenExp = jwtSecurityToken.Claims
-                .First(claim => claim.Type.Equals("exp"))
+                .FirstOrDefault(claim => claim.Type.Equals("exp") || claim.Type.Equals(JwtRegisteredClaimNames.Exp))?
                 .Value;
+
+            if (string.IsNullOrEmpty(tokenExp))
+                throw new Exception("Token expiration claim not found");
 
             return long.Parse(tokenExp);
         }

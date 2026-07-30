@@ -10,7 +10,7 @@ namespace BPM.Web.API.Controllers
     [BPMAuthorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class DrugController : ControllerBase
+    public class DrugController : BaseController
     {
         private readonly IDrugService _drugService;
         private readonly ILogger<DrugController> _logger;

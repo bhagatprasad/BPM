@@ -9,7 +9,7 @@ namespace BPM.Web.API.Controllers
     [BPMAuthorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class SupplierController : ControllerBase
+    public class SupplierController : BaseController
     {
         private readonly ISupplierService _service;
         private readonly ILogger<SupplierController> _logger;
