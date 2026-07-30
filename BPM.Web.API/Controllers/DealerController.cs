@@ -85,25 +85,20 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateDealerDto dealerDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] DealerUpdatedDto dealerDto)
         {
             try
             {
-                _logger.LogInformation("Updating dealer.");
+                _logger.LogInformation("Updating dealer.");       
+                                 
+                var result = await _dealerService.UpdateDealerAsync(id, dealerDto);
 
-                if (id != dealerDto.Id)
+                if (result != null)
                 {
-                    return BadRequest("Route Id and Dealer Id do not match.");
+                    return Ok(new { data = result, message = "Dealer information updated successfully." });
                 }
 
-                var result = await _dealerService.UpdateDealerAsync(dealerDto);
-
-                if (!result)
-                {
-                    return NotFound();
-                }
-
-                return Ok(result);
+                return BadRequest("Route Id and Dealer Id do not match.");
             }
             catch (Exception ex)
             {

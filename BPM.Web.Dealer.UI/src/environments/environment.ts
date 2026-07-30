@@ -17,5 +17,8 @@ export const environment = {
     User: {
       updateUserProfile: 'User',
     },
+    Dealer:{
+      updateDealerAsync:'Dealer'
+    }
   },
 };

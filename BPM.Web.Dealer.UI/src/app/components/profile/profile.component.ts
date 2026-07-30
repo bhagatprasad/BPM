@@ -16,6 +16,7 @@ import { SpinnerLoadingService } from '../../common/services/spinner-loading-ser
 })
 export class ProfileComponent implements OnInit {
 
+
   userData: any = null;
   isAdmin: boolean = false;
 
@@ -53,6 +54,7 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
 
   userId: string = '';
+isDealerEditing: any;
 
   constructor(
     private userService: UserService,
@@ -129,6 +131,13 @@ export class ProfileComponent implements OnInit {
     this.clearMessages();
   }
 
+   enableDealerEdit():void {
+    this.isDealerEditing = true;
+    this.clearMessages();
+
+
+  }
+
   // ============ VALIDATION METHODS ============
 
   private validateUserData(): boolean {
@@ -156,16 +165,118 @@ export class ProfileComponent implements OnInit {
     return true;
   }
 
-  private getUpdateData(): UpdateUserRequest {
-    return {
+  private updatedUserData = {
+    
       firstName: this.userSection.firstName.trim(),
       lastName: this.userSection.lastName.trim(),
       email: this.userSection.email.trim(),
       phone: this.userSection.phone.trim(),
       userId: this.userId,
       modifiedBy: this.userId
-    };
+    
+  };
+ 
+  private validateDealerData(): boolean {
+    if(!this.dealerSection?.dealershipName?.trim())
+    {
+      this.errorMessage ='Please enter dealer name';
+      return false;
+    }
+    if(!this.dealerSection?.contactPerson?.trim())
+    {
+      this.errorMessage='please enter contactPerson';
+       return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(emailRegex.test(this.dealerSection?.email))
+    {
+      this.errorMessage='please enter valid email address';
+      return false;
+    }
+    if(!this.dealerSection?.phone.trim()||this.dealerSection?.phone.length<10)
+    {
+      this.errorMessage = 'please enter valid phone number(minumum 10 digits)';
+      return false;
+    }
+    if(!this.dealerSection.alternatePhone?.trim() || this.dealerSection?.alternatePhone.length<10 )
+    {
+      this.errorMessage ='please enter valid phone number(minumum 10 digits)';
+      return false;
+    }
+    if(!this.dealerSection?.addressLine1?.trim())
+    {
+      this.errorMessage ='please enter addressLine1';
+      return false
+    }
+    if(!this.dealerSection?.addressLine2?.trim())
+    {
+      this.errorMessage ='please enter addressLine2';
+      return false;
+    }
+    if(!this.dealerSection?.city?.trim())
+    {
+      this.errorMessage ='please enter city name';
+      return false;
+    }
+    if(!this.dealerSection?.state?.trim())
+    {
+      this.errorMessage ='please enter state name';
+      return false;
+    }
+    if(!this.dealerSection?.country?.trim())
+    {
+      this.errorMessage ='please enter country name';
+      return false;
+    }
+    if(!this.dealerSection?.postalCode?.trim())
+    {
+      this.errorMessage ='please enter postalCode name';
+      return false;
+    }
+    if(!this.dealerSection?.gstNumber?.trim())
+    {
+      this.errorMessage ='please enter gstNumber name';
+      return false;
+    }
+    if(!this.dealerSection?.registrationNumber?.trim())
+    {
+      this.errorMessage ='please enter registrationNumber name';
+      return false;
+    }
+    if(!this.dealerSection?.tradeLicenseNumber?.trim())
+    {
+      this.errorMessage ='please enter tradeLicenseNumber name';
+      return false;
+    }
+    const websiteRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
+
+    if (!websiteRegex.test(this.dealerSection.website.trim()))
+    {
+       this.errorMessage = 'Please enter a valid website';
+       return false;
+    }
+    return true
+
   }
+   private updatedDealer={
+          dealershipName :this.dealerSection.dealershipName.trim(),
+          contactPerson : this.dealerSection.contactPerson.trim(),
+          email : this.dealerSection.contactPerson.trim(),
+          phone : this.dealerSection.phone.trim(),
+          alternatePhone : this.dealerSection.alternatePhone.trim(),
+          addressLine1 : this.dealerSection.addressLine1.trim(),
+          addressLine2 : this.dealerSection.addressLine2.trim(),
+          city : this.dealerSection.city.trim(),
+          state : this.dealerSection.state.trim(),
+          country : this.dealerSection.country.trim(),
+          postalCode : this.dealerSection.postalCode.trim(),
+          gstNumber : this.dealerSection.gstNumber.trim(),
+          registrationNumber : this.dealerSection.gstNumber.trim(),
+          tradeLicenseNumber : this.dealerSection.tradeLicenseNumber.trim(),
+          website :this.dealerSection.website.trim(),
+          
+  }
+
 
   // ============ UPDATE METHODS ============
 
@@ -175,7 +286,7 @@ export class ProfileComponent implements OnInit {
       this.loader.hide();
       return;
     }
-    const updateData = this.getUpdateData();
+    const updateData = this.updatedUserData;
     this.userService.updateUserProfile(this.userId, updateData).subscribe({
       next: (response) => {
         console.log(response.message);
@@ -194,7 +305,15 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-
+saveDealerChanges() {
+this.loader.show();
+if(!this.validateDealerData())
+{
+  this.loader.hide();
+  return ;
+}
+const updatedDealerData = this.updatedDealer
+}
   // ============ RESPONSE HANDLING METHODS ============
   private updateUserDataInStorage(responseData: UpdateUserResponse): void {
     if (!this.userData?.authenticateResponseDto) {
@@ -209,9 +328,7 @@ export class ProfileComponent implements OnInit {
     this.originalUserData = { ...this.userSection };
   }
 
-  enableDealerEdit() {
-
-  }
+ 
   // ============ UTILITY METHODS ============
 
   private clearMessages(): void {
