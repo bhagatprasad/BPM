@@ -10,7 +10,7 @@ namespace BPM.Web.API.Services
 
         Task<bool> InsertDealerAsync(CreateDealerDto dealer);
 
-        Task<bool> UpdateDealerAsync(UpdateDealerDto dealer);
+        Task<DealerUpdatedDto> UpdateDealerAsync(Guid id, DealerUpdatedDto dealer);
 
         Task<bool> DeleteDealerAsync(Guid dealerId);
     }

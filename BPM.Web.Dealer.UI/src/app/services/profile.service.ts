@@ -16,24 +16,6 @@ export class UserService {
     return this.apiService.send<UpdateUserResponse>('PUT', endpoint, data);
   }
 
-  updateUserProfilePut(userId: string, data: UpdateUserRequest): Observable<UpdateUserResponse> {
-    const endpoint = `user/updateuser/${userId}`;
-
-    return this.apiService.send<UpdateUserResponse>(
-      'PUT',
-      endpoint,
-      data
-    );
-  }
-  updateUserProfilePatch(userId: string, data: Partial<UpdateUserRequest>): Observable<UpdateUserResponse> {
-    const endpoint = `user/updateuser/${userId}`;
-
-    return this.apiService.send<UpdateUserResponse>(
-      'PATCH',
-      endpoint,
-      data
-    );
-  }
 
 
 }

@@ -34,6 +34,31 @@ namespace BPM.Web.API.Models.Mappers
             return dealers.Select(d => d.ToDto()).ToList();
         }
 
+        public static Dealer ToUpdatedDto(this DealerUpdatedDto dto)
+        {
+            return new Dealer
+            {
+
+                Id = dto.Id,
+                DealershipName = dto.DealershipName,
+                ContactPerson = dto.ContactPerson,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                AlternatePhone = dto.AlternatePhone,
+                AddressLine1 = dto.AddressLine1,
+                AddressLine2 = dto.AddressLine2,
+                City = dto.City,
+                State = dto.State,
+                Country = dto.Country,
+                PostalCode = dto.PostalCode,
+                GSTNumber = dto.GSTNumber,
+                RegistrationNumber = dto.RegistrationNumber,
+                TradeLicenseNumber = dto.TradeLicenseNumber,
+                Website = dto.Website,
+
+            };
+        }
+
         public static Dealer ToEntity(this CreateDealerDto dto)
         {
             return new Dealer
@@ -104,5 +129,28 @@ namespace BPM.Web.API.Models.Mappers
                 ModifiedOn = DateTime.UtcNow
             };
         }
+        public static Dealer ToEntity(this DealerUpdatedDto dto)
+        {
+            return new Dealer
+            {
+                Id = dto.Id,
+                DealershipName = dto.DealershipName,
+                ContactPerson = dto.ContactPerson,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                AlternatePhone = dto.AlternatePhone,
+                AddressLine1 = dto.AddressLine1,
+                AddressLine2 = dto.AddressLine2,
+                City = dto.City,
+                State = dto.State,
+                Country = dto.Country,
+                PostalCode = dto.PostalCode,
+                RegistrationNumber = dto.RegistrationNumber,
+                TradeLicenseNumber = dto.TradeLicenseNumber,
+                Website = dto.Website,                
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
+       
     }
 }

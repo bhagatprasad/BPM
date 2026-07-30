@@ -80,31 +80,27 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<bool> UpdateDealerAsync(UpdateDealerDto dealerDto)
+        public async Task<DealerUpdatedDto> UpdateDealerAsync(Guid id, DealerUpdatedDto dealerDto)
         {
             try
             {
-                _logger.LogInformation("Updating dealer");
+                dealerDto.Id = id;
+                var dealer = dealerDto.ToUpdatedDto;
 
-                var existingDealer = await _dealerRepository.GetDealerByIdAsync(dealerDto.Id);
+                var ExistingDealer = await _dealerRepository.GetDealerByIdAsync(id);
 
-                if (existingDealer == null)
+                if (ExistingDealer == null)
                 {
-                    _logger.LogWarning("Dealer not found with Id {DealerId}", dealerDto.Id);
-                    return false;
+                    return null;
                 }
 
-                dealerDto.MapToEntity(existingDealer);
+                var NewDealer = await _dealerRepository.UpdateDealerAsync(dealer);
 
-                var result = await _dealerRepository.UpdateDealerAsync(existingDealer);
 
-                if (!result)
-                {
-                    _logger.LogWarning("Failed to update dealer");
-                    return false;
-                }
+                var updatedDealer = await _dealerRepository.GetDealerByIdAsync(id);
 
-                return true;
+                DealerUpdatedDto dealerUpdatedResponse = ExistingDealer.ToUpdatedDto();
+                return dealerUpdatedResponse;
             }
             catch (Exception ex)
             {
