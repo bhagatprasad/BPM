@@ -1,7 +1,6 @@
 ﻿using BPM.Web.API.CustomFilters;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
@@ -21,6 +20,7 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpGet]
+        [Route("getalldealers")]
         public async Task<IActionResult> GetDealers()
         {
             try
@@ -38,14 +38,15 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetDealer(Guid id)
+        [HttpGet]
+        [Route("getdealerbyid/{dealerId}")]
+        public async Task<IActionResult> GetDealer(Guid dealerId)
         {
             try
             {
-                _logger.LogInformation("Fetching dealer with Id {DealerId}", id);
+                _logger.LogInformation("Fetching dealer with Id {DealerId}", dealerId);
 
-                var dealer = await _dealerService.GetDealerByIdAsync(id);
+                var dealer = await _dealerService.GetDealerByIdAsync(dealerId);
 
                 if (dealer == null)
                 {
@@ -56,13 +57,14 @@ namespace BPM.Web.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching dealer with Id {DealerId}", id);
+                _logger.LogError(ex, "Error occurred while fetching dealer with Id {DealerId}", dealerId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateDealerDto dealerDto)
+        [Route("onboarddealer")]
+        public async Task<IActionResult> Create(CreateDealerDto dealerDto)
         {
             try
             {
@@ -84,14 +86,15 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] DealerUpdatedDto dealerDto)
+        [HttpPut]
+        [Route("updatedealer/{dealerId}")]
+        public async Task<IActionResult> Update(Guid dealerId, DealerUpdatedDto dealerDto)
         {
             try
             {
-                _logger.LogInformation("Updating dealer.");       
-                                 
-                var result = await _dealerService.UpdateDealerAsync(id, dealerDto);
+                _logger.LogInformation("Updating dealer.");
+
+                var result = await _dealerService.UpdateDealerAsync(dealerId, dealerDto);
 
                 if (result != null)
                 {
@@ -102,19 +105,20 @@ namespace BPM.Web.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating dealer with Id {DealerId}", id);
+                _logger.LogError(ex, "Error occurred while updating dealer with Id {DealerId}", dealerId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete]
+        [Route("deactivatedealer/{dealerId}")]
+        public async Task<IActionResult> Delete(Guid dealerId)
         {
             try
             {
-                _logger.LogInformation("Deleting dealer with Id {DealerId}", id);
+                _logger.LogInformation("Deleting dealer with Id {DealerId}", dealerId);
 
-                var result = await _dealerService.DeleteDealerAsync(id);
+                var result = await _dealerService.DeleteDealerAsync(dealerId);
 
                 if (!result)
                 {
@@ -125,7 +129,7 @@ namespace BPM.Web.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting dealer with Id {DealerId}", id);
+                _logger.LogError(ex, "Error occurred while deleting dealer with Id {DealerId}", dealerId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }

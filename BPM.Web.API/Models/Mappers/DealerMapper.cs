@@ -7,7 +7,7 @@ namespace BPM.Web.API.Models.Mappers
     {
         public static DealerDto ToDto(this Dealer dealer)
         {
-            return new DealerDto
+            DealerDto dealerDto = new DealerDto
             {
                 Id = dealer.Id,
                 DealershipName = dealer.DealershipName,
@@ -27,36 +27,13 @@ namespace BPM.Web.API.Models.Mappers
                 Website = dealer.Website,
                 IsActive = dealer.IsActive
             };
+
+            return dealerDto;
         }
 
         public static List<DealerDto> ToDto(this IEnumerable<Dealer> dealers)
         {
             return dealers.Select(d => d.ToDto()).ToList();
-        }
-
-        public static Dealer ToUpdatedDto(this DealerUpdatedDto dto)
-        {
-            return new Dealer
-            {
-
-                Id = dto.Id,
-                DealershipName = dto.DealershipName,
-                ContactPerson = dto.ContactPerson,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                AlternatePhone = dto.AlternatePhone,
-                AddressLine1 = dto.AddressLine1,
-                AddressLine2 = dto.AddressLine2,
-                City = dto.City,
-                State = dto.State,
-                Country = dto.Country,
-                PostalCode = dto.PostalCode,
-                GSTNumber = dto.GSTNumber,
-                RegistrationNumber = dto.RegistrationNumber,
-                TradeLicenseNumber = dto.TradeLicenseNumber,
-                Website = dto.Website,
-
-            };
         }
 
         public static Dealer ToEntity(this CreateDealerDto dto)
@@ -84,73 +61,26 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static void MapToEntity(this UpdateDealerDto dto, Dealer dealer)
+        public static Dealer ToUpdateDealerEntity(this DealerUpdatedDto dealerDto, Dealer dbDealer)
         {
-            dealer.DealershipName = dto.DealershipName;
-            dealer.RegistrationNumber = dto.RegistrationNumber;
-            dealer.TradeLicenseNumber = dto.TradeLicenseNumber;
-            dealer.GSTNumber = dto.GSTNumber;
-            dealer.ContactPerson = dto.ContactPerson;
-            dealer.Email = dto.Email;
-            dealer.Phone = dto.Phone;
-            dealer.AlternatePhone = dto.AlternatePhone;
-            dealer.AddressLine1 = dto.AddressLine1;
-            dealer.AddressLine2 = dto.AddressLine2;
-            dealer.City = dto.City;
-            dealer.State = dto.State;
-            dealer.Country = dto.Country;
-            dealer.PostalCode = dto.PostalCode;
-            dealer.Website = dto.Website;
-            dealer.IsActive = dto.IsActive;
-            dealer.ModifiedOn = DateTime.UtcNow;
+            dbDealer.RegistrationNumber = dealerDto.RegistrationNumber;
+            dbDealer.DealershipName = dealerDto.DealershipName;
+            dbDealer.ContactPerson = dealerDto.ContactPerson;
+            dbDealer.Email = dealerDto.Email;
+            dbDealer.Phone = dealerDto.Phone;
+            dbDealer.AlternatePhone = dealerDto.AlternatePhone;
+            dbDealer.AddressLine1 = dealerDto.AddressLine1;
+            dbDealer.AddressLine2 = dealerDto.AddressLine2;
+            dbDealer.City = dealerDto.City;
+            dbDealer.State = dealerDto.State;
+            dbDealer.Country = dealerDto.Country;
+            dbDealer.PostalCode = dealerDto.PostalCode;
+            dbDealer.GSTNumber = dealerDto.GSTNumber;
+            dbDealer.TradeLicenseNumber = dealerDto.TradeLicenseNumber;
+            dbDealer.Website = dealerDto.Website;
+            dbDealer.ModifiedBy = dealerDto.ModifiedBy;
+            dbDealer.ModifiedOn = DateTime.Now;
+            return dbDealer;
         }
-
-        public static Dealer ToEntity(this UpdateDealerDto dto)
-        {
-            return new Dealer
-            {
-                Id = dto.Id,
-                DealershipName = dto.DealershipName,
-                RegistrationNumber = dto.RegistrationNumber,
-                TradeLicenseNumber = dto.TradeLicenseNumber,
-                GSTNumber = dto.GSTNumber,
-                ContactPerson = dto.ContactPerson,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                AlternatePhone = dto.AlternatePhone,
-                AddressLine1 = dto.AddressLine1,
-                AddressLine2 = dto.AddressLine2,
-                City = dto.City,
-                State = dto.State,
-                Country = dto.Country,
-                PostalCode = dto.PostalCode,
-                Website = dto.Website,
-                IsActive = dto.IsActive,
-                ModifiedOn = DateTime.UtcNow
-            };
-        }
-        public static Dealer ToEntity(this DealerUpdatedDto dto)
-        {
-            return new Dealer
-            {
-                Id = dto.Id,
-                DealershipName = dto.DealershipName,
-                ContactPerson = dto.ContactPerson,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                AlternatePhone = dto.AlternatePhone,
-                AddressLine1 = dto.AddressLine1,
-                AddressLine2 = dto.AddressLine2,
-                City = dto.City,
-                State = dto.State,
-                Country = dto.Country,
-                PostalCode = dto.PostalCode,
-                RegistrationNumber = dto.RegistrationNumber,
-                TradeLicenseNumber = dto.TradeLicenseNumber,
-                Website = dto.Website,                
-                ModifiedOn = DateTime.UtcNow,
-            };
-        }
-       
     }
 }
