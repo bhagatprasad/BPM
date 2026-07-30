@@ -1,3 +1,4 @@
+using BPM.Web.API.CustomFilters;
 using BPM.Web.API.GlobalExceptionHandling;
 using BPM.Web.API.Models.Data;
 using BPM.Web.API.RabbitMQ;
@@ -68,7 +69,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.Configure<RabbitMQSettings>(
     builder.Configuration.GetSection("RabbitMQ"));
-
+builder.Services.AddScoped<BPMAuthorize>();
 // Repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();

@@ -1,13 +1,15 @@
-﻿using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
+    [BPMAuthorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ManufacturerController : ControllerBase
+    public class ManufacturerController : BaseController
     {
         private readonly IManufacturerService _manufacturerService;
         private readonly ILogger<ManufacturerController> _logger;
