@@ -22,9 +22,8 @@
         public string? GSTNumber { get; set; }
 
         public string? RegistrationNumber { get; set; }
-
         public string? TradeLicenseNumber { get; set; }
         public string? Website { get; set; }
-        
+        public Guid? ModifiedBy { get; set; }
     }
 }
