@@ -6,6 +6,8 @@ import { UserService } from '../../services/profile.service';
 import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
+import { DealerService } from '../../services/dealer.service';
+import { UpdatedDealerResponse } from '../../models/dealer-profile';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +19,9 @@ import { SpinnerLoadingService } from '../../common/services/spinner-loading-ser
 export class ProfileComponent implements OnInit {
 
 
+
   userData: any = null;
+  dealerData: any = null;
   isAdmin: boolean = false;
 
   activeTab: string = 'personal';
@@ -48,16 +52,19 @@ export class ProfileComponent implements OnInit {
   };
 
   isEditing: boolean = false;
+  isDealerEditing : boolean = false;
   originalUserData: any = {};
+  originalDealerData: any = {};
 
   errorMessage: string = '';
   successMessage: string = '';
 
   userId: string = '';
-isDealerEditing: any;
+
 
   constructor(
     private userService: UserService,
+    private dealerService:DealerService,
     private toastr: ToastrService,
     private loader: SpinnerLoadingService,
     private cdr: ChangeDetectorRef,
@@ -111,6 +118,7 @@ isDealerEditing: any;
           website: dto.dealerInfo.website || ''
         };
       }
+      this.originalDealerData = {...this.dealerSection};
       if (dto.roleInfo?.name === "Administrator") {
         this.isAdmin = true;
       }
@@ -133,10 +141,14 @@ isDealerEditing: any;
 
    enableDealerEdit():void {
     this.isDealerEditing = true;
+    this.originalDealerData = {...this.dealerSection};
     this.clearMessages();
-
-
   }
+  cancelDealerEdit() {
+    this.originalDealerData={...this.dealerSection};
+ this.isDealerEditing = false;
+    this.clearMessages();
+}
 
   // ============ VALIDATION METHODS ============
 
@@ -274,7 +286,7 @@ isDealerEditing: any;
           registrationNumber : this.dealerSection.gstNumber.trim(),
           tradeLicenseNumber : this.dealerSection.tradeLicenseNumber.trim(),
           website :this.dealerSection.website.trim(),
-          
+          modifiedBy : this.userId
   }
 
 
@@ -313,7 +325,19 @@ if(!this.validateDealerData())
   return ;
 }
 const updatedDealerData = this.updatedDealer
+this.dealerService.updateDealerAsync(this.userId,updatedDealerData).subscribe({
+  next:(response) => {
+console.log(response.message);
+this.toastr.success(response.message);
+this.updateDealerDataInStorage(response);
+this.clearMessages();
+this.loader.hide();
+this.isDealerEditing=false
+this.cdr.detectChanges();
+  }
+})
 }
+  
   // ============ RESPONSE HANDLING METHODS ============
   private updateUserDataInStorage(responseData: UpdateUserResponse): void {
     if (!this.userData?.authenticateResponseDto) {
@@ -327,7 +351,24 @@ const updatedDealerData = this.updatedDealer
     localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(this.userData));
     this.originalUserData = { ...this.userSection };
   }
+updateDealerDataInStorage(responseData: UpdatedDealerResponse) {
+    this.userData.authenticateResponseDto.dealerInfo.dealershipName =responseData.data?.dealershipName;
+    this.userData.authenticateResponseDto.dealerInfo.contactPerson =responseData.data?.contactPerson;
+    this.userData.authenticateResponseDto.dealerInfo.email =responseData.data?.email;
+    this.userData.authenticateResponseDto.dealerInfo.phone =responseData.data?.phone;
+    this.userData.authenticateResponseDto.dealerInfo.alternatePhone =responseData.data?.alternatePhone;
+    this.userData.authenticateResponseDto.dealerInfo.addressLine1 =responseData.data?.addressLine1;
+    this.userData.authenticateResponseDto.dealerInfo.addressLine2 =responseData.data?.addressLine2;
+    this.userData.authenticateResponseDto.dealerInfo.city =responseData.data?.city;
+    this.userData.authenticateResponseDto.dealerInfo.state =responseData.data?.state;
+    this.userData.authenticateResponseDto.dealerInfo.country =responseData.data?.country;
+    this.userData.authenticateResponseDto.dealerInfo.postalCode =responseData.data?.postalCode;
+    this.userData.authenticateResponseDto.dealerInfo.gstNumber =responseData.data?.gstNumber;
+    this.userData.authenticateResponseDto.dealerInfo.registrationNumber =responseData.data?.registrationNumber;
+    this.userData.authenticateResponseDto.dealerInfo.tradeLicenseNumber =responseData.data?.tradeLicenseNumber;
+    this.userData.authenticateResponseDto.dealerInfo.website =responseData.data?.website;
 
+  }
  
   // ============ UTILITY METHODS ============
 

@@ -14,6 +14,6 @@ constructor(private apiService:ApiService){}
 updateDealerAsync(id : string ,Data : UpdatedDealerRequest): Observable<UpdatedDealerResponse>
 {
    
-    return this.apiService.send<UpdatedDealerResponse>('PUT', environment.UrlConstants.Dealer, Data);
+    return this.apiService.send<UpdatedDealerResponse>('PUT', environment.UrlConstants.Dealer.updateDealerAsync, Data);
 }
 }
