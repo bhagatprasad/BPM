@@ -53,6 +53,7 @@ export interface AuthResponse {
   isValidPassword: boolean;
 }
 
+// Interface for refresh token response from backend
 export interface RefreshTokenResponse {
   jwtToken: string;
   refreshToken: string;
@@ -350,76 +351,68 @@ export class ApiService {
     );
   }
 
-  //------------------------------------
-  // Circuit Breaker Methods
-  //------------------------------------
-  private canExecute(): boolean {
-    const currentState = this.circuitState;
+  private handle402Error<T>(request: HttpRequest<any>): Observable<T> {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
 
-    if (currentState === CircuitState.CLOSED) {
-      return true;
-    }
+      const refreshToken = this.getRefreshToken();
 
-    if (currentState === CircuitState.OPEN) {
-      const elapsed = Date.now() - this.lastFailureTime;
-      if (elapsed >= this.RESET_TIMEOUT) {
-        // Transition to HALF_OPEN
-        this.transitionToHalfOpen();
-        return true;
+      // If no refresh token available, fail immediately
+      if (!refreshToken) {
+        this.isRefreshing = false;
+        this.handleRefreshTokenFailure();
+        return throwError(() => new Error('No refresh token available'));
       }
-      return false;
-    }
 
-    // HALF_OPEN state
-    if (this.halfOpenRequestInProgress) {
-      return false;
+      return this.refreshAccessToken(refreshToken).pipe(
+        switchMap((response: RefreshTokenResponse) => {
+          this.isRefreshing = false;
+          
+          // Update ONLY the JWT token in storage, keep everything else
+          this.updateJwtToken(response.jwtToken);
+          
+          // Also update refresh token if backend returns a new one
+          if (response.refreshToken) {
+            this.updateRefreshToken(response.refreshToken);
+          }
+          
+          this.refreshTokenSubject.next(response.jwtToken);
+          
+          // Retry the original request with new token
+          return this.retryRequest<T>(request);
+        }),
+        catchError((error) => {
+          this.isRefreshing = false;
+          // Handle refresh token failure - logout user
+          this.handleRefreshTokenFailure();
+          return throwError(() => error);
+        })
+      );
+    } else {
+      // Wait for token refresh to complete
+      return this.refreshTokenSubject.pipe(
+        filter(token => token !== null),
+        take(1),
+        switchMap(() => {
+          // Retry the original request with new token (interceptor will add it)
+          return this.retryRequest<T>(request);
+        })
+      );
     }
-
-    if (this.halfOpenAttempts >= this.HALF_OPEN_MAX_ATTEMPTS) {
-      return false;
-    }
-
-    this.halfOpenRequestInProgress = true;
-    this.halfOpenAttempts++;
-    return true;
   }
 
-  private onSuccess(): void {
-    const currentState = this.circuitState;
+  private refreshAccessToken(refreshToken: string): Observable<RefreshTokenResponse> {
+    const url = `${environment.baseUrl}/account/refresh-token`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    const body = {
+      refreshToken: refreshToken
+    };
 
-    if (currentState === CircuitState.HALF_OPEN) {
-      // Success in HALF_OPEN - close circuit
-      this.transitionToClosed();
-    } else if (currentState === CircuitState.CLOSED) {
-      // Reset failure count on success
-      this.failureCount = 0;
-    }
-    // Ignore success in OPEN state
-  }
-
-  private onFailure(): void {
-    const currentState = this.circuitState;
-
-    if (currentState === CircuitState.CLOSED) {
-      this.failureCount++;
-      this.lastFailureTime = Date.now();
-      
-      if (this.failureCount >= this.FAILURE_THRESHOLD) {
-        this.transitionToOpen();
-      }
-    } else if (currentState === CircuitState.HALF_OPEN) {
-      // Failure in HALF_OPEN - immediately reopen
-      this.transitionToOpen();
-    }
-    // Ignore failure in OPEN state
-  }
-
-  private transitionToOpen(): void {
-    this.circuitState = CircuitState.OPEN;
-    this.halfOpenRequestInProgress = false;
-    this.halfOpenAttempts = 0;
-    this.circuitState$.next(CircuitState.OPEN);
-    console.warn('🔴 Circuit Breaker: OPEN');
+    return this.http.post<RefreshTokenResponse>(url, JSON.stringify(body), { headers });
   }
 
   private retryRequest<T>(request: HttpRequest<any>): Observable<T> {
@@ -435,109 +428,84 @@ export class ApiService {
     );
   }
 
-  //------------------------------------
-  // Response Handling
-  //------------------------------------
   private handleResponse<T>(response: HttpResponse<T>): T {
     if (response.status >= 200 && response.status < 300) {
       if (response.body === null && response.status === 204) {
         return true as unknown as T;
       }
       return response.body as T;
+    } else {
+      console.error('Error response:', response);
+      throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
     }
-    throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
-  }
-
-  //------------------------------------
-  // Retry Logic
-  //------------------------------------
-  private shouldRetry(error: HttpErrorResponse): boolean {
-    // Retry on network errors (0) or server errors (5xx) but not on 4xx (except 401 handled separately)
-    return error.status === 0 || (error.status >= 500 && error.status < 600);
-  }
-
-  private getRetryDelay(attempt: number): number {
-    // Exponential backoff: 1s, 2s, 4s
-    return Math.min(1000 * Math.pow(2, attempt - 1), 5000);
   }
 
   private handleRefreshTokenFailure(): void {
-    this.clearAuthData();
-    this.transitionToOpen();
-    console.error('❌ Refresh token failed. Please login again.');
-    // Optionally navigate to login page
+    // Clear auth data and redirect to login
+    localStorage.removeItem('AuthenticatedUserResponse');
+    // You can add navigation to login page here if needed
     // this.router.navigate(['/login']);
+    console.error('Refresh token failed. Please login again.');
   }
 
-  //------------------------------------
-  // Storage Management
-  //------------------------------------
+  // Storage helper methods
   private getAuthData(): AuthResponse | null {
-    const data = localStorage.getItem(this.TOKEN_KEY);
-    if (!data) return null;
-    try {
-      return JSON.parse(data);
-    } catch (e) {
-      console.error('Failed to parse auth data:', e);
-      return null;
-    }
+    const loggeddata = localStorage.getItem('AuthenticatedUserResponse');
+    return loggeddata ? JSON.parse(loggeddata) : null;
   }
 
   private getRefreshToken(): string {
-    return this.getAuthData()?.refreshToken || '';
+    const authData = this.getAuthData();
+    return authData?.refreshToken || '';
   }
 
   private getJwtToken(): string {
-    return this.getAuthData()?.jwtToken || '';
+    const authData = this.getAuthData();
+    return authData?.jwtToken || '';
   }
 
+  // Update ONLY the JWT token, preserve everything else
   private updateJwtToken(newJwtToken: string): void {
     const authData = this.getAuthData();
     if (authData) {
       authData.jwtToken = newJwtToken;
-      localStorage.setItem(this.TOKEN_KEY, JSON.stringify(authData));
+      localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(authData));
     }
   }
 
+  // Update refresh token if backend returns a new one
   private updateRefreshToken(newRefreshToken: string): void {
     const authData = this.getAuthData();
     if (authData) {
       authData.refreshToken = newRefreshToken;
-      localStorage.setItem(this.TOKEN_KEY, JSON.stringify(authData));
+      localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(authData));
     }
   }
 
-  //------------------------------------
-  // Public Methods
-  //------------------------------------
+  // Update auth data completely (used for login)
+  private updateAuthTokens(authResponse: AuthResponse): void {
+    // Store the complete auth response
+    localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(authResponse));
+  }
+
+  // Public method to set auth data after login
   setAuthData(authResponse: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, JSON.stringify(authResponse));
-    this.transitionToClosed(); // Reset circuit on login
+    this.updateAuthTokens(authResponse);
   }
 
+  // Public method to clear auth data
   clearAuthData(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem('AuthenticatedUserResponse');
   }
 
+  // Public method to get current user info
   getCurrentUser(): AuthResponse | null {
     return this.getAuthData();
   }
 
+  // Public method to check if user is authenticated
   isAuthenticated(): boolean {
     const authData = this.getAuthData();
     return authData !== null && !!authData.jwtToken;
-  }
-
-  // Reset circuit breaker manually (useful for UI retry buttons)
-  resetCircuitBreaker(): void {
-    this.transitionToClosed();
-  }
-
-  getCircuitState(): Observable<CircuitState> {
-    return this.circuitState$.asObservable();
-  }
-
-  getCurrentCircuitState(): CircuitState {
-    return this.circuitState;
   }
 }
