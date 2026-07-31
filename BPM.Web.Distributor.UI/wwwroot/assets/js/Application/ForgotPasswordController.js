@@ -1,31 +1,71 @@
-﻿var ForgotPasswordController = function () {
+﻿function ForgotPasswordController() {
 
-    var initializeEvents = function () {
+    this.init = function () {
 
-        $("#forgotPasswordForm").on("submit", function () {
+        var form = $("#formForgotPassword");
+        var btnSubmit = $("#btnSubmit");
 
-            if (!$(this).valid()) {
-                return false;
+        form.on("input", "input", function () {
+            btnSubmit.prop("disabled", !form[0].checkValidity());
+        });
+
+        btnSubmit.prop("disabled", !form[0].checkValidity());
+
+        btnSubmit.on("click", function (e) {
+
+            e.preventDefault();
+
+            if (!form[0].checkValidity()) {
+                form[0].reportValidity();
+                return;
             }
 
-            $("#btnSubmit")
-                .prop("disabled", true)
-                .html('<span class="spinner-border spinner-border-sm me-2"></span> Sending...');
+            var model = {
+                Username: $("#username").val()
+            };
 
-            return true;
+            $.ajax({
+
+                url: "/Account/ForgotPassword",
+
+                type: "POST",
+
+                contentType: "application/json",
+
+                data: JSON.stringify(model),
+
+                success: function (response) {
+
+                    console.log(response);
+
+                    if (response.success) {
+
+                        toastr.success(response.message);
+
+                        if (response.userId) {
+
+                            window.location.href =
+                                "/Account/ResetPassword?userId=" + response.userId;
+                        }
+                    }
+                    else {
+
+                        toastr.error(response.message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    toastr.error("Server Error");
+
+                }
+
+            });
 
         });
 
     };
 
-    return {
-
-        init: function () {
-
-            initializeEvents();
-
-        }
-
-    };
-
-};
+}

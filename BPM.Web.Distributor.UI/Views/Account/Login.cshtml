@@ -1,4 +1,5 @@
-﻿@model LoginViewModel
+﻿@using BPM.Web.Distributor.UI.Models.ViewModels
+@model LoginViewModel
 
 @{
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
@@ -10,125 +11,7 @@
     <div class="auth-container">
 
         <!-- LEFT PANEL -->
-
-        <div class="auth-image-section">
-
-            <img src="~/assets/images/png/drug_landing.jpg"
-                 class="auth-image"
-                 alt="Drug Landing" />
-
-            <div class="image-overlay">
-
-                <div class="image-content">
-
-                    <div class="brand-large">
-
-                        <div class="brand-icon-large">
-                            <i class="bi bi-hexagon-fill"></i>
-                            <i class="bi bi-grid-1x2-fill"></i>
-                        </div>
-
-                        <h1 class="brand-name">
-                            BPM<span>Medicals</span>
-                        </h1>
-
-                        <p class="brand-tagline">
-                            Enterprise Medical Dealer Platform
-                        </p>
-
-                    </div>
-
-                    <div class="image-features">
-
-                        <div class="feature-item">
-
-                            <div class="feature-icon">
-                                <i class="bi bi-shield-check"></i>
-                            </div>
-
-                            <div class="feature-text">
-
-                                <h4>Secure Access</h4>
-
-                                <p>
-                                    Enterprise-grade security with end-to-end encryption
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div class="feature-item">
-
-                            <div class="feature-icon">
-                                <i class="bi bi-graph-up-arrow"></i>
-                            </div>
-
-                            <div class="feature-text">
-
-                                <h4>Real-time Analytics</h4>
-
-                                <p>
-                                    Monitor your business performance in real time
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div class="feature-item">
-
-                            <div class="feature-icon">
-                                <i class="bi bi-people"></i>
-                            </div>
-
-                            <div class="feature-text">
-
-                                <h4>Team Collaboration</h4>
-
-                                <p>
-                                    Work seamlessly with your team
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="testimonial">
-
-                        <div class="testimonial-quote">
-
-                            <i class="bi bi-quote"></i>
-
-                            <p>
-                                "The best admin dashboard solution for modern businesses"
-                            </p>
-
-                        </div>
-
-                        <div class="testimonial-author">
-
-                            <img src="~/assets/images/png/user.png"
-                                 class="author-avatar" />
-                            <div>
-
-                                <strong>John Doe</strong>
-
-                                <span>CEO, TechCorp</span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        @await Html.PartialAsync("_AuthLeftPanel")
 
         <!-- RIGHT PANEL -->
 
@@ -154,39 +37,33 @@
 
                 </div>
 
-                <form id="loginForm"
-                      asp-action="Login"
-                      asp-controller="Account"
-                      method="post">
+                <form id="formAuthentication" autocomplete="off">
 
                     @Html.AntiForgeryToken()
 
-                    <div asp-validation-summary="ModelOnly"
-                         class="text-danger mb-3"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <!-- Username -->
 
                     <div class="form-group">
 
-                        <label asp-for="Username"
-                               class="form-label"></label>
+                        <label asp-for="Username" class="form-label"></label>
 
                         <div class="input-group">
 
                             <span class="input-group-text">
-
-                                <i class="bi bi-envelope"></i>
-
+                                <i class="bi bi-person"></i>
                             </span>
 
                             <input asp-for="Username"
+                                   id="Username"
                                    class="form-control"
-                                   placeholder="Enter your email or username" />
+                                   placeholder="Enter username"
+                                   autocomplete="username" />
 
                         </div>
 
-                        <span asp-validation-for="Username"
-                              class="text-danger"></span>
+                        <span asp-validation-for="Username" class="text-danger"></span>
 
                     </div>
 
@@ -196,10 +73,10 @@
 
                         <div class="d-flex justify-content-between">
 
-                            <label asp-for="Password"
-                                   class="form-label"></label>
+                            <label asp-for="Password" class="form-label"></label>
 
                             <a asp-action="ForgotPassword"
+                               asp-controller="Account"
                                class="forgot-link">
 
                                 Forgot Password?
@@ -211,32 +88,32 @@
                         <div class="input-group">
 
                             <span class="input-group-text">
-
                                 <i class="bi bi-lock"></i>
-
                             </span>
 
                             <input asp-for="Password"
-                                   id="password"
+                                   id="Password"
                                    type="password"
                                    class="form-control"
-                                   placeholder="Enter password" />
+                                   placeholder="Enter password"
+                                   autocomplete="current-password" />
 
                             <button type="button"
-                                    class="password-toggle"
+                                    class="password-toggle border-0 bg-transparent px-3"
                                     onclick="togglePassword()">
 
                                 <i id="eyeIcon"
-                                   class="bi bi-eye"></i>
+                                   class="bi bi-eye-fill"></i>
 
                             </button>
 
                         </div>
 
-                        <span asp-validation-for="Password"
-                              class="text-danger"></span>
+                        <span asp-validation-for="Password" class="text-danger"></span>
 
                     </div>
+
+                    <!-- Remember -->
 
                     <div class="form-options">
 
@@ -250,14 +127,12 @@
 
                         </div>
 
-                        <a href="#">
-                            Privacy Policy
-                        </a>
+                        <a href="#">Privacy Policy</a>
 
                     </div>
 
-                    <button id="btnLogin"
-                            type="submit"
+                    <button id="btnSubmit"
+                            type="button"
                             class="btn btn-primary w-100">
 
                         Sign In
@@ -269,22 +144,22 @@
                 </form>
 
                 <div class="divider">
-
                     <span>or continue with</span>
-
                 </div>
 
                 <div class="social-login">
 
-                    <button class="social-btn">
+                    <button type="button"
+                            class="social-btn">
 
                         <i class="bi bi-google"></i>
 
-                        Google
+                        Continue with Google
 
                     </button>
 
                 </div>
+
 
             </div>
 
@@ -296,15 +171,41 @@
 
 @section Scripts {
 
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+                   function togglePassword() {
+
+            const password = document.getElementById("Password");
+            const eye = document.getElementById("eyeIcon");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                eye.classList.remove("bi-eye-fill");
+                eye.classList.add("bi-eye-slash-fill");
+
+            } else {
+
+                password.type = "password";
+
+                eye.classList.remove("bi-eye-slash-fill");
+                eye.classList.add("bi-eye-fill");
+            }
+        }
+    </script>
+
     <script src="~/assets/js/Application/LoginController.js"></script>
 
     <script>
 
         $(function () {
 
-            var ctrl = new LoginController();
+            var controller = new LoginController();
 
-            ctrl.init();
+            controller.init();
 
         });
 

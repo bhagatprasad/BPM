@@ -1,4 +1,6 @@
-﻿using BPM.Web.Distributor.UI.Helpers;
+﻿using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
+using BPM.Web.Distributor.UI.Helpers;
 using BPM.Web.Distributor.UI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -13,35 +15,64 @@ namespace BPM.Web.Distributor.UI
             Configuration = configuration;
         }
 
+        // Register Services
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-
-            services.AddSession();
-
-            services.AddHttpContextAccessor();
-
+          
             services.Configure<BPMConfig>(
                 Configuration.GetSection("BPMConfig"));
 
-            services.AddTransient<TokenAuthorizationHttpClientHandler>();
 
-            services.AddHttpClient("AuthorizedClient")
-                    .AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>();
+            services.AddControllersWithViews();
 
-            services.AddScoped<Services.HttpClientService>();
 
-            services.AddScoped<AccountService>();
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(2);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            services.AddHttpContextAccessor();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Account/Login";
                     options.AccessDeniedPath = "/Account/AccessDenied";
+
+                    options.Cookie.Name = "BPMAuth";
+
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromHours(2);
                 });
-          
+
+            services.AddAuthorization();
+
+            services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 5;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.TopRight;
+            });
+
+            services.AddTransient<TokenAuthorizationHttpClientHandler>();
+
+            services.AddHttpClient<IAuthenticateService, AuthenticateService>((provider, client) =>
+            {
+                var config = Configuration
+                    .GetSection("BPMConfig")
+                    .Get<BPMConfig>();
+
+                client.BaseAddress = new Uri(config.BaseUrl);
+            })
+            .AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>();
+
         }
 
+        // Configure Middleware
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -65,6 +96,8 @@ namespace BPM.Web.Distributor.UI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseNotyf();
 
             app.UseEndpoints(endpoints =>
             {
