@@ -1,58 +1,86 @@
-﻿var LoginController = function () {
+﻿function LoginController() {
 
-    var initializeEvents = function () {
+    var self = this;
 
-        $("#loginForm").on("submit", function () {
+    self.init = function () {
 
-            if (!$(this).valid()) {
-                return false;
-            }
+        var form = $("#formAuthentication");
+        var btnLogin = $("#btnSubmit");
 
-            $("#btnLogin")
-                .prop("disabled", true)
-                .html('<span class="spinner-border spinner-border-sm me-2"></span> Signing In...');
+        checkForm();
 
-            return true;
+        form.on("keyup change", "input", function () {
+            checkForm();
         });
 
-    };
+        function checkForm() {
 
-    return {
+            if (form.length === 0)
+                return;
 
-        init: function () {
-
-            initializeEvents();
+            btnLogin.prop("disabled", !form[0].checkValidity());
 
         }
 
+        btnLogin.on("click", function (e) {
+
+            e.preventDefault();
+
+            // Trigger jquery validation
+            if (!form.valid()) {
+                return;
+            }
+
+            btnLogin.prop("disabled", true);
+
+            $(".loader").show();
+
+            var model = {
+                Username: $("#Username").val(),
+                Password: $("#Password").val()
+            };
+
+            $.ajax({
+
+                url: "/Account/Login",
+
+                type: "POST",
+
+                contentType: "application/json",
+
+                data: JSON.stringify(model),
+
+                success: function (response) {
+
+                    $(".loader").hide();
+                    btnLogin.prop("disabled", false);
+
+                    if (!response || !response.appUser) {
+
+                        toastr.error("Invalid username or password.");
+
+                        return;
+                    }
+
+                    sessionStorage.setItem(
+                        "ApplicationUser",
+                        JSON.stringify(response.appUser));
+
+                    window.location.href = "/Home/Index";
+                },
+
+                error: function () {
+
+                    $(".loader").hide();
+
+                    btnLogin.prop("disabled", false);
+
+                    toastr.error("Unable to login.");
+                }
+
+            });
+
+        });
     };
-
-};
-
-//=============================
-// Toggle Password
-//=============================
-
-function togglePassword() {
-
-    var password = document.getElementById("password");
-    var eye = document.getElementById("eyeIcon");
-
-    if (password.type === "password") {
-
-        password.type = "text";
-
-        eye.classList.remove("bi-eye");
-        eye.classList.add("bi-eye-slash");
-
-    }
-    else {
-
-        password.type = "password";
-
-        eye.classList.remove("bi-eye-slash");
-        eye.classList.add("bi-eye");
-
-    }
 
 }

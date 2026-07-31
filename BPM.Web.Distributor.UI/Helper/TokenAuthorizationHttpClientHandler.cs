@@ -1,31 +1,35 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 
 namespace BPM.Web.Distributor.UI.Helpers
 {
     public class TokenAuthorizationHttpClientHandler : DelegatingHandler
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly BPMConfig _bpmConfig;
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        private readonly BPMConfig _config;
 
         public TokenAuthorizationHttpClientHandler(
-            IHttpContextAccessor httpContextAccessor,
-            IOptions<BPMConfig> bpmConfig)
+            IHttpContextAccessor contextAccessor,
+            IOptions<BPMConfig> config)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _bpmConfig = bpmConfig.Value;
+            _contextAccessor = contextAccessor;
+
+            _config = config.Value;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            var accessToken = _httpContextAccessor.HttpContext?
-                .Session.GetString("AccessToken");
+            var jwt = _contextAccessor.HttpContext?
+                .Session
+                .GetString("JwtToken");
 
-            if (!string.IsNullOrWhiteSpace(accessToken))
+            if (!string.IsNullOrWhiteSpace(jwt))
             {
                 request.Headers.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                    new AuthenticationHeaderValue("Bearer", jwt);
             }
 
             return await base.SendAsync(request, cancellationToken);

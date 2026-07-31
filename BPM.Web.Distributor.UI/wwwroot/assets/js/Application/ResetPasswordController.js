@@ -1,165 +1,106 @@
-﻿var ResetPasswordController = function () {
+﻿function ResetPasswordController() {
 
-    var validatePassword = function () {
+    var self = this;
 
-        var password = $("#newPassword").val();
+    self.init = function () {
 
-        toggleRequirement("#reqLength", password.length >= 6);
-        toggleRequirement("#reqUpper", /[A-Z]/.test(password));
-        toggleRequirement("#reqLower", /[a-z]/.test(password));
-        toggleRequirement("#reqNumber", /[0-9]/.test(password));
+        // Get UserId from query string
+        var userId = getQueryStringParameter("userId");
 
-        validateConfirmPassword();
-
-    };
-
-    var validateConfirmPassword = function () {
-
-        var password = $("#newPassword").val();
-        var confirm = $("#confirmPassword").val();
-
-        if (confirm === "")
-            return;
-
-        if (password === confirm) {
-
-            $("#confirmPassword")
-                .removeClass("is-invalid")
-                
-
-        }
-        else {
-
-            $("#confirmPassword")
-                .removeClass("is-valid")
-                
-
+        if (userId) {
+            $("#userId").val(userId);
         }
 
-    };
+        var form = $("#formResetPassword");
+        var btnSubmit = $("#btnSubmit");
 
-    var toggleRequirement = function (selector, valid) {
+        form.on("input", "input", checkFormValidity);
 
-        var item = $(selector);
+        checkFormValidity();
 
-        if (valid) {
+        function checkFormValidity() {
 
-            item.addClass("valid");
-
-            item.find("i")
-                .removeClass("fa-circle")
-                .addClass("fa-check-circle");
-
-        }
-        else {
-
-            item.removeClass("valid");
-
-            item.find("i")
-                .removeClass("fa-check-circle")
-                .addClass("fa-circle");
-
+            if (form[0].checkValidity()) {
+                btnSubmit.prop("disabled", false);
+            }
+            else {
+                btnSubmit.prop("disabled", true);
+            }
         }
 
-    };
+        $(document).on("click", "#btnSubmit", function (e) {
 
-    var initializeEvents = function () {
+            e.preventDefault();
 
-        $("#newPassword").keyup(validatePassword);
+            // Password Match Validation
+            if ($("#password").val() !== $("#confirmPassword").val()) {
 
-        $("#confirmPassword").keyup(validateConfirmPassword);
+                alert("Passwords do not match.");
 
-        $("#resetPasswordForm").on("submit", function (e) {
-
-            if (!$(this).valid()) {
-                return false;
+                return;
             }
 
-            var password = $("#newPassword").val();
-            var confirm = $("#confirmPassword").val();
+            var resetPassword = {
 
-            if (password !== confirm) {
+                UserId: $("#userId").val(),
 
-                $("#confirmPassword")
-                    .addClass("is-invalid");
+                NewPassword: $("#password").val()
 
-                return false;
-            }
+            };
 
-            if (!$("#ConfirmReset").is(":checked")) {
+            $.ajax({
 
-                alert("Please confirm password reset.");
+                url: "/Account/ResetPassword",
 
-                return false;
-            }
+                type: "POST",
 
-            $("#btnReset")
-                .prop("disabled", true)
-                .html('<span class="spinner-border spinner-border-sm me-2"></span> Updating...');
+                contentType: "application/json",
 
-            return true;
+                data: JSON.stringify(resetPassword),
+
+                success: function (response) {
+
+                    if (response.success) {
+
+                        alert("Password reset successfully.");
+
+                        window.location.href = "/Account/Login";
+
+                    }
+                    else {
+
+                        alert(response.message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    alert("Unable to connect to server.");
+
+                }
+
+            });
 
         });
-        
 
     };
-
-    return {
-
-        init: function () {
-
-            initializeEvents();
-
-        }
-
-    };
-
-};
-
-function toggleNewPassword() {
-
-    var input = $("#newPassword");
-    var eye = $("#newEye");
-
-    if (input.attr("type") === "password") {
-
-        input.attr("type", "text");
-
-        eye.removeClass("bi-eye")
-            .addClass("bi-eye-slash");
-
-    }
-    else {
-
-        input.attr("type", "password");
-
-        eye.removeClass("bi-eye-slash")
-            .addClass("bi-eye");
-
-    }
 
 }
 
-function toggleConfirmPassword() {
+/* Query String Helper */
 
-    var input = $("#confirmPassword");
-    var eye = $("#confirmEye");
+function getQueryStringParameter(name) {
 
-    if (input.attr("type") === "password") {
+    name = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]");
 
-        input.attr("type", "text");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
 
-        eye.removeClass("bi-eye")
-            .addClass("bi-eye-slash");
+    var results = regex.exec(location.search);
 
-    }
-    else {
-
-        input.attr("type", "password");
-
-        eye.removeClass("bi-eye-slash")
-            .addClass("bi-eye");
-
-    }
+    return results === null
+        ? ""
+        : decodeURIComponent(results[1].replace(/\+/g, " "));
 
 }
