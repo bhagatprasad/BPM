@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpResponse, HttpErrorResponse, HttpInterceptor, HttpHandler, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
-import { filter, map, catchError, switchMap, take, tap, finalize, timeout, retry, delay } from 'rxjs/operators';
+import { filter, map, catchError, switchMap, take, tap, delay, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 type BodylessMethod = 'GET' | 'HEAD' | 'DELETE' | 'OPTIONS';
 type BodyMethod = 'POST' | 'PUT' | 'PATCH';
 type HttpMethod = BodylessMethod | BodyMethod;
 
-enum CircuitState {
+// Circuit Breaker States
+export enum CircuitState {
   CLOSED = 'CLOSED',
   OPEN = 'OPEN',
   HALF_OPEN = 'HALF_OPEN'
 }
 
+// Define the authentication response interface based on your response structure
 export interface AuthResponse {
   authenticateResponseDto: {
     userId: string;
@@ -60,32 +62,108 @@ export interface RefreshTokenResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  //------------------------------------
-  // Token Refresh
-  //------------------------------------
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
-  private readonly TOKEN_KEY = 'AuthenticatedUserResponse';
-  private readonly MAX_RETRY_ATTEMPTS = 2;
-  private retryCount = 0;
-
-  //------------------------------------
-  // Circuit Breaker
-  //------------------------------------
+  // Circuit Breaker properties
   private circuitState: CircuitState = CircuitState.CLOSED;
   private failureCount = 0;
   private halfOpenRequestInProgress = false;
   private lastFailureTime = 0;
+  private halfOpenAttempts = 0;
   
   private readonly FAILURE_THRESHOLD = 3;
   private readonly RESET_TIMEOUT = 30000; // 30 seconds
   private readonly HALF_OPEN_MAX_ATTEMPTS = 1;
-  private halfOpenAttempts = 0;
+  private readonly MAX_RETRY_ATTEMPTS = 3;
+  private retryCount = 0;
+
+  // Token refresh properties
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   // Expose circuit state for UI feedback
   public circuitState$ = new BehaviorSubject<CircuitState>(CircuitState.CLOSED);
 
   constructor(private http: HttpClient) { }
+
+  //------------------------------------
+  // Circuit Breaker Methods
+  //------------------------------------
+  private canExecute(): boolean {
+    if (this.circuitState === CircuitState.CLOSED) {
+      return true;
+    }
+
+    if (this.circuitState === CircuitState.OPEN) {
+      // Check if reset timeout has elapsed
+      const now = Date.now();
+      if (now - this.lastFailureTime >= this.RESET_TIMEOUT) {
+        // Move to half-open state
+        this.circuitState = CircuitState.HALF_OPEN;
+        this.halfOpenAttempts = 0;
+        this.circuitState$.next(CircuitState.HALF_OPEN);
+        console.log('Circuit Breaker: Moving to HALF_OPEN state');
+        return true;
+      }
+      console.warn(`Circuit Breaker: OPEN. Retry after ${(this.RESET_TIMEOUT - (now - this.lastFailureTime)) / 1000}s`);
+      return false;
+    }
+
+    if (this.circuitState === CircuitState.HALF_OPEN) {
+      if (this.halfOpenAttempts >= this.HALF_OPEN_MAX_ATTEMPTS) {
+        console.warn('Circuit Breaker: HALF_OPEN - max attempts reached');
+        return false;
+      }
+      this.halfOpenAttempts++;
+      return true;
+    }
+
+    return true;
+  }
+
+  private onSuccess(): void {
+    if (this.circuitState === CircuitState.HALF_OPEN) {
+      // If we succeed in half-open, close the circuit
+      this.circuitState = CircuitState.CLOSED;
+      this.failureCount = 0;
+      this.halfOpenAttempts = 0;
+      this.circuitState$.next(CircuitState.CLOSED);
+      console.log('Circuit Breaker: CLOSED (success in half-open)');
+    } else {
+      // Reset failure count on success
+      this.failureCount = 0;
+    }
+  }
+
+  private onFailure(): void {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+
+    if (this.circuitState === CircuitState.HALF_OPEN) {
+      // Failure in half-open state -> open circuit
+      this.circuitState = CircuitState.OPEN;
+      this.circuitState$.next(CircuitState.OPEN);
+      console.log('Circuit Breaker: OPEN (failure in half-open)');
+      return;
+    }
+
+    if (this.failureCount >= this.FAILURE_THRESHOLD) {
+      this.circuitState = CircuitState.OPEN;
+      this.circuitState$.next(CircuitState.OPEN);
+      console.log(`Circuit Breaker: OPEN (${this.failureCount} failures)`);
+    }
+  }
+
+  //------------------------------------
+  // Retry Logic Helper Methods
+  //------------------------------------
+  private shouldRetry(error: HttpErrorResponse): boolean {
+    // Retry on network errors (status 0) and server errors (5xx)
+    return error.status === 0 || error.status >= 500;
+  }
+
+  private getRetryDelay(attempt: number): number {
+    // Exponential backoff: 1s, 2s, 4s, 8s...
+    return Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+  }
 
   //------------------------------------
   // Main Request Method
@@ -140,7 +218,7 @@ export class ApiService {
   private executeWithRetry<T>(request: HttpRequest<any>): Observable<T> {
     return this.http.request<T>(request).pipe(
       filter(event => event instanceof HttpResponse),
-      map(event => {
+      map((event: any) => {
         const response = event as HttpResponse<T>;
         return this.handleResponse<T>(response);
       }),
@@ -258,29 +336,15 @@ export class ApiService {
 
     return this.http.request<T>(newRequest).pipe(
       filter(event => event instanceof HttpResponse),
-      map(event => {
+      map((event: any) => {
         const response = event as HttpResponse<T>;
         return this.handleResponse<T>(response);
       }),
-      tap(() => {
-        this.onSuccess();
-        this.retryCount = 0;
-      })
-    );
-  }
-
-  private refreshAccessToken(refreshToken: string): Observable<RefreshTokenResponse> {
-    const url = this.buildFullUrl('account/refresh-token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-
-    const body = { refreshToken };
-
-    return this.http.post<RefreshTokenResponse>(url, JSON.stringify(body), { headers }).pipe(
-      timeout(10000), // 10 second timeout
-      catchError((error) => {
-        console.error('Refresh token request failed:', error);
+      catchError((error: HttpErrorResponse) => {
+        // Check if error is 402
+        if (error.status === 402) {
+          return this.handle402Error<T>(request);
+        }
         return throwError(() => error);
       })
     );
@@ -358,21 +422,17 @@ export class ApiService {
     console.warn('🔴 Circuit Breaker: OPEN');
   }
 
-  private transitionToHalfOpen(): void {
-    this.circuitState = CircuitState.HALF_OPEN;
-    this.halfOpenRequestInProgress = false;
-    this.halfOpenAttempts = 0;
-    this.circuitState$.next(CircuitState.HALF_OPEN);
-    console.warn('🟡 Circuit Breaker: HALF-OPEN');
-  }
-
-  private transitionToClosed(): void {
-    this.circuitState = CircuitState.CLOSED;
-    this.failureCount = 0;
-    this.halfOpenRequestInProgress = false;
-    this.halfOpenAttempts = 0;
-    this.circuitState$.next(CircuitState.CLOSED);
-    console.warn('🟢 Circuit Breaker: CLOSED');
+  private retryRequest<T>(request: HttpRequest<any>): Observable<T> {
+    // Clone the request without modifying headers - interceptor will add the token
+    const newRequest = request.clone();
+    
+    return this.http.request<T>(newRequest).pipe(
+      filter(event => event instanceof HttpResponse),
+      map((event: any) => {
+        const response = event as HttpResponse<T>;
+        return this.handleResponse<T>(response);
+      })
+    );
   }
 
   //------------------------------------

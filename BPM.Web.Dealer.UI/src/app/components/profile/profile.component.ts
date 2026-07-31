@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
   };
 
   dealerSection = {
+    id: '',
     dealershipName: '',
     contactPerson: '',
     email: '',
@@ -52,7 +53,7 @@ export class ProfileComponent implements OnInit {
   };
 
   isEditing: boolean = false;
-  isDealerEditing : boolean = false;
+  isDealerEditing: boolean = false;
   originalUserData: any = {};
   originalDealerData: any = {};
 
@@ -64,7 +65,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private dealerService:DealerService,
+    private dealerService: DealerService,
     private toastr: ToastrService,
     private loader: SpinnerLoadingService,
     private cdr: ChangeDetectorRef,
@@ -101,6 +102,7 @@ export class ProfileComponent implements OnInit {
       if (dto.dealerInfo) {
         console.log('Populating dealer data:', dto.dealerInfo);
         this.dealerSection = {
+          id: dto.dealerInfo.id || '',
           dealershipName: dto.dealerInfo.dealershipName || '',
           contactPerson: dto.dealerInfo.contactPerson || '',
           email: dto.dealerInfo.email || '',
@@ -118,7 +120,7 @@ export class ProfileComponent implements OnInit {
           website: dto.dealerInfo.website || ''
         };
       }
-      this.originalDealerData = {...this.dealerSection};
+      this.originalDealerData = { ...this.dealerSection };
       if (dto.roleInfo?.name === "Administrator") {
         this.isAdmin = true;
       }
@@ -139,16 +141,16 @@ export class ProfileComponent implements OnInit {
     this.clearMessages();
   }
 
-   enableDealerEdit():void {
+  enableDealerEdit(): void {
     this.isDealerEditing = true;
-    this.originalDealerData = {...this.dealerSection};
+    this.originalDealerData = { ...this.dealerSection };
     this.clearMessages();
   }
   cancelDealerEdit() {
-    this.originalDealerData={...this.dealerSection};
- this.isDealerEditing = false;
+    this.originalDealerData = { ...this.dealerSection };
+    this.isDealerEditing = false;
     this.clearMessages();
-}
+  }
 
   // ============ VALIDATION METHODS ============
 
@@ -178,115 +180,82 @@ export class ProfileComponent implements OnInit {
   }
 
   private updatedUserData = {
-    
-      firstName: this.userSection.firstName.trim(),
-      lastName: this.userSection.lastName.trim(),
-      email: this.userSection.email.trim(),
-      phone: this.userSection.phone.trim(),
-      userId: this.userId,
-      modifiedBy: this.userId
-    
+
+    firstName: this.userSection.firstName.trim(),
+    lastName: this.userSection.lastName.trim(),
+    email: this.userSection.email.trim(),
+    phone: this.userSection.phone.trim(),
+    userId: this.userId,
+    modifiedBy: this.userId
+
   };
- 
+
   private validateDealerData(): boolean {
-    if(!this.dealerSection?.dealershipName?.trim())
-    {
-      this.errorMessage ='Please enter dealer name';
+    if (!this.dealerSection?.dealershipName?.trim()) {
+      this.errorMessage = 'Please enter dealer name';
       return false;
     }
-    if(!this.dealerSection?.contactPerson?.trim())
-    {
-      this.errorMessage='please enter contactPerson';
-       return false;
+    if (!this.dealerSection?.contactPerson?.trim()) {
+      this.errorMessage = 'please enter contactPerson';
+      return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(emailRegex.test(this.dealerSection?.email))
-    {
-      this.errorMessage='please enter valid email address';
+    if (!emailRegex.test(this.dealerSection?.email)) {
+      this.errorMessage = 'Please enter a valid email address';
       return false;
     }
-    if(!this.dealerSection?.phone.trim()||this.dealerSection?.phone.length<10)
-    {
+    if (!this.dealerSection?.phone.trim() || this.dealerSection?.phone.length < 10) {
       this.errorMessage = 'please enter valid phone number(minumum 10 digits)';
       return false;
     }
-    if(!this.dealerSection.alternatePhone?.trim() || this.dealerSection?.alternatePhone.length<10 )
-    {
-      this.errorMessage ='please enter valid phone number(minumum 10 digits)';
+    if (!this.dealerSection.alternatePhone?.trim() || this.dealerSection?.alternatePhone.length < 10) {
+      this.errorMessage = 'please enter valid phone number(minumum 10 digits)';
       return false;
     }
-    if(!this.dealerSection?.addressLine1?.trim())
-    {
-      this.errorMessage ='please enter addressLine1';
+    if (!this.dealerSection?.addressLine1?.trim()) {
+      this.errorMessage = 'please enter addressLine1';
       return false
     }
-    if(!this.dealerSection?.addressLine2?.trim())
-    {
-      this.errorMessage ='please enter addressLine2';
+    if (!this.dealerSection?.addressLine2?.trim()) {
+      this.errorMessage = 'please enter addressLine2';
       return false;
     }
-    if(!this.dealerSection?.city?.trim())
-    {
-      this.errorMessage ='please enter city name';
+    if (!this.dealerSection?.city?.trim()) {
+      this.errorMessage = 'please enter city name';
       return false;
     }
-    if(!this.dealerSection?.state?.trim())
-    {
-      this.errorMessage ='please enter state name';
+    if (!this.dealerSection?.state?.trim()) {
+      this.errorMessage = 'please enter state name';
       return false;
     }
-    if(!this.dealerSection?.country?.trim())
-    {
-      this.errorMessage ='please enter country name';
+    if (!this.dealerSection?.country?.trim()) {
+      this.errorMessage = 'please enter country name';
       return false;
     }
-    if(!this.dealerSection?.postalCode?.trim())
-    {
-      this.errorMessage ='please enter postalCode name';
+    if (!this.dealerSection?.postalCode?.trim()) {
+      this.errorMessage = 'please enter postalCode name';
       return false;
     }
-    if(!this.dealerSection?.gstNumber?.trim())
-    {
-      this.errorMessage ='please enter gstNumber name';
+    if (!this.dealerSection?.gstNumber?.trim()) {
+      this.errorMessage = 'please enter gstNumber name';
       return false;
     }
-    if(!this.dealerSection?.registrationNumber?.trim())
-    {
-      this.errorMessage ='please enter registrationNumber name';
+    if (!this.dealerSection?.registrationNumber?.trim()) {
+      this.errorMessage = 'please enter registrationNumber name';
       return false;
     }
-    if(!this.dealerSection?.tradeLicenseNumber?.trim())
-    {
-      this.errorMessage ='please enter tradeLicenseNumber name';
+    if (!this.dealerSection?.tradeLicenseNumber?.trim()) {
+      this.errorMessage = 'please enter tradeLicenseNumber name';
       return false;
     }
     const websiteRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
 
-    if (!websiteRegex.test(this.dealerSection.website.trim()))
-    {
-       this.errorMessage = 'Please enter a valid website';
-       return false;
+    if (!websiteRegex.test(this.dealerSection.website.trim())) {
+      this.errorMessage = 'Please enter a valid website';
+      return false;
     }
     return true
 
-  }
-   private updatedDealer={
-          dealershipName :this.dealerSection.dealershipName.trim(),
-          contactPerson : this.dealerSection.contactPerson.trim(),
-          email : this.dealerSection.contactPerson.trim(),
-          phone : this.dealerSection.phone.trim(),
-          alternatePhone : this.dealerSection.alternatePhone.trim(),
-          addressLine1 : this.dealerSection.addressLine1.trim(),
-          addressLine2 : this.dealerSection.addressLine2.trim(),
-          city : this.dealerSection.city.trim(),
-          state : this.dealerSection.state.trim(),
-          country : this.dealerSection.country.trim(),
-          postalCode : this.dealerSection.postalCode.trim(),
-          gstNumber : this.dealerSection.gstNumber.trim(),
-          registrationNumber : this.dealerSection.gstNumber.trim(),
-          tradeLicenseNumber : this.dealerSection.tradeLicenseNumber.trim(),
-          website :this.dealerSection.website.trim(),
-          modifiedBy : this.userId
   }
 
 
@@ -317,27 +286,59 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-saveDealerChanges() {
-this.loader.show();
-if(!this.validateDealerData())
-{
-  this.loader.hide();
-  return ;
-}
-const updatedDealerData = this.updatedDealer
-this.dealerService.updateDealerAsync(this.userId,updatedDealerData).subscribe({
-  next:(response) => {
-console.log(response.message);
-this.toastr.success(response.message);
-this.updateDealerDataInStorage(response);
-this.clearMessages();
-this.loader.hide();
-this.isDealerEditing=false
-this.cdr.detectChanges();
+
+
+  updateDealerInfo() {
+    var updatedDealer = {
+      id: this.dealerSection.id,
+      dealershipName: this.dealerSection.dealershipName.trim(),
+      contactPerson: this.dealerSection.contactPerson.trim(),
+      email: this.dealerSection.contactPerson.trim(),
+      phone: this.dealerSection.phone.trim(),
+      alternatePhone: this.dealerSection.alternatePhone.trim(),
+      addressLine1: this.dealerSection.addressLine1.trim(),
+      addressLine2: this.dealerSection.addressLine2.trim(),
+      city: this.dealerSection.city.trim(),
+      state: this.dealerSection.state.trim(),
+      country: this.dealerSection.country.trim(),
+      postalCode: this.dealerSection.postalCode.trim(),
+      gstNumber: this.dealerSection.gstNumber.trim(),
+      registrationNumber: this.dealerSection.gstNumber.trim(),
+      tradeLicenseNumber: this.dealerSection.tradeLicenseNumber.trim(),
+      website: this.dealerSection.website.trim(),
+      modifiedBy: this.userId
+    };
+
+    return updatedDealer
+
   }
-})
-}
-  
+
+  saveDealerChanges() {
+    this.loader.show();
+    if (!this.validateDealerData()) {
+      this.loader.hide();
+      return;
+    }
+    const updatedDealerData = this.updateDealerInfo()
+    this.dealerService.updateDealerAsync(this.dealerSection.id, updatedDealerData).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.toastr.success(response.message);
+        this.updateDealerDataInStorage(response);
+        this.clearMessages();
+        this.loader.hide();
+        this.isDealerEditing = false
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error updating dealer:', error);
+        this.toastr.error('Error updating dealer:' + error);
+        this.clearMessages();
+        this.loader.hide();
+      }
+    })
+  }
+
   // ============ RESPONSE HANDLING METHODS ============
   private updateUserDataInStorage(responseData: UpdateUserResponse): void {
     if (!this.userData?.authenticateResponseDto) {
@@ -351,25 +352,26 @@ this.cdr.detectChanges();
     localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(this.userData));
     this.originalUserData = { ...this.userSection };
   }
-updateDealerDataInStorage(responseData: UpdatedDealerResponse) {
-    this.userData.authenticateResponseDto.dealerInfo.dealershipName =responseData.data?.dealershipName;
-    this.userData.authenticateResponseDto.dealerInfo.contactPerson =responseData.data?.contactPerson;
-    this.userData.authenticateResponseDto.dealerInfo.email =responseData.data?.email;
-    this.userData.authenticateResponseDto.dealerInfo.phone =responseData.data?.phone;
-    this.userData.authenticateResponseDto.dealerInfo.alternatePhone =responseData.data?.alternatePhone;
-    this.userData.authenticateResponseDto.dealerInfo.addressLine1 =responseData.data?.addressLine1;
-    this.userData.authenticateResponseDto.dealerInfo.addressLine2 =responseData.data?.addressLine2;
-    this.userData.authenticateResponseDto.dealerInfo.city =responseData.data?.city;
-    this.userData.authenticateResponseDto.dealerInfo.state =responseData.data?.state;
-    this.userData.authenticateResponseDto.dealerInfo.country =responseData.data?.country;
-    this.userData.authenticateResponseDto.dealerInfo.postalCode =responseData.data?.postalCode;
-    this.userData.authenticateResponseDto.dealerInfo.gstNumber =responseData.data?.gstNumber;
-    this.userData.authenticateResponseDto.dealerInfo.registrationNumber =responseData.data?.registrationNumber;
-    this.userData.authenticateResponseDto.dealerInfo.tradeLicenseNumber =responseData.data?.tradeLicenseNumber;
-    this.userData.authenticateResponseDto.dealerInfo.website =responseData.data?.website;
+
+  updateDealerDataInStorage(responseData: UpdatedDealerResponse) {
+    this.userData.authenticateResponseDto.dealerInfo.dealershipName = responseData.data?.dealershipName;
+    this.userData.authenticateResponseDto.dealerInfo.contactPerson = responseData.data?.contactPerson;
+    this.userData.authenticateResponseDto.dealerInfo.email = responseData.data?.email;
+    this.userData.authenticateResponseDto.dealerInfo.phone = responseData.data?.phone;
+    this.userData.authenticateResponseDto.dealerInfo.alternatePhone = responseData.data?.alternatePhone;
+    this.userData.authenticateResponseDto.dealerInfo.addressLine1 = responseData.data?.addressLine1;
+    this.userData.authenticateResponseDto.dealerInfo.addressLine2 = responseData.data?.addressLine2;
+    this.userData.authenticateResponseDto.dealerInfo.city = responseData.data?.city;
+    this.userData.authenticateResponseDto.dealerInfo.state = responseData.data?.state;
+    this.userData.authenticateResponseDto.dealerInfo.country = responseData.data?.country;
+    this.userData.authenticateResponseDto.dealerInfo.postalCode = responseData.data?.postalCode;
+    this.userData.authenticateResponseDto.dealerInfo.gstNumber = responseData.data?.gstNumber;
+    this.userData.authenticateResponseDto.dealerInfo.registrationNumber = responseData.data?.registrationNumber;
+    this.userData.authenticateResponseDto.dealerInfo.tradeLicenseNumber = responseData.data?.tradeLicenseNumber;
+    this.userData.authenticateResponseDto.dealerInfo.website = responseData.data?.website;
 
   }
- 
+
   // ============ UTILITY METHODS ============
 
   private clearMessages(): void {
