@@ -1,4 +1,4 @@
-﻿namespace BPM.Web.Distributor.UI.Models
+﻿namespace BPM.Web.Distributor.UI.Models.DTOs
 {
     public class AuthenticateResponseDto
     {
@@ -17,5 +17,9 @@
         public Guid RoleId { get; set; }
 
         public bool IsActive { get; set; }
+
+        public DealerDto DealerInfo { get; set; }
+
+        public RoleDto RoleInfo { get; set; }
     }
 }

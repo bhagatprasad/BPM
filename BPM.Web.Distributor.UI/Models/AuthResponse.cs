@@ -1,4 +1,7 @@
-﻿namespace BPM.Web.Distributor.UI.Models
+﻿using BPM.Web.Distributor.UI.Models;
+using BPM.Web.Distributor.UI.Models.DTOs;
+
+namespace BPM.Web.Distributor.UI.Models
 {
     public class AuthResponse
     {
