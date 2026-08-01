@@ -15,6 +15,8 @@ export const loginGuard: CanActivateFn = (route, state) => {
       }
     } catch (e) {
       console.error('Error parsing auth data:', e);
+      // If parsing fails, clear invalid data
+      localStorage.removeItem('AuthenticatedUserResponse');
     }
   }
 

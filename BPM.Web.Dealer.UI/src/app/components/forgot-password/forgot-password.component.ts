@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
@@ -27,7 +26,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private loadingService: SpinnerLoadingService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Check if user is already logged in
@@ -36,7 +35,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       try {
         const authResponse = JSON.parse(loggedData);
         if (authResponse?.jwtToken) {
-          this.router.navigateByUrl('/drugs-catalog');
+          this.router.navigateByUrl('/drugs');
           return;
         }
       } catch (e) {
@@ -66,13 +65,9 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       this.forgotPasswordSubscription.unsubscribe();
     }
 
-    const postData = {
-      username: this.email
-    };
-
     console.log('🔵 Sending forgot password request for:', this.email);
 
-    this.forgotPasswordSubscription = this.accountService.forgotPassword(postData).subscribe({
+    this.forgotPasswordSubscription = this.accountService.forgotPassword(this.email).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
         this.loadingService.hide();
@@ -82,21 +77,21 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         if (res.success) {
           this.emailSent = true;
           this.toastr.success(res.message || 'Password reset email sent successfully!', 'Success');
-          
+
           // FIX: Navigate with userId (capitalized) from response
           if (res.userId) {
             console.log('📧 Navigating to reset-password with userId:', res.userId);
-            this.router.navigate(['/reset-password'], { 
+            this.router.navigate(['/reset-password'], {
               queryParams: { userId: res.userId }  // Capitalized 'userId'
             });
           } else {
             console.warn('⚠️ No userId received in response');
             // If no userId, maybe the API sends email instead
-            this.router.navigate(['/reset-password'], { 
+            this.router.navigate(['/reset-password'], {
               queryParams: { userId: this.email }  // Fallback to email
             });
           }
-          
+
           form.resetForm();
           this.email = '';
         } else {
@@ -104,24 +99,10 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
           this.toastr.error(this.errorMessage, 'Error');
         }
       },
-      error: (err: HttpErrorResponse) => {
-        this.isSubmitting = false;
-        this.loadingService.hide();
+      error: (error) => {
+        console.error('Failed to send reset email. Please try again.:', error);
+        this.toastr.error('Failed to send reset email. Please try again.:' + error);
 
-        let errorMsg = 'Failed to send reset email. Please try again.';
-        if (err.status === 0) {
-          errorMsg = 'Unable to connect to the server. Please check your network connection.';
-        } else if (err.status === 404) {
-          errorMsg = 'Email address not found. Please check and try again.';
-        } else if (err.status === 429) {
-          errorMsg = 'Too many requests. Please wait a few minutes before trying again.';
-        } else if (err.status === 400) {
-          errorMsg = 'Invalid email address format. Please check and try again.';
-        }
-
-        this.errorMessage = errorMsg;
-        this.toastr.error(errorMsg, 'Error');
-        console.error('❌ Forget password error:', err);
       }
     });
   }
@@ -136,7 +117,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       const form = {
         valid: true,
         invalid: false,
-        resetForm: () => {},
+        resetForm: () => { },
         value: { email: this.email }
       } as any;
       this.onSubmit(form);

@@ -5,6 +5,7 @@ import { CartComponent } from './components/cart/cart.component';
 import { authenticationGuard } from './guards/authentication-guard';
 import { loginGuard } from './guards/login.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { forgotPasswordGuard } from './guards/forgot-password.guard'
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MyOrdersComponent } from './components/my-orders/my-orders.component';
@@ -23,20 +24,19 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent,
-    // No guard needed - App component handles public routes
+    canActivate: [forgotPasswordGuard],
   },
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
-    // No guard needed - App component handles public routes
   },
   {
-    path:'profile',
+    path: 'profile',
     component: ProfileComponent,
-   canActivate: [authenticationGuard]
+    canActivate: [authenticationGuard]
   },
   {
-    path: 'drugs-catalog',
+    path: 'drugs',
     component: DrugsCatelogComponent,
     canActivate: [authenticationGuard],
   },
