@@ -3,7 +3,8 @@
     <div class="logo position-relative d-flex align-items-center justify-content-between">
         <a class="d-block text-decoration-none position-relative" routerLink="/">
             <!-- BPM Medicals Logo SVG -->
-            <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle;">
+            <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+                style="display: inline-block; vertical-align: middle;">
                 <!-- Background circle with gradient -->
                 <circle cx="50" cy="50" r="48" fill="url(#sidebarLogoGradient)" stroke="#0d9488" stroke-width="2" />
 
@@ -12,18 +13,18 @@
                 <rect x="20" y="40" width="60" height="20" rx="3" fill="white" opacity="0.95" />
 
                 <!-- Leaf symbol -->
-                <path d="M70 30 C78 25, 85 30, 82 40 C79 50, 72 48, 70 45 C68 42, 65 38, 70 30Z"
-                      fill="white" opacity="0.8" transform="rotate(15, 75, 35)" />
-                <path d="M30 70 C22 75, 15 70, 18 60 C21 50, 28 52, 30 55 C32 58, 35 62, 30 70Z"
-                      fill="white" opacity="0.8" transform="rotate(-15, 25, 65)" />
+                <path d="M70 30 C78 25, 85 30, 82 40 C79 50, 72 48, 70 45 C68 42, 65 38, 70 30Z" fill="white"
+                    opacity="0.8" transform="rotate(15, 75, 35)" />
+                <path d="M30 70 C22 75, 15 70, 18 60 C21 50, 28 52, 30 55 C32 58, 35 62, 30 70Z" fill="white"
+                    opacity="0.8" transform="rotate(-15, 25, 65)" />
 
                 <!-- BPM Letters integrated -->
                 <text x="50" y="48" text-anchor="middle" font-size="22" font-weight="800"
-                      font-family="Arial, sans-serif" fill="#0d9488" letter-spacing="2">
+                    font-family="Arial, sans-serif" fill="#0d9488" letter-spacing="2">
                     B
                 </text>
                 <text x="50" y="68" text-anchor="middle" font-size="16" font-weight="700"
-                      font-family="Arial, sans-serif" fill="#0e7490" letter-spacing="1">
+                    font-family="Arial, sans-serif" fill="#0e7490" letter-spacing="1">
                     PM
                 </text>
 
@@ -41,27 +42,36 @@
                     </linearGradient>
                 </defs>
             </svg>
-            <span class="logo-text text-secondary fw-semibold" style="font-size: 18px; background: linear-gradient(135deg, #0d9488, #0e7490); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">BPM Medicals</span>
+            <span class="logo-text text-secondary fw-semibold"
+                style="font-size: 18px; background: linear-gradient(135deg, #0d9488, #0e7490); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">BPM
+                Medicals</span>
         </a>
-        <button class="sidebar-burger-menu-close bg-transparent py-3 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y" id="sidebar-burger-menu-close">
-            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(45deg);">
+        <button
+            class="sidebar-burger-menu-close bg-transparent py-3 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
+            id="sidebar-burger-menu-close">
+            <span class="border-1 d-block for-dark-burger"
+                style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(45deg);">
             </span>
-            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(-45deg);">
+            <span class="border-1 d-block for-dark-burger"
+                style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(-45deg);">
             </span>
         </button>
         <button class="sidebar-burger-menu bg-transparent p-0 border-0" id="sidebar-burger-menu">
-            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
+            <span class="border-1 d-block for-dark-burger"
+                style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
             </span>
-            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0;">
+            <span class="border-1 d-block for-dark-burger"
+                style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0;">
             </span>
-            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
+            <span class="border-1 d-block for-dark-burger"
+                style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
             </span>
         </button>
     </div>
     <aside class="layout-menu menu-vertical menu active" data-simplebar="" id="layout-menu">
         <ul class="menu-inner">
             <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">MAIN</span>
+                <span class="menu-title-text">dashboard</span>
             </li>
 
             <!-- Dashboard -->
@@ -71,40 +81,51 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('dashboard')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard" routerLinkActive="active" style="cursor: pointer;">E-Commerce</a>
+                        <a class="menu-link" routerLink="/dashboard" routerLinkActive="active"
+                            style="cursor: pointer;">E-Commerce</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/crm" routerLinkActive="active" style="cursor: pointer;">CRM</a>
+                        <a class="menu-link" routerLink="/dashboard/crm" routerLinkActive="active"
+                            style="cursor: pointer;">CRM</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/project-management" routerLinkActive="active" style="cursor: pointer;">Project Management</a>
+                        <a class="menu-link" routerLink="/dashboard/project-management" routerLinkActive="active"
+                            style="cursor: pointer;">Project Management</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/lms" routerLinkActive="active" style="cursor: pointer;">LMS</a>
+                        <a class="menu-link" routerLink="/dashboard/lms" routerLinkActive="active"
+                            style="cursor: pointer;">LMS</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/help-desk" routerLinkActive="active" style="cursor: pointer;">
+                        <a class="menu-link" routerLink="/dashboard/help-desk" routerLinkActive="active"
+                            style="cursor: pointer;">
                             Help Desk
                             <span class="new tag">Hot</span>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/hr-management" routerLinkActive="active" style="cursor: pointer;">HR Management</a>
+                        <a class="menu-link" routerLink="/dashboard/hr-management" routerLinkActive="active"
+                            style="cursor: pointer;">HR Management</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/school" routerLinkActive="active" style="cursor: pointer;">School</a>
+                        <a class="menu-link" routerLink="/dashboard/school" routerLinkActive="active"
+                            style="cursor: pointer;">School</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/marketing" routerLinkActive="active" style="cursor: pointer;">Marketing</a>
+                        <a class="menu-link" routerLink="/dashboard/marketing" routerLinkActive="active"
+                            style="cursor: pointer;">Marketing</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/analytics" routerLinkActive="active" style="cursor: pointer;">Analytics</a>
+                        <a class="menu-link" routerLink="/dashboard/analytics" routerLinkActive="active"
+                            style="cursor: pointer;">Analytics</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/hospital" routerLinkActive="active" style="cursor: pointer;">Hospital</a>
+                        <a class="menu-link" routerLink="/dashboard/hospital" routerLinkActive="active"
+                            style="cursor: pointer;">Hospital</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/dashboard/finance" routerLinkActive="active" style="cursor: pointer;">Finance</a>
+                        <a class="menu-link" routerLink="/dashboard/finance" routerLinkActive="active"
+                            style="cursor: pointer;">Finance</a>
                     </li>
                 </ul>
             </li>
@@ -148,13 +169,16 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('email')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/email/inbox" routerLinkActive="active" style="cursor: pointer;">Inbox</a>
+                        <a class="menu-link" routerLink="/email/inbox" routerLinkActive="active"
+                            style="cursor: pointer;">Inbox</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/email/compose" routerLinkActive="active" style="cursor: pointer;">Compose</a>
+                        <a class="menu-link" routerLink="/email/compose" routerLinkActive="active"
+                            style="cursor: pointer;">Compose</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/email/read" routerLinkActive="active" style="cursor: pointer;">Read</a>
+                        <a class="menu-link" routerLink="/email/read" routerLinkActive="active"
+                            style="cursor: pointer;">Read</a>
                     </li>
                 </ul>
             </li>
@@ -173,25 +197,32 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('file-manager')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/my-drive" routerLinkActive="active" style="cursor: pointer;">My Drive</a>
+                        <a class="menu-link" routerLink="/file-manager/my-drive" routerLinkActive="active"
+                            style="cursor: pointer;">My Drive</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/assets" routerLinkActive="active" style="cursor: pointer;">Assets</a>
+                        <a class="menu-link" routerLink="/file-manager/assets" routerLinkActive="active"
+                            style="cursor: pointer;">Assets</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/projects" routerLinkActive="active" style="cursor: pointer;">Projects</a>
+                        <a class="menu-link" routerLink="/file-manager/projects" routerLinkActive="active"
+                            style="cursor: pointer;">Projects</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/personal" routerLinkActive="active" style="cursor: pointer;">Personal</a>
+                        <a class="menu-link" routerLink="/file-manager/personal" routerLinkActive="active"
+                            style="cursor: pointer;">Personal</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/applications" routerLinkActive="active" style="cursor: pointer;">Applications</a>
+                        <a class="menu-link" routerLink="/file-manager/applications" routerLinkActive="active"
+                            style="cursor: pointer;">Applications</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/documents" routerLinkActive="active" style="cursor: pointer;">Documents</a>
+                        <a class="menu-link" routerLink="/file-manager/documents" routerLinkActive="active"
+                            style="cursor: pointer;">Documents</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/file-manager/media" routerLinkActive="active" style="cursor: pointer;">Media</a>
+                        <a class="menu-link" routerLink="/file-manager/media" routerLinkActive="active"
+                            style="cursor: pointer;">Media</a>
                     </li>
                 </ul>
             </li>
@@ -207,67 +238,88 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('ecommerce')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/products-grid" routerLinkActive="active" style="cursor: pointer;">Products Grid</a>
+                        <a class="menu-link" routerLink="/ecommerce/products-grid" routerLinkActive="active"
+                            style="cursor: pointer;">Products Grid</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/products-list" routerLinkActive="active" style="cursor: pointer;">Products List</a>
+                        <a class="menu-link" routerLink="/ecommerce/products-list" routerLinkActive="active"
+                            style="cursor: pointer;">Products List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/product-details" routerLinkActive="active" style="cursor: pointer;">Product Details</a>
+                        <a class="menu-link" routerLink="/ecommerce/product-details" routerLinkActive="active"
+                            style="cursor: pointer;">Product Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/create-product" routerLinkActive="active" style="cursor: pointer;">Create Product</a>
+                        <a class="menu-link" routerLink="/ecommerce/create-product" routerLinkActive="active"
+                            style="cursor: pointer;">Create Product</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/edit-product" routerLinkActive="active" style="cursor: pointer;">Edit Product</a>
+                        <a class="menu-link" routerLink="/ecommerce/edit-product" routerLinkActive="active"
+                            style="cursor: pointer;">Edit Product</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/cart" routerLinkActive="active" style="cursor: pointer;">Cart</a>
+                        <a class="menu-link" routerLink="/ecommerce/cart" routerLinkActive="active"
+                            style="cursor: pointer;">Cart</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/checkout" routerLinkActive="active" style="cursor: pointer;">Checkout</a>
+                        <a class="menu-link" routerLink="/ecommerce/checkout" routerLinkActive="active"
+                            style="cursor: pointer;">Checkout</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/orders" routerLinkActive="active" style="cursor: pointer;">Orders</a>
+                        <a class="menu-link" routerLink="/ecommerce/orders" routerLinkActive="active"
+                            style="cursor: pointer;">Orders</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/order-details" routerLinkActive="active" style="cursor: pointer;">Order Details</a>
+                        <a class="menu-link" routerLink="/ecommerce/order-details" routerLinkActive="active"
+                            style="cursor: pointer;">Order Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/create-order" routerLinkActive="active" style="cursor: pointer;">Create Order</a>
+                        <a class="menu-link" routerLink="/ecommerce/create-order" routerLinkActive="active"
+                            style="cursor: pointer;">Create Order</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/order-tracking" routerLinkActive="active" style="cursor: pointer;">Order Tracking</a>
+                        <a class="menu-link" routerLink="/ecommerce/order-tracking" routerLinkActive="active"
+                            style="cursor: pointer;">Order Tracking</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/customers" routerLinkActive="active" style="cursor: pointer;">Customers</a>
+                        <a class="menu-link" routerLink="/ecommerce/customers" routerLinkActive="active"
+                            style="cursor: pointer;">Customers</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/customer-details" routerLinkActive="active" style="cursor: pointer;">Customer Details</a>
+                        <a class="menu-link" routerLink="/ecommerce/customer-details" routerLinkActive="active"
+                            style="cursor: pointer;">Customer Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/categories" routerLinkActive="active" style="cursor: pointer;">Categories</a>
+                        <a class="menu-link" routerLink="/ecommerce/categories" routerLinkActive="active"
+                            style="cursor: pointer;">Categories</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/create-category" routerLinkActive="active" style="cursor: pointer;">Create Category</a>
+                        <a class="menu-link" routerLink="/ecommerce/create-category" routerLinkActive="active"
+                            style="cursor: pointer;">Create Category</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/edit-category" routerLinkActive="active" style="cursor: pointer;">Edit Category</a>
+                        <a class="menu-link" routerLink="/ecommerce/edit-category" routerLinkActive="active"
+                            style="cursor: pointer;">Edit Category</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/sellers" routerLinkActive="active" style="cursor: pointer;">Sellers</a>
+                        <a class="menu-link" routerLink="/ecommerce/sellers" routerLinkActive="active"
+                            style="cursor: pointer;">Sellers</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/seller-details" routerLinkActive="active" style="cursor: pointer;">Seller Details</a>
+                        <a class="menu-link" routerLink="/ecommerce/seller-details" routerLinkActive="active"
+                            style="cursor: pointer;">Seller Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/create-seller" routerLinkActive="active" style="cursor: pointer;">Create Seller</a>
+                        <a class="menu-link" routerLink="/ecommerce/create-seller" routerLinkActive="active"
+                            style="cursor: pointer;">Create Seller</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/reviews" routerLinkActive="active" style="cursor: pointer;">Reviews</a>
+                        <a class="menu-link" routerLink="/ecommerce/reviews" routerLinkActive="active"
+                            style="cursor: pointer;">Reviews</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ecommerce/refunds" routerLinkActive="active" style="cursor: pointer;">Refunds</a>
+                        <a class="menu-link" routerLink="/ecommerce/refunds" routerLinkActive="active"
+                            style="cursor: pointer;">Refunds</a>
                     </li>
                 </ul>
             </li>
@@ -279,22 +331,28 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('crm')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/contacts" routerLinkActive="active" style="cursor: pointer;">Contacts</a>
+                        <a class="menu-link" routerLink="/crm/contacts" routerLinkActive="active"
+                            style="cursor: pointer;">Contacts</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/create-contact" routerLinkActive="active" style="cursor: pointer;">Create Contact</a>
+                        <a class="menu-link" routerLink="/crm/create-contact" routerLinkActive="active"
+                            style="cursor: pointer;">Create Contact</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/customers" routerLinkActive="active" style="cursor: pointer;">Customers</a>
+                        <a class="menu-link" routerLink="/crm/customers" routerLinkActive="active"
+                            style="cursor: pointer;">Customers</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/leads" routerLinkActive="active" style="cursor: pointer;">Leads</a>
+                        <a class="menu-link" routerLink="/crm/leads" routerLinkActive="active"
+                            style="cursor: pointer;">Leads</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/create-lead" routerLinkActive="active" style="cursor: pointer;">Create Lead</a>
+                        <a class="menu-link" routerLink="/crm/create-lead" routerLinkActive="active"
+                            style="cursor: pointer;">Create Lead</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/crm/deals" routerLinkActive="active" style="cursor: pointer;">Deals</a>
+                        <a class="menu-link" routerLink="/crm/deals" routerLinkActive="active"
+                            style="cursor: pointer;">Deals</a>
                     </li>
                 </ul>
             </li>
@@ -306,28 +364,36 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('projects')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/overview" routerLinkActive="active" style="cursor: pointer;">Project Overview</a>
+                        <a class="menu-link" routerLink="/projects/overview" routerLinkActive="active"
+                            style="cursor: pointer;">Project Overview</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/list" routerLinkActive="active" style="cursor: pointer;">Projects List</a>
+                        <a class="menu-link" routerLink="/projects/list" routerLinkActive="active"
+                            style="cursor: pointer;">Projects List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/create" routerLinkActive="active" style="cursor: pointer;">Create Project</a>
+                        <a class="menu-link" routerLink="/projects/create" routerLinkActive="active"
+                            style="cursor: pointer;">Create Project</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/clients" routerLinkActive="active" style="cursor: pointer;">Clients</a>
+                        <a class="menu-link" routerLink="/projects/clients" routerLinkActive="active"
+                            style="cursor: pointer;">Clients</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/teams" routerLinkActive="active" style="cursor: pointer;">Teams</a>
+                        <a class="menu-link" routerLink="/projects/teams" routerLinkActive="active"
+                            style="cursor: pointer;">Teams</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/kanban" routerLinkActive="active" style="cursor: pointer;">Kanban Board</a>
+                        <a class="menu-link" routerLink="/projects/kanban" routerLinkActive="active"
+                            style="cursor: pointer;">Kanban Board</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/users" routerLinkActive="active" style="cursor: pointer;">Users</a>
+                        <a class="menu-link" routerLink="/projects/users" routerLinkActive="active"
+                            style="cursor: pointer;">Users</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/projects/create-user" routerLinkActive="active" style="cursor: pointer;">Create User</a>
+                        <a class="menu-link" routerLink="/projects/create-user" routerLinkActive="active"
+                            style="cursor: pointer;">Create User</a>
                     </li>
                 </ul>
             </li>
@@ -339,19 +405,24 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('lms')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/lms/courses-list" routerLinkActive="active" style="cursor: pointer;">Courses List</a>
+                        <a class="menu-link" routerLink="/lms/courses-list" routerLinkActive="active"
+                            style="cursor: pointer;">Courses List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/lms/course-details" routerLinkActive="active" style="cursor: pointer;">Course Details</a>
+                        <a class="menu-link" routerLink="/lms/course-details" routerLinkActive="active"
+                            style="cursor: pointer;">Course Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/lms/create-course" routerLinkActive="active" style="cursor: pointer;">Create Course</a>
+                        <a class="menu-link" routerLink="/lms/create-course" routerLinkActive="active"
+                            style="cursor: pointer;">Create Course</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/lms/edit-course" routerLinkActive="active" style="cursor: pointer;">Edit Course</a>
+                        <a class="menu-link" routerLink="/lms/edit-course" routerLinkActive="active"
+                            style="cursor: pointer;">Edit Course</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/lms/instructors" routerLinkActive="active" style="cursor: pointer;">Instructors</a>
+                        <a class="menu-link" routerLink="/lms/instructors" routerLinkActive="active"
+                            style="cursor: pointer;">Instructors</a>
                     </li>
                 </ul>
             </li>
@@ -363,16 +434,20 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('helpdesk')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/helpdesk/tickets" routerLinkActive="active" style="cursor: pointer;">Tickets</a>
+                        <a class="menu-link" routerLink="/helpdesk/tickets" routerLinkActive="active"
+                            style="cursor: pointer;">Tickets</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/helpdesk/ticket-details" routerLinkActive="active" style="cursor: pointer;">Ticket Details</a>
+                        <a class="menu-link" routerLink="/helpdesk/ticket-details" routerLinkActive="active"
+                            style="cursor: pointer;">Ticket Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/helpdesk/agents" routerLinkActive="active" style="cursor: pointer;">Agents</a>
+                        <a class="menu-link" routerLink="/helpdesk/agents" routerLinkActive="active"
+                            style="cursor: pointer;">Agents</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/helpdesk/reports" routerLinkActive="active" style="cursor: pointer;">Reports</a>
+                        <a class="menu-link" routerLink="/helpdesk/reports" routerLinkActive="active"
+                            style="cursor: pointer;">Reports</a>
                     </li>
                 </ul>
             </li>
@@ -384,34 +459,44 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('hr')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/employees" routerLinkActive="active" style="cursor: pointer;">Employee List</a>
+                        <a class="menu-link" routerLink="/hr/employees" routerLinkActive="active"
+                            style="cursor: pointer;">Employee List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/add-employee" routerLinkActive="active" style="cursor: pointer;">Add New Employee</a>
+                        <a class="menu-link" routerLink="/hr/add-employee" routerLinkActive="active"
+                            style="cursor: pointer;">Add New Employee</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/employee-leave" routerLinkActive="active" style="cursor: pointer;">Employee Leave</a>
+                        <a class="menu-link" routerLink="/hr/employee-leave" routerLinkActive="active"
+                            style="cursor: pointer;">Employee Leave</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/add-leave" routerLinkActive="active" style="cursor: pointer;">Add Leave</a>
+                        <a class="menu-link" routerLink="/hr/add-leave" routerLinkActive="active"
+                            style="cursor: pointer;">Add Leave</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/attendance" routerLinkActive="active" style="cursor: pointer;">Attendance</a>
+                        <a class="menu-link" routerLink="/hr/attendance" routerLinkActive="active"
+                            style="cursor: pointer;">Attendance</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/departments" routerLinkActive="active" style="cursor: pointer;">Departments</a>
+                        <a class="menu-link" routerLink="/hr/departments" routerLinkActive="active"
+                            style="cursor: pointer;">Departments</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/add-department" routerLinkActive="active" style="cursor: pointer;">Add Departments</a>
+                        <a class="menu-link" routerLink="/hr/add-department" routerLinkActive="active"
+                            style="cursor: pointer;">Add Departments</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/holidays" routerLinkActive="active" style="cursor: pointer;">Holidays</a>
+                        <a class="menu-link" routerLink="/hr/holidays" routerLinkActive="active"
+                            style="cursor: pointer;">Holidays</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/employee-salary" routerLinkActive="active" style="cursor: pointer;">Employee Salary</a>
+                        <a class="menu-link" routerLink="/hr/employee-salary" routerLinkActive="active"
+                            style="cursor: pointer;">Employee Salary</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hr/create-payslip" routerLinkActive="active" style="cursor: pointer;">Create Payslip</a>
+                        <a class="menu-link" routerLink="/hr/create-payslip" routerLinkActive="active"
+                            style="cursor: pointer;">Create Payslip</a>
                     </li>
                 </ul>
             </li>
@@ -423,43 +508,56 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('school')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/students" routerLinkActive="active" style="cursor: pointer;">Student List</a>
+                        <a class="menu-link" routerLink="/school/students" routerLinkActive="active"
+                            style="cursor: pointer;">Student List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-student" routerLinkActive="active" style="cursor: pointer;">Add Student</a>
+                        <a class="menu-link" routerLink="/school/add-student" routerLinkActive="active"
+                            style="cursor: pointer;">Add Student</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/teachers" routerLinkActive="active" style="cursor: pointer;">Teacher List</a>
+                        <a class="menu-link" routerLink="/school/teachers" routerLinkActive="active"
+                            style="cursor: pointer;">Teacher List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-teacher" routerLinkActive="active" style="cursor: pointer;">Add Teacher</a>
+                        <a class="menu-link" routerLink="/school/add-teacher" routerLinkActive="active"
+                            style="cursor: pointer;">Add Teacher</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/staff" routerLinkActive="active" style="cursor: pointer;">Staff List</a>
+                        <a class="menu-link" routerLink="/school/staff" routerLinkActive="active"
+                            style="cursor: pointer;">Staff List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-staff" routerLinkActive="active" style="cursor: pointer;">Add Staff</a>
+                        <a class="menu-link" routerLink="/school/add-staff" routerLinkActive="active"
+                            style="cursor: pointer;">Add Staff</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/courses" routerLinkActive="active" style="cursor: pointer;">All Courses</a>
+                        <a class="menu-link" routerLink="/school/courses" routerLinkActive="active"
+                            style="cursor: pointer;">All Courses</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-course" routerLinkActive="active" style="cursor: pointer;">Add Course</a>
+                        <a class="menu-link" routerLink="/school/add-course" routerLinkActive="active"
+                            style="cursor: pointer;">Add Course</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/fees" routerLinkActive="active" style="cursor: pointer;">Fees collection</a>
+                        <a class="menu-link" routerLink="/school/fees" routerLinkActive="active"
+                            style="cursor: pointer;">Fees collection</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-fees" routerLinkActive="active" style="cursor: pointer;">Add Fees</a>
+                        <a class="menu-link" routerLink="/school/add-fees" routerLinkActive="active"
+                            style="cursor: pointer;">Add Fees</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/attendance" routerLinkActive="active" style="cursor: pointer;">Attendance</a>
+                        <a class="menu-link" routerLink="/school/attendance" routerLinkActive="active"
+                            style="cursor: pointer;">Attendance</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/library" routerLinkActive="active" style="cursor: pointer;">Library</a>
+                        <a class="menu-link" routerLink="/school/library" routerLinkActive="active"
+                            style="cursor: pointer;">Library</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/school/add-library-book" routerLinkActive="active" style="cursor: pointer;">Add Library Book</a>
+                        <a class="menu-link" routerLink="/school/add-library-book" routerLinkActive="active"
+                            style="cursor: pointer;">Add Library Book</a>
                     </li>
                 </ul>
             </li>
@@ -471,22 +569,28 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('hospital')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/patients" routerLinkActive="active" style="cursor: pointer;">Patients</a>
+                        <a class="menu-link" routerLink="/hospital/patients" routerLinkActive="active"
+                            style="cursor: pointer;">Patients</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/patient-details" routerLinkActive="active" style="cursor: pointer;">Patient Details</a>
+                        <a class="menu-link" routerLink="/hospital/patient-details" routerLinkActive="active"
+                            style="cursor: pointer;">Patient Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/doctors" routerLinkActive="active" style="cursor: pointer;">Doctors</a>
+                        <a class="menu-link" routerLink="/hospital/doctors" routerLinkActive="active"
+                            style="cursor: pointer;">Doctors</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/doctor-details" routerLinkActive="active" style="cursor: pointer;">Doctor Details</a>
+                        <a class="menu-link" routerLink="/hospital/doctor-details" routerLinkActive="active"
+                            style="cursor: pointer;">Doctor Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/schedule" routerLinkActive="active" style="cursor: pointer;">All Schedule</a>
+                        <a class="menu-link" routerLink="/hospital/schedule" routerLinkActive="active"
+                            style="cursor: pointer;">All Schedule</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/hospital/book-appointment" routerLinkActive="active" style="cursor: pointer;">Book Appointments</a>
+                        <a class="menu-link" routerLink="/hospital/book-appointment" routerLinkActive="active"
+                            style="cursor: pointer;">Book Appointments</a>
                     </li>
                 </ul>
             </li>
@@ -498,16 +602,20 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('events')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/events/list" routerLinkActive="active" style="cursor: pointer;">Events</a>
+                        <a class="menu-link" routerLink="/events/list" routerLinkActive="active"
+                            style="cursor: pointer;">Events</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/events/details" routerLinkActive="active" style="cursor: pointer;">Event Details</a>
+                        <a class="menu-link" routerLink="/events/details" routerLinkActive="active"
+                            style="cursor: pointer;">Event Details</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/events/create" routerLinkActive="active" style="cursor: pointer;">Create An Event</a>
+                        <a class="menu-link" routerLink="/events/create" routerLinkActive="active"
+                            style="cursor: pointer;">Create An Event</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/events/edit" routerLinkActive="active" style="cursor: pointer;">Edit An Event</a>
+                        <a class="menu-link" routerLink="/events/edit" routerLinkActive="active"
+                            style="cursor: pointer;">Edit An Event</a>
                     </li>
                 </ul>
             </li>
@@ -519,10 +627,12 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('social')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/social/profile" routerLinkActive="active" style="cursor: pointer;">Profile</a>
+                        <a class="menu-link" routerLink="/social/profile" routerLinkActive="active"
+                            style="cursor: pointer;">Profile</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/social/settings" routerLinkActive="active" style="cursor: pointer;">Settings</a>
+                        <a class="menu-link" routerLink="/social/settings" routerLinkActive="active"
+                            style="cursor: pointer;">Settings</a>
                     </li>
                 </ul>
             </li>
@@ -534,10 +644,12 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('invoices')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/invoices/list" routerLinkActive="active" style="cursor: pointer;">Invoices</a>
+                        <a class="menu-link" routerLink="/invoices/list" routerLinkActive="active"
+                            style="cursor: pointer;">Invoices</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/invoices/details" routerLinkActive="active" style="cursor: pointer;">Invoice Details</a>
+                        <a class="menu-link" routerLink="/invoices/details" routerLinkActive="active"
+                            style="cursor: pointer;">Invoice Details</a>
                     </li>
                 </ul>
             </li>
@@ -549,13 +661,16 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('users')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/users/team-members" routerLinkActive="active" style="cursor: pointer;">Team Members</a>
+                        <a class="menu-link" routerLink="/users/team-members" routerLinkActive="active"
+                            style="cursor: pointer;">Team Members</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/users/list" routerLinkActive="active" style="cursor: pointer;">Users List</a>
+                        <a class="menu-link" routerLink="/users/list" routerLinkActive="active"
+                            style="cursor: pointer;">Users List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/users/add" routerLinkActive="active" style="cursor: pointer;">Add User</a>
+                        <a class="menu-link" routerLink="/users/add" routerLinkActive="active"
+                            style="cursor: pointer;">Add User</a>
                     </li>
                 </ul>
             </li>
@@ -567,13 +682,16 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('profile')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/profile/user" routerLinkActive="active" style="cursor: pointer;">User Profile</a>
+                        <a class="menu-link" routerLink="/profile/user" routerLinkActive="active"
+                            style="cursor: pointer;">User Profile</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/profile/teams" routerLinkActive="active" style="cursor: pointer;">Teams</a>
+                        <a class="menu-link" routerLink="/profile/teams" routerLinkActive="active"
+                            style="cursor: pointer;">Teams</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/profile/projects" routerLinkActive="active" style="cursor: pointer;">Projects</a>
+                        <a class="menu-link" routerLink="/profile/projects" routerLinkActive="active"
+                            style="cursor: pointer;">Projects</a>
                     </li>
                 </ul>
             </li>
@@ -596,10 +714,12 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('icons')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/icons/material" routerLinkActive="active" style="cursor: pointer;">Material Symbols</a>
+                        <a class="menu-link" routerLink="/icons/material" routerLinkActive="active"
+                            style="cursor: pointer;">Material Symbols</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/icons/remix" routerLinkActive="active" style="cursor: pointer;">RemixIcon</a>
+                        <a class="menu-link" routerLink="/icons/remix" routerLinkActive="active"
+                            style="cursor: pointer;">RemixIcon</a>
                     </li>
                 </ul>
             </li>
@@ -611,58 +731,76 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('ui-elements')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/alerts" routerLinkActive="active" style="cursor: pointer;">Alerts</a>
+                        <a class="menu-link" routerLink="/ui/alerts" routerLinkActive="active"
+                            style="cursor: pointer;">Alerts</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/avatar" routerLinkActive="active" style="cursor: pointer;">Avatar</a>
+                        <a class="menu-link" routerLink="/ui/avatar" routerLinkActive="active"
+                            style="cursor: pointer;">Avatar</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/buttons" routerLinkActive="active" style="cursor: pointer;">Buttons</a>
+                        <a class="menu-link" routerLink="/ui/buttons" routerLinkActive="active"
+                            style="cursor: pointer;">Buttons</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/cards" routerLinkActive="active" style="cursor: pointer;">Cards</a>
+                        <a class="menu-link" routerLink="/ui/cards" routerLinkActive="active"
+                            style="cursor: pointer;">Cards</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/carousels" routerLinkActive="active" style="cursor: pointer;">Carousels</a>
+                        <a class="menu-link" routerLink="/ui/carousels" routerLinkActive="active"
+                            style="cursor: pointer;">Carousels</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/dropdowns" routerLinkActive="active" style="cursor: pointer;">Dropdowns</a>
+                        <a class="menu-link" routerLink="/ui/dropdowns" routerLinkActive="active"
+                            style="cursor: pointer;">Dropdowns</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/grids" routerLinkActive="active" style="cursor: pointer;">Grids</a>
+                        <a class="menu-link" routerLink="/ui/grids" routerLinkActive="active"
+                            style="cursor: pointer;">Grids</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/images" routerLinkActive="active" style="cursor: pointer;">Images</a>
+                        <a class="menu-link" routerLink="/ui/images" routerLinkActive="active"
+                            style="cursor: pointer;">Images</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/list" routerLinkActive="active" style="cursor: pointer;">List</a>
+                        <a class="menu-link" routerLink="/ui/list" routerLinkActive="active"
+                            style="cursor: pointer;">List</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/modals" routerLinkActive="active" style="cursor: pointer;">Modals</a>
+                        <a class="menu-link" routerLink="/ui/modals" routerLinkActive="active"
+                            style="cursor: pointer;">Modals</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/navs" routerLinkActive="active" style="cursor: pointer;">Navs</a>
+                        <a class="menu-link" routerLink="/ui/navs" routerLinkActive="active"
+                            style="cursor: pointer;">Navs</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/pagination" routerLinkActive="active" style="cursor: pointer;">Pagination</a>
+                        <a class="menu-link" routerLink="/ui/pagination" routerLinkActive="active"
+                            style="cursor: pointer;">Pagination</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/progress" routerLinkActive="active" style="cursor: pointer;">Progress</a>
+                        <a class="menu-link" routerLink="/ui/progress" routerLinkActive="active"
+                            style="cursor: pointer;">Progress</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/spinners" routerLinkActive="active" style="cursor: pointer;">Spinners</a>
+                        <a class="menu-link" routerLink="/ui/spinners" routerLinkActive="active"
+                            style="cursor: pointer;">Spinners</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/tabs" routerLinkActive="active" style="cursor: pointer;">Tabs</a>
+                        <a class="menu-link" routerLink="/ui/tabs" routerLinkActive="active"
+                            style="cursor: pointer;">Tabs</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/accordions" routerLinkActive="active" style="cursor: pointer;">Accordions</a>
+                        <a class="menu-link" routerLink="/ui/accordions" routerLinkActive="active"
+                            style="cursor: pointer;">Accordions</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/date-time-picker" routerLinkActive="active" style="cursor: pointer;">Date Time Picker</a>
+                        <a class="menu-link" routerLink="/ui/date-time-picker" routerLinkActive="active"
+                            style="cursor: pointer;">Date Time Picker</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/ui/videos" routerLinkActive="active" style="cursor: pointer;">Videos</a>
+                        <a class="menu-link" routerLink="/ui/videos" routerLinkActive="active"
+                            style="cursor: pointer;">Videos</a>
                     </li>
                 </ul>
             </li>
@@ -674,10 +812,12 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('tables')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/tables/basic" routerLinkActive="active" style="cursor: pointer;">Basic Table</a>
+                        <a class="menu-link" routerLink="/tables/basic" routerLinkActive="active"
+                            style="cursor: pointer;">Basic Table</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/tables/data" routerLinkActive="active" style="cursor: pointer;">Data Table</a>
+                        <a class="menu-link" routerLink="/tables/data" routerLinkActive="active"
+                            style="cursor: pointer;">Data Table</a>
                     </li>
                 </ul>
             </li>
@@ -689,22 +829,28 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('forms')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/basic" routerLinkActive="active" style="cursor: pointer;">Basic Elements</a>
+                        <a class="menu-link" routerLink="/forms/basic" routerLinkActive="active"
+                            style="cursor: pointer;">Basic Elements</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/advanced" routerLinkActive="active" style="cursor: pointer;">Advanced Elements</a>
+                        <a class="menu-link" routerLink="/forms/advanced" routerLinkActive="active"
+                            style="cursor: pointer;">Advanced Elements</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/validation" routerLinkActive="active" style="cursor: pointer;">Validation</a>
+                        <a class="menu-link" routerLink="/forms/validation" routerLinkActive="active"
+                            style="cursor: pointer;">Validation</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/wizard" routerLinkActive="active" style="cursor: pointer;">Wizard</a>
+                        <a class="menu-link" routerLink="/forms/wizard" routerLinkActive="active"
+                            style="cursor: pointer;">Wizard</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/editors" routerLinkActive="active" style="cursor: pointer;">Editors</a>
+                        <a class="menu-link" routerLink="/forms/editors" routerLinkActive="active"
+                            style="cursor: pointer;">Editors</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/forms/file-uploader" routerLinkActive="active" style="cursor: pointer;">File Uploader</a>
+                        <a class="menu-link" routerLink="/forms/file-uploader" routerLinkActive="active"
+                            style="cursor: pointer;">File Uploader</a>
                     </li>
                 </ul>
             </li>
@@ -716,31 +862,40 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('charts')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/line" routerLinkActive="active" style="cursor: pointer;">Line</a>
+                        <a class="menu-link" routerLink="/charts/line" routerLinkActive="active"
+                            style="cursor: pointer;">Line</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/area" routerLinkActive="active" style="cursor: pointer;">Area</a>
+                        <a class="menu-link" routerLink="/charts/area" routerLinkActive="active"
+                            style="cursor: pointer;">Area</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/column" routerLinkActive="active" style="cursor: pointer;">Column</a>
+                        <a class="menu-link" routerLink="/charts/column" routerLinkActive="active"
+                            style="cursor: pointer;">Column</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/mixed" routerLinkActive="active" style="cursor: pointer;">Mixed</a>
+                        <a class="menu-link" routerLink="/charts/mixed" routerLinkActive="active"
+                            style="cursor: pointer;">Mixed</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/radial-bar" routerLinkActive="active" style="cursor: pointer;">RadialBar</a>
+                        <a class="menu-link" routerLink="/charts/radial-bar" routerLinkActive="active"
+                            style="cursor: pointer;">RadialBar</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/radar" routerLinkActive="active" style="cursor: pointer;">Radar</a>
+                        <a class="menu-link" routerLink="/charts/radar" routerLinkActive="active"
+                            style="cursor: pointer;">Radar</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/pie" routerLinkActive="active" style="cursor: pointer;">Pie</a>
+                        <a class="menu-link" routerLink="/charts/pie" routerLinkActive="active"
+                            style="cursor: pointer;">Pie</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/polar" routerLinkActive="active" style="cursor: pointer;">Polar</a>
+                        <a class="menu-link" routerLink="/charts/polar" routerLinkActive="active"
+                            style="cursor: pointer;">Polar</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/charts/more" routerLinkActive="active" style="cursor: pointer;">More</a>
+                        <a class="menu-link" routerLink="/charts/more" routerLinkActive="active"
+                            style="cursor: pointer;">More</a>
                     </li>
                 </ul>
             </li>
@@ -752,25 +907,32 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('auth')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/login" routerLinkActive="active" style="cursor: pointer;">Sign In</a>
+                        <a class="menu-link" routerLink="/auth/login" routerLinkActive="active"
+                            style="cursor: pointer;">Sign In</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/register" routerLinkActive="active" style="cursor: pointer;">Sign Up</a>
+                        <a class="menu-link" routerLink="/auth/register" routerLinkActive="active"
+                            style="cursor: pointer;">Sign Up</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/forgot-password" routerLinkActive="active" style="cursor: pointer;">Forgot Password</a>
+                        <a class="menu-link" routerLink="/auth/forgot-password" routerLinkActive="active"
+                            style="cursor: pointer;">Forgot Password</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/reset-password" routerLinkActive="active" style="cursor: pointer;">Reset Password</a>
+                        <a class="menu-link" routerLink="/auth/reset-password" routerLinkActive="active"
+                            style="cursor: pointer;">Reset Password</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/confirm-email" routerLinkActive="active" style="cursor: pointer;">Confirm Email</a>
+                        <a class="menu-link" routerLink="/auth/confirm-email" routerLinkActive="active"
+                            style="cursor: pointer;">Confirm Email</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/lock-screen" routerLinkActive="active" style="cursor: pointer;">Lock Screen</a>
+                        <a class="menu-link" routerLink="/auth/lock-screen" routerLinkActive="active"
+                            style="cursor: pointer;">Lock Screen</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/auth/logout" routerLinkActive="active" style="cursor: pointer;">Logout</a>
+                        <a class="menu-link" routerLink="/auth/logout" routerLinkActive="active"
+                            style="cursor: pointer;">Logout</a>
                     </li>
                 </ul>
             </li>
@@ -782,28 +944,36 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('extra')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/pricing" routerLinkActive="active" style="cursor: pointer;">Pricing</a>
+                        <a class="menu-link" routerLink="/extra/pricing" routerLinkActive="active"
+                            style="cursor: pointer;">Pricing</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/timeline" routerLinkActive="active" style="cursor: pointer;">Timeline</a>
+                        <a class="menu-link" routerLink="/extra/timeline" routerLinkActive="active"
+                            style="cursor: pointer;">Timeline</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/faq" routerLinkActive="active" style="cursor: pointer;">FAQ</a>
+                        <a class="menu-link" routerLink="/extra/faq" routerLinkActive="active"
+                            style="cursor: pointer;">FAQ</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/gallery" routerLinkActive="active" style="cursor: pointer;">Gallery</a>
+                        <a class="menu-link" routerLink="/extra/gallery" routerLinkActive="active"
+                            style="cursor: pointer;">Gallery</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/testimonials" routerLinkActive="active" style="cursor: pointer;">Testimonials</a>
+                        <a class="menu-link" routerLink="/extra/testimonials" routerLinkActive="active"
+                            style="cursor: pointer;">Testimonials</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/search" routerLinkActive="active" style="cursor: pointer;">Search</a>
+                        <a class="menu-link" routerLink="/extra/search" routerLinkActive="active"
+                            style="cursor: pointer;">Search</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/coming-soon" routerLinkActive="active" style="cursor: pointer;">Coming Soon</a>
+                        <a class="menu-link" routerLink="/extra/coming-soon" routerLinkActive="active"
+                            style="cursor: pointer;">Coming Soon</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/extra/blank" routerLinkActive="active" style="cursor: pointer;">Blank Page</a>
+                        <a class="menu-link" routerLink="/extra/blank" routerLinkActive="active"
+                            style="cursor: pointer;">Blank Page</a>
                     </li>
                 </ul>
             </li>
@@ -815,10 +985,12 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('errors')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/errors/404" routerLinkActive="active" style="cursor: pointer;">404 Error Page</a>
+                        <a class="menu-link" routerLink="/errors/404" routerLinkActive="active"
+                            style="cursor: pointer;">404 Error Page</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/errors/500" routerLinkActive="active" style="cursor: pointer;">Internal Error</a>
+                        <a class="menu-link" routerLink="/errors/500" routerLinkActive="active"
+                            style="cursor: pointer;">Internal Error</a>
                     </li>
                 </ul>
             </li>
@@ -869,19 +1041,24 @@
                 </a>
                 <ul class="menu-sub" *ngIf="isMenuOpen('settings')">
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/settings/account" routerLinkActive="active" style="cursor: pointer;">Account Settings</a>
+                        <a class="menu-link" routerLink="/settings/account" routerLinkActive="active"
+                            style="cursor: pointer;">Account Settings</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/settings/change-password" routerLinkActive="active" style="cursor: pointer;">Change Password</a>
+                        <a class="menu-link" routerLink="/settings/change-password" routerLinkActive="active"
+                            style="cursor: pointer;">Change Password</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/settings/connections" routerLinkActive="active" style="cursor: pointer;">Connections</a>
+                        <a class="menu-link" routerLink="/settings/connections" routerLinkActive="active"
+                            style="cursor: pointer;">Connections</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/settings/privacy" routerLinkActive="active" style="cursor: pointer;">Privacy Policy</a>
+                        <a class="menu-link" routerLink="/settings/privacy" routerLinkActive="active"
+                            style="cursor: pointer;">Privacy Policy</a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" routerLink="/settings/terms" routerLinkActive="active" style="cursor: pointer;">Terms &amp; Conditions</a>
+                        <a class="menu-link" routerLink="/settings/terms" routerLinkActive="active"
+                            style="cursor: pointer;">Terms &amp; Conditions</a>
                     </li>
                 </ul>
             </li>

@@ -4,7 +4,6 @@
       <span class="page-icon"><i class="bi bi-capsule" aria-hidden="true"></i></span>
       <div>
         <p class="eyebrow mb-1">Drug Catalog</p>
-        <h1 class="h3 mb-1">DRUG-CATALOG</h1>
         <p class="text-muted mb-0">Browse and manage your drug inventory with ease.</p>
       </div>
     </div>
@@ -103,13 +102,12 @@
                   style="object-fit: cover"
                 />
               </div>
-              <!-- ✅ FIXED: Removed ?. operator -->
               <ng-template #initialLetter>
                 <span
                   class="drug-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                   style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto"
                 >
-                  {{ drug.drugName.charAt(0) || 'D' }}
+                  {{ drug.drugName?.charAt(0) || 'D' }}
                 </span>
               </ng-template>
             </div>
@@ -318,13 +316,12 @@
                     style="object-fit: cover"
                   />
                 </div>
-                <!-- ✅ FIXED: Removed ?. operator -->
                 <ng-template #listInitialLetter>
                   <div
                     class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                     style="width: 40px; height: 40px; flex-shrink: 0"
                   >
-                    {{ drug.drugName.charAt(0) || 'D' }}
+                    {{ drug.drugName?.charAt(0) || 'D' }}
                   </div>
                 </ng-template>
                 <div>

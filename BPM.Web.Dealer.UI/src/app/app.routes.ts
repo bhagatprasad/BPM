@@ -27,6 +27,11 @@ export const routes: Routes = [
     component: ResetPasswordComponent,
   },
   {
+    path: 'dashboard',
+    loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authenticationGuard]
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [authenticationGuard]
