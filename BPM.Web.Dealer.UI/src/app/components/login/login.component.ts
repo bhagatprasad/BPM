@@ -18,14 +18,15 @@ import { SpinnerLoadingService } from '../../common/services/spinner-loading-ser
 export class LoginComponent implements OnInit, OnDestroy {
   loginObj = {
     username: '',
-    password: '',
-    JwtToken: ''
+    password: ''
   };
 
   rememberMe = false;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  emailError: string = '';
+  passwordError: string = '';
   private loginSubscription?: Subscription;
 
   constructor(
@@ -80,83 +81,221 @@ export class LoginComponent implements OnInit, OnDestroy {
     console.log('Navigating to forgot password');
     this.router.navigate(['/forgot-password']).catch(err => {
       console.error('Navigation error:', err);
-      // Fallback navigation
       window.location.href = '/forgot-password';
     });
   }
 
+  // Validate email format
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Check form validity
+  checkFormValidity(): boolean {
+    const email = this.loginObj.username?.trim() || '';
+    const password = this.loginObj.password?.trim() || '';
+    return this.validateEmail(email) && password.length >= 6;
+  }
+
+  // Clear all errors
+  clearErrors(): void {
+    this.emailError = '';
+    this.passwordError = '';
+    this.errorMessage = '';
+  }
+
+  // Show error message
+  showError(field: string, message: string): void {
+    if (field === 'loginEmailError' || field === 'emailError') {
+      this.emailError = message;
+    } else if (field === 'loginPasswordError' || field === 'passwordError') {
+      this.passwordError = message;
+    } else {
+      this.errorMessage = message;
+    }
+    
+    setTimeout(() => {
+      if (field === 'loginEmailError' || field === 'emailError') {
+        this.emailError = '';
+      } else if (field === 'loginPasswordError' || field === 'passwordError') {
+        this.passwordError = '';
+      } else {
+        this.errorMessage = '';
+      }
+    }, 5000);
+  }
+
+  // Check if user has access to dealer portal
+  hasDealerAccess(appUser: any): boolean {
+    // Check if dealerInfo exists (has dealer access)
+    const hasDealer = appUser?.authenticateResponseDto?.dealerInfo !== null && 
+                      appUser?.authenticateResponseDto?.dealerInfo !== undefined;
+    
+    // Check if user is Administrator or Operator
+    const roleName = appUser?.authenticateResponseDto?.roleInfo?.name;
+    const isAdminOrOperator = roleName === "Administrator" || roleName === "Operator";
+    
+    // User has access if:
+    // 1. They have dealerInfo (dealer user), OR
+    // 2. They are Administrator or Operator (can login without dealer)
+    return hasDealer || isAdminOrOperator;
+  }
+
+  // Handle authentication success
+  handleAuthenticationSuccess(response: any): void {
+    console.info('Authentication response:', response);
+
+    // Check if response has appUser
+    if (response) {
+      const appUser = response;
+
+      // Check if user has access to this portal
+      if (!this.hasDealerAccess(appUser)) {
+        const errorMsg = 'You are not authorized to login to this portal. Please use the dealer portal to login.';
+        this.showError('loginEmailError', errorMsg);
+        this.toastr.error(errorMsg, 'Access Denied');
+        this.spinnerService.hide();
+        this.isLoading = false;
+        return;
+      }
+
+      // Check if user is authenticated successfully
+      if (appUser.jwtToken) {
+        // Store user info
+        if (this.rememberMe) {
+          localStorage.setItem('savedUsername', this.loginObj.username);
+        } else {
+          localStorage.removeItem('savedUsername');
+        }
+
+        // Store auth data
+        localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(response));
+        localStorage.setItem('ApplicationUser', JSON.stringify(appUser));
+        
+        // Also set in ApiService for consistency
+        this.accountService.apiService.setAuthData(response);
+
+        // Get role name
+        const roleName = appUser.authenticateResponseDto?.roleInfo?.name;
+
+        // Hide loader
+        this.spinnerService.hide();
+        this.isLoading = false;
+
+        // Show success message
+        this.toastr.success('Login successful!', 'Success');
+
+        // Redirect based on role
+        setTimeout(() => {
+          if (roleName === "Administrator" || roleName === "Operator") {
+            // Admin or Operator - redirect to Admin dashboard
+            this.router.navigateByUrl('/AdminBoard/Index');
+          } else {
+            // Regular user with dealer - redirect to User dashboard
+            this.router.navigateByUrl('/UserBoard/Index');
+          }
+        }, 500);
+      } else {
+        // JWT token is missing - show error message
+        const errorMessage = appUser.message || 'Authentication failed. Please try again.';
+        this.showError('loginEmailError', errorMessage);
+        this.spinnerService.hide();
+        this.isLoading = false;
+      }
+    } else {
+      // Invalid response
+      this.showError('loginEmailError', 'Invalid response from server. Please try again.');
+      this.spinnerService.hide();
+      this.isLoading = false;
+    }
+  }
+
+  // Handle authentication error
+  handleAuthenticationError(error: any): void {
+    console.error('Authentication error:', error);
+
+    // Hide loader
+    this.spinnerService.hide();
+    this.isLoading = false;
+
+    let errorMsg = 'Invalid email or password. Please try again.';
+    
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        errorMsg = 'Unable to connect to the server. Please check your network connection.';
+      } else if (error.status === 401) {
+        errorMsg = 'Invalid email or password. Please try again.';
+      } else if (error.status === 403) {
+        errorMsg = 'Access forbidden. Please contact support.';
+      } else if (error.status === 404) {
+        errorMsg = 'Login service not found. Please try again later.';
+      } else if (error.status === 500) {
+        errorMsg = 'Internal server error. Please try again later.';
+      } else if (error.error?.message) {
+        errorMsg = error.error.message;
+      } else if (error.error?.error) {
+        errorMsg = error.error.error;
+      }
+    } else if (error.message) {
+      errorMsg = error.message;
+    }
+
+    this.showError('loginEmailError', errorMsg);
+    this.toastr.error(errorMsg, 'Error');
+  }
+
+  // Handle Sign In
   onLogin(): void {
-    if (this.isLoading) {
+    // Clear previous errors
+    this.clearErrors();
+
+    const email = this.loginObj.username?.trim() || '';
+    const password = this.loginObj.password?.trim() || '';
+
+    // Validate fields
+    if (!this.validateEmail(email)) {
+      this.showError('loginEmailError', 'Please enter a valid email address.');
       return;
     }
 
-    if (!this.loginObj.username || !this.loginObj.password) {
-      this.errorMessage = 'Please enter both username and password.';
-      this.toastr.error('Please enter both username and password.', 'Error');
+    if (!password || password.length < 6) {
+      this.showError('loginPasswordError', 'Password must be at least 6 characters.');
+      return;
+    }
+
+    if (this.isLoading) {
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
-    this.spinnerService.show();
+    this.spinnerService.show('Signing you in...');
+
+    const userAuthentication = {
+      username: email,
+      password: password,
+      rememberMe: this.rememberMe
+    };
 
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
 
-    this.loginSubscription = this.accountService.authenticateAsync(this.loginObj).subscribe({
+    this.loginSubscription = this.accountService.authenticateAsync(userAuthentication).subscribe({
       next: (res: any) => {
-        this.isLoading = false;
-        this.spinnerService.hide();
         console.log('Login response:', res);
-
-        if (res.jwtToken) {
-          if (this.rememberMe) {
-            localStorage.setItem('savedUsername', this.loginObj.username);
-          } else {
-            localStorage.removeItem('savedUsername');
-          }
-
-          // Store auth data
-          localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
-          
-          // Also set in ApiService for consistency
-          this.accountService.apiService.setAuthData(res);
-          
-          this.toastr.success('Login successful!', 'Success');
-
-          // Navigate after a short delay to ensure storage is updated
-          setTimeout(() => {
-            this.router.navigateByUrl('/drugs-catalog');
-          }, 500);
-        } else {
-          this.errorMessage = 'Invalid username or password. Please try again.';
-          this.toastr.error('Invalid username or password. Please try again.', 'Error');
-        }
+        this.handleAuthenticationSuccess(res);
       },
       error: (err: HttpErrorResponse) => {
-        console.error('Login failed', err);
-        this.isLoading = false;
-        this.spinnerService.hide();
-
-        let errorMsg = 'Login failed. Please try again.';
-        if (err.status === 0) {
-          errorMsg = 'Unable to connect to the server. Please check your network connection.';
-        } else if (err.status === 401) {
-          errorMsg = 'Invalid username or password. Please try again.';
-        } else if (err.status === 403) {
-          errorMsg = 'Access forbidden. Please contact support.';
-        } else if (err.status === 404) {
-          errorMsg = 'Login service not found. Please try again later.';
-        } else if (err.status === 500) {
-          errorMsg = 'Internal server error. Please try again later.';
-        } else if (err.error?.message) {
-          errorMsg = err.error.message;
-        }
-
-        this.errorMessage = errorMsg;
-        this.toastr.error(errorMsg, 'Error');
+        this.handleAuthenticationError(err);
       }
     });
+  }
+
+  // Update environment and version
+  updateEnvironmentAndVersion(): void {
+    localStorage.setItem('Environment', window.location.hostname);
+    localStorage.setItem('Version', '1.0.0.0');
   }
 }

@@ -2,10 +2,10 @@ import { Component, OnInit, signal, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { filter, Subscription, BehaviorSubject } from 'rxjs';
-import { SidenavComponent } from './common/sidenav';
 import { CartService } from './services/cart.service';
 import { AccountService } from './services/account.service';
 import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-indicator-component/spinner-loading-indicator-component.component';
+import { SidenavComponent } from './common/sidenav.component';
 
 @Component({
   selector: 'app-root',
