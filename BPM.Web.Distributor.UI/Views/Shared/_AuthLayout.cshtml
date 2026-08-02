@@ -1,100 +1,188 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>@ViewData["Title"]</title>
-
-    <!-- Bootstrap -->
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-          rel="stylesheet" />
-
-    <!-- Toastr -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-
-    <!-- Styles -->
-    <link href="~/assets/css/style.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/assets/css/auth.css" rel="stylesheet" asp-append-version="true" />
-
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <title>@ViewData["Title"] - BPM Distributor</title>
+    <!-- Links Of CSS File -->
+    <link href="~/assets/css/sidebar-menu.css" rel="stylesheet" />
+    <link href="~/assets/css/simplebar.css" rel="stylesheet" />
+    <link href="~/assets/css/prism.css" rel="stylesheet" />
+    <link href="~/assets/css/quill.snow.css" rel="stylesheet" />
+    <link href="~/assets/css/remixicon.css" rel="stylesheet" />
+    <link href="~/assets/css/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="~/assets/css/jsvectormap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/assets/css/authlayout.css" rel="stylesheet" />
+    <link href="~/assets/css/loader.css" rel="stylesheet" />
+    <link href="~/assets/css/auth.css" rel="stylesheet" />
+    <!-- Favicon -->
+    <link href="~/assets/images/favicon.png" rel="icon" type="image/png" />
 </head>
 
-<body>
-    <div class="se-pre-con" style="display:none;">
-        <div class="loader"></div>
+<body class="bg-body-bg">
+    <!-- Use ONLY ONE of these loaders -->
+    
+    <!-- Option 1: Pharmacy Preloader -->
+    <partial name="_loaderPartial" />
+    
+    <!-- Option 2: Simple Spinner (Uncomment if you want to use this instead) -->
+    <!-- <div class="se-pre-con" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div> -->
+    
+    <div class="container-fluid p-0">
+        <div class="main-content d-flex flex-column p-0">
+            <div class="container-fluid p-0">
+                <div class="row g-0 min-vh-100">
+                    <!-- Left Side - Medical/Pharmacy Image -->
+                    <div class="col-lg-7 d-none d-lg-flex align-items-center justify-content-center medical-bg">
+                        <!-- Floating Medical Icons -->
+                        <i class="ri-medicine-bottle-line floating-icon"></i>
+                        <i class="ri-heart-pulse-line floating-icon"></i>
+                        <i class="ri-hospital-line floating-icon"></i>
+                        <i class="ri-capsule-line floating-icon"></i>
+                        <i class="ri-health-book-line floating-icon"></i>
+                        <i class="ri-first-aid-kit-line floating-icon"></i>
+
+                        <div class="gradient-overlay"></div>
+
+                        <div class="text-center text-white p-5 medical-illustration">
+                            <div class="mb-4">
+                                <img alt="pharmacy-illustration" src="~/assets/images/pharmacy-illustration.svg" class="img-fluid" style="max-width: 100%; height: auto; filter: drop-shadow(0 10px 40px rgba(0,0,0,0.3));" />
+                            </div>
+                            
+                            <h2 class="text-white fw-bold display-5 mb-3">
+                                <i class="ri-heart-3-fill me-2" style="font-size: 2.5rem;"></i>
+                                BPM Medicals
+                            </h2>
+                            
+                            <p class="text-white-50 fs-5 mb-0 px-4">
+                                Your trusted partner in pharmaceutical distribution.
+                                <br class="d-none d-xl-block" />
+                                <span style="color: rgba(255,255,255,0.7);">Quality medications delivered with care.</span>
+                            </p>
+                            
+                            <div class="mt-5 d-flex justify-content-center gap-3 medical-stats flex-wrap">
+                                <div class="medical-stat-item rounded-3">
+                                    <h3 class="text-white mb-1">500+</h3>
+                                    <span>Medications</span>
+                                </div>
+                                <div class="medical-stat-item rounded-3">
+                                    <h3 class="text-white mb-1">98%</h3>
+                                    <span>Delivery Rate</span>
+                                </div>
+                                <div class="medical-stat-item rounded-3">
+                                    <h3 class="text-white mb-1">24/7</h3>
+                                    <span>Support</span>
+                                </div>
+                            </div>
+
+                            <!-- Trust badges -->
+                            <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+                                <div class="trust-badge d-flex align-items-center">
+                                    <i class="ri-shield-check-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                                    <span class="text-white-50 small">ISO Certified</span>
+                                </div>
+                                <div class="trust-badge d-flex align-items-center">
+                                    <i class="ri-medal-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                                    <span class="text-white-50 small">Quality Assured</span>
+                                </div>
+                                <div class="trust-badge d-flex align-items-center">
+                                    <i class="ri-truck-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                                    <span class="text-white-50 small">Fast Delivery</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Form -->
+                    <div class="col-lg-5 d-flex align-items-center justify-content-center bg-white p-4 p-md-5 form-container">
+                        <!-- Decorative accents -->
+                        <div class="corner-accent top-right"></div>
+                        <div class="corner-accent bottom-left"></div>
+                        
+                        <div style="width: 100%; max-width: 100%; position: relative; z-index: 1;">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @RenderBody()
-
-    @RenderBody()
+    <!-- Link Of JS File -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    <script src="~/assets/js/quill.min.js"></script>
+    <script src="~/assets/js/data-table.js"></script>
+    <script src="~/assets/js/prism.js"></script>
+    <script src="~/assets/js/clipboard.min.js"></script>
+    <script src="~/assets/js/simplebar.min.js"></script>
+    <script src="~/assets/js/apexcharts.min.js"></script>
+    <script src="~/assets/js/echarts.min.js"></script>
+    <script src="~/assets/js/swiper-bundle.min.js"></script>
+    <script src="~/assets/js/fullcalendar.main.js"></script>
+    <script src="~/assets/js/jsvectormap.min.js"></script>
+    <script src="~/assets/js/world-merc.js"></script>
+    <script src="~/assets/js/custom/apexcharts.js"></script>
+    <script src="~/assets/js/custom/echarts.js"></script>
+    <script src="~/assets/js/custom/maps.js"></script>
+    <script src="~/assets/js/custom/custom.js"></script>
+    <script src="~/js/CommonController.js"></script>
+    <script src="~/js/StorageService.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            console.log('Layout loaded successfully');
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+            // Global AJAX events for preloader - Using ONLY #preloader
+            $(window).on('load', function () {
+                $('#preloader').fadeOut(500);
+            });
 
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+            $(document).ajaxStart(function () {
+                $('#preloader').fadeIn(300);
+            });
 
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+            $(document).ajaxStop(function () {
+                $('#preloader').fadeOut(300);
+            });
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+            $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+                $('#preloader').fadeOut(300);
+                if (jqxhr.status === 401) {
+                    $('#loginEmailError').text('Session expired. Please login again.').show();
+                    setTimeout(function () {
+                        $('#loginEmailError').fadeOut(300);
+                    }, 5000);
+                }
+            });
 
-    <script src="~/assets/js/main.js"></script>
-    <script>
-        function togglePassword() {
+            // Custom functions for manual control
+            window.showPharmacyLoader = function() {
+                $('#preloader').fadeIn(300);
+            };
 
-            var password = document.getElementById("password");
+            window.hidePharmacyLoader = function() {
+                $('#preloader').fadeOut(300);
+            };
 
-            var eye = document.getElementById("eyeIcon");
-
-            if (!password || !eye)
-                return;
-
-            if (password.type === "password") {
-
-                password.type = "text";
-
-                eye.classList.remove("bi-eye");
-
-                eye.classList.add("bi-eye-slash");
-
-            }
-            else {
-
-                password.type = "password";
-
-                eye.classList.remove("bi-eye-slash");
-
-                eye.classList.add("bi-eye");
-
-            }
-
-        }
+            window.showPharmacyLoaderWithMessage = function(message) {
+                if (message) {
+                    $('.loading-message').text(message);
+                }
+                window.showPharmacyLoader();
+            };
+        });
     </script>
-
     <script>
-
-        @if (TempData["Success"] != null)
-        {
-                <text>
-                    toastr.success("@TempData["Success"]");
-                </text>
-        }
-
-        @if (TempData["Error"] != null)
-        {
-                <text>
-                    toastr.error("@TempData["Error"]");
-                </text>
-        }
-
+        (function() { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9bc2a239bfc60d0e',t:'MTc2ODExNTgzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function() { }; document.onreadystatechange = function(b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();
     </script>
-
-    @await RenderSectionAsync("Scripts", false)
-
+    @await Component.InvokeAsync("Notyf")
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>

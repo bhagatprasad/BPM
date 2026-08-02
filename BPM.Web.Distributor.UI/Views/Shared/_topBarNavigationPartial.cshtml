@@ -1,79 +1,367 @@
-﻿<nav class="navbar admin-navbar navbar-expand bg-white">
-    <div class="container-fluid px-3 px-lg-4">
-        <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar" aria-expanded="true" aria-label="Toggle sidebar">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <form class="d-none d-md-flex ms-3 flex-grow-1" role="search">
-            <input class="form-control search-input" type="search" placeholder="Search users, orders, reports" aria-label="Search">
-        </form>
-
-        <div class="navbar-actions ms-auto">
-            <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
-                <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
-            </button>
-            <div class="dropdown">
-                <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
-                    <span class="notification-dot"></span>
-                    <i class="bi bi-bell" aria-hidden="true"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end notification-menu">
-                    <div class="dropdown-header fw-bold text-body">Notifications</div>
-                    <a class="dropdown-item" href="users.html">
-                        <span class="notification-title">New user registered</span>
-                        <span class="notification-time">4 minutes ago</span>
-                    </a>
-                    <a class="dropdown-item" href="charts.html">
-                        <span class="notification-title">Revenue target reached</span>
-                        <span class="notification-time">32 minutes ago</span>
-                    </a>
-                    <a class="dropdown-item" href="settings.html">
-                        <span class="notification-title">Security review completed</span>
-                        <span class="notification-time">1 hour ago</span>
-                    </a>
-                </div>
+﻿<!-- Start Header Area -->
+<header class="header-area bg-white mb-4 rounded-10 border border-white" id="header-area">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <div class="left-header-content">
+                <ul class="d-flex align-items-center ps-0 mb-0 list-unstyled justify-content-center justify-content-md-start">
+                    <li class="d-xl-none">
+                        <button class="header-burger-menu bg-transparent p-0 border-0 position-relative top-3" id="header-burger-menu">
+                            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
+                            </span>
+                            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0;">
+                            </span>
+                            <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;">
+                            </span>
+                        </button>
+                    </li>
+                    <li>
+                        <form class="src-form position-relative">
+                            <input class="form-control" placeholder="Search here..." type="text" />
+                        </form>
+                    </li>
+                </ul>
             </div>
+        </div>
+        <div class="col-md-6">
+            <div class="right-header-content mt-3 mt-md-0">
+                <ul class="d-flex align-items-center justify-content-center justify-content-md-end ps-0 mb-0 list-unstyled">
 
-            <div class="dropdown">
-                <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="avatar-img avatar-sm" src="~/assets/images/avatar/avatar.jpg" alt="Admin Hasan">
-                    <span class="profile-name d-none d-sm-inline">Admin Hasan</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-
-                    <li>
-                        <a class="dropdown-item"
-                           asp-controller="Account"
-                           asp-action="Profile">
-                            <i class="bi bi-person me-2"></i>
-                            Profile
-                        </a>
+                    <!-- Language Dropdown -->
+                    <li class="header-right-item language-item">
+                        <div class="dropdown notifications language">
+                            <button aria-expanded="false" class="btn btn-secondary dropdown-toggle border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                                <span>Language</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-lg p-0 border-0 dropdown-menu-end">
+                                <span class="fw-medium fs-16 text-secondary d-block title" style="padding-top: 20px; padding-bottom: 20px;">
+                                    Choose Language
+                                </span>
+                                <div class="max-h-275" data-simplebar="">
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="usa" class="wh-30 rounded-circle" src="~/assets/images/usa.png" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <span class="text-secondary fw-medium fs-15">
+                                                        English
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="australia" class="wh-30 rounded-circle" src="~/assets/images/australia.png" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <span class="text-secondary fw-medium fs-15">
+                                                        Australia
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="spain" class="wh-30 rounded-circle" src="~/assets/images/spain.png" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <span class="text-secondary fw-medium fs-15">
+                                                        Spanish
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="portugal" class="wh-30 rounded-circle" src="~/assets/images/france.png" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <span class="text-secondary fw-medium fs-15">
+                                                        France
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu mb-0">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="Germany" class="wh-30 rounded-circle" src="~/assets/images/germany.png" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <span class="text-secondary fw-medium fs-15">
+                                                        Spain
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
 
-                    <li>
-                        <a class="dropdown-item"
-                           asp-controller="Account"
-                           asp-action="AccountSettings">
-                            <i class="bi bi-gear me-2"></i>
-                            Account settings
-                        </a>
+                    <!-- Dark/Light Mode -->
+                    <li class="header-right-item light-dark-item">
+                        <div class="light-dark">
+                            <button class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0" id="switch-toggle">
+                                <span class="dark">Dark</span>
+                                <span class="light">Light</span>
+                            </button>
+                        </div>
                     </li>
 
-                    <li><hr class="dropdown-divider"></li>
-
-                    <li>
-                        <a class="dropdown-item"
-                           asp-controller="Account"
-                           asp-action="Logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>
-                            Sign out
-                        </a>
+                    <!-- Calendar -->
+                    <li class="header-right-item calendar-item">
+                        <div class="dropdown notifications">
+                            <a class="btn btn-secondary border-0 p-0 position-relative" href="/Apps/Calendar">
+                                Calendar
+                            </a>
+                        </div>
                     </li>
 
+                    <!-- Messages -->
+                    <li class="header-right-item messages-item">
+                        <div class="dropdown notifications noti messages">
+                            <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                                Messages
+                                <span class="count bg-primary">5</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
+                                <div class="d-flex justify-content-between align-items-center title">
+                                    <span class="fw-medium fs-16 text-secondary">
+                                        Messages
+                                        <span class="fw-normal text-body fs-16">
+                                            (03)
+                                        </span>
+                                    </span>
+                                    <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium">
+                                        Mark all as read
+                                    </button>
+                                </div>
+                                <div data-simplebar="" style="max-height: 300px;">
+                                    <div class="notification-menu unseen">
+                                        <a class="dropdown-item" href="/Apps/Chat">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="images" class="rounded-circle" src="~/assets/images/user1.jpg" style="width: 44px; height: 44px;" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <p class="fs-16 fw-medium text-secondary mb-2">
+                                                        Jacob Liwiski
+                                                        <span class="fs-14 fw-normal text-body ms-2">
+                                                            35 min ago
+                                                        </span>
+                                                    </p>
+                                                    <span class="fs-14-5 fw-medium d-inline-block" style="line-height: 1.4;">
+                                                        Hey Victor! Could you please...
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu unseen">
+                                        <a class="dropdown-item" href="/Apps/Chat">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="images" class="rounded-circle" src="~/assets/images/user2.jpg" style="width: 44px; height: 44px;" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <p class="fs-16 fw-medium text-secondary mb-2">
+                                                        Angela Carter
+                                                        <span class="fs-14 fw-normal text-body ms-2">
+                                                            1 day ago
+                                                        </span>
+                                                    </p>
+                                                    <span class="fs-14-5 fw-medium d-inline-block" style="line-height: 1.4;">
+                                                        How are you Angela? Would you please...
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="/Apps/Chat">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img alt="images" class="rounded-circle" src="~/assets/images/user3.jpg" style="width: 44px; height: 44px;" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <p class="fs-16 fw-medium text-secondary mb-2">
+                                                        Brad Traversy
+                                                        <span class="fs-14 fw-normal text-body ms-2">
+                                                            2 days ago
+                                                        </span>
+                                                    </p>
+                                                    <span class="fs-14-5 fw-medium d-inline-block" style="line-height: 1.4;">
+                                                        Hey Brad Traversy! Could you please...
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" href="/Apps/Chat">
+                                    <span>
+                                        See All Messages
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="header-right-item">
+                        <div class="dropdown notifications noti">
+                            <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                                Notifications
+                                <span class="count">3</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
+                                <div class="d-flex justify-content-between align-items-center title">
+                                    <span class="fw-medium fs-16 text-secondary">
+                                        Notifications
+                                        <span class="fw-normal text-body fs-16">
+                                            (03)
+                                        </span>
+                                    </span>
+                                    <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium">
+                                        Clear All
+                                    </button>
+                                </div>
+                                <div data-simplebar="" style="max-height: 300px;">
+                                    <div class="notification-menu unseen">
+                                        <a class="dropdown-item" href="/Pages/Notifications">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <span class="text-primary">SMS</span>
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <p class="fs-16 fw-medium text-secondary">
+                                                        You have requested to withdrawal
+                                                    </p>
+                                                    <span class="fs-14 fw-medium">
+                                                        2 hrs ago
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu unseen">
+                                        <a class="dropdown-item" href="/Pages/Notifications">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <span class="text-info">User</span>
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <p class="fs-16 fw-medium text-secondary">
+                                                        A new user added in StarCode
+                                                    </p>
+                                                    <span class="fs-14 fw-medium">
+                                                        3 hrs ago
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="notification-menu">
+                                        <a class="dropdown-item" href="/Pages/Notifications">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <span class="text-success">Email</span>
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <p class="fs-16 fw-medium text-secondary">
+                                                        You have requested to withdrawal
+                                                    </p>
+                                                    <span class="fs-14 fw-medium">
+                                                        1 day ago
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" href="/Pages/Notifications">
+                                    <span>
+                                        See All Notifications
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Admin Profile -->
+                    <li class="header-right-item">
+                        <div class="dropdown admin-profile">
+                            <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
+                                <div class="flex-shrink-0 position-relative">
+                                    <img alt="admin" class="rounded-circle admin-img-width-for-mobile" src="~/assets/images/admin.png" style="width: 40px; height: 40px;" />
+                                    <span class="d-block bg-success-60 border border-2 border-white rounded-circle position-absolute end-0 bottom-0" style="width: 11px; height: 11px;">
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
+                                <div class="d-flex align-items-center info">
+                                    <div class="flex-shrink-0">
+                                        <img alt="admin" class="rounded-circle admin-img-width-for-mobile" src="~/assets/images/admin.png" style="width: 40px; height: 40px;" />
+                                    </div>
+                                    <div class="flex-grow-1 ms-10">
+                                        <h3 class="fw-medium fs-17 mb-0">
+                                            StarCode Kh
+                                        </h3>
+                                        <span class="fs-15 fw-medium">
+                                            Admin
+                                        </span>
+                                    </div>
+                                </div>
+                                <ul class="admin-link mb-0 list-unstyled">
+                                    <li>
+                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Others/MyProfile">
+                                            <span class="ms-2">
+                                                My Profile
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Settings/AccountSettings">
+                                            <span class="ms-2">
+                                                Settings
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/HelpDesk/Tickets">
+                                            <span class="ms-2">
+                                                Support
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Auth/Logout">
+                                            <span class="ms-2">
+                                                Logout
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
-</nav>
+</header>
+<!-- End Header Area -->

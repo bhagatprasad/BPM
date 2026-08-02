@@ -3,6 +3,8 @@ using AspNetCoreHero.ToastNotification.Extensions;
 using BPM.Web.Distributor.UI.Helpers;
 using BPM.Web.Distributor.UI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Newtonsoft.Json.Serialization;
 
 namespace BPM.Web.Distributor.UI
 {
@@ -18,58 +20,89 @@ namespace BPM.Web.Distributor.UI
         // Register Services
         public void ConfigureServices(IServiceCollection services)
         {
-          
-            services.Configure<BPMConfig>(
-                Configuration.GetSection("BPMConfig"));
+            // Configure BPMConfig
+            services.Configure<BPMConfig>(Configuration.GetSection("BPMConfig"));
 
+            // Add Controllers with Newtonsoft Json
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
 
-            services.AddControllersWithViews();
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
 
+            services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
+            services.AddDirectoryBrowser();
+
+            // Add Distributed Memory Cache
             services.AddDistributedMemoryCache();
 
+            // Add Session
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(2);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
+            // Add Http Context Accessor
             services.AddHttpContextAccessor();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/Account/Login";
-                    options.AccessDeniedPath = "/Account/AccessDenied";
+            // Add HttpClient
+            services.AddHttpClient();
 
-                    options.Cookie.Name = "BPMAuth";
+            // Register Services
+            services.AddScoped<HttpClientService>();
+            services.AddTransient<TokenAuthorizationHttpClientHandler>();
+            services.AddHttpClient("AuthorizedClient").AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>();
 
-                    options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromHours(2);
-                });
+            // Register Repository Factory and Services
+            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
+            //services.AddScoped<IUserService, UserService>();
+            // Add other services as needed
 
-            services.AddAuthorization();
-
-            services.AddNotyf(config =>
+            // Configure Authentication
+            services.AddAuthentication(options =>
             {
-                config.DurationInSeconds = 5;
-                config.IsDismissable = true;
-                config.Position = NotyfPosition.TopRight;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.Cookie.Name = "BPMAuth";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromHours(2);
             });
 
-            services.AddTransient<TokenAuthorizationHttpClientHandler>();
-
-            services.AddHttpClient<IAuthenticateService, AuthenticateService>((provider, client) =>
+            // Add Authorization Policies
+            services.AddAuthorization(options =>
             {
-                var config = Configuration
-                    .GetSection("BPMConfig")
-                    .Get<BPMConfig>();
+                options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
+                options.AddPolicy("Operator", policy => policy.RequireRole("Operator"));
+                options.AddPolicy("User", policy => policy.RequireRole("User"));
+                options.AddPolicy("Executive", policy => policy.RequireRole("Executive"));
+            });
 
-                client.BaseAddress = new Uri(config.BaseUrl);
-            })
-            .AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>();
-
+            // Configure Notyf
+            services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 10;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.TopCenter;
+            });
         }
 
         // Configure Middleware
@@ -87,7 +120,16 @@ namespace BPM.Web.Distributor.UI
 
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            // Configure Static Files with Cache Control
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers["Cache-Control"] = "no-cache, no-store";
+                    ctx.Context.Response.Headers["Pragma"] = "no-cache";
+                    ctx.Context.Response.Headers["Expires"] = "-1";
+                }
+            });
 
             app.UseRouting();
 

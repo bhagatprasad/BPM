@@ -1,99 +1,52 @@
 ﻿using BPM.Web.Distributor.UI.Models;
 using BPM.Web.Distributor.UI.Models.DTOs;
-using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace BPM.Web.Distributor.UI.Services
 {
     public class AuthenticateService : IAuthenticateService
     {
-        private readonly HttpClient _client;
+        private readonly IRepositoryFactory _repositoryFactory;
 
-        public AuthenticateService(HttpClient client)
+        public AuthenticateService(IRepositoryFactory repositoryFactory)
         {
-            _client = client;
+            _repositoryFactory = repositoryFactory;
         }
 
         public async Task<AuthResponse?> AuthenticateUserAsync(AuthenticateUserDto dto)
         {
-            var response = await _client.PostAsJsonAsync(
-                "Account/authenticate",
-                dto);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return new AuthResponse
-                {
-                    IsValidUser = false,
-                    IsValidPassword = false,
-                    Message = "Unable to connect to server."
-                };
-            }
-            return await response.Content.ReadFromJsonAsync<AuthResponse>(
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+            return await _repositoryFactory.SendAsync<AuthenticateUserDto, AuthResponse>(HttpMethod.Post, "Account/authenticate", dto);
         }
+
         public async Task<ForgotPasswordResponseDto?> ForgotPasswordAsync(ForgotPasswordDto dto)
         {
-            var response = await _client.PostAsJsonAsync(
+            return await _repositoryFactory.SendAsync<ForgotPasswordDto, ForgotPasswordResponseDto>(
+                HttpMethod.Post,
                 "Account/forgot-password",
                 dto);
-
-            if (!response.IsSuccessStatusCode)
-                return null;
-
-            return await response.Content.ReadFromJsonAsync<ForgotPasswordResponseDto>(
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
         }
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
         {
-            var response = await _client.PostAsJsonAsync(
+            return await _repositoryFactory.SendAsync<ResetPasswordDto, bool>(
+                HttpMethod.Post,
                 "Account/reset-password",
                 dto);
-
-            return response.IsSuccessStatusCode;
         }
 
         public async Task<RefreshTokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto dto)
         {
-            var response = await _client.PostAsJsonAsync(
+            return await _repositoryFactory.SendAsync<RefreshTokenRequestDto, RefreshTokenResponseDto>(
+                HttpMethod.Post,
                 "Account/refresh-token",
                 dto);
-
-            if (!response.IsSuccessStatusCode)
-                return null;
-
-            return await response.Content.ReadFromJsonAsync<RefreshTokenResponseDto>(
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
         }
-        public Task<ApplicationUser> GenerateUserClaimsAsync(AuthResponse auth)
+
+        public async Task<ApplicationUser> GenerateUserClaimsAsync(AuthResponse auth)
         {
-            var dto = auth.AuthenticateResponseDto;
-
-            var user = new ApplicationUser
-            {
-                UserId = dto.UserId,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                DealerId = dto.DealerId,
-                RoleId = dto.RoleId,
-                IsActive = dto.IsActive,
-                JwtToken = auth.JwtToken,
-                RefreshToken = auth.RefreshToken
-            };
-
-            return Task.FromResult(user);
+            return await _repositoryFactory.SendAsync<AuthResponse, ApplicationUser>(
+                HttpMethod.Post,
+                "Account/GenerateUserClaimsAsync",
+                auth);
         }
     }
 }

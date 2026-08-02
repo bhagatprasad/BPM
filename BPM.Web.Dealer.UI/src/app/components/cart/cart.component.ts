@@ -12,7 +12,7 @@ import { PurchaseOrderService } from '../../services/purchase-order.service';
 })
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
-  //constructor
+
   constructor(
     private cartService: CartService,
     private purchaseOrderService: PurchaseOrderService,
@@ -21,50 +21,51 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     this.cartItems = this.cartService.getCartItems();
   }
+
   removeItem(drugId: string): void {
     this.cartService.removeFromCart(drugId);
     this.cartItems = this.cartService.getCartItems();
   }
+
   increase(drugId: string): void {
     this.cartService.increaseQuantity(drugId);
     this.cartItems = this.cartService.getCartItems();
   }
+
   decrease(drugId: string): void {
     this.cartService.decreaseQuantity(drugId);
     this.cartItems = this.cartService.getCartItems();
   }
+
   get totalQuantity(): number {
     return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
   }
+
   get subtotal(): number {
-    return this.cartItems.reduce((sum, item) => sum + (item.packagePrice ?? 0) * item.quantity, 0);
+    return this.cartItems.reduce((sum, item) => (item.packagePrice ?? 0) * item.quantity + sum, 0);
   }
+
   get gst(): number {
     return this.subtotal * 0.12;
   }
+
   get grandTotal(): number {
     return this.subtotal + this.gst;
   }
+
   placeOrder(): void {
     const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
     console.log(auth.authenticateResponseDto);
 
     const request = {
       supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
-
-      // supplierId: auth.authenticateResponseDto.supplierId,
-      //dealerId: '6d32cd25-aa93-4625-ae69-7e8bdd9caf87',
       dealerId: auth.authenticateResponseDto.dealerId,
-
       expectedDeliveryDate: new Date().toISOString(),
-
       paymentTerms: 'Net 30',
       deliveryTerms: 'Door Delivery',
       remarks: 'Order from Angular UI',
       internalNotes: 'Angular UI',
-
       createdBy: auth.authenticateResponseDto.userId,
-
       items: this.cartItems.map((item) => ({
         drugId: item.drugId,
         packagingId: item.packagingId,

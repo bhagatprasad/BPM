@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('LoginComponent ngOnInit');
     
-    // Check if user is already authenticated
+    // Check if user is already authenticated - if so, redirect
     const loggedData = localStorage.getItem('AuthenticatedUserResponse');
     console.log('Logged data:', loggedData);
     
@@ -76,37 +76,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
-  // UPDATED: Navigate to forgot password with debugging
   onForgotPassword(): void {
-    console.log('🔵 onForgotPassword() called');
-    console.log('Current URL:', this.router.url);
-    
-    // Try to navigate
-    this.router.navigate(['/forgot-password']).then(
-      (success) => {
-        console.log('✅ Navigation result:', success);
-        if (!success) {
-          console.error('❌ Navigation failed - trying alternative');
-          // Alternative navigation
-          this.router.navigateByUrl('/forgot-password').then(
-            (success2) => {
-              console.log('✅ Alternative navigation result:', success2);
-              if (!success2) {
-                // Last resort - use window.location
-                console.log('🔄 Using window.location fallback');
-                window.location.href = '/forgot-password';
-              }
-            }
-          );
-        }
-      },
-      (error) => {
-        console.error('❌ Navigation error:', error);
-        // Last resort
-        console.log('🔄 Using window.location fallback due to error');
-        window.location.href = '/forgot-password';
-      }
-    );
+    console.log('Navigating to forgot password');
+    this.router.navigate(['/forgot-password']).catch(err => {
+      console.error('Navigation error:', err);
+      // Fallback navigation
+      window.location.href = '/forgot-password';
+    });
   }
 
   onLogin(): void {
@@ -141,9 +117,15 @@ export class LoginComponent implements OnInit, OnDestroy {
             localStorage.removeItem('savedUsername');
           }
 
+          // Store auth data
           localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
+          
+          // Also set in ApiService for consistency
+          this.accountService.apiService.setAuthData(res);
+          
           this.toastr.success('Login successful!', 'Success');
 
+          // Navigate after a short delay to ensure storage is updated
           setTimeout(() => {
             this.router.navigateByUrl('/drugs-catalog');
           }, 500);
@@ -168,6 +150,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           errorMsg = 'Login service not found. Please try again later.';
         } else if (err.status === 500) {
           errorMsg = 'Internal server error. Please try again later.';
+        } else if (err.error?.message) {
+          errorMsg = err.error.message;
         }
 
         this.errorMessage = errorMsg;

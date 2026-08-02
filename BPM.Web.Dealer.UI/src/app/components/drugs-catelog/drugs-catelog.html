@@ -103,12 +103,13 @@
                   style="object-fit: cover"
                 />
               </div>
+              <!-- ✅ FIXED: Removed ?. operator -->
               <ng-template #initialLetter>
                 <span
                   class="drug-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                   style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto"
                 >
-                  {{ drug.drugName?.charAt(0) || 'D' }}
+                  {{ drug.drugName.charAt(0) || 'D' }}
                 </span>
               </ng-template>
             </div>
@@ -317,12 +318,13 @@
                     style="object-fit: cover"
                   />
                 </div>
+                <!-- ✅ FIXED: Removed ?. operator -->
                 <ng-template #listInitialLetter>
                   <div
                     class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                     style="width: 40px; height: 40px; flex-shrink: 0"
                   >
-                    {{ drug.drugName?.charAt(0) || 'D' }}
+                    {{ drug.drugName.charAt(0) || 'D' }}
                   </div>
                 </ng-template>
                 <div>
