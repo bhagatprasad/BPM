@@ -15,9 +15,10 @@
                         </button>
                     </li>
                     <li>
-                        <form class="src-form position-relative">
-                            <input class="form-control" placeholder="Search here..." type="text" />
-                        </form>
+                         <div class="d-flex flex-column justify-content-center">
+        <h5 class="mb-0 fw-semibold text-primary" id="greeting"></h5>
+        <small class="text-muted" id="currentDateTime"></small>
+    </div>
                     </li>
                 </ul>
             </div>
@@ -349,7 +350,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Auth/Logout">
+                                        <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Account/Logout">
                                             <span class="ms-2">
                                                 Logout
                                             </span>
@@ -365,3 +366,39 @@
     </div>
 </header>
 <!-- End Header Area -->
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        const hour = now.getHours();
+
+        let greeting = "Welcome";
+
+        if (hour < 12) {
+            greeting = "Welcome | Good Morning";
+        } else if (hour < 17) {
+            greeting = "Welcome | Good Afternoon";
+        } else if (hour < 21) {
+            greeting = "Welcome | Good Evening";
+        } else {
+            greeting = "Welcome | Good Night";
+        }
+
+        document.getElementById("greeting").innerText = greeting;
+
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+
+        document.getElementById("currentDateTime").innerText =
+            now.toLocaleString('en-IN', options);
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+</script>

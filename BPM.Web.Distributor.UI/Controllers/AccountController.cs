@@ -27,18 +27,40 @@ namespace BPM.Web.Distributor.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> Login()
         {
+            // Check if user is already authenticated
             if (User.Identity.IsAuthenticated)
             {
-                HttpContext.Session.Clear();
-
-                foreach (var cookie in Request.Cookies.Keys)
-                    Response.Cookies.Delete(cookie);
-
-                await HttpContext.SignOutAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme);
+                // Redirect to home page instead of clearing session
+                return RedirectToAction("Index", "Home");
             }
 
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            // Clear session
+            HttpContext.Session.Remove("JwtToken");
+            HttpContext.Session.Remove("RefreshToken");
+            HttpContext.Session.Remove("AuthResponse");
+
+            // Sign out
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Delete cookies
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+
+            // Clear all cookies
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
+            _notyfService.Success("Logged out successfully.");
+
+            return RedirectToAction(nameof(Login));
         }
 
         [HttpPost]
@@ -57,18 +79,14 @@ namespace BPM.Web.Distributor.UI.Controllers
                     // Check if user is Administrator or Operator
                     bool isAdminOrOperator = roleName == "Administrator" || roleName == "Operator";
 
-                    // Log access attempt
-                    //  _logger.LogInformation($"Login attempt - User: {model.Email}, Role: {roleName}, HasDealer: {dealerInfo != null}");
-                   
                     // Allow login if:
                     // 1. User has dealer info, OR
                     // 2. User is Administrator or Operator (can login without dealer)
-                    if (dealerInfo != null)
+                    if (dealerInfo == null && !isAdminOrOperator)
                     {
                         // User doesn't have dealer and is not Admin/Operator - deny access
                         var errorMsg = "You are not authorized to login to this portal. Please use the dealer portal to login.";
                         _notyfService.Error(errorMsg);
-                        // _logger.LogWarning($"Access denied for user: {model.Email} - No dealer and not Admin/Operator");
 
                         return Json(new
                         {
@@ -97,20 +115,19 @@ namespace BPM.Web.Distributor.UI.Controllers
 
                     var successMsg = "Login Successful.";
                     _notyfService.Success(successMsg);
-                   // _logger.LogInformation($"Login successful for user: {model.Email}");
 
                     return Json(new
                     {
                         appUser = response,
                         hasAccess = true,
-                        message = successMsg
+                        message = successMsg,
+                        redirectUrl = Url.Action("Index", "Home")
                     });
                 }
                 else
                 {
                     var errorMsg = response.Message ?? "Login failed. Please check your credentials.";
                     _notyfService.Error(errorMsg);
-                    //_logger.LogWarning($"Login failed for user: {model.Email} - {errorMsg}");
 
                     return Json(new
                     {
@@ -124,7 +141,6 @@ namespace BPM.Web.Distributor.UI.Controllers
             {
                 var errorMsg = "An error occurred during login. Please try again.";
                 _notyfService.Error(errorMsg);
-               // _logger.LogError(ex, $"Login error for user: {model.Email}");
 
                 return Json(new
                 {
@@ -178,7 +194,6 @@ namespace BPM.Web.Distributor.UI.Controllers
         public IActionResult ResetPassword(Guid userId)
         {
             ViewBag.UserId = userId;
-
             return View();
         }
 
@@ -187,14 +202,11 @@ namespace BPM.Web.Distributor.UI.Controllers
         {
             try
             {
-                var response =
-                    await _authenticateService.ResetPasswordAsync(model);
+                var response = await _authenticateService.ResetPasswordAsync(model);
 
                 if (response)
                 {
-                    _notyfService.Success(
-                        "Password reset successfully. Please login.");
-
+                    _notyfService.Success("Password reset successfully. Please login.");
                     return Json(new
                     {
                         success = true
@@ -202,7 +214,6 @@ namespace BPM.Web.Distributor.UI.Controllers
                 }
 
                 _notyfService.Warning("Unable to reset password.");
-
                 return Json(new
                 {
                     success = false
@@ -211,7 +222,6 @@ namespace BPM.Web.Distributor.UI.Controllers
             catch (Exception ex)
             {
                 _notyfService.Error(ex.Message);
-
                 return Json(new
                 {
                     success = false
@@ -223,23 +233,5 @@ namespace BPM.Web.Distributor.UI.Controllers
         {
             return View();
         }
-
-
-        public async Task<IActionResult> Logout()
-        {
-            HttpContext.Session.Remove("JwtToken");
-            HttpContext.Session.Remove("RefreshToken");
-            HttpContext.Session.Remove("AuthResponse");
-
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
-
-            Response.Cookies.Delete(".AspNetCore.Cookies");
-
-            _notyfService.Success("Logged out successfully.");
-
-            return RedirectToAction(nameof(Login));
-        }
-
     }
 }
