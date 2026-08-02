@@ -68,9 +68,19 @@ function makeAjaxRequest({
     processData = true,
     cache = false,
     headers = {},
+    showLoader = true,
     successCallback = function (response) { console.log(response); },
-    errorCallback = function (xhr, status, error) { console.error(`Error: ${error}`); }
+    errorCallback = function (xhr, status, error) { console.error(`Error: ${error}`); },
+    completeCallback = function () { }
 }) {
+    // Show loader if requested
+    if (showLoader) {
+        var $preloader = $('#preloader');
+        if ($preloader.length) {
+            $preloader.fadeIn(300);
+        }
+    }
+
     $.ajax({
         url: url,
         data: type === 'GET' ? data : JSON.stringify(data),
@@ -81,7 +91,20 @@ function makeAjaxRequest({
         cache: cache,
         headers: headers,
         success: successCallback,
-        error: errorCallback
+        error: errorCallback,
+        complete: function () {
+            // Hide loader
+            if (showLoader) {
+                var $preloader = $('#preloader');
+                if ($preloader.length) {
+                    $preloader.fadeOut(300);
+                }
+            }
+            // Call complete callback
+            if (completeCallback) {
+                completeCallback();
+            }
+        }
     });
 }
 const Id = "00000000-0000-0000-0000-000000000000";

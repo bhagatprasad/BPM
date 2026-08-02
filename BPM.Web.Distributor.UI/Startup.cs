@@ -65,6 +65,7 @@ namespace BPM.Web.Distributor.UI
             // Register Repository Factory and Services
             services.AddScoped<IRepositoryFactory, RepositoryFactory>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
+            services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             //services.AddScoped<IUserService, UserService>();
             // Add other services as needed
 
@@ -90,10 +91,10 @@ namespace BPM.Web.Distributor.UI
             // Add Authorization Policies
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
-                options.AddPolicy("Operator", policy => policy.RequireRole("Operator"));
-                options.AddPolicy("User", policy => policy.RequireRole("User"));
-                options.AddPolicy("Executive", policy => policy.RequireRole("Executive"));
+                options.AddPolicy("DistributorPortal", policy =>
+                {
+                    policy.RequireClaim("Portal", "Distributor");
+                });
             });
 
             // Configure Notyf

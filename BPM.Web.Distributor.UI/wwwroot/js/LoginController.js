@@ -159,12 +159,12 @@
             }
 
             // Check if user is authenticated successfully
-            if (appUser.jwtToken) {
+            if (appUser.JwtToken) {
                 // Store user info using common storage service
                 storageService.set('ApplicationUser', appUser);
 
                 // Get role name
-                var roleName = appUser.authenticateResponseDto?.roleInfo?.name;
+                var roleName = appUser.AuthenticateResponseDto?.RoleInfo?.Name;
 
                 // Hide loader before redirect
                 $('#preloader').fadeOut(300);
@@ -172,10 +172,10 @@
                 // Redirect based on role
                 if (roleName === "Administrator" || roleName === "Operator") {
                     // Admin or Operator - redirect to Admin dashboard
-                    window.location.href = '/AdminBoard/Index';
+                    window.location.href = '/Home/Index';
                 } else {
                     // Regular user with dealer - redirect to User dashboard
-                    window.location.href = '/UserBoard/Index';
+                    window.location.href = '/Home/Index';
                 }
             } else {
                 // JWT token is missing - show error message

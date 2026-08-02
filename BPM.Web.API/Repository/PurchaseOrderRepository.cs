@@ -32,7 +32,7 @@ namespace BPM.Web.API.Repository
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
         {
-            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.PurchaseOrderItems).OrderByDescending(po => po.CreatedOn).ToListAsync();
+            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.PurchaseOrderItems).OrderByDescending(po => po.ModifiedOn).ToListAsync();
         }
 
         public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id)
