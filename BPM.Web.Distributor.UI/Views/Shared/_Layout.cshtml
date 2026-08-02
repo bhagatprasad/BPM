@@ -15,92 +15,15 @@
     <link href="~/assets/css/swiper-bundle.min.css" rel="stylesheet" />
     <link href="~/assets/css/jsvectormap.min.css" rel="stylesheet" />
     <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/assets/css/layoutstyle.css" rel="stylesheet" />
+    <link href="~/assets/css/loader.css" rel="stylesheet" />
     <!-- Favicon -->
     <link href="~/assets/images/favicon.png" rel="icon" type="image/png" />
 
-    <style>
-            /* Medical/Pharmacy Theme - Only affects background */
-            body.bg-body-bg {
-                background: linear-gradient(160deg, #f0fdfa 0%, #d5f5f0 40%, #b8ebe3 100%) !important;
-                min-height: 100vh;
-                position: relative;
-            }
-
-                /* Subtle medical pattern overlay */
-                body.bg-body-bg::before {
-                    content: '';
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-image: radial-gradient(circle at 20% 50%, rgba(13, 148, 136, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(14, 116, 144, 0.03) 0%, transparent 50%), radial-gradient(circle at 50% 20%, rgba(13, 148, 136, 0.02) 0%, transparent 40%), radial-gradient(circle at 50% 80%, rgba(14, 116, 144, 0.02) 0%, transparent 40%);
-                    pointer-events: none;
-                    z-index: 0;
-                }
-
-            /* Card and panel backgrounds remain white */
-            .card, .bg-white, .bg-body, .bg-light {
-                background: #ffffff !important;
-            }
-
-            /* Fix for sidebar - ensure it works with layout */
-            .layout-container {
-                display: flex !important;
-                min-height: 100vh !important;
-            }
-
-            .layout-menu {
-                flex: 0 0 auto !important;
-            }
-
-            .layout-page {
-                flex: 1 1 auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-                min-width: 0 !important;
-            }
-
-            .content-wrapper {
-                flex: 1 1 auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-            }
-
-            /* Ensure sidebar links are clickable */
-            .menu-link {
-                cursor: pointer !important;
-            }
-
-            /* Fix for menu toggle */
-            .menu-item .menu-sub {
-                display: none;
-            }
-
-            .menu-item.open .menu-sub {
-                display: block !important;
-            }
-
-            /* Container fluid should not interfere */
-            .container-fluid {
-                flex: 1 1 auto !important;
-                width: 100% !important;
-            }
-
-            .main-content {
-                flex: 1 1 auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-                min-height: 100vh !important;
-            }
-
-            /* Background overlay should not affect clicks */
-            body.bg-body-bg::before {
-                pointer-events: none !important;
-            }
-    </style>
+   
 </head>
 <body class="bg-body-bg">
+    <partial name="_loaderPartial" />
     <!-- Layout Container -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -145,6 +68,8 @@
     <script src="~/assets/js/custom/echarts.js"></script>
     <script src="~/assets/js/custom/maps.js"></script>
     <script src="~/assets/js/custom/custom.js"></script>
+    <script src="~/js/CommonController.js"></script>
+    <script src="~/js/StorageService.js"></script>
 
     <script>
             $(document).ready(function() {
@@ -154,9 +79,48 @@
                 if (typeof $.fn.menu !== 'undefined') {
                     // If menu plugin exists, initialize it
                 }
+
+                // Global AJAX events for preloader
+                $(window).on('load', function () {
+                    $('#preloader').fadeOut(500);
+                });
+
+                $(document).ajaxStart(function () {
+                    $('#preloader').fadeIn(300);
+                });
+
+                $(document).ajaxStop(function () {
+                    $('#preloader').fadeOut(300);
+                });
+
+                $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+                    $('#preloader').fadeOut(300);
+                    if (jqxhr.status === 401) {
+                        $('#loginEmailError').text('Session expired. Please login again.').show();
+                        setTimeout(function () {
+                            $('#loginEmailError').fadeOut(300);
+                        }, 5000);
+                    }
+                });
+
+                // Custom functions for manual control
+                function showPharmacyLoader() {
+                    $('#preloader').fadeIn(300);
+                }
+
+                function hidePharmacyLoader() {
+                    $('#preloader').fadeOut(300);
+                }
+
+                function showPharmacyLoaderWithMessage(message) {
+                    if (message) {
+                        $('.loading-message').text(message);
+                    }
+                    showPharmacyLoader();
+                }
             });
     </script>
-
+     @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

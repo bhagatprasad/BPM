@@ -4,21 +4,19 @@ using System.Security.Claims;
 
 public static class UserPrincipal
 {
-    public static ClaimsPrincipal GenerateUserPrincipal(ApplicationUser user)
+    public static ClaimsPrincipal GenerateUserPrincipal(AuthResponse response)
     {
         var claims = new List<Claim>
         {
-            new Claim("UserId", user.UserId.ToString()),
-            new Claim("FirstName", user.FirstName),
-            new Claim("LastName", user.LastName),
-            new Claim("Email", user.Email),
-            new Claim("RoleId", user.RoleId.ToString()),
-            new Claim(ClaimTypes.Role, user.RoleId.ToString())
+            new Claim("UserId", response.AuthenticateResponseDto.UserId.ToString()),
+            new Claim("FirstName", response.AuthenticateResponseDto.FirstName),
+            new Claim("LastName", response.AuthenticateResponseDto.LastName),
+            new Claim("Email", response.AuthenticateResponseDto.Email),
+            new Claim("RoleId", response.AuthenticateResponseDto.RoleId.ToString()),
+            new Claim(ClaimTypes.Role, response.AuthenticateResponseDto.RoleInfo.Name.ToString())
         };
 
-        var identity = new ClaimsIdentity(
-            claims,
-            CookieAuthenticationDefaults.AuthenticationScheme);
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
         return new ClaimsPrincipal(identity);
     }

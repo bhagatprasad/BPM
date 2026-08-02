@@ -4,7 +4,7 @@ using BPM.Web.Distributor.UI.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace BPM.Web.Distributor.UI.Controllers
 {
@@ -13,8 +13,6 @@ namespace BPM.Web.Distributor.UI.Controllers
         private readonly IAuthenticateService _authenticateService;
         private readonly INotyfService _notyfService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public object JsonConvert { get; private set; }
 
         public AccountController(
             IAuthenticateService authenticateService,
@@ -50,64 +48,89 @@ namespace BPM.Web.Distributor.UI.Controllers
             {
                 var response = await _authenticateService.AuthenticateUserAsync(model);
 
-                if (response == null)
+                if (!string.IsNullOrEmpty(response.JwtToken))
                 {
-                    _notyfService.Error("Unable to connect to server.");
-                    return Json(new { appUser = default(object) });
-                }
+                    // Check if user has dealer or is Admin/Operator
+                    var roleName = response.AuthenticateResponseDto?.RoleInfo?.Name;
+                    var dealerInfo = response.AuthenticateResponseDto?.DealerInfo;
 
-                if (!response.IsValidUser)
-                {
-                    _notyfService.Warning(response.Message);
-                    return Json(new { appUser = default(object) });
-                }
+                    // Check if user is Administrator or Operator
+                    bool isAdminOrOperator = roleName == "Administrator" || roleName == "Operator";
 
-                if (!response.IsValidPassword)
-                {
-                    _notyfService.Warning(response.Message);
-                    return Json(new { appUser = default(object) });
-                }
-
-                // Store Tokens
-
-                HttpContext.Session.SetString("JwtToken", response.JwtToken);
-                HttpContext.Session.SetString("RefreshToken", response.RefreshToken);
-
-                // Generate Claims
-
-                var applicationUser =
-                    await _authenticateService.GenerateUserClaimsAsync(response);
-
-                HttpContext.Session.SetString(
-                 "ApplicationUser",
-                 JsonSerializer.Serialize(applicationUser));
-
-                var principal =
-                    UserPrincipal.GenerateUserPrincipal(applicationUser);
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal,
-                    new AuthenticationProperties
+                    // Log access attempt
+                    //  _logger.LogInformation($"Login attempt - User: {model.Email}, Role: {roleName}, HasDealer: {dealerInfo != null}");
+                   
+                    // Allow login if:
+                    // 1. User has dealer info, OR
+                    // 2. User is Administrator or Operator (can login without dealer)
+                    if (dealerInfo != null)
                     {
-                        IsPersistent = true,
-                        ExpiresUtc = DateTime.UtcNow.AddHours(8)
+                        // User doesn't have dealer and is not Admin/Operator - deny access
+                        var errorMsg = "You are not authorized to login to this portal. Please use the dealer portal to login.";
+                        _notyfService.Error(errorMsg);
+                        // _logger.LogWarning($"Access denied for user: {model.Email} - No dealer and not Admin/Operator");
+
+                        return Json(new
+                        {
+                            appUser = response,
+                            hasAccess = false,
+                            message = errorMsg
+                        });
+                    }
+
+                    // Store session data
+                    _httpContextAccessor.HttpContext.Session.SetString("JwtToken", response.JwtToken);
+                    _httpContextAccessor.HttpContext.Session.SetString("RefreshToken", response.RefreshToken);
+                    _httpContextAccessor.HttpContext.Session.SetString("AuthResponse", JsonConvert.SerializeObject(response));
+
+                    // Generate user principal
+                    var principal = UserPrincipal.GenerateUserPrincipal(response);
+
+                    // Sign in user
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            ExpiresUtc = DateTime.UtcNow.AddHours(8)
+                        });
+
+                    var successMsg = "Login Successful.";
+                    _notyfService.Success(successMsg);
+                   // _logger.LogInformation($"Login successful for user: {model.Email}");
+
+                    return Json(new
+                    {
+                        appUser = response,
+                        hasAccess = true,
+                        message = successMsg
                     });
-
-                _notyfService.Success("Login Successful.");
-
-                return Json(new
+                }
+                else
                 {
-                    appUser = applicationUser
-                });
+                    var errorMsg = response.Message ?? "Login failed. Please check your credentials.";
+                    _notyfService.Error(errorMsg);
+                    //_logger.LogWarning($"Login failed for user: {model.Email} - {errorMsg}");
+
+                    return Json(new
+                    {
+                        appUser = response,
+                        hasAccess = false,
+                        message = errorMsg
+                    });
+                }
             }
             catch (Exception ex)
             {
-                _notyfService.Error(ex.Message);
+                var errorMsg = "An error occurred during login. Please try again.";
+                _notyfService.Error(errorMsg);
+               // _logger.LogError(ex, $"Login error for user: {model.Email}");
 
                 return Json(new
                 {
-                    appUser = default(object)
+                    appUser = default(object),
+                    hasAccess = false,
+                    message = errorMsg
                 });
             }
         }
@@ -160,8 +183,7 @@ namespace BPM.Web.Distributor.UI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(
-            [FromBody] ResetPasswordDto model)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
             try
             {
@@ -202,12 +224,12 @@ namespace BPM.Web.Distributor.UI.Controllers
             return View();
         }
 
-     
+
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Remove("JwtToken");
             HttpContext.Session.Remove("RefreshToken");
-            HttpContext.Session.Remove("ApplicationUser");
+            HttpContext.Session.Remove("AuthResponse");
 
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
