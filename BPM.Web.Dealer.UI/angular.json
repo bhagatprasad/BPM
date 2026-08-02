@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "8c8e2238-0519-4503-8367-d7b4a58344cb"
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -24,9 +24,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-  
             "browser": "src/main.ts",
-            
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -41,15 +39,37 @@
               }
             ],
             "styles": [
-              "node_modules/smart-webcomponents-angular/source/styles/smart.default.css",
-              "src/assets/css/bootstrap.min.css",
-              "src/assets/vendors/bootstrap-icons/bootstrap-icons.css",
+              "src/assets/css/sidebar-menu.css",
+              "src/assets/css/simplebar.css",
+              "src/assets/css/prism.css",
+              "src/assets/css/quill.snow.css",
+              "src/assets/css/remixicon.css",
+              "src/assets/css/swiper-bundle.min.css",
+              "src/assets/css/jsvectormap.min.css",
               "src/assets/css/style.css",
-              "src/assets/css/toastr.css"
+              "src/assets/css/authlayout.css",
+              "src/assets/css/loader.css",
+              "src/assets/css/auth.css"
             ],
             "scripts": [
               "src/assets/js/bootstrap.bundle.min.js",
-              "src/assets/js/main.js"
+              "src/assets/js/main.js",
+              "src/assets/js/sidebar-menu.js",
+              "src/assets/js/quill.min.js",
+              "src/assets/js/data-table.js",
+              "src/assets/js/prism.js",
+              "src/assets/js/clipboard.min.js",
+              "src/assets/js/simplebar.min.js",
+              "src/assets/js/apexcharts.min.js",
+              "src/assets/js/echarts.min.js",
+              "src/assets/js/swiper-bundle.min.js",
+              "src/assets/js/fullcalendar.main.js",
+              "src/assets/js/jsvectormap.min.js",
+              "src/assets/js/world-merc.js",
+              "src/assets/js/custom/apexcharts.js",
+              "src/assets/js/custom/echarts.js",
+              "src/assets/js/custom/maps.js",
+              "src/assets/js/custom/custom.js"
             ]
           },
           "configurations": {
@@ -95,5 +115,3 @@
     }
   }
 }
-
-

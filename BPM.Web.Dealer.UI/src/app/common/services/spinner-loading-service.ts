@@ -11,8 +11,8 @@ export class SpinnerLoadingService {
   // Counter to handle multiple concurrent requests
   private loadingCounter = 0;
   
-  // Optional: Loading message
-  private messageSubject = new BehaviorSubject<string>('');
+  // Loading message
+  private messageSubject = new BehaviorSubject<string>('Loading...');
   message$ = this.messageSubject.asObservable();
 
   constructor() {
@@ -29,6 +29,8 @@ export class SpinnerLoadingService {
     
     if (message) {
       this.messageSubject.next(message);
+    } else {
+      this.messageSubject.next('Loading...');
     }
     
     this.loadingSubject.next(true);
@@ -46,7 +48,17 @@ export class SpinnerLoadingService {
     
     if (this.loadingCounter === 0) {
       this.loadingSubject.next(false);
-      this.messageSubject.next('');
+      this.messageSubject.next('Loading...');
+    }
+  }
+
+  /**
+   * Update loading message while spinner is visible
+   * @param message New message to display
+   */
+  setMessage(message: string): void {
+    if (this.loadingSubject.value) {
+      this.messageSubject.next(message);
     }
   }
 
@@ -56,7 +68,7 @@ export class SpinnerLoadingService {
   forceHide(): void {
     this.loadingCounter = 0;
     this.loadingSubject.next(false);
-    this.messageSubject.next('');
+    this.messageSubject.next('Loading...');
     console.log('⚠️ Spinner force hidden');
   }
 
@@ -68,12 +80,19 @@ export class SpinnerLoadingService {
   }
 
   /**
+   * Get current loading message
+   */
+  get currentMessage(): string {
+    return this.messageSubject.value;
+  }
+
+  /**
    * Reset the spinner state (use for error recovery)
    */
   reset(): void {
     this.loadingCounter = 0;
     this.loadingSubject.next(false);
-    this.messageSubject.next('');
+    this.messageSubject.next('Loading...');
     console.log('🔄 Spinner reset');
   }
 }

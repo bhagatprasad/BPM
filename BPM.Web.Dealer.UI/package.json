@@ -5,8 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve:quiet": "ng serve 2>nul",
+    "serve:filter": "ng serve 2>&1 | findstr /V WARNING"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

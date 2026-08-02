@@ -1,189 +1,158 @@
-<div class="login-wrapper">
-  <div class="auth-container">
-    <!-- Left Side - Image Section (60%) -->
-    <div class="auth-image-section">
-      <div class="image-overlay">
-        <div class="image-content">
-          <div class="brand-large">
-            <div class="brand-icon-large">
-              <i class="bi bi-hexagon-fill"></i>
-              <i class="bi bi-grid-1x2-fill"></i>
+<div class="login-wrapper" style="max-width: 100%; padding: 0 30px;">
+    <!-- Modern Pharmacy Logo -->
+    <div class="text-center mb-4">
+        <a class="pharmacy-logo" href="/">
+            <div class="logo-icon">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" fill="url(#logoGradient)" stroke="#0d9488" stroke-width="2" />
+                    <rect x="40" y="20" width="20" height="60" rx="3" fill="white" opacity="0.95" />
+                    <rect x="20" y="40" width="60" height="20" rx="3" fill="white" opacity="0.95" />
+                    <path d="M70 30 C78 25, 85 30, 82 40 C79 50, 72 48, 70 45 C68 42, 65 38, 70 30Z"
+                          fill="white" opacity="0.8" transform="rotate(15, 75, 35)" />
+                    <path d="M30 70 C22 75, 15 70, 18 60 C21 50, 28 52, 30 55 C32 58, 35 62, 30 70Z"
+                          fill="white" opacity="0.8" transform="rotate(-15, 25, 65)" />
+                    <text x="50" y="48" text-anchor="middle" font-size="22" font-weight="800"
+                          font-family="Arial, sans-serif" fill="#0d9488" letter-spacing="2">B</text>
+                    <text x="50" y="68" text-anchor="middle" font-size="16" font-weight="700"
+                          font-family="Arial, sans-serif" fill="#0e7490" letter-spacing="1">PM</text>
+                    <circle cx="25" cy="25" r="3" fill="white" opacity="0.3" />
+                    <circle cx="75" cy="25" r="3" fill="white" opacity="0.3" />
+                    <circle cx="25" cy="75" r="3" fill="white" opacity="0.3" />
+                    <circle cx="75" cy="75" r="3" fill="white" opacity="0.3" />
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:0.15" />
+                            <stop offset="100%" style="stop-color:#0e7490;stop-opacity:0.08" />
+                        </linearGradient>
+                    </defs>
+                </svg>
             </div>
-             <h1 class="brand-name">BPM<span>Medicals</span></h1>
-            <p class="brand-tagline">Enterprise Medical Dealer Platform</p>
-          </div>
-
-          <div class="image-features">
-            <div class="feature-item">
-              <div class="feature-icon">
-                <i class="bi bi-shield-check"></i>
-              </div>
-              <div class="feature-text">
-                <h4>Secure Access</h4>
-                <p>Enterprise-grade security with end-to-end encryption</p>
-              </div>
+            <div class="logo-text">
+                <span class="brand-name">BPM Medicals</span>
+                <span class="brand-tagline">Healthcare Solutions</span>
             </div>
-            <div class="feature-item">
-              <div class="feature-icon">
-                <i class="bi bi-graph-up-arrow"></i>
-              </div>
-              <div class="feature-text">
-                <h4>Real-time Analytics</h4>
-                <p>Monitor your business performance in real-time</p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">
-                <i class="bi bi-people"></i>
-              </div>
-              <div class="feature-text">
-                <h4>Team Collaboration</h4>
-                <p>Work seamlessly with your team members</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial">
-            <div class="testimonial-quote">
-              <i class="bi bi-quote"></i>
-              <p>"The best admin dashboard solution for modern businesses"</p>
-            </div>
-            <div class="testimonial-author">
-              <img src="https://via.placeholder.com/40" alt="User" class="author-avatar">
-              <div>
-                <strong>John Doe</strong>
-                <span>CEO, TechCorp</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <img src="assets/images/png/drug_landing.jpg" alt="Dashboard Interface" class="auth-image">
+        </a>
     </div>
 
-    <!-- Right Side - Login Form (40%) -->
-    <div class="auth-form-section">
-      <div class="auth-card">
-        <!-- Form Header -->
-        <div class="form-header">
-          <div class="welcome-badge">
-            <i class="bi bi-arrow-right-circle"></i>
-            <span>Sign in to continue</span>
-          </div>
-          <h1 class="h2 fw-bold">Welcome Back</h1>
-          <p class="text-muted">Sign in to manage your workspace and access all features</p>
+    <!-- Sign In Form -->
+    <div id="signin-form">
+        <div class="text-center mb-4">
+            <h3 class="fs-26 fw-medium animated-title" style="margin-bottom: 6px;">
+                Welcome Back!
+            </h3>
+            <p class="fs-16 text-secondary lh-1-8" style="color: #64748b;">
+                Sign in to your account
+            </p>
         </div>
 
-        <!-- Login Form -->
         <form #loginForm="ngForm" (ngSubmit)="onLogin()" novalidate>
-          <!-- Username field -->
-          <div class="form-group">
-            <label class="form-label" for="username">Email or Username</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-envelope"></i>
-              </span>
-              <input 
-                class="form-control" 
-                id="username" 
-                type="text" 
-                placeholder="Enter your email or username"
-                required
-                [(ngModel)]="loginObj.username" 
-                name="username"
-                #username="ngModel"
-                [class.is-invalid]="username.invalid && username.touched">
+            <div class="mb-20">
+                <div class="input-group-enhanced form-floating-enhanced">
+                    <input id="loginEmail" name="Email" class="form-control" placeholder=" " 
+                           type="email" [(ngModel)]="loginObj.username" required
+                           #emailField="ngModel"
+                           [class.is-invalid]="emailField.invalid && emailField.touched" />
+                    <i class="ri-mail-line input-icon"></i>
+                    <label for="loginEmail">Email Address</label>
+                    <span id="loginEmailError" class="text-danger" 
+                          *ngIf="emailError || (emailField.invalid && emailField.touched)" 
+                          style="font-size: 13px; margin-top: 5px;">
+                        <span *ngIf="emailField.errors?.['required'] && emailField.touched">
+                            <i class="ri-error-warning-line me-1"></i> Email address is required.
+                        </span>
+                        <span *ngIf="emailField.errors?.['email'] && emailField.touched">
+                            <i class="ri-error-warning-line me-1"></i> Please enter a valid email address.
+                        </span>
+                        <span *ngIf="emailError">{{ emailError }}</span>
+                    </span>
+                </div>
             </div>
-            <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
-              <i class="bi bi-exclamation-circle me-1"></i>Please enter your username or email.
-            </div>
-          </div>
 
-          <!-- Password field -->
-          <div class="form-group">
-            <div class="d-flex justify-content-between align-items-center">
-              <label class="form-label" for="loginPassword">Password</label>
-              <!-- UPDATED: Using (click) event -->
-              <a class="forgot-link" (click)="onForgotPassword()" style="cursor: pointer;">Forgot password?</a>
+            <div class="mb-20">
+                <div class="input-group-enhanced form-floating-enhanced">
+                    <input id="loginPassword" name="Password" class="form-control password" 
+                           placeholder=" " [type]="showPassword ? 'text' : 'password'"
+                           [(ngModel)]="loginObj.password" required minlength="6"
+                           #passwordField="ngModel"
+                           [class.is-invalid]="passwordField.invalid && passwordField.touched" />
+                    <i class="ri-lock-line input-icon"></i>
+                    <label for="loginPassword">Your Password</label>
+                    <i aria-hidden="true" class="ri-eye-off-line password-toggle" 
+                       (click)="togglePasswordVisibility()"></i>
+                    <span id="loginPasswordError" class="text-danger" 
+                          *ngIf="passwordError || (passwordField.invalid && passwordField.touched)" 
+                          style="font-size: 13px; margin-top: 5px;">
+                        <span *ngIf="passwordField.errors?.['required'] && passwordField.touched">
+                            <i class="ri-error-warning-line me-1"></i> Password is required.
+                        </span>
+                        <span *ngIf="passwordField.errors?.['minlength'] && passwordField.touched">
+                            <i class="ri-error-warning-line me-1"></i> Password must be at least 6 characters.
+                        </span>
+                        <span *ngIf="passwordError">{{ passwordError }}</span>
+                    </span>
+                </div>
             </div>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-lock"></i>
-              </span>
-              <input 
-                class="form-control" 
-                id="loginPassword" 
-                [type]="showPassword ? 'text' : 'password'" 
-                placeholder="Enter your password"
-                minlength="6" 
-                required
-                [(ngModel)]="loginObj.password" 
-                name="password"
-                #password="ngModel"
-                [class.is-invalid]="password.invalid && password.touched">
-              <button type="button" class="btn btn-outline-secondary password-toggle" (click)="togglePasswordVisibility()">
-                <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
-              </button>
-            </div>
-            <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
-              <span *ngIf="password.errors?.['required']">
-                <i class="bi bi-exclamation-circle me-1"></i>Password is required.
-              </span>
-              <span *ngIf="password.errors?.['minlength']">
-                <i class="bi bi-exclamation-circle me-1"></i>Password must be at least 6 characters.
-              </span>
-            </div>
-          </div>
 
-          <!-- Remember me checkbox -->
-          <div class="form-options">
-            <div class="form-check">
-              <input 
-                class="form-check-input" 
-                type="checkbox" 
-                id="rememberMe"
-                [(ngModel)]="rememberMe" 
-                name="rememberMe">
-              <label class="form-check-label" for="rememberMe">Keep me signed in</label>
+            <div class="mb-20">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                    <label class="modern-checkbox">
+                        <input id="rememberMe" name="RememberMe" type="checkbox" 
+                               [(ngModel)]="rememberMe" />
+                        <span class="checkmark"></span>
+                        <span style="font-size: 14px; color: #475569;">Remember me</span>
+                    </label>
+                    <a class="forgot-link" (click)="onForgotPassword()" style="cursor: pointer;">
+                        Forgot Password?
+                    </a>
+                </div>
             </div>
-            <a href="#" class="text-muted small">Privacy policy</a>
-          </div>
 
-          <!-- Error message display -->
-          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            {{ errorMessage }}
-            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
-          </div>
+            <div class="mb-4">
+                <button class="btn-modern" type="submit" 
+                        [disabled]="loginForm.invalid || isLoading">
+                    <i class="ri-login-circle-line me-2"></i> 
+                    <span *ngIf="!isLoading">Sign In</span>
+                    <span *ngIf="isLoading">
+                        <i class="ri-loader-4-line ri-spin me-2"></i> Signing In...
+                    </span>
+                </button>
+            </div>
 
-          <!-- Submit button -->
-          <button 
-            class="btn btn-primary btn-lg w-100" 
-            type="submit"
-            [disabled]="loginForm.invalid || isLoading">
-            <span *ngIf="!isLoading">
-              Sign In
-              <i class="bi bi-arrow-right-circle ms-2"></i>
-            </span>
-           
-              Signing in...
-            
-          </button>
+            <!-- Error message display -->
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ri-error-warning-line me-2"></i>
+                {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+            </div>
+
+            <div class="divider">
+                <span class="line"></span>
+                <span class="text">or continue with</span>
+                <span class="line"></span>
+            </div>
+
+            <ul class="p-0 mb-0 list-unstyled d-flex justify-content-center" style="gap: 12px;">
+                <li>
+                    <a class="social-btn facebook" href="https://www.facebook.com/" target="_blank">
+                        <i class="ri-facebook-fill"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="social-btn twitter" href="https://www.twitter.com/" target="_blank">
+                        <i class="ri-twitter-x-line"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="social-btn google" href="https://www.twitter.com/" target="_blank">
+                        <i class="ri-google-fill"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="social-btn linkedin" href="https://www.linkedin.com/" target="_blank">
+                        <i class="ri-linkedin-fill"></i>
+                    </a>
+                </li>
+            </ul>
         </form>
-
-        <!-- Divider -->
-        <div class="divider">
-          <span>or continue with</span>
-        </div>
-
-        <!-- Social Login -->
-        <div class="social-login">
-          <button type="button" class="social-btn">
-            <i class="bi bi-google"></i>
-            <span>Google</span>
-          </button>        
-        </div>
-      </div>
     </div>
-  </div>
 </div>

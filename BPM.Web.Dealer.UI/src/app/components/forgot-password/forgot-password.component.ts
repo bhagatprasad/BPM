@@ -35,11 +35,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       try {
         const authResponse = JSON.parse(loggedData);
         if (authResponse?.jwtToken) {
-          this.router.navigateByUrl('/drugs');
+          this.router.navigateByUrl('/drugs-catalog');
           return;
         }
       } catch (e) {
-        // Invalid data, continue to forgot password
+        console.error('Error parsing auth data:', e);
       }
     }
   }
@@ -59,7 +59,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isSubmitting = true;
     this.errorMessage = '';
-    this.loadingService.show();
+    this.loadingService.show('Sending reset link...');
 
     if (this.forgotPasswordSubscription) {
       this.forgotPasswordSubscription.unsubscribe();
@@ -78,31 +78,46 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
           this.emailSent = true;
           this.toastr.success(res.message || 'Password reset email sent successfully!', 'Success');
 
-          // FIX: Navigate with userId (capitalized) from response
+          // Navigate with userId from response
           if (res.userId) {
             console.log('📧 Navigating to reset-password with userId:', res.userId);
             this.router.navigate(['/reset-password'], {
-              queryParams: { userId: res.userId }  // Capitalized 'userId'
+              queryParams: { userId: res.userId }
             });
           } else {
             console.warn('⚠️ No userId received in response');
-            // If no userId, maybe the API sends email instead
+            // If no userId, navigate with email as fallback
             this.router.navigate(['/reset-password'], {
-              queryParams: { userId: this.email }  // Fallback to email
+              queryParams: { userId: this.email }
             });
           }
 
           form.resetForm();
           this.email = '';
         } else {
-          this.errorMessage = res.message || 'Something went wrong';
+          this.errorMessage = res.message || 'Something went wrong. Please try again.';
           this.toastr.error(this.errorMessage, 'Error');
         }
       },
-      error: (error) => {
-        console.error('Failed to send reset email. Please try again.:', error);
-        this.toastr.error('Failed to send reset email. Please try again.:' + error);
+      error: (error: any) => {
+        this.isSubmitting = false;
+        this.loadingService.hide();
 
+        console.error('❌ Forgot password error:', error);
+        
+        let errorMsg = 'Failed to send reset email. Please try again.';
+        if (error.status === 0) {
+          errorMsg = 'Unable to connect to the server. Please check your network connection.';
+        } else if (error.status === 404) {
+          errorMsg = 'Email address not found. Please check and try again.';
+        } else if (error.status === 400) {
+          errorMsg = 'Invalid email address. Please check and try again.';
+        } else if (error.error?.message) {
+          errorMsg = error.error.message;
+        }
+
+        this.errorMessage = errorMsg;
+        this.toastr.error(errorMsg, 'Error');
       }
     });
   }
@@ -121,6 +136,9 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         value: { email: this.email }
       } as any;
       this.onSubmit(form);
+    } else {
+      this.toastr.warning('Please enter your email address to resend.', 'Warning');
+      this.emailSent = false;
     }
   }
 }

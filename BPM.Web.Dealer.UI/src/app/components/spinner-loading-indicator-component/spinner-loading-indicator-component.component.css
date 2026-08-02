@@ -1,53 +1,195 @@
-.spinner-container {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 0;
-  left: 0;
-  background: linear-gradient(135deg, rgba(15, 15, 35, 0.85), rgba(30, 30, 60, 0.85));
-  backdrop-filter: blur(10px);
-  z-index: 9999;
+/* Pharmacy Preloader Styles */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    transition: opacity 0.5s ease;
 }
 
-.default-spinner {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.preloader-content {
+    text-align: center;
+    animation: fadeInUp 0.6s ease;
 }
 
-.default-spinner::before {
-  content: '';
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent,
-    #4facfe,
-    #43e97b,
-    #f5576c,
-    #f093fb,
-    transparent
-  );
-  animation: spin 1.5s linear infinite;
+/* Pharmacy Loader Icon */
+.pharmacy-loader-icon {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    animation: pulseLoader 1.5s ease-in-out infinite;
 }
 
-.default-spinner::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: rgba(15, 15, 35, 0.9);
+.pharmacy-loader-icon svg {
+    width: 100%;
+    height: 100%;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Loader Text */
+.loader-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.brand-name-loader {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0d9488 0%, #0e7490 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    animation: shimmerText 2s ease-in-out infinite;
+}
+
+.tagline-loader {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    -webkit-text-fill-color: #64748b;
+    margin-top: -2px;
+}
+
+/* Animated Loading Dots */
+.loading-dots {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.loading-dots span {
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #0d9488, #0e7490);
+    border-radius: 50%;
+    display: inline-block;
+    animation: dotBounce 1.4s ease-in-out infinite both;
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 0s;
+}
+
+/* Loading Message */
+.loading-message {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    letter-spacing: 1px;
+    animation: fadeInOut 2s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pulseLoader {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes shimmerText {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes dotBounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Medical Cross Background Animation */
+.preloader::before {
+    content: '+';
+    position: absolute;
+    font-size: 200px;
+    color: rgba(13, 148, 136, 0.04);
+    font-weight: 300;
+    animation: rotateCross 30s linear infinite;
+}
+
+@keyframes rotateCross {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Preloader */
+@media (max-width: 576px) {
+    .pharmacy-loader-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .brand-name-loader {
+        font-size: 24px;
+    }
+    
+    .tagline-loader {
+        font-size: 10px;
+    }
+    
+    .loading-dots span {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .preloader::before {
+        font-size: 120px;
+    }
 }
