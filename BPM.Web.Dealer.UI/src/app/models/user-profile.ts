@@ -58,3 +58,14 @@ export interface userDto {
   email?: string;
   phone?: string;
 }
+
+
+export interface ChangePasswordRequest{
+  userId?: string;
+  newPassword?: string;
+  modifiedBy?: string;
+}
+
+export interface ChangePasswordResponse{
+  message? : string;
+}

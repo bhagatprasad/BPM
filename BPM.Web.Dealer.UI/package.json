@@ -23,6 +23,7 @@
     "@angular/localize": "^22.0.6",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "@fortawesome/fontawesome-free": "^7.3.1",
     "@iqx-limited/ngx-toastr": "^3.0.0",
     "rxjs": "~7.8.0",
     "smart-webcomponents-angular": "^26.0.0",
