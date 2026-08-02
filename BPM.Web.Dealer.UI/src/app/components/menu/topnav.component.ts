@@ -266,7 +266,9 @@ export class TopnavComponent implements OnInit, OnDestroy {
   goToCalendar(): void {
     this.router.navigate(['/apps/calendar']);
   }
-
+  goToCart(): void {
+    this.router.navigate(['cart']);
+  }
   logout(): void {
     this.accountService.logout();
     this.router.navigate(['/login']);
