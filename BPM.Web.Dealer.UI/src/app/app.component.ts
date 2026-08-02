@@ -1,11 +1,12 @@
-import { Component, OnInit, signal, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { filter, Subscription, BehaviorSubject } from 'rxjs';
 import { CartService } from './services/cart.service';
 import { AccountService } from './services/account.service';
 import { SpinnerLoadingIndicatorComponent } from './components/spinner-loading-indicator-component/spinner-loading-indicator-component.component';
-import { SidenavComponent } from './common/sidenav.component';
+import { SidenavComponent } from './components/menu/sidenav.component';
+import { TopnavComponent } from './components/menu/topnav.component';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { SidenavComponent } from './common/sidenav.component';
   imports: [
     RouterOutlet,
     SidenavComponent,
+    TopnavComponent,
     NgIf,
     AsyncPipe,
     SpinnerLoadingIndicatorComponent
@@ -21,11 +23,13 @@ import { SidenavComponent } from './common/sidenav.component';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  protected readonly title = signal('BPM Medicals');
+  private router = inject(Router);
+  private cartService = inject(CartService);
+  public accountService = inject(AccountService);
+
   cartCount: number = 0;
-  
-  // Use BehaviorSubject for template
   isAuthenticated$ = new BehaviorSubject<boolean>(false);
+  isInitialized = false;
   
   firstName: string = '';
   lastName: string = '';
@@ -35,12 +39,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Define public routes that don't require authentication
   private publicRoutes = ['/login', '/forgot-password', '/reset-password'];
-
-  constructor(
-    private cartService: CartService,
-    private router: Router,
-    public accountService: AccountService
-  ) { }
 
   ngOnInit(): void {
     // Check authentication status on init
@@ -58,13 +56,13 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Listen to route changes
+    // Listen to route changes - optimized with debounce
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      // Only check if not already redirecting
       if (!this.isRedirecting) {
-        this.checkAuthStatus();
+        // Use setTimeout to avoid change detection issues
+        setTimeout(() => this.checkAuthStatus(), 0);
       }
     });
   }
@@ -92,35 +90,32 @@ export class AppComponent implements OnInit, OnDestroy {
         isAuth = false;
         this.firstName = '';
         this.lastName = '';
+        this.dealerShipName = '';
       }
     } else {
       this.firstName = '';
       this.lastName = '';
+      this.dealerShipName = '';
     }
 
-    // Update the observable
     this.isAuthenticated$.next(isAuth);
-
-    // Handle redirects
+    this.isInitialized = true;
     this.handleRedirect(isAuth);
   }
 
   private handleRedirect(isAuth: boolean): void {
-    const currentUrl = this.router.url;
-    const isPublicRoute = this.publicRoutes.some(route => currentUrl.includes(route));
-    
-    console.log('🔍 Auth Check:', { isAuth, currentUrl, isPublicRoute });
-
     // Prevent redirect loops
     if (this.isRedirecting) {
       return;
     }
 
+    const currentUrl = this.router.url;
+    const isPublicRoute = this.publicRoutes.some(route => currentUrl.includes(route));
+    
     // Case 1: Authenticated user on login page -> redirect to drugs
     if (isAuth && currentUrl === '/login') {
       this.isRedirecting = true;
-      console.log('✅ Redirecting to /drugs');
-      this.router.navigateByUrl('/drugs').finally(() => {
+      this.router.navigateByUrl('/drugs', { replaceUrl: true }).finally(() => {
         this.isRedirecting = false;
       });
       return;
@@ -129,16 +124,14 @@ export class AppComponent implements OnInit, OnDestroy {
     // Case 2: Unauthenticated user on protected page -> redirect to login
     if (!isAuth && !isPublicRoute && currentUrl !== '/login') {
       this.isRedirecting = true;
-      console.log('✅ Redirecting to /login');
-      this.router.navigateByUrl('/login').finally(() => {
+      this.router.navigateByUrl('/login', { replaceUrl: true }).finally(() => {
         this.isRedirecting = false;
       });
       return;
     }
 
-    // Case 3: Unauthenticated user on public route -> allow access
-    // Case 4: Authenticated user on protected route -> allow access
-    console.log('✅ Allowing access to:', currentUrl);
+    // Case 3: Unauthenticated user on login page -> allow
+    // Case 4: Authenticated user on protected route -> allow
   }
 
   getFullName(): string {
@@ -153,12 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   getDealerName() {
-    if (this.dealerShipName) {
-      return `${this.dealerShipName}`;
-    }
-    else {
-      return ` `;
-    }
+    return this.dealerShipName || '';
   }
 
   gotoprofile() {
@@ -170,7 +158,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isAuthenticated$.next(false);
     this.firstName = '';
     this.lastName = '';
-    this.router.navigate(['/login']);
+    this.dealerShipName = '';
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   goToCart(): void {

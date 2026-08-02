@@ -1,3 +1,5 @@
+import { isActive } from "@angular/router";
+
 // Define the authentication response interface
 export interface AuthResponse {
   authenticateResponseDto: {
@@ -27,7 +29,13 @@ export interface AuthResponse {
       tradeLicenseNumber: string;
       website: string;
       isActive: boolean;
-    };
+    },
+    roleInfo: {
+      id: string,
+      name: string,
+      isActive: boolean,
+      code: string
+    }
   };
   jwtToken: string;
   refreshToken: string;

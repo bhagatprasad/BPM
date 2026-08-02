@@ -1,36 +1,33 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { AccountService } from '../services/account.service';
 
-export const forgotPasswordGuard: CanActivateFn = (route, state) => {
+export const forgotPasswordGuard: CanActivateFn = async (route, state) => {
+  const accountService = inject(AccountService);
   const router = inject(Router);
-  const loggedData = localStorage.getItem('AuthenticatedUserResponse');
 
   console.log('🔵 forgotPasswordGuard called');
-  console.log('Current URL:', state.url);
 
-  // Check if there's any auth data
-  if (loggedData) {
-    try {
-      const authResponse = JSON.parse(loggedData);
+  // Check if user is authenticated
+  const isAuth = await accountService.isAuthenticated();
+  
+  if (isAuth) {
+    const currentUser = accountService.getCurrentUser();
+    
+    if (currentUser?.jwtToken) {
+      const dealerInfo = currentUser?.authenticateResponseDto?.dealerInfo;
+      const roleName = currentUser?.authenticateResponseDto?.roleInfo?.name;
+      const isAdminOrOperator = roleName === "Administrator" || roleName === "Operator";
       
-      // Validate that the token exists and is not expired
-      if (authResponse?.jwtToken) {
-        // Optional: Add token expiration check
-        // You can decode JWT and check exp claim if needed
-        
-        // If already logged in, redirect to drugs-catalog
-        console.log('✅ User already logged in, redirecting to drugs-catalog');
-        router.navigateByUrl('/drugs-catalog');
+      // If already logged in and has access, redirect to drugs
+      if (dealerInfo || isAdminOrOperator) {
+        console.log('✅ User already logged in, redirecting to drugs');
+        router.navigateByUrl('/drugs');
         return false;
       } else {
-        // Invalid auth data - clear it
-        console.warn('⚠️ Invalid auth data found, clearing...');
-        localStorage.removeItem('AuthenticatedUserResponse');
+        // User doesn't have access, clear auth and allow forgot password
+        accountService.logout();
       }
-    } catch (e) {
-      console.error('❌ Error parsing auth data:', e);
-      // Clear invalid data
-      localStorage.removeItem('AuthenticatedUserResponse');
     }
   }
 
