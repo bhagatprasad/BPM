@@ -31,7 +31,7 @@ interface Notification {
 @Component({
   selector: 'app-topnav',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './topnav.component.html',
   styleUrls: ['./topnav.component.css'],
 })
