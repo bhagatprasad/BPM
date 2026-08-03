@@ -49,8 +49,7 @@
               "src/assets/css/style.css",
               "src/assets/css/authlayout.css",
               "src/assets/css/loader.css",
-              "src/assets/css/auth.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "src/assets/css/auth.css"
             ],
             "scripts": [
               "src/assets/js/bootstrap.bundle.min.js",
