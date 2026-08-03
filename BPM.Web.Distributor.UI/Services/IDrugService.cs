@@ -1,6 +1,6 @@
-﻿using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.Distributor.UI.Models.DTOs;
 
-namespace BPM.Web.API.Service
+namespace BPM.Web.Distributor.UI.Services
 {
     public interface IDrugService
     {

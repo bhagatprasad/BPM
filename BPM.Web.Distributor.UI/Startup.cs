@@ -68,6 +68,7 @@ namespace BPM.Web.Distributor.UI
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDrugService, DrugService>();
             // Add other services as needed
 
             // Configure Authentication

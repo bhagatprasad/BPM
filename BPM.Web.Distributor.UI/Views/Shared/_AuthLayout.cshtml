@@ -21,18 +21,9 @@
 </head>
 
 <body class="bg-body-bg">
-    <!-- Use ONLY ONE of these loaders -->
-    
-    <!-- Option 1: Pharmacy Preloader -->
+    <!-- Pharmacy Preloader -->
     <partial name="_loaderPartial" />
-    
-    <!-- Option 2: Simple Spinner (Uncomment if you want to use this instead) -->
-    <!-- <div class="se-pre-con" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div> -->
-    
+
     <div class="container-fluid p-0">
         <div class="main-content d-flex flex-column p-0">
             <div class="container-fluid p-0">
@@ -53,18 +44,18 @@
                             <div class="mb-4">
                                 <img alt="pharmacy-illustration" src="~/assets/images/pharmacy-illustration.svg" class="img-fluid" style="max-width: 100%; height: auto; filter: drop-shadow(0 10px 40px rgba(0,0,0,0.3));" />
                             </div>
-                            
+
                             <h2 class="text-white fw-bold display-5 mb-3">
                                 <i class="ri-heart-3-fill me-2" style="font-size: 2.5rem;"></i>
                                 BPM Medicals
                             </h2>
-                            
+
                             <p class="text-white-50 fs-5 mb-0 px-4">
                                 Your trusted partner in pharmaceutical distribution.
                                 <br class="d-none d-xl-block" />
                                 <span style="color: rgba(255,255,255,0.7);">Quality medications delivered with care.</span>
                             </p>
-                            
+
                             <div class="mt-5 d-flex justify-content-center gap-3 medical-stats flex-wrap">
                                 <div class="medical-stat-item rounded-3">
                                     <h3 class="text-white mb-1">500+</h3>
@@ -103,7 +94,7 @@
                         <!-- Decorative accents -->
                         <div class="corner-accent top-right"></div>
                         <div class="corner-accent bottom-left"></div>
-                        
+
                         <div style="width: 100%; max-width: 100%; position: relative; z-index: 1;">
                             @RenderBody()
                         </div>
@@ -133,54 +124,21 @@
     <script src="~/assets/js/custom/maps.js"></script>
     <script src="~/assets/js/custom/custom.js"></script>
     <script src="~/js/CommonController.js"></script>
+    <script src="~/js/LoaderController.js"></script>  <!-- Loader Controller - Must be after CommonController -->
     <script src="~/js/StorageService.js"></script>
-    
+
     <script type="text/javascript">
-        $(document).ready(function() {
-            console.log('Layout loaded successfully');
+            $(document).ready(function () {
+                console.log('Layout loaded successfully');
 
-            // Global AJAX events for preloader - Using ONLY #preloader
-            $(window).on('load', function () {
-                $('#preloader').fadeOut(500);
+                // Only hide preloader on page load
+                $(window).on('load', function () {
+                    hideLoader(); // Using LoaderController function
+                });
+
+                // REMOVED: Global ajaxStart, ajaxStop, ajaxError events
+                // We will control loader manually using showLoader() and hideLoader()
             });
-
-            $(document).ajaxStart(function () {
-                $('#preloader').fadeIn(300);
-            });
-
-            $(document).ajaxStop(function () {
-                $('#preloader').fadeOut(300);
-            });
-
-            $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
-                $('#preloader').fadeOut(300);
-                if (jqxhr.status === 401) {
-                    $('#loginEmailError').text('Session expired. Please login again.').show();
-                    setTimeout(function () {
-                        $('#loginEmailError').fadeOut(300);
-                    }, 5000);
-                }
-            });
-
-            // Custom functions for manual control
-            window.showPharmacyLoader = function() {
-                $('#preloader').fadeIn(300);
-            };
-
-            window.hidePharmacyLoader = function() {
-                $('#preloader').fadeOut(300);
-            };
-
-            window.showPharmacyLoaderWithMessage = function(message) {
-                if (message) {
-                    $('.loading-message').text(message);
-                }
-                window.showPharmacyLoader();
-            };
-        });
-    </script>
-    <script>
-        (function() { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9bc2a239bfc60d0e',t:'MTc2ODExNTgzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function() { }; document.onreadystatechange = function(b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();
     </script>
     @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)

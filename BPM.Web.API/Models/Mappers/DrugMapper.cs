@@ -5,7 +5,7 @@ namespace BPM.Web.API.Models.Mappers
 {
     public static class DrugMapper
     {
-        public static Drug ToEntity(CreateDrugDto dto)
+        public static Drug ToEntity(this CreateDrugDto dto)
         {
             return new Drug
             {
@@ -22,7 +22,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static Drug ToEntity(UpdateDrugDto dto)
+        public static Drug UpdateDrugDtoToDrug(this UpdateDrugDto dto)
         {
             return new Drug
             {
@@ -41,7 +41,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static DrugDto ToDto(Drug entity)
+        public static DrugDto DrugToDrugDto(this Drug entity)
         {
             return new DrugDto
             {
@@ -68,9 +68,9 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static List<DrugDto> ToDtoList(List<Drug> entities)
+        public static List<DrugDto> ToDrugDtoList(this List<Drug> entities)
         {
-            return entities.Select(ToDto).ToList();
+            return entities.Select(drug => drug.DrugToDrugDto()).ToList();
         }
     }
 }

@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Drugs";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h3 class="mb-0">
+            Drugs
+        </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a class="d-flex align-items-center text-decoration-none" href="/Home/Index">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span>Inventory</span>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span class="text-secondary">Drugs</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+            <form class="table-src-form position-relative m-0" onsubmit="return false;">
+                <input class="form-control w-350" placeholder="Search drugs..." type="text" id="searchInput" />
+            </form>
+            <a class="text-primary fs-16 border-0 text-decoration-none" href="create-drug.html">
+                + Add New Drug
+            </a>
+        </div>
+
+        <div class="default-table-area mx-minus-1 table-to-do-list">
+            <div class="table-responsive">
+                <table class="table align-middle w-100" id="drugTable">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium" scope="col" style="width: 50px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="checkAll" type="checkbox" />
+                                </div>
+                            </th>
+                            <th class="fw-medium" scope="col">Drug Code</th>
+                            <th class="fw-medium" scope="col">Drug Name</th>
+                            <th class="fw-medium" scope="col">Generic Name</th>
+                            <th class="fw-medium" scope="col">Brand Name</th>
+                            <th class="fw-medium" scope="col">Manufacturer</th>
+                            <th class="fw-medium" scope="col">Category</th>
+                            <th class="fw-medium" scope="col">Status</th>
+                            <th class="fw-medium" scope="col" style="width: 150px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drugTableBody">
+                        <!-- Drugs will be dynamically rendered here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15" id="entriesInfo">
+                    Showing 0 to 0 of 0 entries
+                </span>
+                <nav aria-label="Page navigation example" class="custom-pagination">
+                    <ul class="pagination mb-0 justify-content-center" id="paginationControls">
+                        <!-- Pagination will be dynamically rendered here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/DrugController.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        var ctrl = new DrugController();
+        ctrl.init();
+    });
+</script>
