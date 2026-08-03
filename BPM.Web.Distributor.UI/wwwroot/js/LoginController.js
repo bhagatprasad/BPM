@@ -80,8 +80,9 @@
             return;
         }
 
-        // Show loading state using preloader
-        $('#preloader').fadeIn(300);
+        // Show loading state using LoaderController
+        showLoader('Signing in...');
+
         var signInButton = $('#loginForm .btn-modern');
         signInButton.prop('disabled', true);
         signInButton.html('<i class="ri-loader-4-line ri-spin me-2"></i> Signing In...');
@@ -97,6 +98,7 @@
             url: '/Account/Login',
             data: userAuthentication,
             type: 'POST',
+            showLoader: false, // We're controlling manually
             successCallback: function (response) {
                 console.log('Login response:', response);
                 self.handleAuthenticationSuccess(response);
@@ -106,8 +108,8 @@
                 self.handleAuthenticationError(xhr, status, error);
             },
             completeCallback: function () {
-                // Hide loader
-                $('#preloader').fadeOut(300);
+                // Hide loader using LoaderController
+                hideLoader();
                 signInButton.prop('disabled', false);
                 signInButton.html('<i class="ri-login-circle-line me-2"></i> Sign In');
 
@@ -154,7 +156,7 @@
                 var errorMsg = response.message || 'Access Denied. You do not have permission to access this portal.';
                 self.showError('loginEmailError', errorMsg);
                 // Hide loader
-                $('#preloader').fadeOut(300);
+                hideLoader();
                 return;
             }
 
@@ -167,7 +169,7 @@
                 var roleName = appUser.AuthenticateResponseDto?.RoleInfo?.Name;
 
                 // Hide loader before redirect
-                $('#preloader').fadeOut(300);
+                hideLoader();
 
                 // Redirect based on role
                 if (roleName === "Administrator" || roleName === "Operator") {
@@ -182,13 +184,13 @@
                 var errorMessage = appUser.message || 'Authentication failed. Please try again.';
                 self.showError('loginEmailError', errorMessage);
                 // Hide loader
-                $('#preloader').fadeOut(300);
+                hideLoader();
             }
         } else {
             // Invalid response
             self.showError('loginEmailError', 'Invalid response from server. Please try again.');
             // Hide loader
-            $('#preloader').fadeOut(300);
+            hideLoader();
         }
     };
 
@@ -197,7 +199,7 @@
         console.error('Authentication error:', error);
 
         // Hide loader
-        $('#preloader').fadeOut(300);
+        hideLoader();
 
         // Show error message from server or generic message
         if (xhr.responseJSON && xhr.responseJSON.message) {
