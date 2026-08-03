@@ -687,4 +687,37 @@
   .loading-overlay {
     display: none !important;
   }
+  .password-requirements {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.password-requirements ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.password-requirements li {
+  margin-bottom: 6px;
+}
+/* In your styles */
+.password-toggle {
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  color: #6c757d;
+}
+
+.password-toggle.visible {
+  color: #0d6efd;
+  transform: scale(1.1);
+}
+
+.password-toggle:hover {
+  transform: scale(1.2);
+}
 }

@@ -1,24 +1,28 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { UpdateUserRequest, UpdateUserResponse } from '../../models/user-profile';
+import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, AuthenticateResponse } from '../../models/user-profile';
 import { UserService } from '../../services/profile.service';
-import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 import { DealerService } from '../../services/dealer.service';
-import { UpdatedDealerResponse } from '../../models/dealer-profile';
+import { UpdatedDealerRequest, UpdatedDealerResponse } from '../../models/dealer-profile';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule, ResetPasswordComponent],
+  imports: [FormsModule, CommonModule,],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-
-
+  constructor(
+    private userService: UserService,
+    private dealerService: DealerService,
+    private toastr: ToastrService,
+    private loader: SpinnerLoadingService,
+    private cdr: ChangeDetectorRef,
+  ) { }
 
   userData: any = null;
   dealerData: any = null;
@@ -33,8 +37,16 @@ export class ProfileComponent implements OnInit {
     phone: ''
   };
 
+  changePassword = {
+    userId: '',
+    newPassword: '',
+    confirmPassword: '',
+    modifiedBy: '',
+    resetPassword: false
+  }
+
   dealerSection = {
-    id: '',
+    dealerId: '',
     dealershipName: '',
     contactPerson: '',
     email: '',
@@ -54,6 +66,10 @@ export class ProfileComponent implements OnInit {
 
   isEditing: boolean = false;
   isDealerEditing: boolean = false;
+
+  isChangePassword: boolean = false;
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
   originalUserData: any = {};
   originalDealerData: any = {};
 
@@ -61,15 +77,8 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
 
   userId: string = '';
+  dealerId:string='';
 
-
-  constructor(
-    private userService: UserService,
-    private dealerService: DealerService,
-    private toastr: ToastrService,
-    private loader: SpinnerLoadingService,
-    private cdr: ChangeDetectorRef,
-  ) { }
 
   ngOnInit(): void {
     this.loadUserData();
@@ -83,6 +92,8 @@ export class ProfileComponent implements OnInit {
       this.userData = JSON.parse(storedData);
       console.log('Full userData:', this.userData);
       this.userId = this.userData.authenticateResponseDto.userId;
+      this.dealerId=this.userData.authenticateResponseDto.dealerId;
+
       this.populateFormData();
     }
   }
@@ -102,7 +113,7 @@ export class ProfileComponent implements OnInit {
       if (dto.dealerInfo) {
         console.log('Populating dealer data:', dto.dealerInfo);
         this.dealerSection = {
-          id: dto.dealerInfo.id || '',
+          dealerId: dto.dealerInfo.id || '',
           dealershipName: dto.dealerInfo.dealershipName || '',
           contactPerson: dto.dealerInfo.contactPerson || '',
           email: dto.dealerInfo.email || '',
@@ -138,6 +149,18 @@ export class ProfileComponent implements OnInit {
   cancelEdit(): void {
     this.userSection = { ...this.originalUserData };
     this.isEditing = false;
+    this.clearMessages();
+  }
+
+
+
+  enablePasswordEdit() {
+    this.isChangePassword = true;
+    this.clearMessages();
+  }
+
+  cancelPasswordChanges() {
+    this.isChangePassword = false;
     this.clearMessages();
   }
 
@@ -179,16 +202,73 @@ export class ProfileComponent implements OnInit {
     return true;
   }
 
-  private updatedUserData = {
+  private updateUserInfo():UpdateUserRequest{
+    var updatedUserData = {
 
-    firstName: this.userSection.firstName.trim(),
-    lastName: this.userSection.lastName.trim(),
-    email: this.userSection.email.trim(),
-    phone: this.userSection.phone.trim(),
-    userId: this.userId,
-    modifiedBy: this.userId
+      firstName: this.userSection.firstName.trim(),
+      lastName: this.userSection.lastName.trim(),
+      email: this.userSection.email.trim(),
+      phone: this.userSection.phone.trim(),
+      userId: this.userId,
+      modifiedBy: this.userId
 
-  };
+    };
+    return updatedUserData
+  }
+
+  private validateChangePassword(): boolean {
+    if (this.changePassword.resetPassword) {
+      this.errorMessage = 'Please confirm that you want to reset your password';
+      this.toastr.warning('Please confirm password reset', 'Warning');
+      return false;
+    }
+    if (this.changePassword.newPassword !== this.changePassword.confirmPassword) {
+      this.errorMessage = 'NewPassword and confirm Password should match';
+      this.toastr.warning('NewPassword and confirm Password should match', 'Warning')
+      return false;
+    }
+    if (!/[A-Z]/.test(this.changePassword.newPassword)) {
+      this.errorMessage = 'Password must contain at least one uppercase letter.';
+      this.toastr.warning('Password must contain at least one uppercase letter.', 'Warning');
+      return false;
+    }
+    if (!/[a-z]/.test(this.changePassword.newPassword)) {
+      this.errorMessage = 'Password must contain at least one lowercase letter.';
+      this.toastr.warning('Password must contain at least one lowercase letter.', 'Warning');
+      return false;
+    }
+    if (!/[0-9]/.test(this.changePassword.newPassword)) {
+      this.errorMessage = 'Password must contain at least one number.';
+      this.toastr.warning('Password must contain at least one number.', 'Warning');
+      return false;
+    }
+    if (this.changePassword.newPassword.length < 6) {
+      this.errorMessage = 'password lenght must be atleast 6 characters long';
+      this.toastr.warning('password lenght must be atleast 6 characters long', 'Warning')
+      return false;
+    }
+
+    return true;
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+  updatedPasswordInfo():ChangePasswordRequest {
+    var changedPassword = {
+      userId: this.userId,
+      newPassword: this.changePassword.newPassword,
+      modifiedBy: this.userId
+
+    };
+    return changedPassword
+  }
+
+
 
   private validateDealerData(): boolean {
     if (!this.dealerSection?.dealershipName?.trim()) {
@@ -258,6 +338,31 @@ export class ProfileComponent implements OnInit {
 
   }
 
+  updateDealerInfo():UpdatedDealerRequest {
+    var updatedDealer = {
+      dealerId: this.dealerSection.dealerId,
+      dealershipName: this.dealerSection.dealershipName.trim(),
+      contactPerson: this.dealerSection.contactPerson.trim(),
+      email: this.dealerSection.email.trim(),
+      phone: this.dealerSection.phone.trim(),
+      alternatePhone: this.dealerSection.alternatePhone.trim(),
+      addressLine1: this.dealerSection.addressLine1.trim(),
+      addressLine2: this.dealerSection.addressLine2.trim(),
+      city: this.dealerSection.city.trim(),
+      state: this.dealerSection.state.trim(),
+      country: this.dealerSection.country.trim(),
+      postalCode: this.dealerSection.postalCode.trim(),
+      gstNumber: this.dealerSection.gstNumber.trim(),
+      registrationNumber: this.dealerSection.registrationNumber.trim(),
+      tradeLicenseNumber: this.dealerSection.tradeLicenseNumber.trim(),
+      website: this.dealerSection.website.trim(),
+      modifiedBy: this.dealerId
+    };
+
+    return updatedDealer
+
+  }
+
 
   // ============ UPDATE METHODS ============
 
@@ -267,7 +372,7 @@ export class ProfileComponent implements OnInit {
       this.loader.hide();
       return;
     }
-    const updateData = this.updatedUserData;
+    const updateData = this.updateUserInfo();
     this.userService.updateUserProfile(this.userId, updateData).subscribe({
       next: (response) => {
         console.log(response.message);
@@ -287,31 +392,27 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  savePasswordChanges() {
+    this.loader.show();
+    if (!this.validateChangePassword) {
+      this.loader.hide();
+      return;
+    }
+    const updatedChangePassword = this.updatedPasswordInfo();
 
-  updateDealerInfo() {
-    var updatedDealer = {
-      id: this.dealerSection.id,
-      dealershipName: this.dealerSection.dealershipName.trim(),
-      contactPerson: this.dealerSection.contactPerson.trim(),
-      email: this.dealerSection.contactPerson.trim(),
-      phone: this.dealerSection.phone.trim(),
-      alternatePhone: this.dealerSection.alternatePhone.trim(),
-      addressLine1: this.dealerSection.addressLine1.trim(),
-      addressLine2: this.dealerSection.addressLine2.trim(),
-      city: this.dealerSection.city.trim(),
-      state: this.dealerSection.state.trim(),
-      country: this.dealerSection.country.trim(),
-      postalCode: this.dealerSection.postalCode.trim(),
-      gstNumber: this.dealerSection.gstNumber.trim(),
-      registrationNumber: this.dealerSection.gstNumber.trim(),
-      tradeLicenseNumber: this.dealerSection.tradeLicenseNumber.trim(),
-      website: this.dealerSection.website.trim(),
-      modifiedBy: this.userId
-    };
-
-    return updatedDealer
+    this.userService.updatedChangePassword(this.userId, updatedChangePassword).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.toastr.success(response.message);
+        this.clearMessages();
+        this.loader.hide();
+        this.isChangePassword = false;
+        this.cdr.detectChanges();
+      }
+    })
 
   }
+
 
   saveDealerChanges() {
     this.loader.show();
@@ -320,7 +421,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
     const updatedDealerData = this.updateDealerInfo()
-    this.dealerService.updateDealerAsync(this.dealerSection.id, updatedDealerData).subscribe({
+    this.dealerService.updateDealerAsync(this.dealerId, updatedDealerData).subscribe({
       next: (response) => {
         console.log(response.message);
         this.toastr.success(response.message);
@@ -381,9 +482,6 @@ export class ProfileComponent implements OnInit {
 
   // ============ EVENT HANDLERS ============
 
-  onPasswordResetSuccess(success: boolean): void {
-    if (success) {
-      this.toastr.success('Password updated successfully!', 'Success');
-    }
-  }
+
+
 }

@@ -15,7 +15,8 @@ export const environment = {
       FetchPurchaseOrderById: 'PurchaseOrder/FetchPurchaseOrderById',
     },
     User: {
-      updateUserProfile: 'User',
+      UpdateUserProfileAsync: 'user/updateuser',
+      ChangePasswordAsync:'user/changepassword',
     },
     Dealer:{
       updateDealerAsync:'dealer/updatedealer'
