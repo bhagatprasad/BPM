@@ -13,7 +13,9 @@
 }
 
 /* ========== PROFILE HEADER ========== */
-.profile-header-section {
+.profile-header-section,
+.change-password-section,
+.dealer-info-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -170,12 +172,21 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ========== PROFILE CARD ========== */
-.profile-card {
+.profile-card,
+.change-password-card,
+.dealer-info-card {
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e8ecf5;
@@ -184,11 +195,15 @@
   transition: all 0.3s ease;
 }
 
-.profile-card:last-child {
+.profile-card:last-child,
+.change-password-card:last-child,
+.dealer-info-card:last-child {
   margin-bottom: 0;
 }
 
-.profile-card:hover {
+.profile-card:hover,
+.change-password-card:hover,
+.dealer-info-card:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
@@ -267,13 +282,23 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ========== BADGES ========== */
@@ -687,37 +712,39 @@
   .loading-overlay {
     display: none !important;
   }
+
   .password-requirements {
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 12px;
-  margin-top: 10px;
-  font-size: 14px;
-}
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 14px;
+  }
 
-.password-requirements ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
-}
+  .password-requirements ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+  }
 
-.password-requirements li {
-  margin-bottom: 6px;
-}
-/* In your styles */
-.password-toggle {
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  color: #6c757d;
-}
+  .password-requirements li {
+    margin-bottom: 6px;
+  }
 
-.password-toggle.visible {
-  color: #0d6efd;
-  transform: scale(1.1);
-}
+  /* In your styles */
+  .password-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    color: #6c757d;
+  }
 
-.password-toggle:hover {
-  transform: scale(1.2);
-}
+  .password-toggle.visible {
+    color: #0d6efd;
+    transform: scale(1.1);
+  }
+
+  .password-toggle:hover {
+    transform: scale(1.2);
+  }
 }
