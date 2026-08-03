@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { Subscription } from 'rxjs';
+import { CartService } from '@app/services/cart.service';
 
 interface Language {
   name: string;
@@ -37,6 +38,7 @@ interface Notification {
 export class TopnavComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
+  private cartService = inject(CartService);
 
   firstName: string = '';
   lastName: string = '';
@@ -48,6 +50,7 @@ export class TopnavComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   private authSubscription?: Subscription;
   isScrolled: boolean = false;
+  cartCount = 0;
 
   // Languages data
   languages: Language[] = [
@@ -55,7 +58,7 @@ export class TopnavComponent implements OnInit, OnDestroy {
     { name: 'Australia', code: 'au', flag: 'assets/images/australia.png' },
     { name: 'Spanish', code: 'es', flag: 'assets/images/spain.png' },
     { name: 'France', code: 'fr', flag: 'assets/images/france.png' },
-    { name: 'Germany', code: 'de', flag: 'assets/images/germany.png' }
+    { name: 'Germany', code: 'de', flag: 'assets/images/germany.png' },
   ];
 
   // Messages data
@@ -65,22 +68,22 @@ export class TopnavComponent implements OnInit, OnDestroy {
       avatar: 'assets/images/user1.jpg',
       time: '35 min ago',
       preview: 'Hey Victor! Could you please review the latest proposal?',
-      read: false
+      read: false,
     },
     {
       sender: 'Angela Carter',
       avatar: 'assets/images/user2.jpg',
       time: '1 day ago',
       preview: 'How are you Angela? Would you please join the meeting?',
-      read: false
+      read: false,
     },
     {
       sender: 'Brad Traversy',
       avatar: 'assets/images/user3.jpg',
       time: '2 days ago',
       preview: 'Hey Brad Traversy! Could you please share the files?',
-      read: true
-    }
+      read: true,
+    },
   ];
 
   // Notifications data
@@ -90,22 +93,22 @@ export class TopnavComponent implements OnInit, OnDestroy {
       iconClass: 'text-primary',
       message: 'You have requested to withdrawal amount $500',
       time: '2 hrs ago',
-      read: false
+      read: false,
     },
     {
       image: 'ri-user-line',
       iconClass: 'text-info',
       message: 'A new user "John Doe" added in StarCode',
       time: '3 hrs ago',
-      read: false
+      read: false,
     },
     {
       image: 'ri-mail-line',
       iconClass: 'text-success',
       message: 'You have received a new message from Sarah',
       time: '1 day ago',
-      read: true
-    }
+      read: true,
+    },
   ];
 
   @HostListener('window:scroll', [])
@@ -115,8 +118,11 @@ export class TopnavComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.cartService.cartCount$.subscribe((count) => {
+      this.cartCount = count;
+    });
     // Subscribe to auth state changes
-    this.authSubscription = this.accountService.authState$.subscribe(isAuth => {
+    this.authSubscription = this.accountService.authState$.subscribe((isAuth) => {
       this.isAuthenticated = isAuth;
       if (isAuth) {
         this.loadUserData();
@@ -179,11 +185,11 @@ export class TopnavComponent implements OnInit, OnDestroy {
   }
 
   getUnreadMessagesCount(): number {
-    return this.messages.filter(msg => !msg.read).length;
+    return this.messages.filter((msg) => !msg.read).length;
   }
 
   getUnreadNotificationsCount(): number {
-    return this.notifications.filter(notif => !notif.read).length;
+    return this.notifications.filter((notif) => !notif.read).length;
   }
 
   toggleDarkMode(): void {
@@ -232,11 +238,11 @@ export class TopnavComponent implements OnInit, OnDestroy {
   }
 
   markAllMessagesAsRead(): void {
-    this.messages = this.messages.map(msg => ({ ...msg, read: true }));
+    this.messages = this.messages.map((msg) => ({ ...msg, read: true }));
   }
 
   markAllNotificationsAsRead(): void {
-    this.notifications = this.notifications.map(notif => ({ ...notif, read: true }));
+    this.notifications = this.notifications.map((notif) => ({ ...notif, read: true }));
   }
 
   clearAllNotifications(): void {

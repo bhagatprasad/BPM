@@ -2,12 +2,12 @@
 .header-area {
     padding: 12px 20px;
     transition: all 0.3s ease;
-    position: sticky;
+    /* position: sticky;
     top: 0;
-    z-index: 1030;
+    z-index: 1030; */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); */
     background: rgba(255, 255, 255, 0.95);
     width: 100%;
     margin: 0 !important;
@@ -29,9 +29,9 @@
 }
 
 /* Ensure content doesn't hide behind sticky header */
-.layout-page {
+/* .layout-page {
     padding-top: 0 !important;
-}
+} */
 
 .content-wrapper {
     padding-top: 0 !important;
@@ -430,4 +430,7 @@
 
 [data-bs-theme="dark"] .max-h-275::-webkit-scrollbar-thumb:hover {
     background: #64748b;
+}
+.cart-item i {
+    font-size: 26px;
 }
