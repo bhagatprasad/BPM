@@ -62,7 +62,11 @@ namespace BPM.Web.API.Models.Mappers
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                Phone = dto.Phone
+                Phone = dto.Phone,
+                RoleId = dto.RoleId,
+                DealerId = dto.DealerId,
+                DealerInfo =dto.Dealer != null ? dto.Dealer.ToDto() : null,
+                RoleInfo = dto.Role != null ? dto.Role.ToDto() : null,
             };
 
         }

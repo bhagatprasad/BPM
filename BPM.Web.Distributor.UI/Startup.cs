@@ -3,7 +3,6 @@ using AspNetCoreHero.ToastNotification.Extensions;
 using BPM.Web.Distributor.UI.Helpers;
 using BPM.Web.Distributor.UI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Newtonsoft.Json.Serialization;
 
 namespace BPM.Web.Distributor.UI
@@ -60,20 +59,25 @@ namespace BPM.Web.Distributor.UI
             // Register Services
             services.AddScoped<HttpClientService>();
             services.AddTransient<TokenAuthorizationHttpClientHandler>();
-            services.AddHttpClient("AuthorizedClient").AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>();
+            services.AddHttpClient("AuthorizedClient")
+                .AddHttpMessageHandler<TokenAuthorizationHttpClientHandler>()
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             // Register Repository Factory and Services
             services.AddScoped<IRepositoryFactory, RepositoryFactory>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
-            //services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
             // Add other services as needed
 
             // Configure Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultForbidScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(options =>
             {
@@ -86,6 +90,7 @@ namespace BPM.Web.Distributor.UI
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.SlidingExpiration = true;
                 options.ExpireTimeSpan = TimeSpan.FromHours(2);
+                options.ReturnUrlParameter = "returnUrl";
             });
 
             // Add Authorization Policies
@@ -136,8 +141,8 @@ namespace BPM.Web.Distributor.UI
 
             app.UseSession();
 
+            // Important: Authentication must be added after UseSession
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseNotyf();
