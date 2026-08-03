@@ -2,6 +2,7 @@
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace BPM.Web.API.Controllers
 {
@@ -19,7 +20,41 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("get-all-users")]
+        public async Task<IActionResult> GetAllUsersListAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching all users.");
+                var users = await _userServiec.GetAllUsersListAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+        [HttpGet]
+        [Route("get-all-users-by-dealer/{dealerId}")]
+        public async Task<IActionResult> GetUsersListByDealerAsync(Guid dealerId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching users by dealer.");
+                var users = await _userServiec.GetUsersListByDealerAsync(dealerId);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users by dealer.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+
         [HttpPost]
+        [Route("insert-user")]
         public async Task<IActionResult> InsertUserAsync(UserCreateDto user)
         {
             try

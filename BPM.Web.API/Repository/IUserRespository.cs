@@ -1,5 +1,4 @@
-﻿using BPM.Web.API.Models.DTOs;
-using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.Entities;
 
 namespace BPM.Web.API.Repository
 {
@@ -14,6 +13,7 @@ namespace BPM.Web.API.Repository
         Task<bool> ChangePasswordAsync(User user);
         Task<User> GetUserByIdAsync(Guid userId);
         Task<List<User>> GetAllUsersAsync();
+        Task<List<User>> GetUserListByDealerAsync(Guid dealerId);
         Task<User> GetUserByUsernameOrPhoneAsync(string username, string phone);
     }
 }

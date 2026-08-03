@@ -14,6 +14,56 @@ namespace BPM.Web.API.Services
             _userRespository = userRespository;
             _logger = logger;
         }
+        public async Task<List<UserDto>> GetUsersListByDealerAsync(Guid dealerId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching users by dealer");
+
+                var users = await _userRespository.GetUserListByDealerAsync(dealerId);
+
+                if (users == null || !users.Any())
+                {
+                    _logger.LogWarning("No users found for dealer {DealerId}", dealerId);
+                    return new List<UserDto>();
+                }
+
+                var userDtos = users.Select(user => user.ToEntity()).ToList();
+
+                return userDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users by dealer");
+                throw;
+            }
+        }
+
+        public async Task<List<UserDto>> GetAllUsersListAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching all users");
+
+                var users = await _userRespository.GetAllUsersAsync();
+
+                if (users == null || !users.Any())
+                {
+                    _logger.LogWarning("No users found");
+
+                    return new List<UserDto>();
+                }
+
+                var userDtos = users.Select(user => user.ToEntity()).ToList();
+
+                return userDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users");
+                throw;
+            }
+        }
 
         public async Task<bool> ActivateUserAync(UserActivateDto userActivateDto)
         {
