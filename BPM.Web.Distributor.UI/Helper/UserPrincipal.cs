@@ -1,44 +1,29 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using BPM.Web.Distributor.UI.Models;
+﻿using BPM.Web.Distributor.UI.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 
-namespace BPM.Web.Distributor.UI.Helpers
+public static class UserPrincipal
 {
-    public static class UserPrincipal
+    public static ClaimsPrincipal GenerateUserPrincipal(AuthResponse response)
     {
-        //public static ClaimsPrincipal GenerateUserPrincipal(ApplicationUser user)
-        //{
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim("Id", user.Id.ToString()),
-        //        new Claim("Email", user.Email),
-        //        new Claim("UserName", user.UserName),
-        //        new Claim("RoleId", user.RoleId.ToString()),
-        //        new Claim(ClaimTypes.Role, MapRoleIdToRoleName(user.RoleId))
-        //    };
-
-        //    var principal = new ClaimsPrincipal();
-
-        //    principal.AddIdentity(new ClaimsIdentity(
-        //        claims,
-        //        CookieAuthenticationDefaults.AuthenticationScheme));
-
-        //    return principal;
-        //}
-
-        private static string MapRoleIdToRoleName(long? roleId)
+        var claims = new List<Claim>
         {
-            return roleId switch
-            {
-                1 => "Administrator",
-                2 => "Manager",
-                3 => "Supervisor",
-                4 => "Pharmacist",
-                5 => "StoreKeeper",
-                6 => "Distributor",
-                7 => "Sales",
-                _ => "User"
-            };
+            new Claim("UserId", response.AuthenticateResponseDto.UserId.ToString()),
+            new Claim("FirstName", response.AuthenticateResponseDto.FirstName ?? string.Empty),
+            new Claim("LastName", response.AuthenticateResponseDto.LastName ?? string.Empty),
+            new Claim("Email", response.AuthenticateResponseDto.Email ?? string.Empty),
+            new Claim("RoleId", response.AuthenticateResponseDto.RoleId.ToString()),
+            new Claim(ClaimTypes.Name, $"{response.AuthenticateResponseDto.FirstName} {response.AuthenticateResponseDto.LastName}"),
+            new Claim(ClaimTypes.Email, response.AuthenticateResponseDto.Email ?? string.Empty),
+            new Claim(ClaimTypes.Role, response.AuthenticateResponseDto.RoleInfo.Name)
+        };
+        
+        if (response.AuthenticateResponseDto.DealerInfo == null)
+        {
+            claims.Add(new Claim("Portal", "Distributor"));
         }
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return new ClaimsPrincipal(identity);
     }
 }

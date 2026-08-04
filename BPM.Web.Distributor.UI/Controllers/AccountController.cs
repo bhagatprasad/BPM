@@ -1,63 +1,154 @@
-﻿using BPM.Web.Distributor.UI.Models;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using BPM.Web.Distributor.UI.Models.DTOs;
 using BPM.Web.Distributor.UI.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BPM.Web.Distributor.UI.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AccountService _service;
+        private readonly IAuthenticateService _authenticateService;
+        private readonly INotyfService _notyfService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(AccountService service)
+        public AccountController(
+            IAuthenticateService authenticateService,
+            INotyfService notyfService,
+            IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
+            _authenticateService = authenticateService;
+            _notyfService = notyfService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            // Check if user is already authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                // Redirect to home page instead of clearing session
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [HttpGet]
+        public async Task<IActionResult> Logout()
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            // Clear session
+            HttpContext.Session.Remove("JwtToken");
+            HttpContext.Session.Remove("RefreshToken");
+            HttpContext.Session.Remove("AuthResponse");
 
-            var dto = new AuthenticateUserDto
+            // Sign out
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Delete cookies
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+
+            // Clear all cookies
+            foreach (var cookie in Request.Cookies.Keys)
             {
-                Username = model.Username,
-                Password = model.Password
-            };
-
-            var result = await _service.LoginAsync(dto);
-
-            if (result == null)
-            {
-                TempData["Error"] = "Unable to connect to server.";
-                return View(model);
+                Response.Cookies.Delete(cookie);
             }
 
-            if (!result.IsValidUser)
+            _notyfService.Success("Logged out successfully.");
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] AuthenticateUserDto model)
+        {
+            try
             {
-                TempData["Error"] = "Invalid Username.";
-                return View(model);
-            }
+                var response = await _authenticateService.AuthenticateUserAsync(model);
 
-            if (!result.IsValidPassword)
+                if (!string.IsNullOrEmpty(response.JwtToken))
+                {
+                    // Check if user has dealer or is Admin/Operator
+                    var roleName = response.AuthenticateResponseDto?.RoleInfo?.Name;
+                    var dealerInfo = response.AuthenticateResponseDto?.DealerInfo;
+
+                    // Check if user is Administrator or Operator
+                    bool isAdminOrOperator = roleName == "Administrator" || roleName == "Operator";
+
+                    // Allow login if:
+                    // 1. User has dealer info, OR
+                    // 2. User is Administrator or Operator (can login without dealer)
+                    if (dealerInfo == null && !isAdminOrOperator)
+                    {
+                        // User doesn't have dealer and is not Admin/Operator - deny access
+                        var errorMsg = "You are not authorized to login to this portal. Please use the dealer portal to login.";
+                        _notyfService.Error(errorMsg);
+
+                        return Json(new
+                        {
+                            appUser = response,
+                            hasAccess = false,
+                            message = errorMsg
+                        });
+                    }
+
+                    // Store session data
+                    _httpContextAccessor.HttpContext.Session.SetString("JwtToken", response.JwtToken);
+                    _httpContextAccessor.HttpContext.Session.SetString("RefreshToken", response.RefreshToken);
+                    _httpContextAccessor.HttpContext.Session.SetString("AuthResponse", JsonConvert.SerializeObject(response));
+
+                    // Generate user principal
+                    var principal = UserPrincipal.GenerateUserPrincipal(response);
+
+                    // Sign in user
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            ExpiresUtc = DateTime.UtcNow.AddHours(8)
+                        });
+
+                    var successMsg = "Login Successful.";
+                    _notyfService.Success(successMsg);
+
+                    return Json(new
+                    {
+                        appUser = response,
+                        hasAccess = true,
+                        message = successMsg,
+                        redirectUrl = Url.Action("Index", "Home")
+                    });
+                }
+                else
+                {
+                    var errorMsg = response.Message ?? "Login failed. Please check your credentials.";
+                    _notyfService.Error(errorMsg);
+
+                    return Json(new
+                    {
+                        appUser = response,
+                        hasAccess = false,
+                        message = errorMsg
+                    });
+                }
+            }
+            catch (Exception ex)
             {
-                TempData["Error"] = "Invalid Password.";
-                return View(model);
+                var errorMsg = "An error occurred during login. Please try again.";
+                _notyfService.Error(errorMsg);
+
+                return Json(new
+                {
+                    appUser = default(object),
+                    hasAccess = false,
+                    message = errorMsg
+                });
             }
-
-            HttpContext.Session.SetString("JwtToken", result.JwtToken);
-            HttpContext.Session.SetString("UserName", result.AuthenticateResponseDto.FirstName);
-
-            TempData["Success"] = "Login Successful.";
-
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -67,91 +158,80 @@ namespace BPM.Web.Distributor.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var dto = new ForgotPasswordDto
+            try
             {
-                Username = model.Username
-            };
+                var response = await _authenticateService.ForgotPasswordAsync(model);
 
-            var result = await _service.ForgotPasswordAsync(dto);
+                if (response == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Unable to process request."
+                    });
+                }
 
-            if (result == null)
-            {
-                TempData["Error"] = "Unable to connect to server.";
-                return View(model);
+                return Json(new
+                {
+                    success = response.Success,
+                    message = response.Message,
+                    userId = response.UserId
+                });
             }
-
-            if (!result.Success)
+            catch (Exception ex)
             {
-                TempData["Error"] = result.Message;
-                return View(model);
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
             }
-
-            return RedirectToAction("ResetPassword", new
-            {
-                userId = result.UserId
-            });
         }
 
         [HttpGet]
         public IActionResult ResetPassword(Guid userId)
         {
-            var model = new ResetPasswordViewModel
-            {
-                UserId = userId.ToString()
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var dto = new ResetPasswordDto
-            {
-                UserId = model.UserId,
-                NewPassword = model.NewPassword
-            };
-
-            var success = await _service.ResetPasswordAsync(dto);
-
-            if (!success)
-            {
-                TempData["Error"] = "Password reset failed.";
-                return View(model);
-            }
-
-            TempData["Success"] = "Password reset successfully.";
-
-            return RedirectToAction(nameof(Login));
-        }
-        public IActionResult Index()
-        {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
+            ViewBag.UserId = userId;
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Logout()
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
-            HttpContext.Session.Clear();
+            try
+            {
+                var response = await _authenticateService.ResetPasswordAsync(model);
 
-            TempData["Success"] = "Logged out successfully.";
+                if (response)
+                {
+                    _notyfService.Success("Password reset successfully. Please login.");
+                    return Json(new
+                    {
+                        success = true
+                    });
+                }
 
-            return RedirectToAction("Login", "Account");
+                _notyfService.Warning("Unable to reset password.");
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            catch (Exception ex)
+            {
+                _notyfService.Error(ex.Message);
+                return Json(new
+                {
+                    success = false
+                });
+            }
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

@@ -6,8 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 
-
-
 @Component({
   selector: 'app-drugs-catelog',
   standalone: true,
@@ -22,12 +20,13 @@ export class DrugsCatelogComponent implements OnInit {
   searchTerm: string = '';
   isLoading: boolean = false;
   error: string | null = null;
+  selectedPackages: { [drugId: string]: DrugPackaging } = {};
 
   constructor(
     private drugCatalogService: DrugCatalogService,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
-    private spinnerService:SpinnerLoadingService
+    private spinnerService: SpinnerLoadingService
   ) {}
 
   ngOnInit(): void {
@@ -37,11 +36,10 @@ export class DrugsCatelogComponent implements OnInit {
   fetchDrugsCatalog(): void {
     this.isLoading = true;
     this.error = null;
-   this.spinnerService.show();
+    this.spinnerService.show();
 
     this.drugCatalogService.getDrugsCatalogAsync().subscribe({
       next: (response: drugCatelog[]) => {
-        
         console.log('Drugs fetched successfully:', response);
         console.log('Number of drugs:', response?.length);
 
@@ -77,7 +75,7 @@ export class DrugsCatelogComponent implements OnInit {
         drug.genericName?.toLowerCase().includes(search) ||
         drug.brandName?.toLowerCase().includes(search) ||
         drug.manufacturer?.toLowerCase().includes(search) ||
-        drug.category?.toLowerCase().includes(search),
+        drug.category?.toLowerCase().includes(search)
     );
   }
 
@@ -106,16 +104,22 @@ export class DrugsCatelogComponent implements OnInit {
     this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
   }
 
+  selectPackage(drugId: string, pkg: DrugPackaging): void {
+    this.selectedPackages[drugId] = pkg;
+  }
+
   addToCart(drug: drugCatelog): void {
     if (!drug.isActive) {
       alert('This drug is currently inactive and cannot be added to cart.');
       return;
     }
+
     const selectedPackage = this.selectedPackages[drug.drugId];
     if (!selectedPackage) {
       alert('Please select a package.');
       return;
     }
+
     this.cartService.addToCart({
       drugId: drug.drugId,
       drugCode: drug.drugCode,
@@ -161,10 +165,5 @@ export class DrugsCatelogComponent implements OnInit {
   addNewDrug(): void {
     console.log('Add new drug');
     alert('Opening add drug form...');
-  }
-
-  selectedPackages: { [drugId: string]: DrugPackaging } = {};
-  selectPackage(drugId: string, pkg: DrugPackaging): void {
-    this.selectedPackages[drugId] = pkg;
   }
 }

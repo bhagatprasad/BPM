@@ -1,5 +1,5 @@
 export interface UpdatedDealerRequest {
-
+    dealerId?:string;
     dealershipName? : string;
     contactPerson? : string;
     email : string;

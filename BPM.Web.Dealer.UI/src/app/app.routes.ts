@@ -1,13 +1,10 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { DrugsCatelogComponent } from './components/drugs-catelog/drugs-catelog';
-import { CartComponent } from './components/cart/cart.component';
 import { authenticationGuard } from './guards/authentication-guard';
 import { loginGuard } from './guards/login.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { forgotPasswordGuard } from './guards/forgot-password.guard';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { ProfileComponent } from './components/profile/profile.component';
-import { MyOrdersComponent } from './components/my-orders/my-orders.component';
 
 export const routes: Routes = [
   {
@@ -23,31 +20,35 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent,
-    // No guard needed - App component handles public routes
+    canActivate: [forgotPasswordGuard],
   },
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
-    // No guard needed - App component handles public routes
   },
   {
-    path:'profile',
-    component: ProfileComponent,
-   canActivate: [authenticationGuard]
+    path: 'dashboard',
+    loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authenticationGuard]
   },
   {
-    path: 'drugs-catalog',
-    component: DrugsCatelogComponent,
+    path: 'profile',
+    loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authenticationGuard]
+  },
+  {
+    path: 'drugs',
+    loadComponent: () => import('./components/drugs-catelog/drugs-catelog').then(m => m.DrugsCatelogComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'cart',
-    component: CartComponent,
+    loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'my-orders',
-    component: MyOrdersComponent,
+    loadComponent: () => import('./components/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
     canActivate: [authenticationGuard],
   },
   {

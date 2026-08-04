@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { AccountService } from '../../services/account.service';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
@@ -18,14 +17,15 @@ import { SpinnerLoadingService } from '../../common/services/spinner-loading-ser
 export class LoginComponent implements OnInit, OnDestroy {
   loginObj = {
     username: '',
-    password: '',
-    JwtToken: ''
+    password: ''
   };
 
   rememberMe = false;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  emailError: string = '';
+  passwordError: string = '';
   private loginSubscription?: Subscription;
 
   constructor(
@@ -40,22 +40,20 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('LoginComponent ngOnInit');
     
-    // Check if user is already authenticated
-    const loggedData = localStorage.getItem('AuthenticatedUserResponse');
-    console.log('Logged data:', loggedData);
-    
-    if (loggedData) {
-      try {
-        const authResponse = JSON.parse(loggedData);
-        if (authResponse?.jwtToken) {
-          console.log('User already logged in, redirecting to drugs-catalog');
-          this.router.navigateByUrl('/drugs-catalog');
-          return;
+    // Check if user is already authenticated using AccountService
+    this.accountService.isAuthenticated().then(isAuth => {
+      if (isAuth) {
+        const currentUser = this.accountService.getCurrentUser();
+        const dealerInfo = currentUser?.authenticateResponseDto?.dealerInfo;
+        const roleName = currentUser?.authenticateResponseDto?.roleInfo?.name;
+        const isAdminOrOperator = roleName === "Administrator" || roleName === "Operator";
+        
+        if (dealerInfo || isAdminOrOperator) {
+          console.log('User already logged in, redirecting to drugs');
+          this.router.navigateByUrl('/drugs');
         }
-      } catch (e) {
-        console.error('Error parsing auth data:', e);
       }
-    }
+    });
 
     // Load saved username if exists
     const savedUsername = localStorage.getItem('savedUsername');
@@ -76,86 +74,112 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
-  // UPDATED: Navigate to forgot password with debugging
   onForgotPassword(): void {
-    console.log('🔵 onForgotPassword() called');
-    console.log('Current URL:', this.router.url);
+    console.log('Navigating to forgot password');
+    this.router.navigate(['/forgot-password']).catch(err => {
+      console.error('Navigation error:', err);
+      window.location.href = '/forgot-password';
+    });
+  }
+
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  clearErrors(): void {
+    this.emailError = '';
+    this.passwordError = '';
+    this.errorMessage = '';
+  }
+
+  showError(field: string, message: string): void {
+    if (field === 'loginEmailError' || field === 'emailError') {
+      this.emailError = message;
+    } else if (field === 'loginPasswordError' || field === 'passwordError') {
+      this.passwordError = message;
+    } else {
+      this.errorMessage = message;
+    }
     
-    // Try to navigate
-    this.router.navigate(['/forgot-password']).then(
-      (success) => {
-        console.log('✅ Navigation result:', success);
-        if (!success) {
-          console.error('❌ Navigation failed - trying alternative');
-          // Alternative navigation
-          this.router.navigateByUrl('/forgot-password').then(
-            (success2) => {
-              console.log('✅ Alternative navigation result:', success2);
-              if (!success2) {
-                // Last resort - use window.location
-                console.log('🔄 Using window.location fallback');
-                window.location.href = '/forgot-password';
-              }
-            }
-          );
-        }
-      },
-      (error) => {
-        console.error('❌ Navigation error:', error);
-        // Last resort
-        console.log('🔄 Using window.location fallback due to error');
-        window.location.href = '/forgot-password';
+    setTimeout(() => {
+      if (field === 'loginEmailError' || field === 'emailError') {
+        this.emailError = '';
+      } else if (field === 'loginPasswordError' || field === 'passwordError') {
+        this.passwordError = '';
+      } else {
+        this.errorMessage = '';
       }
-    );
+    }, 5000);
   }
 
   onLogin(): void {
-    if (this.isLoading) {
+    this.clearErrors();
+
+    const email = this.loginObj.username?.trim() || '';
+    const password = this.loginObj.password?.trim() || '';
+
+    if (!this.validateEmail(email)) {
+      this.showError('loginEmailError', 'Please enter a valid email address.');
       return;
     }
 
-    if (!this.loginObj.username || !this.loginObj.password) {
-      this.errorMessage = 'Please enter both username and password.';
-      this.toastr.error('Please enter both username and password.', 'Error');
+    if (!password || password.length < 6) {
+      this.showError('loginPasswordError', 'Password must be at least 6 characters.');
+      return;
+    }
+
+    if (this.isLoading) {
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
-    this.spinnerService.show();
+    this.spinnerService.show('Signing you in...');
+
+    const userAuthentication = {
+      username: email,
+      password: password,
+      rememberMe: this.rememberMe
+    };
 
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
 
-    this.loginSubscription = this.accountService.authenticateAsync(this.loginObj).subscribe({
+    this.loginSubscription = this.accountService.authenticateAsync(userAuthentication).subscribe({
       next: (res: any) => {
         this.isLoading = false;
         this.spinnerService.hide();
         console.log('Login response:', res);
 
-        if (res.jwtToken) {
+        if (res?.jwtToken) {
           if (this.rememberMe) {
             localStorage.setItem('savedUsername', this.loginObj.username);
           } else {
             localStorage.removeItem('savedUsername');
           }
 
-          localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(res));
           this.toastr.success('Login successful!', 'Success');
 
+          // Navigate after a short delay
           setTimeout(() => {
-            this.router.navigateByUrl('/drugs-catalog');
+            const roleName = res?.authenticateResponseDto?.roleInfo?.name;
+            if (roleName === "Administrator" || roleName === "Operator") {
+              this.router.navigateByUrl('/drugs');
+            } else {
+              this.router.navigateByUrl('/drugs');
+            }
           }, 500);
         } else {
           this.errorMessage = 'Invalid username or password. Please try again.';
           this.toastr.error('Invalid username or password. Please try again.', 'Error');
         }
       },
-      error: (err: HttpErrorResponse) => {
-        console.error('Login failed', err);
+      error: (err: any) => {
         this.isLoading = false;
         this.spinnerService.hide();
+        console.error('Login failed', err);
 
         let errorMsg = 'Login failed. Please try again.';
         if (err.status === 0) {
@@ -164,10 +188,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           errorMsg = 'Invalid username or password. Please try again.';
         } else if (err.status === 403) {
           errorMsg = 'Access forbidden. Please contact support.';
-        } else if (err.status === 404) {
-          errorMsg = 'Login service not found. Please try again later.';
-        } else if (err.status === 500) {
-          errorMsg = 'Internal server error. Please try again later.';
+        } else if (err.error?.message) {
+          errorMsg = err.error.message;
         }
 
         this.errorMessage = errorMsg;

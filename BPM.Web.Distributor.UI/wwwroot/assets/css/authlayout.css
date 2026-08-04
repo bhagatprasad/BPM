@@ -1,0 +1,339 @@
+﻿/* Medical/Pharmacy Theme Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f0fdfa;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.medical-bg {
+    background: linear-gradient(160deg, #0d9488 0%, #0f766e 35%, #0e7490 70%, #1a365d 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+    .medical-bg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 40%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.04) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .medical-bg::after {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -10%;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    /* Animated gradient overlay */
+    .medical-bg .gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(13, 148, 136, 0.3) 0%, rgba(14, 116, 144, 0.5) 100%);
+        pointer-events: none;
+    }
+
+.medical-illustration {
+    position: relative;
+    z-index: 2;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.medical-icon-box {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.3s ease;
+}
+
+    .medical-icon-box:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-5px);
+    }
+
+.medical-stats {
+    position: relative;
+    z-index: 2;
+}
+
+.medical-stat-item {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: all 0.3s ease;
+    min-width: 120px;
+    padding: 1rem 1.5rem;
+}
+
+    .medical-stat-item:hover {
+        background: rgba(255,255,255,0.18);
+        transform: translateY(-5px) scale(1.03);
+        border-color: rgba(255,255,255,0.3);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+
+    .medical-stat-item h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.25rem;
+    }
+
+    .medical-stat-item span {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        color: rgba(255,255,255,0.7);
+    }
+
+/* Floating medical icons */
+.floating-icon {
+    position: absolute;
+    opacity: 0.08;
+    font-size: 60px;
+    color: white;
+    z-index: 1;
+    animation: floatIcon 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+    .floating-icon:nth-child(1) {
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+        font-size: 70px;
+    }
+
+    .floating-icon:nth-child(2) {
+        top: 55%;
+        left: 12%;
+        animation-delay: 2s;
+        font-size: 90px;
+    }
+
+    .floating-icon:nth-child(3) {
+        top: 15%;
+        right: 8%;
+        animation-delay: 4s;
+        font-size: 80px;
+    }
+
+    .floating-icon:nth-child(4) {
+        bottom: 15%;
+        right: 5%;
+        animation-delay: 6s;
+        font-size: 65px;
+    }
+
+    .floating-icon:nth-child(5) {
+        top: 40%;
+        right: 15%;
+        animation-delay: 3s;
+        font-size: 50px;
+    }
+
+    .floating-icon:nth-child(6) {
+        bottom: 40%;
+        left: 8%;
+        animation-delay: 5s;
+        font-size: 55px;
+    }
+
+@keyframes floatIcon {
+    0% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: translateY(-30px) rotate(8deg) scale(1.1);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+    }
+}
+
+/* Right side form container */
+.form-container {
+    background: #ffffff;
+    border-radius: 30px 0 0 30px;
+    box-shadow: -10px 0 60px rgba(0,0,0,0.08);
+    min-height: 100vh;
+    position: relative;
+}
+
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #ffffff 100%);
+        border-radius: 30px 0 0 30px;
+        pointer-events: none;
+    }
+
+@media (max-width: 991px) {
+    .form-container {
+        border-radius: 0;
+        box-shadow: none;
+        min-height: auto;
+        padding: 2rem 1.5rem;
+    }
+
+        .form-container::before {
+            border-radius: 0;
+        }
+
+    .medical-bg {
+        min-height: 50vh;
+    }
+}
+
+/* Pharmacy themed card glow */
+.pharmacy-glow {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+}
+
+.pharmacy-input:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.pharmacy-btn {
+    background: linear-gradient(135deg, #0d9488, #0f766e);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+    .pharmacy-btn:hover {
+        background: linear-gradient(135deg, #0f766e, #0d9488);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(13, 148, 136, 0.4);
+    }
+
+    .pharmacy-btn:active {
+        transform: translateY(0px);
+    }
+
+/* Decorative corner accents */
+.corner-accent {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(13,148,136,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+    .corner-accent.top-right {
+        top: -50px;
+        right: -50px;
+    }
+
+    .corner-accent.bottom-left {
+        bottom: -50px;
+        left: -50px;
+    }
+
+/* Trust badge hover effects */
+.trust-badge {
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+    .trust-badge:hover {
+        background: rgba(255,255,255,0.12);
+        transform: translateY(-2px);
+    }
+
+/* Custom scrollbar for medical theme */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0fdfa;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0d9488;
+    border-radius: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #0f766e;
+    }
+
+/* Input focus glow effect */
+.form-control:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+/* Button primary override */
+.btn-primary {
+    background: linear-gradient(135deg, #0d9488, #0f766e);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0f766e, #0d9488);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(13, 148, 136, 0.35);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0px);
+    }
+
+/* Text color overrides */
+.text-primary {
+    color: #0d9488 !important;
+}
+
+.bg-primary {
+    background: #0d9488 !important;
+}
+
+.border-primary {
+    border-color: #0d9488 !important;
+}

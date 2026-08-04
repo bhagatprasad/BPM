@@ -15,10 +15,12 @@ export const environment = {
       FetchPurchaseOrderById: 'PurchaseOrder/FetchPurchaseOrderById',
     },
     User: {
-      updateUserProfile: 'User',
+      UpdateUserProfileAsync: 'user/updateuser',
+      ChangePasswordAsync:'user/changepassword',
+      GetAllUsersByDealerIdAsync:'user/GetAllUsersByDealerId'
     },
     Dealer:{
-      updateDealerAsync:'Dealer'
+      updateDealerAsync:'dealer/updatedealer'
     }
   },
 };

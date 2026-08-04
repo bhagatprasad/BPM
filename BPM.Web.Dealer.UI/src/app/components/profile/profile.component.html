@@ -34,16 +34,16 @@
   </div>
 
   <!-- Scroll Container -->
-  <div class="scroll-container">
+  <div  class="scroll-container">
        <!-- ==================== PERSONAL INFORMATION CARD ==================== -->
     <div class="profile-card">
       <div class="card-header">
-        <h3><i class="fas fa-user-circle"></i> PERSONAL INFORMATION</h3>
-        <div class="card-actions">
-          <button *ngIf="!isEditing" (click)="enableEdit()" class="btn btn-edit">
-            <i class="fas fa-pen"></i> Edit
-          </button>
-          <ng-container *ngIf="isEditing">
+         <h3><i class="fas fa-user-circle"></i> PERSONAL INFORMATION</h3>
+          <div class="card-actions">
+            <button *ngIf="!isEditing" (click)="enableEdit()" class="btn btn-edit">
+               <i class="fas fa-pen"></i> Edit
+            </button>
+           <ng-container *ngIf="isEditing">
             <button (click)="saveUserChanges()" class="btn btn-save" >
               
                Save 
@@ -55,7 +55,7 @@
         </div>
       </div>
 
-      <div class="card-body">
+       <div class="card-body">
         <div class="profile-grid">
           <!-- First Name -->
           <div class="form-group">
@@ -156,63 +156,117 @@
 
     <!-- ==================== CHANGE PASSWORD CARD ==================== -->
     <div class="profile-card">
-      <div class="card-header">
-        <h3><i class="fas fa-key"></i> CHANGE PASSWORD</h3>
-      </div>
-
-      <div class="card-body">
-        <app-reset-password 
-          [userIdFromParent]="userId" 
-          [isProfileMode]="true"
-          (passwordResetSuccess)="onPasswordResetSuccess($event)">
-        </app-reset-password>
-      </div>
+         <div class="card-header">
+            <h3><i class="fas fa-key"></i> CHANGE PASSWORD</h3>
+              <div class="card-actions">                  
+                  <button class="btn btn-edit" *ngIf="!isChangePassword" (click)="enablePasswordEdit()">
+                    <i class="fas fa-edit"></i>Edit
+                  </button>              
+                  <ng-container *ngIf="isChangePassword"  >
+                    <button class="btn btn-save" (click)="savePasswordChanges()">
+                      <i fas fa-save></i>
+                      Save
+                    </button>
+                    <button class="btn btn-cancel" (click)="cancelPasswordChanges()">
+                    <i fas fa-cancel></i>
+                    Cancel
+                    </button>
+                  </ng-container>                                      
+              </div>  
+          </div>
+          
+          <div class="card-body">           
+                  <div class="profile-grid">
+                    <div class="form-group">
+                      <label for="newPassword" class="form-label">New Password<span class="required">*</span></label>
+                      <div class="input-wrapper">
+                      <i class="fas fa-key input-icon"></i>
+                      <input 
+                        class="form-control"
+                        [type]="showPassword?'text':'password'"
+                        [(ngModel)]="changePassword.newPassword"
+                        id="newPassword"
+                        name="newPassword"
+                        placeholder="New Password"
+                        #newPassword="ngModel"
+                        [class.is-invalid]="newPassword.invalid && newPassword.touched"
+                        >
+                         <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+                         <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                         </button>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="profile-grid">
+                          <div class="form-group">
+                              <label for="confirmPassword" class="form-label">Confirm Password<span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                  <i class="fas fa-key input-icon"></i>
+                                    <input 
+                                      class="form-control"
+                                      [type]="showConfirmPassword?'text':'password'"
+                                      [(ngModel)]="changePassword.confirmPassword"
+                                      id="confirmPassword"
+                                      name="confirmPassword"
+                                      placeholder="Confirm Password"
+                                      #confirmPassword="ngModel"
+                                      [class.is-invalid]="(confirmPassword.invalid && confirmPassword.touched) || 
+                                       (changePassword.confirmPassword && changePassword.newPassword !== changePassword.confirmPassword)"
+                                      >
+                                       <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()">
+                                       <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                                      </button>
+                                  </div>
+                          </div>
+                   </div>
+              
+            </div>
     </div>
-
+    
     <!-- ==================== DEALER INFORMATION CARD ==================== -->
     <div class="profile-card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-  <h3>
-    <i class="fas fa-store"></i> DEALER INFORMATION
-  </h3>
+      <div class="card-header">
+          <h3><i class="fas fa-store"></i> DEALER INFORMATION</h3>
+                <div class="card-actions" *ngIf="isAdmin"; else readOnly>
+              <!-- Edit Button -->
+                    <button
+                      *ngIf="!isDealerEditing"
+                      type="button"
+                      class="btn btn-edit"
+                      (click)="enableDealerEdit()">
+                      <i class="fas fa-pen"></i>
+                      Edit
+                    </button>
 
-  <div class="card-actions">
+                  <!-- Admin -->
+                  <ng-container *ngIf="isDealerEditing">
 
-    <!-- Admin -->
-    <ng-container *ngIf="isAdmin; else readOnly">
+                    
+                    <!-- Save Button -->
+                    <button        
+                      type="button"
+                      class="btn btn-success"
+                      (click)="saveDealerChanges()">
+                      <i class="fas fa-save"></i>
+                      Save
+                    </button>
+                    <button (click)="cancelDealerEdit()" class="btn btn-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                    </button>
 
-      <!-- Edit Button -->
-      <button
-        *ngIf="!isDealerEditing"
-        type="button"
-        class="btn btn-edit"
-        (click)="enableDealerEdit()">
-        <i class="fas fa-pen"></i>
-        Edit
-      </button>
+                  </ng-container>
 
-      <!-- Save Button -->
-      <button
-        *ngIf="isDealerEditing"
-        type="button"
-        class="btn btn-success"
-        (click)="saveDealerChanges()">
-        <i class="fas fa-save"></i>
-        Save
-      </button>
+                  <!-- Non Admin -->
+                  <ng-template #readOnly>
+                    <span class="badge badge-readonly">
+                      <i class="fas fa-eye"></i>
+                      Read Only
+                    </span>
+                  </ng-template>
 
-    </ng-container>
-
-    <!-- Non Admin -->
-    <ng-template #readOnly>
-      <span class="badge badge-readonly">
-        <i class="fas fa-eye"></i>
-        Read Only
-      </span>
-    </ng-template>
-
-  </div>
-</div>
+                </div>
+      
+      </div>
       
       
 
@@ -227,8 +281,12 @@
                 type="text" 
                 id="dealershipName"
                 [(ngModel)]="dealerSection.dealershipName" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.dealershipName"
+                class="form-control"              
+              
               >
             </div>
           </div>
@@ -242,8 +300,11 @@
                 type="text" 
                 id="gstNumber"
                 [(ngModel)]="dealerSection.gstNumber" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.gstNumber"                
+                class="form-control "
               >
             </div>
           </div>
@@ -257,8 +318,11 @@
                 type="tel" 
                 id="dealerPhone"
                 [(ngModel)]="dealerSection.phone" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.phone"               
+                class="form-control"
               >
             </div>
           </div>
@@ -272,8 +336,11 @@
                 type="email" 
                 id="dealerEmail"
                 [(ngModel)]="dealerSection.email" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.email"               
+                class="form-control"
               >
             </div>
           </div>
@@ -287,8 +354,11 @@
                 type="text" 
                 id="contactPerson"
                 [(ngModel)]="dealerSection.contactPerson" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.contactPerson" 
+                class="form-control "
               >
             </div>
           </div>
@@ -302,8 +372,11 @@
                 type="text" 
                 id="addressLine1"
                 [(ngModel)]="dealerSection.addressLine1" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.addressLine1"               
+                class="form-control"
               >
             </div>
           </div>
@@ -317,8 +390,11 @@
                 type="text" 
                 id="city"
                 [(ngModel)]="dealerSection.city" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.city"                 
+                class="form-control"
               >
             </div>
           </div>
@@ -332,8 +408,11 @@
                 type="text" 
                 id="state"
                 [(ngModel)]="dealerSection.state" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.state"               
+                class="form-control"
               >
             </div>
           </div>
@@ -347,8 +426,11 @@
                 type="text" 
                 id="country"
                 [(ngModel)]="dealerSection.country" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.country"                
+                class="form-control"
               >
             </div>
           </div>
@@ -362,8 +444,11 @@
                 type="url" 
                 id="website"
                 [(ngModel)]="dealerSection.website" 
-                readonly
-                class="form-control readonly"
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.website"                
+                class="form-control"
               >
             </div>
           </div>
@@ -371,4 +456,5 @@
       </div>
     </div>
   </div>
+  
 </div>

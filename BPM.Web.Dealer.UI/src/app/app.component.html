@@ -1,0 +1,108 @@
+<!-- Show loading state while initializing -->
+<div *ngIf="!isInitialized" class="loading-screen">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Show login page when NOT authenticated and initialized -->
+<div class="container-fluid p-0" *ngIf="isInitialized && (isAuthenticated$ | async) === false">
+  <div class="main-content d-flex flex-column p-0">
+    <div class="container-fluid p-0">
+      <div class="row g-0 min-vh-100">
+        <!-- Left Side - Medical/Pharmacy Image -->
+        <div class="col-lg-7 d-none d-lg-flex align-items-center justify-content-center medical-bg">
+          <!-- Floating Medical Icons -->
+          <i class="ri-medicine-bottle-line floating-icon"></i>
+          <i class="ri-heart-pulse-line floating-icon"></i>
+          <i class="ri-hospital-line floating-icon"></i>
+          <i class="ri-capsule-line floating-icon"></i>
+          <i class="ri-health-book-line floating-icon"></i>
+          <i class="ri-first-aid-kit-line floating-icon"></i>
+
+          <div class="gradient-overlay"></div>
+
+          <div class="text-center text-white p-5 medical-illustration">
+            <div class="mb-4">
+              <img alt="pharmacy-illustration" src="assets/images/pharmacy-illustration.svg" class="img-fluid"
+                style="max-width: 100%; height: auto; filter: drop-shadow(0 10px 40px rgba(0,0,0,0.3));" />
+            </div>
+
+            <h2 class="text-white fw-bold display-5 mb-3">
+              <i class="ri-heart-3-fill me-2" style="font-size: 2.5rem;"></i>
+              BPM Medicals
+            </h2>
+
+            <p class="text-white-50 fs-5 mb-0 px-4">
+              Your trusted partner in pharmaceutical distribution.
+              <br class="d-none d-xl-block" />
+              <span style="color: rgba(255,255,255,0.7);">Quality medications delivered with care.</span>
+            </p>
+
+            <div class="mt-5 d-flex justify-content-center gap-3 medical-stats flex-wrap">
+              <div class="medical-stat-item rounded-3">
+                <h3 class="text-white mb-1">500+</h3>
+                <span>Medications</span>
+              </div>
+              <div class="medical-stat-item rounded-3">
+                <h3 class="text-white mb-1">98%</h3>
+                <span>Delivery Rate</span>
+              </div>
+              <div class="medical-stat-item rounded-3">
+                <h3 class="text-white mb-1">24/7</h3>
+                <span>Support</span>
+              </div>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+              <div class="trust-badge d-flex align-items-center">
+                <i class="ri-shield-check-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                <span class="text-white-50 small">ISO Certified</span>
+              </div>
+              <div class="trust-badge d-flex align-items-center">
+                <i class="ri-medal-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                <span class="text-white-50 small">Quality Assured</span>
+              </div>
+              <div class="trust-badge d-flex align-items-center">
+                <i class="ri-truck-fill text-white-50 me-2" style="font-size: 18px;"></i>
+                <span class="text-white-50 small">Fast Delivery</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="col-lg-5 d-flex align-items-center justify-content-center bg-white p-4 p-md-5 form-container">
+          <div style="width: 100%; max-width: 100%; position: relative; z-index: 1;">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Show admin shell when authenticated -->
+<div class="layout-wrapper layout-content-navbar" *ngIf="isInitialized && (isAuthenticated$ | async) === true">
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <app-sidenav></app-sidenav>
+
+    <!-- Main Content Area -->
+    <div class="layout-page">
+      <div class="content-wrapper">
+        <div class="container-fluid">
+          <div class="main-content d-flex flex-column">
+            <!-- Header area - keep as is -->
+             <app-topnav></app-topnav>
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spinner Loading Indicator -->
+<app-spinner-loading-indicator [detectRouteTransitions]="true"></app-spinner-loading-indicator>

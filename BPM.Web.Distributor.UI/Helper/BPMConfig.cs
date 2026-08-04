@@ -2,12 +2,10 @@
 {
     public class BPMConfig
     {
-        public string ApplicationName { get; set; } = string.Empty;
+        public string ApplicationName { get; set; }
 
-        public string Version { get; set; } = string.Empty;
+        public string Version { get; set; }
 
-        public string BaseUrl { get; set; } = string.Empty;
-
-        public string RedirectUri { get; set; } = string.Empty;
+        public string BaseUrl { get; set; }
     }
 }

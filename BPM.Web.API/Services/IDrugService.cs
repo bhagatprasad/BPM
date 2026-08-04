@@ -1,16 +1,16 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Service
 {
     public interface IDrugService
     {
-        Task<List<Drug>> GetAllDrugsAsync();
+        Task<List<DrugDto>> GetAllDrugsAsync();
 
-        Task<Drug?> GetDrugByIdAsync(Guid drugId);
+        Task<DrugDto?> GetDrugByIdAsync(Guid drugId);
 
-        Task<bool> InsertDrugAsync(Drug drugs);
+        Task<bool> InsertDrugAsync(CreateDrugDto drugDto);
 
-        Task<bool> UpdateDrugAsync(Drug drugs);
+        Task<bool> UpdateDrugAsync(UpdateDrugDto drugDto);
 
         Task<bool> DeleteDrugAsync(Guid drugId);
     }

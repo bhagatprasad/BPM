@@ -1,0 +1,459 @@
+﻿/* Enhanced Login Form Styles */
+.login-wrapper {
+    padding: 0 20px;
+    position: relative;
+}
+
+/* Modern Pharmacy Logo Styles */
+.pharmacy-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    position: relative;
+}
+
+.pharmacy-logo .logo-icon {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+.pharmacy-logo .logo-icon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 12px rgba(13, 148, 136, 0.25));
+}
+
+.pharmacy-logo .logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.pharmacy-logo .logo-text .brand-name {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0d9488 0%, #0e7490 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+.pharmacy-logo .logo-text .brand-tagline {
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    -webkit-text-fill-color: #64748b;
+    margin-top: -2px;
+}
+
+/* Animated title underline */
+.animated-title {
+    position: relative;
+    display: inline-block;
+}
+
+.animated-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0d9488, #0e7490);
+    animation: expandUnderline 3s ease-in-out infinite;
+}
+
+@keyframes expandUnderline {
+    0% {
+        width: 0;
+        left: 0;
+    }
+    50% {
+        width: 100%;
+        left: 0;
+    }
+    100% {
+        width: 0;
+        left: 100%;
+    }
+}
+
+/* Enhanced form inputs with icon */
+.input-group-enhanced {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.input-group-enhanced .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-size: 20px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.input-group-enhanced .form-control {
+    padding-left: 48px;
+    padding-right: 48px;
+    height: 56px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    font-size: 15px;
+}
+
+.input-group-enhanced .form-control:focus {
+    border-color: #0d9488;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
+    transform: translateY(-2px);
+}
+
+.input-group-enhanced .form-control:focus ~ .input-icon {
+    color: #0d9488;
+}
+
+.input-group-enhanced .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.input-group-enhanced .password-toggle:hover {
+    color: #0d9488;
+}
+
+/* Floating labels animation */
+.form-floating-enhanced {
+    position: relative;
+}
+
+.form-floating-enhanced .form-control {
+    height: 56px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    padding-left: 48px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    font-size: 15px;
+}
+
+.form-floating-enhanced .form-control:focus {
+    border-color: #0d9488;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
+    transform: translateY(-2px);
+}
+
+.form-floating-enhanced label {
+    position: absolute;
+    top: 50%;
+    left: 48px;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-size: 15px;
+    background: transparent;
+    padding: 0 5px;
+}
+
+.form-floating-enhanced .form-control:focus ~ label,
+.form-floating-enhanced .form-control:not(:placeholder-shown) ~ label {
+    top: -10px;
+    left: 15px;
+    font-size: 12px;
+    color: #0d9488;
+    background: white;
+    padding: 0 8px;
+    border-radius: 6px;
+}
+
+/* Modern checkbox */
+.modern-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.modern-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.modern-checkbox .checkmark {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    background: #f8fafc;
+}
+
+.modern-checkbox input:checked ~ .checkmark {
+    background: linear-gradient(135deg, #0d9488, #0e7490);
+    border-color: #0d9488;
+    animation: checkPop 0.3s ease;
+}
+
+.modern-checkbox input:checked ~ .checkmark::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+@keyframes checkPop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Modern button with pulse effect */
+.btn-modern {
+    position: relative;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(135deg, #0d9488, #0e7490);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    width: 100%;
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(13, 148, 136, 0.35);
+    background: linear-gradient(135deg, #0f766e, #0d9488);
+}
+
+.btn-modern:active {
+    transform: translateY(0px);
+}
+
+.btn-modern:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-modern:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn-modern:disabled::before {
+    display: none;
+}
+
+/* Forgot password link */
+.forgot-link {
+    color: #0d9488;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.forgot-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #0d9488;
+    transition: width 0.3s ease;
+}
+
+.forgot-link:hover::after {
+    width: 100%;
+}
+
+.forgot-link:hover {
+    color: #0f766e;
+}
+
+/* Social buttons with hover effects */
+.social-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.social-btn:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.social-btn.facebook {
+    background: #3a559f;
+}
+
+.social-btn.twitter {
+    background: #0f1419;
+}
+
+.social-btn.google {
+    background: #e02f2f;
+}
+
+.social-btn.linkedin {
+    background: #007ab9;
+}
+
+/* Divider with animated line */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.divider .line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    position: relative;
+}
+
+.divider .line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #0d9488, transparent);
+    animation: slideLine 3s ease-in-out infinite;
+}
+
+@keyframes slideLine {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.divider .text {
+    color: #a0aec0;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 0 5px;
+    background: white;
+}
+
+/* Loading Spinner */
+.se-pre-con {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.se-pre-con .spinner-border {
+    width: 4rem;
+    height: 4rem;
+    color: #0d9488 !important;
+}
+
+/* Error message styling */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .login-wrapper {
+        padding: 0 10px;
+    }
+
+    .pharmacy-logo .logo-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .pharmacy-logo .logo-text .brand-name {
+        font-size: 22px;
+    }
+
+    .pharmacy-logo .logo-text .brand-tagline {
+        font-size: 8px;
+    }
+
+    .input-group-enhanced .form-control {
+        height: 50px;
+        font-size: 14px;
+    }
+
+    .btn-modern {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+}

@@ -11,6 +11,10 @@ namespace BPM.Web.API.Repository
         {
             _context = context;
         }
+        public async Task<List<User>> GetUserListByDealerAsync(Guid dealerId)
+        {
+            return await _context.Users.Where(x => x.DealerId == dealerId).ToListAsync();
+        }
 
         public async Task<bool> ActivateUserAync(User user)
         {
@@ -130,7 +134,7 @@ namespace BPM.Web.API.Repository
 
         public async Task<List<User>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(x=>x.Role).Include(x=>x.Dealer).ToListAsync();
         }
     }
 }
