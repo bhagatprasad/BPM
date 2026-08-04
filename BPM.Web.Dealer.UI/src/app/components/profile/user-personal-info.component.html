@@ -1,117 +1,124 @@
- <div class="profile-card">
-      <div class="card-header">
-         <h3><i class="fas fa-user-circle"></i> PERSONAL INFORMATION</h3>
-          <div class="card-actions">
+<div class="profile-card">
+    <div class="card-header">
+        <h3><i class="ri-user-3-line"></i> PERSONAL INFORMATION</h3>
+        <div class="card-actions">
             <button *ngIf="!isUserEditing" (click)="Edit.emit()" class="btn btn-edit">
-               <i class="fas fa-pen"></i> Edit
+                <i class="ri-edit-2-line"></i> Edit
             </button>
-           <ng-container *ngIf="isUserEditing">
-            <button (click)="save.emit()" class="btn btn-save" >
-              
-               Save 
-            </button>
-            <button (click)="cancel.emit()" class="btn btn-cancel">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-          </ng-container>
+            <ng-container *ngIf="isUserEditing">
+                <button (click)="OnSave()" class="btn btn-save">
+                    <i class="ri-save-2-line"></i> Save
+                </button>
+                <button (click)="OnCancel()" class="btn btn-cancel">
+                    <i class="ri-close-line"></i> Cancel
+                </button>
+            </ng-container>
         </div>
-      </div>
+    </div>
 
-       <div class="card-body">
+    <div class="card-body">
         <div class="profile-grid">
-          <!-- First Name -->
-          <div class="form-group">
-            <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
-            <div class="input-wrapper">
-              <i class="fas fa-user input-icon"></i>
-              <input 
-                type="text" 
-                id="firstName"
-                [(ngModel)]="userPersionalSection.firstName" 
-                [readonly]="!isUserEditing"
-                [class.editable]="isUserEditing"
-                [class.readonly]="!isUserEditing"
-                [class.error]="errorMsz && !userPersionalSection.firstName"
-                class="form-control"
-                placeholder="Enter first name"
-              >
+            <!-- First Name -->
+            <div class="form-group">
+                <label for="firstName" class="form-label">
+                    First Name <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="ri-user-2-line input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="firstName"
+                        [(ngModel)]="userPersionalSection.firstName" 
+                        [readonly]="!isUserEditing"
+                        [class.editable]="isUserEditing"
+                        [class.readonly]="!isUserEditing"
+                        [class.error]="errorMsz && !userPersionalSection.firstName"
+                        class="form-control"
+                        placeholder="Enter first name"
+                    >
+                </div>
+                <div *ngIf="errorMsz && !userPersionalSection.firstName" class="field-error">
+                    <i class="ri-error-warning-line"></i> First name is required
+                </div>
             </div>
-            <div *ngIf="errorMsz && !userPersionalSection.firstName" class="field-error">
-              <i class="fas fa-exclamation-circle"></i> First name is required
-            </div>
-          </div>
 
-          <!-- Last Name -->
-          <div class="form-group">
-            <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
-            <div class="input-wrapper">
-              <i class="fas fa-user input-icon"></i>
-              <input 
-                type="text" 
-                id="lastName"
-                [(ngModel)]="userPersionalSection.lastName" 
-                [readonly]="!isUserEditing"
-                [class.editable]="isUserEditing"
-                [class.readonly]="!isUserEditing"
-                [class.error]="errorMsz && !userPersionalSection.lastName"
-                class="form-control"
-                placeholder="Enter last name"
-              >
+            <!-- Last Name -->
+            <div class="form-group">
+                <label for="lastName" class="form-label">
+                    Last Name <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="ri-user-2-line input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="lastName"
+                        [(ngModel)]="userPersionalSection.lastName" 
+                        [readonly]="!isUserEditing"
+                        [class.editable]="isUserEditing"
+                        [class.readonly]="!isUserEditing"
+                        [class.error]="errorMsz && !userPersionalSection.lastName"
+                        class="form-control"
+                        placeholder="Enter last name"
+                    >
+                </div>
+                <div *ngIf="errorMsz && !userPersionalSection.lastName" class="field-error">
+                    <i class="ri-error-warning-line"></i> Last name is required
+                </div>
             </div>
-            <div *ngIf="errorMsz && !userPersionalSection.lastName" class="field-error">
-              <i class="fas fa-exclamation-circle"></i> Last name is required
-            </div>
-          </div>
 
-          <!-- Email -->
-          <div class="form-group">
-            <label for="userEmail" class="form-label">Email <span class="required">*</span></label>
-            <div class="input-wrapper">
-              <i class="fas fa-envelope input-icon"></i>
-              <input 
-                type="email" 
-                id="userEmail"
-                [(ngModel)]="userPersionalSection.email" 
-                [readonly]="!isUserEditing"
-                [class.editable]="isUserEditing"
-                [class.readonly]="!isUserEditing"
-                [class.error]="errorMsz && !userPersionalSection.email"
-                class="form-control"
-                placeholder="Enter email address"
-              >
+            <!-- Email -->
+            <div class="form-group">
+                <label for="userEmail" class="form-label">
+                    Email <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="ri-mail-line input-icon"></i>
+                    <input 
+                        type="email" 
+                        id="userEmail"
+                        [(ngModel)]="userPersionalSection.email" 
+                        [readonly]="!isUserEditing"
+                        [class.editable]="isUserEditing"
+                        [class.readonly]="!isUserEditing"
+                        [class.error]="errorMsz && !userPersionalSection.email"
+                        class="form-control"
+                        placeholder="Enter email address"
+                    >
+                </div>
+                <div *ngIf="errorMsz && !userPersionalSection.email" class="field-error">
+                    <i class="ri-error-warning-line"></i> Valid email is required
+                </div>
             </div>
-            <div *ngIf="errorMsz && !userPersionalSection.email" class="field-error">
-              <i class="fas fa-exclamation-circle"></i> Valid email is required
-            </div>
-          </div>
 
-          <!-- Phone -->
-          <div class="form-group">
-            <label for="userPhone" class="form-label">Phone <span class="required">*</span></label>
-            <div class="input-wrapper">
-              <i class="fas fa-phone input-icon"></i>
-              <input 
-                type="tel" 
-                id="userPhone"
-                [(ngModel)]="userPersionalSection.phone" 
-                [readonly]="!isUserEditing"
-                [class.editable]="isUserEditing"
-                [class.readonly]="!isUserEditing"
-                [class.error]="errorMsz && !userPersionalSection.phone"
-                class="form-control"
-                placeholder="Enter phone number"
-              >
+            <!-- Phone -->
+            <div class="form-group">
+                <label for="userPhone" class="form-label">
+                    Phone <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="ri-phone-line input-icon"></i>
+                    <input 
+                        type="tel" 
+                        id="userPhone"
+                        [(ngModel)]="userPersionalSection.phone" 
+                        [readonly]="!isUserEditing"
+                        [class.editable]="isUserEditing"
+                        [class.readonly]="!isUserEditing"
+                        [class.error]="errorMsz && !userPersionalSection.phone"
+                        class="form-control"
+                        placeholder="Enter phone number"
+                    >
+                </div>
+                <div *ngIf="errorMsz && !userPersionalSection.phone" class="field-error">
+                    <i class="ri-error-warning-line"></i> Valid phone number is required
+                </div>
             </div>
-            <div *ngIf="errorMsz && !userPersionalSection.phone" class="field-error">
-              <i class="fas fa-exclamation-circle"></i> Valid phone number is required
-            </div>
-          </div>
         </div>
 
         <!-- Edit Mode Indicator -->
         <div *ngIf="isUserEditing" class="edit-indicator">
-          <i class="fas fa-edit"></i>
-          <span>You are editing your profile information</span>
+            <i class="ri-edit-2-line"></i>
+            <span>You are editing your profile information</span>
         </div>
-      </div>
     </div>
+</div>

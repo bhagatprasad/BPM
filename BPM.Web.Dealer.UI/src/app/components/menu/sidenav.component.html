@@ -3,65 +3,28 @@
   <div class="logo position-relative d-flex align-items-center justify-content-between">
     <a class="d-block text-decoration-none position-relative" routerLink="/">
       <!-- BPM Medicals Logo SVG -->
-      <svg
-        width="38"
-        height="38"
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style="display: inline-block; vertical-align: middle"
-      >
+      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+        style="display: inline-block; vertical-align: middle">
         <!-- Background circle with gradient -->
-        <circle
-          cx="50"
-          cy="50"
-          r="48"
-          fill="url(#sidebarLogoGradient)"
-          stroke="#0d9488"
-          stroke-width="2"
-        />
+        <circle cx="50" cy="50" r="48" fill="url(#sidebarLogoGradient)" stroke="#0d9488" stroke-width="2" />
 
         <!-- Medical Cross -->
         <rect x="40" y="20" width="20" height="60" rx="3" fill="white" opacity="0.95" />
         <rect x="20" y="40" width="60" height="20" rx="3" fill="white" opacity="0.95" />
 
         <!-- Leaf symbol -->
-        <path
-          d="M70 30 C78 25, 85 30, 82 40 C79 50, 72 48, 70 45 C68 42, 65 38, 70 30Z"
-          fill="white"
-          opacity="0.8"
-          transform="rotate(15, 75, 35)"
-        />
-        <path
-          d="M30 70 C22 75, 15 70, 18 60 C21 50, 28 52, 30 55 C32 58, 35 62, 30 70Z"
-          fill="white"
-          opacity="0.8"
-          transform="rotate(-15, 25, 65)"
-        />
+        <path d="M70 30 C78 25, 85 30, 82 40 C79 50, 72 48, 70 45 C68 42, 65 38, 70 30Z" fill="white" opacity="0.8"
+          transform="rotate(15, 75, 35)" />
+        <path d="M30 70 C22 75, 15 70, 18 60 C21 50, 28 52, 30 55 C32 58, 35 62, 30 70Z" fill="white" opacity="0.8"
+          transform="rotate(-15, 25, 65)" />
 
         <!-- BPM Letters integrated -->
-        <text
-          x="50"
-          y="48"
-          text-anchor="middle"
-          font-size="22"
-          font-weight="800"
-          font-family="Arial, sans-serif"
-          fill="#0d9488"
-          letter-spacing="2"
-        >
+        <text x="50" y="48" text-anchor="middle" font-size="22" font-weight="800" font-family="Arial, sans-serif"
+          fill="#0d9488" letter-spacing="2">
           B
         </text>
-        <text
-          x="50"
-          y="68"
-          text-anchor="middle"
-          font-size="16"
-          font-weight="700"
-          font-family="Arial, sans-serif"
-          fill="#0e7490"
-          letter-spacing="1"
-        >
+        <text x="50" y="68" text-anchor="middle" font-size="16" font-weight="700" font-family="Arial, sans-serif"
+          fill="#0e7490" letter-spacing="1">
           PM
         </text>
 
@@ -79,344 +42,286 @@
           </linearGradient>
         </defs>
       </svg>
-      <span
-        class="logo-text text-secondary fw-semibold"
-        style="
+      <span class="logo-text text-secondary fw-semibold" style="
           font-size: 18px;
           background: linear-gradient(135deg, #0d9488, #0e7490);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-        "
-        >BPM Medicals</span
-      >
+        ">BPM Medicals</span>
     </a>
     <button
       class="sidebar-burger-menu-close bg-transparent py-3 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
-      id="sidebar-burger-menu-close"
-    >
-      <span
-        class="border-1 d-block for-dark-burger"
-        style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(45deg)"
-      >
+      id="sidebar-burger-menu-close">
+      <span class="border-1 d-block for-dark-burger"
+        style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(45deg)">
       </span>
-      <span
-        class="border-1 d-block for-dark-burger"
-        style="
+      <span class="border-1 d-block for-dark-burger" style="
           border-bottom: 1px solid #475569;
           height: 1px;
           width: 25px;
           transform: rotate(-45deg);
-        "
-      >
+        ">
       </span>
     </button>
     <button class="sidebar-burger-menu bg-transparent p-0 border-0" id="sidebar-burger-menu">
-      <span
-        class="border-1 d-block for-dark-burger"
-        style="border-bottom: 1px solid #475569; height: 1px; width: 25px"
-      >
+      <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px">
       </span>
-      <span
-        class="border-1 d-block for-dark-burger"
-        style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0"
-      >
+      <span class="border-1 d-block for-dark-burger"
+        style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0">
       </span>
-      <span
-        class="border-1 d-block for-dark-burger"
-        style="border-bottom: 1px solid #475569; height: 1px; width: 25px"
-      >
+      <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px">
       </span>
     </button>
   </div>
   <aside class="layout-menu menu-vertical menu active" data-simplebar="" id="layout-menu">
     <ul class="menu-inner">
-      <li class="menu-title small text-uppercase">
-        <span class="menu-title-text">dashboard</span>
+      <!-- Drugs -->
+      <li class="menu-item">
+        <a class="menu-link" routerLink="/drugs" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-medicine-bottle-line menu-icon"></i>
+          <span class="title">Drugs</span>
+        </a>
       </li>
 
-      <!-- Dashboard -->
+      <!-- Users -->
+      <li class="menu-item">
+        <a class="menu-link" routerLink="/users" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-user-3-line menu-icon"></i>
+          <span class="title">Users</span>
+        </a>
+      </li>
+
+      <!-- Pharmacy (Dropdown) -->
       <li class="menu-item" [class.open]="isMenuOpen('dashboard')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('dashboard')" style="cursor: pointer">
-          <span class="title">Dashboard</span>
+          <i class="ri-store-2-line menu-icon"></i>
+          <span class="title">Pharmacy</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('dashboard')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/drugs"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Drug Categories</a
-            >
+            <a class="menu-link" routerLink="/my-orders" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-shopping-bag-2-line menu-sub-icon"></i>
+              My Orders
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/my-orders"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >My Orders</a
-            >
+            <a class="menu-link" routerLink="/my-bills" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-receipt-line menu-sub-icon"></i>
+              My Bills
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" routerLink="/my-payments" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-money-dollar-circle-line menu-sub-icon"></i>
+              My Payments
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" routerLink="/my-invoices" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-file-text-line menu-sub-icon"></i>
+              My Invoices
+            </a>
           </li>
         </ul>
       </li>
 
-      <!-- <li class="menu-title small text-uppercase">
-        <span class="menu-title-text">APPS</span>
-      </li> -->
+      <!-- Permissions -->
+      <li class="menu-item">
+        <a class="menu-link" routerLink="/user-permissions" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-shield-keyhole-line menu-icon"></i>
+          <span class="title">Permissions</span>
+        </a>
+      </li>
 
+      <!-- ====== Additional Menu Items with Icons (Commented) ====== -->
+      
       <!-- To Do List -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/apps/todo-list"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/apps/todo-list" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-checkbox-line menu-icon"></i>
           <span class="title">To Do List</span>
         </a>
       </li> -->
 
       <!-- Calendar -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/apps/calendar"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/apps/calendar" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-calendar-2-line menu-icon"></i>
           <span class="title">Calendar</span>
         </a>
       </li> -->
 
       <!-- Contacts -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/apps/contacts"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/apps/contacts" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-contacts-book-2-line menu-icon"></i>
           <span class="title">Contacts</span>
         </a>
       </li> -->
 
       <!-- Chat -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/apps/chat"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/apps/chat" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-chat-3-line menu-icon"></i>
           <span class="title">Chat</span>
         </a>
       </li> -->
 
-      <!-- Email -->
+      <!-- Email (Dropdown) -->
       <!-- <li class="menu-item" [class.open]="isMenuOpen('email')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('email')" style="cursor: pointer">
+          <i class="ri-mail-line menu-icon"></i>
           <span class="title">Email</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('email')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/email/inbox"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Inbox</a
-            >
+            <a class="menu-link" routerLink="/email/inbox" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-inbox-line menu-sub-icon"></i>
+              Inbox
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/email/compose"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Compose</a
-            >
+            <a class="menu-link" routerLink="/email/compose" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-edit-2-line menu-sub-icon"></i>
+              Compose
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/email/read"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Read</a
-            >
+            <a class="menu-link" routerLink="/email/read" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-mail-open-line menu-sub-icon"></i>
+              Read
+            </a>
           </li>
         </ul>
       </li> -->
 
-      <!-- Invoices -->
+      <!-- Invoices (Dropdown) -->
       <!-- <li class="menu-item" [class.open]="isMenuOpen('invoices')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('invoices')" style="cursor: pointer">
+          <i class="ri-file-text-line menu-icon"></i>
           <span class="title">Invoices</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('invoices')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/invoices/list"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Invoices</a
-            >
+            <a class="menu-link" routerLink="/invoices/list" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-file-list-2-line menu-sub-icon"></i>
+              Invoices
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/invoices/details"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Invoice Details</a
-            >
+            <a class="menu-link" routerLink="/invoices/details" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-file-info-line menu-sub-icon"></i>
+              Invoice Details
+            </a>
           </li>
         </ul>
       </li> -->
 
-      <!-- Users -->
+      <!-- Users (Dropdown) -->
       <!-- <li class="menu-item" [class.open]="isMenuOpen('users')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('users')" style="cursor: pointer">
+          <i class="ri-user-3-line menu-icon"></i>
           <span class="title">Users</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('users')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/users/team-members"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Team Members</a
-            >
+            <a class="menu-link" routerLink="/users/team-members" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-user-2-line menu-sub-icon"></i>
+              Team Members
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/users/list"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Users List</a
-            >
+            <a class="menu-link" routerLink="/users/list" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-user-add-line menu-sub-icon"></i>
+              Users List
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/users/add"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Add User</a
-            >
-          </li>
-        </ul>
-      </li>  -->
-
-      <!-- Profile -->
-      <!-- <li class="menu-item" [class.open]="isMenuOpen('profile')">
-        <a class="menu-link menu-toggle" (click)="toggleMenu('profile')" style="cursor: pointer">
-          <span class="title">Profile</span>
-        </a>
-        <ul class="menu-sub" *ngIf="isMenuOpen('profile')">
-          <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/profile/user"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >User Profile</a
-            >
-          </li>
-          <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/profile/teams"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Teams</a
-            >
-          </li>
-          <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/profile/projects"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Projects</a
-            >
+            <a class="menu-link" routerLink="/users/add" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-user-follow-line menu-sub-icon"></i>
+              Add User
+            </a>
           </li>
         </ul>
       </li> -->
 
-      <!-- Authentication -->
+      <!-- Profile (Dropdown) -->
+      <!-- <li class="menu-item" [class.open]="isMenuOpen('profile')">
+        <a class="menu-link menu-toggle" (click)="toggleMenu('profile')" style="cursor: pointer">
+          <i class="ri-user-settings-line menu-icon"></i>
+          <span class="title">Profile</span>
+        </a>
+        <ul class="menu-sub" *ngIf="isMenuOpen('profile')">
+          <li class="menu-item">
+            <a class="menu-link" routerLink="/profile/user" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-user-3-line menu-sub-icon"></i>
+              User Profile
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" routerLink="/profile/teams" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-team-line menu-sub-icon"></i>
+              Teams
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" routerLink="/profile/projects" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-folder-line menu-sub-icon"></i>
+              Projects
+            </a>
+          </li>
+        </ul>
+      </li> -->
+
+      <!-- Authentication (Dropdown) -->
       <!-- <li class="menu-item" [class.open]="isMenuOpen('auth')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('auth')" style="cursor: pointer">
+          <i class="ri-lock-2-line menu-icon"></i>
           <span class="title">Authentication</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('auth')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/login"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Sign In</a
-            >
+            <a class="menu-link" routerLink="/auth/login" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-login-box-line menu-sub-icon"></i>
+              Sign In
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/register"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Sign Up</a
-            >
+            <a class="menu-link" routerLink="/auth/register" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-user-add-line menu-sub-icon"></i>
+              Sign Up
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/forgot-password"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Forgot Password</a
-            >
+            <a class="menu-link" routerLink="/auth/forgot-password" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-key-2-line menu-sub-icon"></i>
+              Forgot Password
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/reset-password"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Reset Password</a
-            >
+            <a class="menu-link" routerLink="/auth/reset-password" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-refresh-line menu-sub-icon"></i>
+              Reset Password
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/confirm-email"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Confirm Email</a
-            >
+            <a class="menu-link" routerLink="/auth/confirm-email" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-mail-check-line menu-sub-icon"></i>
+              Confirm Email
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/lock-screen"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Lock Screen</a
-            >
+            <a class="menu-link" routerLink="/auth/lock-screen" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-lock-line menu-sub-icon"></i>
+              Lock Screen
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/auth/logout"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Logout</a
-            >
+            <a class="menu-link" routerLink="/auth/logout" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-logout-box-r-line menu-sub-icon"></i>
+              Logout
+            </a>
           </li>
         </ul>
       </li> -->
@@ -424,96 +329,71 @@
       <!-- Maps -->
       <!-- <li class="menu-item">
         <a class="menu-link" routerLink="/maps" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-map-2-line menu-icon"></i>
           <span class="title">Maps</span>
         </a>
       </li> -->
 
       <!-- Notifications -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/notifications"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/notifications" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-notification-3-line menu-icon"></i>
           <span class="title">Notifications</span>
         </a>
       </li> -->
 
       <!-- My Profile -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/my-profile"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/my-profile" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-user-3-line menu-icon"></i>
           <span class="title">My Profile</span>
         </a>
       </li> -->
 
-      <!-- Settings -->
+      <!-- Settings (Dropdown) -->
       <!-- <li class="menu-item" [class.open]="isMenuOpen('settings')">
         <a class="menu-link menu-toggle" (click)="toggleMenu('settings')" style="cursor: pointer">
+          <i class="ri-settings-3-line menu-icon"></i>
           <span class="title">Settings</span>
         </a>
         <ul class="menu-sub" *ngIf="isMenuOpen('settings')">
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/settings/account"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Account Settings</a
-            >
+            <a class="menu-link" routerLink="/settings/account" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-account-circle-line menu-sub-icon"></i>
+              Account Settings
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/settings/change-password"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Change Password</a
-            >
+            <a class="menu-link" routerLink="/settings/change-password" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-key-2-line menu-sub-icon"></i>
+              Change Password
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/settings/connections"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Connections</a
-            >
+            <a class="menu-link" routerLink="/settings/connections" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-link-line menu-sub-icon"></i>
+              Connections
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/settings/privacy"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Privacy Policy</a
-            >
+            <a class="menu-link" routerLink="/settings/privacy" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-shield-user-line menu-sub-icon"></i>
+              Privacy Policy
+            </a>
           </li>
           <li class="menu-item">
-            <a
-              class="menu-link"
-              routerLink="/settings/terms"
-              routerLinkActive="active"
-              style="cursor: pointer"
-              >Terms &amp; Conditions</a
-            >
+            <a class="menu-link" routerLink="/settings/terms" routerLinkActive="active" style="cursor: pointer">
+              <i class="ri-file-text-line menu-sub-icon"></i>
+              Terms &amp; Conditions
+            </a>
           </li>
         </ul>
       </li> -->
 
       <!-- Logout -->
       <!-- <li class="menu-item">
-        <a
-          class="menu-link"
-          routerLink="/auth/logout"
-          routerLinkActive="active"
-          style="cursor: pointer"
-        >
+        <a class="menu-link" routerLink="/auth/logout" routerLinkActive="active" style="cursor: pointer">
+          <i class="ri-logout-box-r-line menu-icon"></i>
           <span class="title">Logout</span>
         </a>
       </li> -->
