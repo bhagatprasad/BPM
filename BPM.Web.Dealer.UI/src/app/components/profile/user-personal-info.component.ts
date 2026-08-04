@@ -18,52 +18,32 @@ export class UserPersonalInfoComponent {
   @Output() save = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
-
   constructor() {
-    console.log('UserPersonalInfoComponent initialized with userId:', this.userId);
-    console.log('UserPersonalInfoComponent initialized with userPersionalSection:', this.userPersionalSection);
-    console.log('UserPersonalInfoComponent initialized with isUserEditing:', this.isUserEditing);
-    console.log('UserPersonalInfoComponent initialized with errorMsz:', this.errorMsz);
-    console.log('UserPersonalInfoComponent initialized with Edit event emitter:', this.Edit);
-    console.log('UserPersonalInfoComponent initialized with save event emitter:', this.save);
-    console.log('UserPersonalInfoComponent initialized with cancel event emitter:', this.cancel);
+    console.log('UserPersonalInfoComponent initialized');
   }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['userId']) {
       console.log('User ID changed to:', changes['userId'].currentValue);
       this.userId = changes['userId'].currentValue;
     }
     if (changes['userPersionalSection']) {
-      console.log('User Data:', changes['userPersionalSection'].currentValue);
+      console.log('User Data changed to:', changes['userPersionalSection'].currentValue);
       this.userPersionalSection = changes['userPersionalSection'].currentValue;
     }
-    if(changes['isUserEditing'])
-    {
+    if (changes['isUserEditing']) {
       console.log('isUserEditing changed to:', changes['isUserEditing'].currentValue);
       this.isUserEditing = changes['isUserEditing'].currentValue;
     }
-    if(changes['errorMsz'])
-    {
+    if (changes['errorMsz']) {
       console.log('errorMsz changed to:', changes['errorMsz'].currentValue);
-      this.errorMsz = changes['errorMessage'].currentValue;
+      this.errorMsz = changes['errorMsz'].currentValue;
     }
-    if(changes['Edit'])
-    {
-      console.log('Edit event emitter changed to:', changes['Edit'].currentValue);
-      this.Edit = changes['Edit'].currentValue;
-    }
-    if(changes['save'])
-    {
-      console.log('save event emitter changed to:', changes['save'].currentValue);
-      this.save = changes['save'].currentValue;
-    }
-    if(changes['cancel'])
-    {
-      console.log('cancel event emitter changed to:', changes['cancel'].currentValue);
-      this.cancel = changes['cancel'].currentValue;
-    }
-
-    
+  }
+  OnSave(): void {
+    this.save.emit();
+  }
+  OnCancel(): void {
+    this.cancel.emit();
   }
 }
-
