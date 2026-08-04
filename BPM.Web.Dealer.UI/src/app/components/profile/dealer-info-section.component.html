@@ -1,0 +1,231 @@
+<div class="profile-card">
+      <div class="card-header">
+          <h3><i class="fas fa-store"></i> DEALER INFORMATION</h3>
+                <div class="card-actions" *ngIf="isAdmin"; else readOnly>
+              <!-- Edit Button -->
+                    <button
+                      *ngIf="!isDealerEditing"
+                      type="button"
+                      class="btn btn-edit"
+                      (click)="Edit.emit()">
+                      <i class="fas fa-pen"></i>
+                      Edit
+                    </button>
+
+                  <!-- Admin -->
+                  <ng-container *ngIf="isDealerEditing">
+
+                    
+                    <!-- Save Button -->
+                    <button        
+                      type="button"
+                      class="btn btn-success"
+                      (click)="save.emit()">
+                      <i class="fas fa-save"></i>
+                      Save
+                    </button>
+                    <button (click)="cancel.emit()" class="btn btn-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                    </button>
+
+                  </ng-container>
+
+                  <!-- Non Admin -->
+                  <ng-template #readOnly>
+                    <span class="badge badge-readonly">
+                      <i class="fas fa-eye"></i>
+                      Read Only
+                    </span>
+                  </ng-template>
+
+                </div>
+      
+      </div>
+      
+      
+
+      <div class="card-body">
+        <div class="profile-grid">
+          <!-- Dealership Name -->
+          <div class="form-group full-width">
+            <label for="dealershipName" class="form-label">Dealer Name</label>
+            <div class="input-wrapper">
+              <i class="fas fa-store input-icon"></i>
+              <input 
+                type="text" 
+                id="dealershipName"
+                [(ngModel)]="dealerSection.dealershipName" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.dealershipName"
+                class="form-control"              
+              
+              >
+            </div>
+          </div>
+
+          <!-- GST Number -->
+          <div class="form-group">
+            <label for="gstNumber" class="form-label">GST</label>
+            <div class="input-wrapper">
+              <i class="fas fa-file-invoice input-icon"></i>
+              <input 
+                type="text" 
+                id="gstNumber"
+                [(ngModel)]="dealerSection.gstNumber" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.gstNumber"                
+                class="form-control "
+              >
+            </div>
+          </div>
+
+          <!-- Dealer Phone -->
+          <div class="form-group">
+            <label for="dealerPhone" class="form-label">Phone</label>
+            <div class="input-wrapper">
+              <i class="fas fa-phone input-icon"></i>
+              <input 
+                type="tel" 
+                id="dealerPhone"
+                [(ngModel)]="dealerSection.phone" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.phone"               
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- Dealer Email -->
+          <div class="form-group">
+            <label for="dealerEmail" class="form-label">Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input 
+                type="email" 
+                id="dealerEmail"
+                [(ngModel)]="dealerSection.email" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.email"               
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- Contact Person -->
+          <div class="form-group">
+            <label for="contactPerson" class="form-label">Contact Person</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user-tie input-icon"></i>
+              <input 
+                type="text" 
+                id="contactPerson"
+                [(ngModel)]="dealerSection.contactPerson" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.contactPerson" 
+                class="form-control "
+              >
+            </div>
+          </div>
+
+          <!-- Address Line 1 -->
+          <div class="form-group full-width">
+            <label for="addressLine1" class="form-label">Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-map-marker-alt input-icon"></i>
+              <input 
+                type="text" 
+                id="addressLine1"
+                [(ngModel)]="dealerSection.addressLine1" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.addressLine1"               
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="form-group">
+            <label for="city" class="form-label">City</label>
+            <div class="input-wrapper">
+              <i class="fas fa-city input-icon"></i>
+              <input 
+                type="text" 
+                id="city"
+                [(ngModel)]="dealerSection.city" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.city"                 
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- State -->
+          <div class="form-group">
+            <label for="state" class="form-label">State</label>
+            <div class="input-wrapper">
+              <i class="fas fa-map input-icon"></i>
+              <input 
+                type="text" 
+                id="state"
+                [(ngModel)]="dealerSection.state" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.state"               
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- Country -->
+          <div class="form-group">
+            <label for="country" class="form-label">Country</label>
+            <div class="input-wrapper">
+              <i class="fas fa-globe input-icon"></i>
+              <input 
+                type="text" 
+                id="country"
+                [(ngModel)]="dealerSection.country" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.country"                
+                class="form-control"
+              >
+            </div>
+          </div>
+
+          <!-- Website -->
+          <div class="form-group">
+            <label for="website" class="form-label">Website</label>
+            <div class="input-wrapper">
+              <i class="fas fa-globe input-icon"></i>
+              <input 
+                type="url" 
+                id="website"
+                [(ngModel)]="dealerSection.website" 
+                [readonly]="!isDealerEditing"
+                [class.editable]="isDealerEditing"
+                [class.readonly]="!isDealerEditing"
+                [class.error]="errorMessage && !dealerSection.website"                
+                class="form-control"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
