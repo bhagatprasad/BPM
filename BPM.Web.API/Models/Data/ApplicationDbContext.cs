@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace BPM.Web.API.Models.Data
 {
@@ -27,6 +28,9 @@ namespace BPM.Web.API.Models.Data
         public DbSet<UserLoginHistory> UserLoginHistorys { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<UserPasswordHistory> UserPasswordHistories { get; set; }
+        public DbSet<Activities> Activities { get; set; }
+        public DbSet<Feature> Features { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
 
 

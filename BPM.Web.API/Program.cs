@@ -87,6 +87,9 @@ builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
 builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRepository>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -102,6 +105,9 @@ builder.Services.AddScoped<IDrugUomService, DrugUomService>();
 builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
 builder.Services.AddScoped<IDrugFormService, DrugFormService>();
 builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
+builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
