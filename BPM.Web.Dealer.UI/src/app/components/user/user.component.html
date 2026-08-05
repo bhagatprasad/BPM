@@ -1,50 +1,715 @@
-
-
-<!--<div class="user-header">
-<div><h3>Users</h3></div>
-<div>
-    <button (click)="addUser()">Add User</button>
-    <button (click)="cancel()">Cancel</button>
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h3 class="mb-0">
+            Orders
+        </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a class="d-flex align-items-center text-decoration-none" href="index.html">
+                        <i class="ri-home-8-line fs-15 text-primary me-1">
+                        </i>
+                        <span class="text-body fs-14 hover">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span>
+                        E-Commerce
+                    </span>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span class="text-secondary">
+                        Orders
+                    </span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+            <form class="table-src-form position-relative m-0">
+                <input class="form-control w-350" placeholder="Search order..." type="text" />
+                <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </div>
+            </form>
+            <a class="text-primary fs-16 border-0 text-decoration-none" href="create-order.html">
+                + Add New Order
+            </a>
+        </div>
+        <div class="default-table-area mx-minus-1 table-to-do-list">
+            <div class="table-responsive">
+                <table class="table align-middle w-100">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium" scope="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault1" type="checkbox" />
+                                </div>
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Order ID
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Customer
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Items
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Price
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Date
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Vendor
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Status
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault2" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-1217
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user15" class="rounded-circle" src="assets/images/user15.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Marcia Baker
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                120
+                            </td>
+                            <td class="text-body">
+                                $6855.00
+                            </td>
+                            <td class="text-body">
+                                Nov 10, 2025
+                            </td>
+                            <td class="text-body">
+                                Dennis Matthews
+                            </td>
+                            <td>
+                                <span
+                                    class="text-primary bg-primary bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Shipped
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault3" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-1364
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user7" class="rounded-circle" src="assets/images/user7.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Carolyn Barnes
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                62
+                            </td>
+                            <td class="text-body">
+                                $258.00
+                            </td>
+                            <td class="text-body">
+                                Nov 11, 2025
+                            </td>
+                            <td class="text-body">
+                                Susan Rader
+                            </td>
+                            <td>
+                                <span
+                                    class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Confirmed
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault4" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-2951
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user12" class="rounded-circle" src="assets/images/user12.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Donna Miller
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                49
+                            </td>
+                            <td class="text-body">
+                                $3,890.00
+                            </td>
+                            <td class="text-body">
+                                Nov 12, 2025
+                            </td>
+                            <td class="text-body">
+                                Douglas Harvey
+                            </td>
+                            <td>
+                                <span
+                                    class="text-warning bg-warning bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault5" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-7342
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user5" class="rounded-circle" src="assets/images/user5.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Barbara Cross
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                25
+                            </td>
+                            <td class="text-body">
+                                $2,500.00
+                            </td>
+                            <td class="text-body">
+                                Nov 13, 2025
+                            </td>
+                            <td class="text-body">
+                                John Valdez
+                            </td>
+                            <td>
+                                <span
+                                    class="text-primary bg-primary bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Shipped
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault6" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-4619
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user16" class="rounded-circle" src="assets/images/user16.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Rebecca Block
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                82
+                            </td>
+                            <td class="text-body">
+                                $8,200.00
+                            </td>
+                            <td class="text-body">
+                                Nov 14, 2025
+                            </td>
+                            <td class="text-body">
+                                Kathryn Turner
+                            </td>
+                            <td>
+                                <span
+                                    class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Rejected
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault7" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-7346
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user9" class="rounded-circle" src="assets/images/user9.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Ramiro McCarty
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                64
+                            </td>
+                            <td class="text-body">
+                                $640.00
+                            </td>
+                            <td class="text-body">
+                                Nov 15, 2025
+                            </td>
+                            <td class="text-body">
+                                Ilona Slover
+                            </td>
+                            <td>
+                                <span
+                                    class="text-warning bg-warning bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Pending
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault8" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-7612
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user1" class="rounded-circle" src="assets/images/user1.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Robert Fairweather
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                91
+                            </td>
+                            <td class="text-body">
+                                $9,100.00
+                            </td>
+                            <td class="text-body">
+                                Nov 16, 2025
+                            </td>
+                            <td class="text-body">
+                                Melanie Goldman
+                            </td>
+                            <td>
+                                <span
+                                    class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Confirmed
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault9" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-7642
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user6" class="rounded-circle" src="assets/images/user6.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Marcelino Haddock
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                73
+                            </td>
+                            <td class="text-body">
+                                $7,300.00
+                            </td>
+                            <td class="text-body">
+                                Nov 17, 2025
+                            </td>
+                            <td class="text-body">
+                                Norma Collett
+                            </td>
+                            <td>
+                                <span
+                                    class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Confirmed
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault10" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-4652
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user13" class="rounded-circle" src="assets/images/user13.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Thomas Wilson
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                66
+                            </td>
+                            <td class="text-body">
+                                $6,600.00
+                            </td>
+                            <td class="text-body">
+                                Nov 18, 2025
+                            </td>
+                            <td class="text-body">
+                                Lucy Sturgill
+                            </td>
+                            <td>
+                                <span
+                                    class="text-primary bg-primary bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Shipped
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault11" type="checkbox" />
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                #ARP-7895
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img alt="user14" class="rounded-circle" src="assets/images/user14.jpg"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        Nathaniel Hulsey
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                28
+                            </td>
+                            <td class="text-body">
+                                $2,800.00
+                            </td>
+                            <td class="text-body">
+                                Nov 19, 2025
+                            </td>
+                            <td class="text-body">
+                                Shirley Scott
+                            </td>
+                            <td>
+                                <span
+                                    class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                    Rejected
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                        data-bs-title="View" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-placement="top" data-bs-title="Edit" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15">
+                    Showing 1 to 10 of 50 entries
+                </span>
+                <nav aria-label="Page navigation example" class="custom-pagination">
+                    <ul class="pagination mb-0 justify-content-center">
+                        <li class="page-item">
+                            <button aria-label="Previous" class="page-link icon">
+                                <i class="material-symbols-outlined">
+                                    west
+                                </i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link active">
+                                1
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                2
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                3
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button aria-label="Next" class="page-link icon">
+                                <i class="material-symbols-outlined">
+                                    east
+                                </i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-<div class="container text-center">
-    <table class="">
-        <thead> 
-        <tr>
-             <th>userId</th>
-             <th>firstName</th>
-             <th>lastName</th>
-             <th>email</th>
-             <th>phone</th>
-             <th>isActive</th>
-             <th>roleId</th>
-             <th>dealerId</th>
-             <th>Dealer Info</th>
-             <th>Role Info</th>
-             <th>Edit</th>
-             <th>View Responsibilities</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let user of users">
-            <td>{{user.userId}}</td>
-            <td>{{user.firstName}}</td>
-            <td>{{user.lastName}}</td>
-            <td>{{user.email}}</td>
-            <td>{{user.phone}}</td>
-            <td>{{user.isActive}}</td>
-            <td>{{user.roleId}}</td>
-            <td>{{user.dealerId}}</td>
-            <td>
-                <button (click)="enableEdit()">Edit</button>
-                <button (click)="disableEdit()">Cancel</button>
-            </td>
-            <td>
-                <button (click)="viewResponsiblities()">View Responsibilities</button>
-                <button (click)="closeResponsibilities()">Close</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-</div> -->
