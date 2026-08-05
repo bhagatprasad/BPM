@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, inject, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  HostListener,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -39,6 +46,7 @@ export class TopnavComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
   private cartService = inject(CartService);
+  private cdr = inject(ChangeDetectorRef);
 
   firstName: string = '';
   lastName: string = '';
@@ -120,6 +128,7 @@ export class TopnavComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cartService.cartCount$.subscribe((count) => {
       this.cartCount = count;
+      this.cdr.detectChanges();
     });
     // Subscribe to auth state changes
     this.authSubscription = this.accountService.authState$.subscribe((isAuth) => {
@@ -273,7 +282,7 @@ export class TopnavComponent implements OnInit, OnDestroy {
     this.router.navigate(['/apps/calendar']);
   }
   goToCart(): void {
-    this.router.navigate(['cart']);
+    this.router.navigate(['/cart']);
   }
   logout(): void {
     this.accountService.logout();

@@ -6,9 +6,6 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class CartService {
-  clearCart() {
-    throw new Error('Method not implemented.');
-  }
   private readonly CART_KEY = 'cart';
   private cartItems: CartItem[] = [];
   private cartCountSubject = new BehaviorSubject<number>(0);
@@ -79,5 +76,10 @@ export class CartService {
       localStorage.setItem(this.CART_KEY, JSON.stringify(this.cartItems));
       this.cartCountSubject.next(this.getCartCount());
     }
+  }
+  clearCart(): void {
+    this.cartItems = [];
+    localStorage.removeItem(this.CART_KEY);
+    this.cartCountSubject.next(0);
   }
 }
