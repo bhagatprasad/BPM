@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { CartItem } from '../../models/cart-item';
 import { CommonModule } from '@angular/common';
@@ -20,34 +20,60 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private purchaseOrderService: PurchaseOrderService,
     private toasterService: ToastrService,
+    private cdr: ChangeDetectorRef,
   ) {}
+
+  cartCount = 0;
 
   ngOnInit(): void {
     this.cartItems = this.cartService.getCartItems();
+    this.cartService.cartCount$.subscribe(() => {
+      this.cartItems = [...this.cartService.getCartItems()];
+
+      this.cdr.detectChanges();
+    });
   }
 
   removeItem(drugId: string): void {
-    const confirmed = confirm('Remove this medicine from the cart?');
+    const confirmed = window.confirm(
+      'Are you sure you want to remove this medicine from the cart?',
+    );
 
     if (!confirmed) {
       return;
     }
-
     this.cartService.removeFromCart(drugId);
-    this.cartItems = this.cartService.getCartItems();
-    console.log('Toast Called');
-
+    this.cartItems = [...this.cartService.getCartItems()];
     this.toasterService.success('Medicine removed from the cart', 'Success');
   }
 
   increase(drugId: string): void {
     this.cartService.increaseQuantity(drugId);
-    this.cartItems = this.cartService.getCartItems();
+    this.cartItems = [...this.cartService.getCartItems()];
+    this.toasterService.success('Quantity increased', 'Success');
   }
 
   decrease(drugId: string): void {
+    const item = this.cartItems.find((x) => x.drugId === drugId);
+
+    if (item?.quantity === 1) {
+      const confirmed = window.confirm(
+        'Are you sure you want to remove this medicine from the cart?',
+      );
+
+      if (!confirmed) {
+        return;
+      }
+    }
+
     this.cartService.decreaseQuantity(drugId);
-    this.cartItems = this.cartService.getCartItems();
+    this.cartItems = [...this.cartService.getCartItems()];
+
+    if (item && item.quantity > 1) {
+      this.toasterService.info('Quantity decreased', 'Updated');
+    } else {
+      this.toasterService.warning('Medicine removed from the cart', 'Removed');
+    }
   }
 
   get totalQuantity(): number {
@@ -97,11 +123,10 @@ export class CartComponent implements OnInit {
       next: (response) => {
         console.log(response);
         this.isPlacingOrder = false;
-        console.log('Toast called ');
-
         this.toasterService.success('Purchase Order Created Successfully');
         this.cartService.clearCart();
         this.cartItems = [];
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);

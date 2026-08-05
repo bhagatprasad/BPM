@@ -77,4 +77,9 @@ export class CartService {
       this.cartCountSubject.next(this.getCartCount());
     }
   }
+  clearCart(): void {
+    this.cartItems = [];
+    localStorage.removeItem(this.CART_KEY);
+    this.cartCountSubject.next(0);
+  }
 }
