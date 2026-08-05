@@ -6,11 +6,14 @@ export interface usersRequest {
     dealerId: string;
 }
 export interface userInformation{
+
+
     userId?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
     phone?: string;
+    isActive?: boolean;
     dealerId?: string;
     roleId?: string;
     dealerInfo?: DealerInfo[];

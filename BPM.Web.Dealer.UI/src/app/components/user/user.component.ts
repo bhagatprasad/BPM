@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SpinnerLoadingService } from '@app/common/services/spinner-loading-service';
-import { userInformation } from '@app/models/user';
+import { roleInfo, userInformation } from '@app/models/user';
+import { DealerInfo } from '@app/models/user-profile';
+
 import { UserDetailsService } from '@app/services/user.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 
@@ -14,11 +16,19 @@ import { ToastrService } from '@iqx-limited/ngx-toastr';
   styleUrl: './user.component.css',
 })
 export class UserComponent {
+deleteUser() {
+throw new Error('Method not implemented.');
+}
+
+
   userInformation: userInformation[] = [];
+
   dealerId: string = '';
   error: string | null = null;
   userData: any;
   userId: any;
+  dealerinformation: DealerInfo[] = [];
+  roleinformation: roleInfo[] = [];
   constructor(private userService: UserDetailsService) { }
 
   ngOnInit(): void {
@@ -37,6 +47,9 @@ export class UserComponent {
       next: (response: userInformation[]) => {
         console.log('Users fetched successfully:', response);
         this.userInformation = response || [];
+        this.dealerinformation = response[0]?.dealerInfo || [];
+        this.roleinformation = response[0]?.roleinfo || []; 
+           
       },
       error: (error) => {
         console.error('Error fetching users:', error);
@@ -45,4 +58,13 @@ export class UserComponent {
       }
     });
   }
+  addNewUser() {
+;
+}
+enableEdit() {
+throw new Error('Method not implemented.');
+}
+
+
+
 }

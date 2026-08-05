@@ -14,5 +14,8 @@ export class UserDetailsService {
         const endpoint = `${environment.UrlConstants.User.GetAllUsersByDealerIdAsync}/${dealerId}`;
         return this.apiService.send<userInformation[]>('GET', endpoint);
     }
-    
+    InsertUser(userData: userInformation): Observable<any> {
+        const endpoint = `${environment.UrlConstants.User.InsertUserAsync}`;
+        return this.apiService.send<any>('POST', endpoint, userData);
+    }
 }
