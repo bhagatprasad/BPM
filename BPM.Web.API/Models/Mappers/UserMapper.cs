@@ -54,6 +54,11 @@ namespace BPM.Web.API.Models.Mappers
 
         }
 
+        public static List<UserDto> ToUserDtoList(this List<User> users)
+        {
+            return users.Select(u => u.ToEntity()).ToList();
+        }
+
         public static UserDto ToEntity(this User dto)
         {
             return new UserDto
@@ -63,9 +68,10 @@ namespace BPM.Web.API.Models.Mappers
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Phone = dto.Phone,
+                IsActive = dto.IsActive,
                 RoleId = dto.RoleId,
                 DealerId = dto.DealerId,
-                DealerInfo =dto.Dealer != null ? dto.Dealer.ToDto() : null,
+                DealerInfo = dto.Dealer != null ? dto.Dealer.ToDto() : null,
                 RoleInfo = dto.Role != null ? dto.Role.ToDto() : null,
             };
 

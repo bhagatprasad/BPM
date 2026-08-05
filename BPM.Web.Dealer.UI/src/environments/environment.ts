@@ -17,7 +17,9 @@ export const environment = {
     User: {
       UpdateUserProfileAsync: 'user/updateuser',
       ChangePasswordAsync:'user/changepassword',
-      GetAllUsersByDealerIdAsync:'user/GetAllUsersByDealerId'
+      GetAllUsersByDealerIdAsync:'user/get-all-users-by-dealer',
+      InsertUserAsync:'user/insert-user',
+      CreateUserAsync:'user/create-user'
     },
     Dealer:{
       updateDealerAsync:'dealer/updatedealer'

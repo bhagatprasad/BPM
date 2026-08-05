@@ -1,6 +1,7 @@
 export interface User { }
 
 export interface DealerInfo {
+
   addressLine1: string;
   addressLine2: string;
   alternatePhone: string;
@@ -37,6 +38,7 @@ export interface AuthenticateResponse {
   message: string;
   refreshToken: string;
 }
+
 
 export interface UpdateUserRequest {
   userId: string,

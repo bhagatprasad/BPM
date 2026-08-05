@@ -1,0 +1,180 @@
+<div class="main-content-container overflow-hidden pt-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h3 class="mb-0">
+            Dealer User Management
+        </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a class="d-flex align-items-center text-decoration-none" href="index.html">
+                        <i class="ri-home-8-line fs-15 text-primary me-1">
+                        </i>
+                        <span class="text-body fs-14 hover">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span>
+                        E-Commerce
+                    </span>
+                </li>
+                <li aria-current="page" class="breadcrumb-item active">
+                    <span class="text-secondary">
+                        Users
+                    </span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+            <form class="table-src-form position-relative m-0">
+                <input class="form-control w-350" placeholder="Search user..." type="text" />
+            </form>
+            <a class="text-primary fs-16 border-0 text-decoration-none" style="cursor: pointer;"
+                (click)="openSidebar()">
+                + Add New User
+            </a>
+        </div>
+        <div class="default-table-area mx-minus-1 table-to-do-list">
+            <div class="table-responsive">
+                <table class="table align-middle w-100">
+                    <thead>
+                        <tr>
+                            <th class="fw-medium" scope="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="flexCheckDefault1" type="checkbox" />
+                                </div>
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Full Name
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Email
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Phone
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Role
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                IsActive
+                            </th>
+                            <th class="fw-medium" scope="col">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of userInformation; let i = index">
+                            <td class="text-body" style="width: 62px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="assets/images/user5.jpg" alt="user" class="rounded-circle"
+                                        style="width: 35px; height: 35px;" />
+                                    <span class="fs-16 fw-medium text-secondary ms-12">
+                                        {{ user.firstName }} {{ user.lastName }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-body">
+                                {{ user.email }}
+                            </td>
+                            <td class="text-body">
+                                {{ user.phone }}
+                            </td>
+                            <td class="text-body">
+                                {{user.roleInfo?.name}}
+                            </td>
+                            <td>
+                                <span
+                                    class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
+                                    *ngIf="user.isActive; else inactive">
+                                    Active
+                                </span>
+                                <ng-template #inactive>
+                                    <span
+                                        class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
+                                        Inactive
+                                    </span>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end" style="gap: 12px;">
+                                    <button class="bg-transparent p-0 border-0" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" data-bs-title="View">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-primary">
+                                            visibility
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-success"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            edit
+                                        </i>
+                                    </button>
+                                    <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                        <i class="material-symbols-outlined fs-16 fw-normal text-body">
+                                            delete
+                                        </i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15">
+                    Showing 1 to 10 of 50 entries
+                </span>
+                <nav aria-label="Page navigation example" class="custom-pagination">
+                    <ul class="pagination mb-0 justify-content-center">
+                        <li class="page-item">
+                            <button aria-label="Previous" class="page-link icon">
+                                <i class="material-symbols-outlined">
+                                    west
+                                </i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link active">
+                                1
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                2
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                3
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button aria-label="Next" class="page-link icon">
+                                <i class="material-symbols-outlined">
+                                    east
+                                </i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar Component -->
+<app-user-create #userSidebar [isVisible]="isSidebarVisible" [dealerId]="dealerId" (closeSidebar)="closeSidebar()"
+    (formSubmit)="handleFormSubmit($event)">
+</app-user-create>
