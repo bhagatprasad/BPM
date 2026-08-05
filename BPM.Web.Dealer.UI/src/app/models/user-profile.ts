@@ -38,6 +38,7 @@ export interface AuthenticateResponse {
   refreshToken: string;
 }
 
+
 export interface UpdateUserRequest {
   userId: string,
   firstName: string;
