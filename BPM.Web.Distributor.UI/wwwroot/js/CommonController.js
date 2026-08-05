@@ -58,7 +58,14 @@ function getFormData(formSelector) {
     });
     return formData;
 }
-// ajaxHelper.js
+// ============================================
+// LOADER FUNCTIONS - Must be defined first
+// ============================================
+
+// ============================================
+// AJAX HELPER
+// ============================================
+
 function makeAjaxRequest({
     url,
     data = {},
@@ -69,15 +76,24 @@ function makeAjaxRequest({
     cache = false,
     headers = {},
     showLoader = true,
+    loaderMessage = null,
     successCallback = function (response) { console.log(response); },
     errorCallback = function (xhr, status, error) { console.error(`Error: ${error}`); },
     completeCallback = function () { }
 }) {
     // Show loader if requested
     if (showLoader) {
-        var $preloader = $('#preloader');
-        if ($preloader.length) {
-            $preloader.fadeIn(300);
+        if (typeof showLoader === 'function') {
+            showLoader(loaderMessage || 'Loading...');
+        } else {
+            // Fallback to direct preloader
+            var $preloader = $('#preloader');
+            if ($preloader.length) {
+                if (loaderMessage) {
+                    $preloader.find('.loading-message').text(loaderMessage);
+                }
+                $preloader.fadeIn(300);
+            }
         }
     }
 
@@ -90,137 +106,47 @@ function makeAjaxRequest({
         processData: processData,
         cache: cache,
         headers: headers,
-        success: successCallback,
-        error: errorCallback,
+        success: function (response) {
+            successCallback(response);
+        },
+        error: function (xhr, status, error) {
+            errorCallback(xhr, status, error);
+        },
         complete: function () {
-            // Hide loader
+            // Hide loader if it was shown
             if (showLoader) {
-                var $preloader = $('#preloader');
-                if ($preloader.length) {
-                    $preloader.fadeOut(300);
+                if (typeof hideLoader === 'function') {
+                    hideLoader();
+                } else {
+                    var $preloader = $('#preloader');
+                    if ($preloader.length) {
+                        $preloader.fadeOut(300);
+                    }
                 }
             }
-            // Call complete callback
             if (completeCallback) {
                 completeCallback();
             }
         }
     });
 }
+
+// ============================================
+// REST OF YOUR EXISTING FUNCTIONS
+// ============================================
+
+// Keep all your other functions here...
+// (getStatusBadge, formatDate, generateDealerCode, etc.)
+// ============================================
+// REST OF YOUR EXISTING FUNCTIONS
+// ============================================
+
+// ... (keep all your other functions like getStatusBadge, formatDate, etc.)
+// But make sure you REMOVE duplicate showLoader/hideLoader definitions
+
+
 const Id = "00000000-0000-0000-0000-000000000000";
 
-const API_URLS = {
-    AuthenticateAsync: "/Account/Login",
-    RegistrationUserAsync: "/Account/SignUp",
-    ForgotPasswordAsync: "/Account/ForgotPassword",
-    ResetPasswordAsync: "/Account/ResetPassword",
-    ExternalCallaBackResponseAsync: "/Account/ExternalCallaBackResponse",
-    LoginOrRegisterExternalUserAsync: "/Account/LoginOrRegisterExternalUser",
-    GetUserAccountsAsync: "/User/GetUserAccounts",
-    InsertTenantAsync: '/Tenant/InsertTenant',
-    FetchTenantDetailsAsync: '/Tenant/GetTenantDetails',
-    FetchTenantsAsync: '/Tenant/fetchTenants',
-    FetchDealersAsync: '/Dealer/GetDealers',
-    InsertOrUpdateRoleAsync: '/Role/InsertOrUpdateRole',
-    BulkInsertOrUpdateTenant: '/Tenant/BulkInsertOrUpdateTenant',
-    InsertCampaignPeriodAsync: '/CampaignPeriod/InsertCampaignPeriod',
-    InsertWorkFlowAsync: '/WorkFlow/InsertWorkFlow',
-    BulkInsertOrUpdateWorkFlow: '/WorkFlow/BulkInsertOrUpdateWorkFlow',
-    InsertWorkFlowActivityAsync: '/WorkFlowActivity/InsertWorkFlowActivity',
-    FetchWorkFlowActivity: '/WorkFlowActivity/FetchWorkFlowActivity',
-    BulkInsertOrUpdateWorkFlowActivity: '/WorkFlowActivity/BulkInsertOrUpdateWorkFlowActivity',
-    FetchRolePermissionsAsync: '/Permission/FetchRolePermissions',
-    FetchActivitiesAsync: '/Activity/FetchActivities',
-    FetchFeaturesAsync: '/Feature/FetchFeatures',
-    InsertOrUpdateRolePermissonsAsync: '/Permission/InsertOrUpdateRolePermissons',
-    InsertDealerAdvantageAsync: '/DealerAdvantage/InsertDealerAdvantage',
-    DeleteDealerAdvantageAsync: '/DealerAdvantage/DeleteDealerAdvantage',
-    FetchCampaignPeriodsAsync: '/CampaignPeriod/FetchCampaignPeriod',
-    FetchCampaignTypeAsync: '/CampaignType/FetchCampaignTypes',
-    FetchCategoryAsync: '/Category/FetchCategories',
-    FetchCampaignChannelsAsync: '/CampaignChannel/FetchCampaignChannels',
-    FetchProductsAsync: '/Product/FetchProducts',
-    FetchWorkFlowsAsync: '/WorkFlow/FetchWorkFlow',
-    FetchStatusesAsync: '/Status/FetchStatuses',
-    FetchWorkFlowTemplatesAsync: '/WorkFlowTemplate/FetchWorkFlowTemplates',
-    InsertOrUpdateCampaignAsync: '/Campaign/InsertOrUpdateCampaign',
-    InsertOrUpdateDealerAsync: '/Dealer/InsertOrUpdateDealer',
-    InsertOrUpdateFlagshipDealerAsync: '/Dealer/InsertOrUpdateFlagshipDealer',
-    InsertOrUpdateDealerAmenityAsync: '/Dealer/InsertOrUpdateDealerAmenity',
-    FetchDealerAsync: '/Dealer/GetDealer',
-    FetchFlahshipDealerInfoAsync: '/Dealer/GetDealerDetails',
-    InsertOrUpdateDealerProduct: '/Dealer/InsertOrUpdateDealerProduct',
-    InsertOrUpdateDealerIncentiveAsync: '/Dealer/InsertOrUpdateDealerIncentive',
-    InsertOrUpdateDealerServiceType: '/Dealer/InsertOrUpdateDealerServiceType',
-    InsertOrUpdateDealerURLType: '/Dealer/InsertOrUpdateDealerURLType',
-    SyncFlagshipDealerAsync: '/Dealer/SyncFlagshipDealer',
-    InsertOrUpdateDealerDeleveryType: '/Dealer/InsertOrUpdateDealerDeleveryType',
-    InsertOrUpdateCustomerAsync: '/Dealer/InsertOrUpdateCustomer',
-    BulkInsertCustomerAsync: '/Dealer/BulkInsertCustomer',
-    InsertOrUpdateDealerBuyerAdvantage: '/Dealer/InsertOrUpdateDealerBuyerAdvantage',
-    FetchAmenitiesAsync: '/Aminity/FetchAmenities',
-    InsertOrUpdateAmenityAsync: '/Aminity/InsertOrUpdateAmenity',
-    FetchCampaignTypesAsync: '/CampaignType/FetchCampaignTypes',
-    InsertOrUpdateCampaignTypeAsync: '/CampaignType/InsertOrUpdateCampaignType',
-    FetchCategoriesAsync: '/Category/FetchCategories',
-    InsertOrUpdateCategoryAsync: '/Category/InsertOrUpdateCategory',
-    FetchMessageTypesAsync: '/MessageType/GetMessageTypes',
-    FetchMailboxMessagesAsync: '/MailBox/GetMailboxMessages',
-    InsertOrUpdateMailBoxAsync: '/MailBox/InsertOrUpdateMailbox',
-    FetchNotificationsAsync: '/UserMailBox/GetNotifications',
-    FetchFeaturesAsync: '/Feature/FetchFeatures',
-    InsertOrUpdateFeatureAsync: '/Feature/InsertOrUpdateFeature',
-    FetchIncentivesAsync: '/Incentive/FetchIncentives',
-    InsertOrUpdateIncentiveAsync: '/Incentive/InsertOrUpdateIncentive',
-    FetchMakesAsync: '/Make/FetchMakes',
-    InsertOrUpdateMakeAsync: '/Make/InsertOrUpdateMake',
-    FetchMetrixsAsync: '/Metric/FetchMetrixs',
-    InsertOrUpdateMetricAsync: '/Metric/InsertOrUpdateMetric',
-    FetchCampaignTemplatesAsync: '/CampaignTemplate/FetchCampaignTemplates',
-    InsertOrUpdateCampaignTemplateAsync: '/CampaignTemplate/InsertOrUpdateCampaignTemplate',
-    FetchLeadSourcesAsync: '/LeadSource/FetchLeadSources',
-    FetchProductsAsync: '/Product/FetchProducts',
-    InsertOrUpdateProductAsync: '/Product/InsertOrUpdateProduct',
-    GetSettingTypesAsync: '/SettingType/FetchSettingTypes',
-    InsertOrUpdateSettingTypeAsync: '/SettingType/InsertOrUpdateSettingType',
-    GetServiceTypeAsync: '/ServiceType/FetchServiceTypes',
-    InsertOrUpdateServiceTypeAsync: '/ServiceType/InsertOrUpdateServiceType',
-    FetchURLTypesAsync: '/URLType/FetchURLTypes',
-    InsertOrUpdateURLTypeAsync: '/URLType/InsertOrUpdateURLType',
-    InsertOrUpdateStatusAsync: '/Status/InsertOrUpdateStatus',
-    FetchYearsAynsc: '/Year/FetchYears',
-    InsertOrUpdateYearAsync: '/Year/InsertOrUpdateYear',
-    FetchMesssageTypeAsync: '/MessageType/FetchMesssageType',
-    InsertOrUpdateMessageTypeAsync: '/MessageType/InsertOrUpdateMessageType',
-    GetSettingTypeElementsAsync: '/SettingTypeElement/FetchSettingTypeElements',
-    InsertOrUpdateSettingTypeElementAsync: '/SettingTypeElement/InsertOrUpdateSettingTypeElement',
-    GetFunnelStagesAsync: '/FunnelStage/FetchFunnelStages',
-    InsertOrUpdateFunnelStageAsync: '/FunnelStage/InsertOrUpdateFunnelStage',
-    GetCustomSegmentsAsync: '/CustomSegment/FetchCustomSegments',
-    InsertOrUpdateCustomSegmentAsync: '/CustomSegment/InsertOrUpdateCustomSegment',
-    GetSurveysAsync: '/Survey/FetchSurveys',
-    InsertOrUpdateSurveyAsync: '/Survey/InsertOrUpdateSurvey',
-    GetSurveyQuestionsAsync: '/SurveyQuestion/FetchSurveyQuestions',
-    InsertOrUpdateSurveyQuestionAsync: '/SurveyQuestion/InsertOrUpdateSurveyQuestion',
-    GenarateDealerAggrimentAsync: '/Dealer/GenarateDealerAggriment',
-    GetSurveyResponsesAsync: '/SurveyResponse/FetchSurveyResponses',
-    InsertOrUpdateSurveyResponseAsync: '/SurveyResponse/InsertOrUpdateSurveyResponse',
-    GenarateTenantDealerDetailsAggriment: '/Tenant/GenarateTenantDealerDetailsAggriment',
-    FetchPaymentMethodAsync: '/PaymentMethod/FetchPaymentMethod',
-    InsertOrUpdatePaymentMethod: '/PaymentMethod/InsertOrUpdatePaymentMethod',
-    InsertOrUpdateBillingAccount: '/BillingAccount/InsertOrUpdateBillingAccount',
-    FetchBillingAccount: '/BillingAccount/FetchBillingAccount',
-    GetAccountTypeAsync: '/AccountType/GetAccountType',
-    GetAddressTypesAsync: '/AddressType/GetAddressTypes',
-    GetBanksAsync: '/Bank/GetBanks',
-    GetCardTypesAsync: '/CardType/GetCardTypes',
-    GetStatusesAsync: '/Status/GetStatuses',
-    GetTransactionTypesAsync: '/TransactionType/GetTransactionTypes',
-    GetCountriesListAsync: '/Country/GetCountriesList',
-    PlacePaymentOrderAsync: '/PaymentOrder/PlacePaymentOrder',
-    CreatePortalUserAsync: '/User/CreatePortalUser',
-    InsertAndUpdateUserKycAsync: '/User/InsertAndUpdateUserKyc'
-};
 function addCommonProperties(data) {
     var appuser = storageService.get("ApplicationUser");
     var userId = appuser ? appuser.Id : null;
@@ -231,190 +157,7 @@ function addCommonProperties(data) {
     data.IsActive = true;
     return data;
 }
-function exportToExcel(data, columns, sheetName, filename, sortColumn, sortOrder) {
-    // Filter columns to include in the Excel file
-    var filteredData = [];
-    if (data.length > 0) {
-        filteredData = data.map(function (item) {
-            var filteredItem = {};
-            columns.forEach(function (col) {
-                filteredItem[col] = item[col];
-            });
-            return filteredItem;
-        });
-        if (filteredData.length > 0 && sortColumn) {
-            filteredData.sort(function (a, b) {
-                if (a[sortColumn] < b[sortColumn]) return sortOrder === 'asc' ? -1 : 1;
-                if (a[sortColumn] > b[sortColumn]) return sortOrder === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
-    }
-    else {
-        var headerRow = {};
-        columns.forEach(function (col) {
-            headerRow[col] = null;
-        });
-        filteredData.push(headerRow);
-    }
 
-    // Apply sorting if sortColumn is provided
-
-
-    // Create a new workbook and add the data as a worksheet
-    var workbook = XLSX.utils.book_new();
-    var worksheet = XLSX.utils.json_to_sheet(filteredData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    // Generate the Excel file
-    var excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    var dataBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-    // Create a link element and trigger the download
-    var link = document.createElement('a');
-    link.href = URL.createObjectURL(dataBlob);
-    link.download = filename + '.xlsx';
-    document.body.appendChild(link);
-    link.click();
-}
-const gridColumns = {
-    TenantGrid: ['TenantName', 'TenantCode', 'Logo', 'TenantWebsite', 'Location', 'Address', 'ContactName', 'ContactPhone', 'Products', 'Makes', 'DealerCount'],
-    RoleGrid: ['Name', 'Code'],
-    CustomerGrid: ['Id', 'VIN', 'Price', 'Miles', 'StockNo', 'Year', 'Make', 'Model', 'Trim', 'BodyType', 'VehicleType', 'Drivetrain', 'Transmission', 'FuelType', 'EngineSize', 'EngineBlock', 'SellerName', 'Street', 'City', 'State', 'Zip'],
-    VehicleGrid: ["id", "vin", "price", "miles", "stock_no", "year", "make", "model", "trim", "body_type", "vehicle_type", "drivetrain", "transmission", "fuel_type", "engine_size", "engine_block", "seller_name", "street", "city", "state", "zip"]
-};
-const exportType = {
-    "Exporttemplate": "Export Template",
-    "Exportwithgriddata": "Export with Grid Data",
-    "Exportwithoriginaldata": "Export with Original Data"
-};
-
-function processFiles(files, gridColumns, callback) {
-    var importedData = [];
-    var fileList = $('#fileInfo ul');
-    fileList.empty();
-
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        fileList.append('<li>' + file.name + ' (' + file.size + ' bytes)</li>');
-    }
-
-    var reader = new FileReader();
-
-    reader.onload = function (e) {
-        var contents = e.target.result;
-
-        var workbook = XLSX.read(contents, { type: 'binary' });
-        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        // Define expected column headers
-        var expectedHeaders = gridColumns;
-
-        // Get actual column headers from the Excel file
-        var actualHeaders = Object.values(jsonData[0]);
-
-        // Validate column headers
-        var isValid = compareColumnHeaders(expectedHeaders, actualHeaders);
-
-        if (isValid) {
-            console.log('Excel column headers are valid.');
-        } else {
-            console.log('Excel column headers are invalid.');
-        }
-
-        if (isValid) {
-            var headerIndexMap = {};
-
-            // Map actual headers to their indexes
-            for (var j = 0; j < actualHeaders.length; j++) {
-                headerIndexMap[actualHeaders[j]] = j;
-            }
-
-            for (var i = 1; i < jsonData.length; i++) {
-                if (jsonData[i][0] != '' && jsonData[i][0] != 'undefined' && jsonData[i][0] != null) {
-                    var rowData = mapRowToObject(jsonData[i], headerIndexMap);
-                    var comon = addCommonProperties(rowData);
-                    importedData.push(comon);
-                }
-            }
-        }
-
-        // Call the callback with the imported data
-        callback(importedData);
-    };
-
-    reader.readAsBinaryString(file);
-}
-
-function mapRowToObject(row, headerIndexMap) {
-    var obj = {};
-
-    for (var key in headerIndexMap) {
-        if (headerIndexMap.hasOwnProperty(key)) {
-            obj[key] = row[headerIndexMap[key]];
-        }
-    }
-
-    return obj;
-}
-function compareColumnHeaders(expectedHeaders, actualHeaders) {
-    // Check if the number of columns match
-    if (expectedHeaders.length !== actualHeaders.length) {
-        return false;
-    }
-
-    // Check if the column headers match in order
-    for (var i = 0; i < expectedHeaders.length; i++) {
-        if (expectedHeaders[i].toLowerCase() !== actualHeaders[i].toLowerCase()) {
-            return false;
-        }
-    }
-
-    return true;
-}
-// Function to disable all buttons
-function disableAllButtons() {
-
-    $(".custom-cursor").addClass("disabled");
-    $("#addBtn").removeClass("disabled");
-    $("#exportBtn").removeClass("disabled");
-    /* $("#importBtn").removeClass("disabled");*/
-    /* $("#permissionBtn").removeClass("disabled");*/
-}
-
-// Function to enable buttons
-function enableButtons(table) {
-    $(".custom-cursor").removeClass("disabled");
-
-    // Highlight buttons based on selection
-    var selectedRows = table.getSelectedRows();
-    var hasMultipleSelection = selectedRows.length > 1;
-
-    if (hasMultipleSelection) {
-        /* $("#addBtn").removeClass("selected");*/
-        $("#editBtn").addClass("disabled");
-        $("#deleteBtn").addClass("disabled");
-        $("#copyBtn").addClass("disabled");
-        $("#addBtn").removeClass("disabled");
-        $("#permissionBtn").removeClass("disabled");
-        $("#campaignBtn").removeClass("disabled");
-    } else {
-        selectedRows.forEach(function (row) {
-            // Highlight based on specific conditions (e.g., edit and delete)
-            var isSelected = row.isSelected();
-            if (isSelected) {
-                /*  $("#addBtn").addClass("selected");*/
-                $("#editBtn").addClass("selected");
-                $("#deleteBtn").addClass("selected");
-                $("#copyBtn").addClass("selected");
-                $("#addBtn").addClass("disabled");
-                $("#permissionBtn").addClass("selected");
-                $("#campaignBtn").addClass("selected");
-            }
-        });
-    }
-}
 
 function getQueryStringParameter(name) {
     var urlParams = new URLSearchParams(window.location.search);
@@ -471,42 +214,7 @@ const Features = {
     SettingType: 'SettingType',
     Dealer: 'Dealer'
 };
-const hospitalStatuses = [
-    { "StatusName": "Appointment booked", "StatusCode": "AppointmentBooked" },
-    { "StatusName": "Hospital visited", "StatusCode": "HospitalVisited" },
-    { "StatusName": "Doctor consultation created", "StatusCode": "DoctorConsultationCreated" },
-    { "StatusName": "Doctor consulted", "StatusCode": "DoctorConsulted" },
-    { "StatusName": "Sent for test", "StatusCode": "SentForTests" },
-    { "StatusName": "Medicines are requested", "StatusCode": "SentForPharmacy" },
-    { "StatusName": "Test completed", "StatusCode": "TestCompleted" },
-    { "StatusName": "Reports Available", "StatusCode": "ReportsAvailable" },
-    { "StatusName": "Doctor reports seen", "StatusCode": "DoctorReportsSeen" },
-    { "StatusName": "Sent for medicine", "StatusCode": "SentToPharmacy" },
-    { "StatusName": "Medicine given", "StatusCode": "MedicineGiven" },
-    { "StatusName": "Hospital visit completed", "StatusCode": "HospitalVisitCompleted" },
-    { "StatusName": "Follow-Up Scheduled", "StatusCode": "FollowUpScheduled" },
-    { "StatusName": "Follow-Up Completed", "StatusCode": "FollowUpCompleted" },
-    { "StatusName": "Referral Made", "StatusCode": "ReferralMade" },
-    { "StatusName": "Referral Completed", "StatusCode": "ReferralCompleted" },
-    { "StatusName": "Insurance Verified", "StatusCode": "InsuranceVerified" },
-    { "StatusName": "Payment Processed", "StatusCode": "PaymentProcessed" },
-    { "StatusName": "Patient Discharged", "StatusCode": "PatientDischarged" },
-    { "StatusName": "Patient Feedback Received", "StatusCode": "PatientFeedbackReceived" },
-    { "StatusName": "Emergency Visit", "StatusCode": "EmergencyVisit" },
-    { "StatusName": "Telehealth Appointment Scheduled", "StatusCode": "TelehealthAppointmentScheduled" }
-];
-const statuses = {
-    AppointmentBooked: "Appointment booked",
-    HospitalVisited: "Hospital visited",
-    DoctorConsulated: "Doctor consulated",
-    SentForTests: "Sent for test",
-    TestCompleted: "Test completed",
-    ReportsAvailable: "Reports Available",
-    DoctorReportsSeen: "Doctor reports seen",
-    SentToPharmacy: "Sent for medicine",
-    MediceneGiven: "Medicene given",
-    HospitalVisitCompleted: "Hospital visit completed"
-};
+
 function hasPermission(featureName, activityName) {
     var userPermissions = storageService.get('UserPermissions');
     if (!userPermissions) {

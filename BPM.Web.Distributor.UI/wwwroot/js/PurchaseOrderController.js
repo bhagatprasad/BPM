@@ -54,10 +54,14 @@
     };
 
     self.fetchPurchaseOrdersAsync = function () {
+        // Show loader manually
+        showLoader('Loading purchase orders...');
+        console.log('Loader shown - fetching purchase orders...');
+
         makeAjaxRequest({
             url: '/PurchaseOrder/GetAllPurchaseOrders',
             type: 'GET',
-            showLoader: true,
+            showLoader: false, // Manual control
             successCallback: function (response) {
                 console.log('PurchaseOrder response:', response);
 
@@ -108,11 +112,29 @@
                         };
                     });
 
+                    console.log('Mapped purchase orders:', self.PurchaseOrders);
+
                     // Initialize filtered orders
                     self.filteredOrders = self.PurchaseOrders;
 
                     // Render the table
+                    console.log('Rendering table...');
                     self.render();
+
+                    // Hide loader after rendering with a small delay
+                    setTimeout(function () {
+                        console.log('Hiding loader...');
+                        hideLoader();
+                    }, 300);
+
+                } else {
+                    console.error('Invalid response');
+                    self.$tableBody.html(
+                        '<tr><td colspan="10" class="text-center py-4 text-danger">' +
+                        '<i class="material-symbols-outlined fs-40 mb-2 d-block">error</i>' +
+                        'Invalid data format received from server.</td></tr>'
+                    );
+                    hideLoader();
                 }
             },
             errorCallback: function (xhr, status, error) {
@@ -123,6 +145,7 @@
                     '<i class="material-symbols-outlined fs-40 mb-2 d-block">error</i>' +
                     'Failed to load purchase orders. Please try again.</td></tr>'
                 );
+                hideLoader();
             }
         });
     };
@@ -160,6 +183,8 @@
 
     self.renderTableBody = function () {
         var currentPageOrders = self.getCurrentPageOrders();
+
+        console.log('Rendering orders:', currentPageOrders);
 
         if (currentPageOrders.length === 0) {
             self.$tableBody.html(
@@ -327,8 +352,18 @@
         console.log('View order:', orderId);
         var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
         if (order) {
-            // You can open a modal or navigate to detail page
-            alert('Viewing Purchase Order: ' + order.PONumber + '\nSupplier: ' + order.supplierName + '\nTotal: $' + order.totalAmount.toFixed(2));
+            var message = 'Viewing Purchase Order:\n\n' +
+                'PO Number: ' + order.PONumber + '\n' +
+                'Supplier: ' + order.supplierName + '\n' +
+                'Sub Total: $' + order.subTotal.toFixed(2) + '\n' +
+                'Tax: $' + order.taxAmount.toFixed(2) + '\n' +
+                'Total: $' + order.totalAmount.toFixed(2) + '\n' +
+                'Status: ' + order.status + '\n' +
+                'Order Date: ' + self.formatDate(order.orderDate) + '\n' +
+                'Delivery Terms: ' + (order.deliveryTerms || 'N/A') + '\n' +
+                'Payment Terms: ' + (order.paymentTerms || 'N/A') + '\n' +
+                'Items: ' + (order.purchaseOrderDetails ? order.purchaseOrderDetails.length : 0);
+            alert(message);
         }
     };
 
@@ -337,16 +372,22 @@
         if (confirm('Are you sure you want to approve this purchase order?')) {
             var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
             if (order) {
+                // Show loader manually
+                showLoader('Approving order...');
+
                 makeAjaxRequest({
                     url: '/PurchaseOrder/ApproveOrder',
                     type: 'POST',
-                    data: { orderId: orderId },
-                    showLoader: true,
+                    data: JSON.stringify({ orderId: orderId }),
+                    contentType: 'application/json; charset=utf-8',
+                    showLoader: false,
                     successCallback: function (response) {
+                        hideLoader();
                         alert('Order ' + order.PONumber + ' has been approved successfully!');
                         self.fetchPurchaseOrdersAsync(); // Refresh data
                     },
                     errorCallback: function (xhr, status, error) {
+                        hideLoader();
                         alert('Failed to approve order. Please try again.');
                     }
                 });
@@ -359,16 +400,22 @@
         if (confirm('Are you sure you want to cancel this purchase order? This action cannot be undone.')) {
             var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
             if (order) {
+                // Show loader manually
+                showLoader('Cancelling order...');
+
                 makeAjaxRequest({
                     url: '/PurchaseOrder/CancelOrder',
                     type: 'POST',
-                    data: { orderId: orderId },
-                    showLoader: true,
+                    data: JSON.stringify({ orderId: orderId }),
+                    contentType: 'application/json; charset=utf-8',
+                    showLoader: false,
                     successCallback: function (response) {
+                        hideLoader();
                         alert('Order ' + order.PONumber + ' has been cancelled.');
                         self.fetchPurchaseOrdersAsync(); // Refresh data
                     },
                     errorCallback: function (xhr, status, error) {
+                        hideLoader();
                         alert('Failed to cancel order. Please try again.');
                     }
                 });

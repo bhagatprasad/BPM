@@ -1,4 +1,6 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.Entities;
+using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 
@@ -15,7 +17,7 @@ namespace BPM.Web.API.Services
             _logger = logger;
         }
 
-        public async Task<List<Drug>> GetAllDrugsAsync()
+        public async Task<List<DrugDto>> GetAllDrugsAsync()
         {
             try
             {
@@ -23,7 +25,7 @@ namespace BPM.Web.API.Services
 
                 var drugs = await _repository.GetAllDrugsAsync();
 
-                return drugs;
+                return drugs.ToDrugDtoList();
             }
             catch (Exception ex)
             {
@@ -32,7 +34,7 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<Drug?> GetDrugByIdAsync(Guid drugId)
+        public async Task<DrugDto?> GetDrugByIdAsync(Guid drugId)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace BPM.Web.API.Services
                     return null;
                 }
 
-                return drug;
+                return drug.DrugToDrugDto();
             }
             catch (Exception ex)
             {
@@ -55,11 +57,13 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<bool> InsertDrugAsync(Drug drug)
+        public async Task<bool> InsertDrugAsync(CreateDrugDto drugDto)
         {
             try
             {
                 _logger.LogInformation("Creating drug");
+
+                var drug = drugDto.ToEntity();
 
                 var result = await _repository.InsertDrugAsync(drug);
 
@@ -78,13 +82,15 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<bool> UpdateDrugAsync(Drug drug)
+        public async Task<bool> UpdateDrugAsync(UpdateDrugDto dto)
         {
             try
             {
                 _logger.LogInformation("Updating drug");
 
-                var result = await _repository.UpdateDrugAsync(drug);
+
+
+                var result = await _repository.UpdateDrugAsync(dto.UpdateDrugDtoToDrug());
 
                 if (!result)
                 {
@@ -96,7 +102,7 @@ namespace BPM.Web.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating drug with Id {DrugId}", drug.DrugId);
+                _logger.LogError(ex, "Error occurred while updating drug with Id {DrugId}", dto.DrugId);
                 throw;
             }
         }

@@ -1,19 +1,23 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, AuthenticateResponse } from '../../models/user-profile';
+import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse } from '../../models/user-profile';
 import { UserService } from '../../services/profile.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 import { DealerService } from '../../services/dealer.service';
 import { UpdatedDealerRequest, UpdatedDealerResponse } from '../../models/dealer-profile';
+import { UserPersonalInfoComponent } from './user-personal-info.component';
+import { ChangePasswordComponent } from './change-password.component';
+import { DealerInfoSectionComponent } from './dealer-info-section.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule,],
+  imports: [FormsModule, CommonModule,UserPersonalInfoComponent,ChangePasswordComponent,DealerInfoSectionComponent],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+ 
 })
 export class ProfileComponent implements OnInit {
   constructor(

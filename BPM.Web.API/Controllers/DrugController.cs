@@ -1,8 +1,6 @@
 ﻿using BPM.Web.API.Service;
 using Microsoft.AspNetCore.Mvc;
-using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Models.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using BPM.Web.API.CustomFilters;
 
 namespace BPM.Web.API.Controllers
@@ -30,7 +28,25 @@ namespace BPM.Web.API.Controllers
 
                 var drugs = await _drugService.GetAllDrugsAsync();
 
-                return Ok(DrugMapper.ToDtoList(drugs));
+                return Ok(drugs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching all drugs.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+        [HttpGet]
+        [Route("get-all-drugs")]
+        public async Task<IActionResult> GetAllDrugs()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching all drugs.");
+
+                var drugs = await _drugService.GetAllDrugsAsync();
+
+                return Ok(drugs);
             }
             catch (Exception ex)
             {
@@ -39,7 +55,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("{drugId:guid}")]
+        [HttpGet]
+        [Route("get-drug-by-id/{drugId}")]
         public async Task<IActionResult> Get(Guid drugId)
         {
             try
@@ -53,7 +70,7 @@ namespace BPM.Web.API.Controllers
                     return NotFound("Drug not found.");
                 }
 
-                return Ok(DrugMapper.ToDto(drug));
+                return Ok(drug);
             }
             catch (Exception ex)
             {
@@ -63,22 +80,21 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateDrugDto dto)
+        [Route("create-drug")]
+        public async Task<IActionResult> Create(CreateDrugDto dto)
         {
             try
             {
                 _logger.LogInformation("Creating drug.");
 
-                var drug = DrugMapper.ToEntity(dto);
-
-                var result = await _drugService.InsertDrugAsync(drug);
+                var result = await _drugService.InsertDrugAsync(dto);
 
                 if (!result)
                 {
-                    return BadRequest("Failed to create drug.");
+                    return BadRequest(false);
                 }
 
-                return Ok("Drug Created Successfully");
+                return Ok(true);
             }
             catch (Exception ex)
             {
@@ -94,22 +110,14 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogInformation("Updating drug.");
 
-                var drug = DrugMapper.ToEntity(dto);
-
-                var result = await _drugService.UpdateDrugAsync(drug);
+                var result = await _drugService.UpdateDrugAsync(dto);
 
                 if (!result)
                 {
-                    return NotFound(new
-                    {
-                        Message = "Drug not found."
-                    });
+                    return Ok(false);
                 }
 
-                return Ok(new
-                {
-                    Message = "Drug updated successfully."
-                });
+                return Ok(true);
             }
             catch (Exception ex)
             {

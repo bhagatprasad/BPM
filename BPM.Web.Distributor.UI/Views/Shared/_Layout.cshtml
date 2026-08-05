@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
     <title>@ViewData["Title"] - BPM Distributor</title>
@@ -19,8 +18,6 @@
     <link href="~/assets/css/loader.css" rel="stylesheet" />
     <!-- Favicon -->
     <link href="~/assets/images/favicon.png" rel="icon" type="image/png" />
-
-   
 </head>
 <body class="bg-body-bg">
     <partial name="_loaderPartial" />
@@ -46,7 +43,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- All Required JavaScript Libraries -->
@@ -69,10 +65,11 @@
     <script src="~/assets/js/custom/maps.js"></script>
     <script src="~/assets/js/custom/custom.js"></script>
     <script src="~/js/CommonController.js"></script>
+    <script src="~/js/LoaderController.js"></script> 
     <script src="~/js/StorageService.js"></script>
 
     <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 console.log('Layout loaded successfully');
 
                 // Ensure sidebar menu works
@@ -80,47 +77,16 @@
                     // If menu plugin exists, initialize it
                 }
 
-                // Global AJAX events for preloader
+                // Only hide preloader on page load
                 $(window).on('load', function () {
-                    $('#preloader').fadeOut(500);
+                    hideLoader(); // Using LoaderController function
                 });
 
-                $(document).ajaxStart(function () {
-                    $('#preloader').fadeIn(300);
-                });
-
-                $(document).ajaxStop(function () {
-                    $('#preloader').fadeOut(300);
-                });
-
-                $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
-                    $('#preloader').fadeOut(300);
-                    if (jqxhr.status === 401) {
-                        $('#loginEmailError').text('Session expired. Please login again.').show();
-                        setTimeout(function () {
-                            $('#loginEmailError').fadeOut(300);
-                        }, 5000);
-                    }
-                });
-
-                // Custom functions for manual control
-                function showPharmacyLoader() {
-                    $('#preloader').fadeIn(300);
-                }
-
-                function hidePharmacyLoader() {
-                    $('#preloader').fadeOut(300);
-                }
-
-                function showPharmacyLoaderWithMessage(message) {
-                    if (message) {
-                        $('.loading-message').text(message);
-                    }
-                    showPharmacyLoader();
-                }
+                // REMOVED: Global ajaxStart, ajaxStop, ajaxError events
+                // We will control loader manually using showLoader() and hideLoader()
             });
     </script>
-     @await Component.InvokeAsync("Notyf")
+    @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

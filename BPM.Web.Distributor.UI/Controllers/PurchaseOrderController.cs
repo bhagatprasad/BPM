@@ -40,5 +40,22 @@ namespace BPM.Web.Distributor.UI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPurchaseOrdersByDealer(Guid dealerId)
+        {
+            try
+            {
+                var purchaseOrders = await _purchaseOrderService.GetPurchaseOrdersByDealerAsync(dealerId);
+
+                return Json(purchaseOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching dealer purchase orders.");
+                _notyf.Error("Unable to load purchase orders.");
+                return StatusCode(500);
+            }
+        }
     }
 }
