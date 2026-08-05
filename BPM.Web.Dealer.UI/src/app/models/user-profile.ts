@@ -1,6 +1,7 @@
 export interface User { }
 
 export interface DealerInfo {
+
   addressLine1: string;
   addressLine2: string;
   alternatePhone: string;
