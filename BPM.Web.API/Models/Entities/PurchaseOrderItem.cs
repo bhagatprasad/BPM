@@ -74,6 +74,10 @@ namespace BPM.Web.API.Models.Entities
 
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
+        
+        //navigation
         public PurchaseOrder PurchaseOrder { get; set; }
+        [ForeignKey(nameof(DrugId))]
+        public virtual Drug? Drug { get; set; }
     }
 }

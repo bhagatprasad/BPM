@@ -64,9 +64,5 @@
 }
 
 /*.
-<<input
-  type="text"
-  class="form-control search-input"
-  placeholder="Search orders..."
-  [(ngModel)]="searchText" />
+
 */

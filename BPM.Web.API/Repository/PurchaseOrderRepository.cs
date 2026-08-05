@@ -32,22 +32,29 @@ namespace BPM.Web.API.Repository
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
         {
-            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.PurchaseOrderItems).OrderByDescending(po => po.ModifiedOn).ToListAsync();
+            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po=>po.Supplier).Include(po => po.PurchaseOrderItems).ThenInclude(item => item.Drug).OrderByDescending(po => po.ModifiedOn).ToListAsync();
         }
+    
 
         public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id)
         {
             return await _dbContext.PurchaseOrders
+                .Include(po => po.Supplier)
                 .Include(po => po.PurchaseOrderItems)
+                .ThenInclude(item => item.Drug)
                 .FirstOrDefaultAsync(po => po.Id == id && po.IsActive);
         }
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
         {
             return await _dbContext.PurchaseOrders
+                .Include(po=>po.Supplier)
                 .Include(po => po.PurchaseOrderItems)
+                .ThenInclude(item => item.Drug)
                 .Where(po => po.DealerId == dealerId && po.IsActive)
+                .OrderByDescending(po => po.OrderDate)
                 .ToListAsync();
         }
+       
     }
 }

@@ -1,3 +1,6 @@
+<div class="mb-3 mt-4">
+  <h2 class="fw-bold mb-0">Orders</h2>
+</div>
 <div class="card shadow-sm border-0 mb-3">
   <div class="card-body">
     <div class="row align-items-center">
@@ -13,11 +16,18 @@
           />
         </div>
       </div>
+
       <!--statistics-->
-      <div class="col-lg-5"></div>
+      <div class="col-lg-5 d-flex align-items-center justify-content-center">
+        <span class="fw-semibold fs-6">
+          Total Orders:
+          <span class="text-primary">{{ filteredOrders().length }}</span>
+        </span>
+      </div>
+
       <!--add button-->
       <div class="col-lg-3 text-end">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="addNewOrder()">
           <i class="ri-add-line me-1"></i>
           Add New Order
         </button>
@@ -66,12 +76,12 @@
                 [class.ri-arrow-right-s-line]="expandedOrderId !== order.poNumber"
                 [class.ri-arrow-down-s-line]="expandedOrderId === order.poNumber"
                 (click)="toggleRow(order.poNumber)"
-                style="cursor: pointer"
               >
               </i>
             </td>
             <td>{{ order.poNumber }}</td>
-            <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td>
+            <!-- <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td> 5hrs30min late-->
+            <td>{{ convertToIST(order.orderDate) | date: 'dd-MMM-yyyy hh:mm a' }}</td>
 
             <td>{{ order.supplierName }}</td>
 
@@ -153,22 +163,13 @@
                     </thead>
 
                     <tbody>
-                      <tr>
-                        <td>Paracetamol 500mg</td>
-                        <td>100</td>
-                        <td>₹10.00</td>
-                        <td>₹0.00</td>
-                        <td>₹50.00</td>
-                        <td>₹1,050.00</td>
-                      </tr>
-
-                      <tr>
-                        <td>Amoxicillin 250mg</td>
-                        <td>50</td>
-                        <td>₹20.00</td>
-                        <td>₹100.00</td>
-                        <td>₹90.00</td>
-                        <td>₹990.00</td>
+                      <tr *ngFor="let item of order.purchaseOrderItemResponse">
+                        <td>{{ item.drugName }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.unitPrice | number: '1.2-2' }}</td>
+                        <td>₹{{ item.discountAmount | number: '1.2-2' }}</td>
+                        <td>₹{{ item.taxAmount | number: '1.2-2' }}</td>
+                        <td>₹{{ item.totalAmount | number: '1.2-2' }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -182,23 +183,23 @@
                   <table class="table table-bordered mb-0">
                     <tbody>
                       <tr>
-                        <th width="70%">Sub Total</th>
-                        <td>₹11,500.00</td>
+                        <th>SubTotal</th>
+                        <td>₹{{ order.subTotal | number: '1.2-2' }}</td>
                       </tr>
 
                       <tr>
                         <th>Discount</th>
-                        <td>₹100.00</td>
+                        <td>₹{{ order.discountAmount | number: '1.2-2' }}</td>
                       </tr>
 
                       <tr>
                         <th>Tax</th>
-                        <td>₹1,100.00</td>
+                        <td>₹{{ order.taxAmount | number: '1.2-2' }}</td>
                       </tr>
 
                       <tr class="table-light fw-bold">
                         <th>Grand Total</th>
-                        <td>₹12,500.00</td>
+                        <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -207,6 +208,9 @@
             </td>
           </tr>
         </ng-container>
+        <tr *ngIf="filteredOrders().length === 0">
+          <td colspan="8" class="text-center py-4">No Purchase Orders Found</td>
+        </tr>
       </tbody>
     </table>
   </div>

@@ -1,6 +1,9 @@
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PurchaseOrderService } from '@app/services/purchase-order.service';
+import { Router } from '@angular/router';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({
   selector: 'app-my-orders',
@@ -9,8 +12,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
 })
-export class MyOrdersComponent {
-  //orders: any[] = [];
+export class MyOrdersComponent implements OnInit {
+  orders: any[] = [];
   expandedOrderId: string | null = null;
 
   selectedOrders: string[] = [];
@@ -18,32 +21,34 @@ export class MyOrdersComponent {
 
   searchText = '';
 
-  constructor() {}
+  constructor(
+    private purchaseOrderService: PurchaseOrderService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private toaster: ToastrService,
+  ) {}
+  ngOnInit(): void {
+    this.loadOrders();
+  }
 
-  orders = [
-    {
-      poNumber: 'PO-202608-0001',
-      orderDate: new Date(),
-      supplierName: 'Sun Pharma',
-      status: 'Draft',
-      totalAmount: 12500,
-    },
-    {
-      poNumber: 'PO-202608-0002',
-      orderDate: new Date(),
-      supplierName: 'Cipla',
-      status: 'Approved',
-      totalAmount: 34250,
-    },
-    {
-      poNumber: 'PO-202608-0003',
-      orderDate: new Date(),
-      supplierName: 'Dr Reddys',
-      status: 'Pending',
-      totalAmount: 9850,
-    },
-  ];
-
+  loadOrders(): void {
+    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
+    const dealerId = auth.authenticateResponseDto.dealerId;
+    //const dealerId = 'fb325f30-b6ea-4660-85ba-65a95379874a';
+    this.purchaseOrderService.getOrdersByDealer(dealerId).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.orders = res;
+        this.cdr.detectChanges();
+        console.log('orders length is : ', this.orders.length);
+        this.toaster.success('Orders loaded successfully', 'Success');
+      },
+      error: (err) => {
+        console.log(err);
+        this.toaster.error('Failed to load orders', 'Error');
+      },
+    });
+  }
   toggleRow(poNumber: string) {
     if (this.expandedOrderId === poNumber) {
       this.expandedOrderId = null;
@@ -62,11 +67,10 @@ export class MyOrdersComponent {
   toggleAll(event: any) {
     this.isAllSelected = event.target.checked;
     if (this.isAllSelected) {
-      this.selectedOrders = this.orders.map((a) => a.poNumber);
+      this.selectedOrders = this.filteredOrders().map((a) => a.poNumber);
     } else {
       this.selectedOrders = [];
     }
-    console.log(this.selectedOrders);
   }
 
   toggleSelection(poNumber: string, event: any) {
@@ -89,5 +93,13 @@ export class MyOrdersComponent {
         order.supplierName.toLowerCase().includes(this.searchText.toLowerCase()) ||
         order.status.toLowerCase().includes(this.searchText.toLowerCase()),
     );
+  }
+  addNewOrder() {
+    this.toaster.info('Redirecting to Drugs Catalog...', 'Info');
+    this.router.navigate(['/drugs']);
+  }
+  convertToIST(date: string): Date {
+    const utcDate = new Date(date);
+    return new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000);
   }
 }
