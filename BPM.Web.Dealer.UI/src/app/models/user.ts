@@ -5,9 +5,7 @@ export interface User { }
 export interface usersRequest {
     dealerId: string;
 }
-export interface userInformation{
-
-
+export interface userInformation {
     userId?: string;
     firstName?: string;
     lastName?: string;
@@ -16,13 +14,13 @@ export interface userInformation{
     isActive?: boolean;
     dealerId?: string;
     roleId?: string;
-    dealerInfo?: DealerInfo[];
-    roleinfo?: roleInfo[];    
+    dealerInfo?: DealerInfo;
+    roleInfo?: roleInfo;
 }
 
-  export interface roleInfo {
-      id: string,
-      name: string,
-      isActive: boolean,
-      code: string
-    }
+export interface roleInfo {
+    id: string,
+    name: string,
+    isActive: boolean,
+    code: string
+}
