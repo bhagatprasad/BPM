@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, userDto } from '../../models/user-profile';
-import { UserService } from '../../services/profile.service';
+import { ProfileService } from '../../services/profile.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 import { DealerService } from '../../services/dealer.service';
@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit {
   dealerId:string='';
 
   constructor(
-    private userService: UserService,
+    private profileService: ProfileService,
     private dealerService: DealerService,
     private toastr: ToastrService,
     private loader: SpinnerLoadingService,
@@ -380,7 +380,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
     const updateData = this.updateUserInfo();
-    this.userService.updateUserProfile(this.userId, updateData).subscribe({
+    this.profileService.updateUserProfile(this.userId, updateData).subscribe({
       next: (response) => {
         console.log(response.message);
         this.toastr.success(response.message);
@@ -407,7 +407,7 @@ export class ProfileComponent implements OnInit {
     }
     const updatedChangePassword = this.updatedPasswordInfo();
 
-    this.userService.updatedChangePassword(this.userId, updatedChangePassword).subscribe({
+    this.profileService.updatedChangePassword(this.userId, updatedChangePassword).subscribe({
       next: (response) => {
         console.log(response.message);
         this.toastr.success(response.message);

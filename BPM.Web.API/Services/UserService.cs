@@ -28,9 +28,7 @@ namespace BPM.Web.API.Services
                     return new List<UserDto>();
                 }
 
-                var userDtos = users.Select(user => user.ToEntity()).ToList();
-
-                return userDtos;
+                return users.ToUserDtoList(); 
             }
             catch (Exception ex)
             {
@@ -54,9 +52,7 @@ namespace BPM.Web.API.Services
                     return new List<UserDto>();
                 }
 
-                var userDtos = users.Select(user => user.ToEntity()).ToList();
-
-                return userDtos;
+                return users.ToUserDtoList();
             }
             catch (Exception ex)
             {
