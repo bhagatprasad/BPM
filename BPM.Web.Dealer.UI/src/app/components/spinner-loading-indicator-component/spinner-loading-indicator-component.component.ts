@@ -14,6 +14,12 @@ import { SpinnerLoadingService } from '../../common/services/spinner-loading-ser
   styleUrls: ['./spinner-loading-indicator-component.component.css']
 })
 export class SpinnerLoadingIndicatorComponent implements OnInit, OnDestroy {
+  hide() {
+    throw new Error('Method not implemented.');
+  }
+  show(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   loading$: Observable<boolean>;
   loadingMessage: string = 'Loading...';
   private messageSubscription?: Subscription;

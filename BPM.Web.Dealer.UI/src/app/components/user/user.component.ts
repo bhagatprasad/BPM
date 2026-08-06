@@ -23,6 +23,7 @@ export class UserComponent {
   userData: any;
   userId: any;
   isSidebarVisible: boolean = false;
+  
 
   constructor(
     private userService: UserService,

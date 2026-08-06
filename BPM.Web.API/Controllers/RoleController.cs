@@ -21,6 +21,7 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpGet]
+        [Route("get-all-roles")]
         public async Task<IActionResult> GetRoles()
         {
             try
