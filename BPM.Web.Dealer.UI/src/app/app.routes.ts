@@ -52,7 +52,7 @@ export const routes: Routes = [
     canActivate: [authenticationGuard],
   },
   {
-    path:'users',
+    path: 'users',
     loadComponent: () => import('./components/user/user.component').then(m => m.UserComponent),
     canActivate: [authenticationGuard],
   },

@@ -3,87 +3,160 @@
 
 <!-- Add *ngIf to the sidebar -->
 <div class="sidebar" *ngIf="isVisible" [class.visible]="isVisible">
-    <div class="sidebar-header">
-        <h5 class="sidebar-title">Add New User</h5>
-        <button type="button" class="close" (click)="close()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+  <div class="sidebar-header">
+    <h5 class="sidebar-title">Add New User</h5>
+    <button type="button" class="close" (click)="close()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="sidebar-body">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="firstName">First Name *</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstName"
+          formControlName="firstName"
+          placeholder="Enter first name"
+        />
+        <div
+          *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('firstName')?.errors?.['required']"
+            >First name is required</small
+          >
+          <small *ngIf="userForm.get('firstName')?.errors?.['minlength']"
+            >Minimum 2 characters required</small
+          >
+          <small *ngIf="userForm.get('firstName')?.errors?.['maxlength']"
+            >Maximum 50 characters allowed.</small
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name *</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lastName"
+          formControlName="lastName"
+          placeholder="Enter last name"
+        />
+        <div
+          *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('lastName')?.errors?.['required']"
+            >Last name is required</small
+          >
+          <small *ngIf="userForm.get('lastName')?.errors?.['minlength']"
+            >Minimum 2 characters required</small
+          >
+          <small *ngIf="userForm.get('lastName')?.errors?.['maxlength']"
+            >Maximum 50 characters allowed.</small
+          >
+          <small *ngIf="userForm.get('lastName')?.errors?.['pattern']"
+            >Only letters are allowed.</small
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="Enter email address"
+        />
+        <div
+          *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('email')?.errors?.['required']">Email is required</small>
+          <small *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email</small>
+          <small *ngIf="userForm.get('email')?.errors?.['maxlength']"
+            >Maximum 50 characters allowed.</small
+          >
+          <small *ngIf="userForm.get('email')?.errors?.['pattern']"
+            >Only letters are allowed.</small
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone *</label>
+        <input
+          type="tel"
+          class="form-control"
+          id="phone"
+          formControlName="phone"
+          placeholder="Enter phone number"
+        />
+        <div
+          *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('phone')?.errors?.['required']"
+            >Phone number is required</small
+          >
+          <small *ngIf="userForm.get('phone')?.errors?.['pattern']"
+            >Please enter a valid phone number (10-15 digits)</small
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Enter password (min 6 characters)"
+        />
+        <div
+          *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('password')?.errors?.['required']">Password is required</small>
+          <small *ngIf="userForm.get('password')?.errors?.['minlength']"
+            >Minimum 6 characters required</small
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="roleId">Role *</label>
+        <select class="form-control" id="roleId" formControlName="roleId">
+          <option value="">Select Role</option>
+          <option *ngFor="let role of roles" [value]="role.id">
+            {{ role.name }}
+          </option>
+        </select>
+        <div
+          *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched"
+          class="text-danger mt-1"
+        >
+          <small *ngIf="userForm.get('roleId')?.errors?.['required']"> Role is required </small>
+        </div>
+      </div>
+
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="isActive" formControlName="isActive" />
+        <label class="form-check-label" for="isActive">Active</label>
+      </div>
+
+      <div class="sidebar-footer">
+        <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+          Create User
         </button>
-    </div>
-    <div class="sidebar-body">
-        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-                <label for="firstName">First Name *</label>
-                <input type="text" class="form-control" id="firstName" formControlName="firstName"
-                    placeholder="Enter first name">
-                <div *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('firstName')?.errors?.['required']">First name is required</small>
-                    <small *ngIf="userForm.get('firstName')?.errors?.['minlength']">Minimum 2 characters required</small>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="lastName">Last Name *</label>
-                <input type="text" class="form-control" id="lastName" formControlName="lastName"
-                    placeholder="Enter last name">
-                <div *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('lastName')?.errors?.['required']">Last name is required</small>
-                    <small *ngIf="userForm.get('lastName')?.errors?.['minlength']">Minimum 2 characters required</small>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" class="form-control" id="email" formControlName="email"
-                    placeholder="Enter email address">
-                <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('email')?.errors?.['required']">Email is required</small>
-                    <small *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email</small>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone *</label>
-                <input type="tel" class="form-control" id="phone" formControlName="phone"
-                    placeholder="Enter phone number">
-                <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('phone')?.errors?.['required']">Phone number is required</small>
-                    <small *ngIf="userForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number (10-15 digits)</small>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password *</label>
-                <input type="password" class="form-control" id="password" formControlName="password"
-                    placeholder="Enter password (min 6 characters)">
-                <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('password')?.errors?.['required']">Password is required</small>
-                    <small *ngIf="userForm.get('password')?.errors?.['minlength']">Minimum 6 characters required</small>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="roleId">Role *</label>
-                <select class="form-control" id="roleId" formControlName="roleId">
-                    <option value="">Select Role</option>
-                    <option value="1">Admin</option>
-                    <option value="2">Manager</option>
-                    <option value="3">Staff</option>
-                    <option value="4">Viewer</option>
-                </select>
-                <div *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched" class="text-danger mt-1">
-                    <small *ngIf="userForm.get('roleId')?.errors?.['required']">Role is required</small>
-                </div>
-            </div>
-
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="isActive" formControlName="isActive">
-                <label class="form-check-label" for="isActive">Active</label>
-            </div>
-
-            <div class="sidebar-footer">
-                <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
-                <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">Create User</button>
-            </div>
-        </form>
-    </div>
+      </div>
+    </form>
+  </div>
 </div>
