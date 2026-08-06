@@ -7,6 +7,7 @@
         public string PONumber { get; set; } = string.Empty;
 
         public Guid SupplierId { get; set; }
+        public string SupplierName { get; set; } = string.Empty;
 
         public Guid DealerId { get; set; }
 
