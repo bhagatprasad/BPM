@@ -11,7 +11,7 @@ export class RoleService {
 constructor(private apiService: ApiService) { }
 
 getAllRolesAsync(): Observable<roleInfo[]> {
-    const endpoint = `${environment.UrlConstants.User.GetAllRolesAsync}`;
+    const endpoint = `${environment.UrlConstants.Role.GetAllRolesAsync}`;
     return this.apiService.send<roleInfo[]>('GET', endpoint);
   }
 

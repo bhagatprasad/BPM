@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoleService } from '@app/services/role.service';
 import { roleInfo } from '@app/models/user';
@@ -11,21 +11,22 @@ import { roleInfo } from '@app/models/user';
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.css']
 })
-export class UserCreateSidebarComponent {
+export class UserCreateSidebarComponent implements OnInit {
   @Input() isVisible: boolean = false;
   @Input() dealerId: string = '';
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() formSubmit = new EventEmitter<any>();
 
   roles: roleInfo[] = [];
+  filteredRoles: roleInfo[] = [];
+  showPassword: boolean = false;
 
   userForm: FormGroup;
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private roleService: RoleService,
     private cdr: ChangeDetectorRef,
-
-
   ) {
     this.userForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern('^[A-Za-z ]+$')]],
@@ -39,14 +40,16 @@ export class UserCreateSidebarComponent {
     });
   }
 
-
   ngOnChanges(changes: SimpleChanges): void {
-    // Update dealerId if it changes from parent
     if (changes['dealerId'] && this.dealerId) {
       this.userForm.patchValue({
         dealerId: this.dealerId
       });
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   close(): void {
@@ -65,7 +68,6 @@ export class UserCreateSidebarComponent {
       return;
     }
 
-    // Emit the form data to parent
     this.formSubmit.emit(this.userForm.value);
   }
 
@@ -80,21 +82,22 @@ export class UserCreateSidebarComponent {
     });
   }
 
-  // Helper method to reset form from parent
   reset(): void {
     this.resetForm();
   }
 
   ngOnInit(): void {
-
     this.loadRoles();
   }
 
   loadRoles(): void {
-
     this.roleService.getAllRolesAsync().subscribe({
       next: (roles) => {
         this.roles = roles || [];
+        // Filter to show only Operator and Dealer (exclude Administrator)
+        this.filteredRoles = this.roles.filter(role =>
+          role.code === 'OPERATOR'
+        );
         this.cdr.detectChanges();
       },
       error: (error) => {

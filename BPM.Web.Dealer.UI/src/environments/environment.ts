@@ -16,14 +16,16 @@ export const environment = {
     },
     User: {
       UpdateUserProfileAsync: 'user/updateuser',
-      ChangePasswordAsync:'user/changepassword',
-      GetAllUsersByDealerIdAsync:'user/get-all-users-by-dealer',
-      InsertUserAsync:'user/insert-user',
-      CreateUserAsync:'user/create-user',
-      GetAllRolesAsync:'user/get-all-roles'
+      ChangePasswordAsync: 'user/changepassword',
+      GetAllUsersByDealerIdAsync: 'user/get-all-users-by-dealer',
+      InsertUserAsync: 'user/insert-user',
+      CreateUserAsync: 'user/create-user'
     },
-    Dealer:{
-      updateDealerAsync:'dealer/updatedealer'
-    }    
+    Role: {
+      GetAllRolesAsync: 'role/get-all-roles'
+    },
+    Dealer: {
+      updateDealerAsync: 'dealer/updatedealer'
+    }
   },
 };

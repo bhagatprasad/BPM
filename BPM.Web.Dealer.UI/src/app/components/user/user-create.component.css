@@ -21,7 +21,6 @@
     transition: right 0.3s ease;
     overflow-y: auto;
     display: block;
-    /* Change from default */
 }
 
 .sidebar:not(.visible) {
@@ -68,6 +67,81 @@
     padding-bottom: 100px;
 }
 
+/* ===== INPUT ICON STYLES ===== */
+.input-icon-wrapper {
+    position: relative;
+}
+
+.input-icon-wrapper .input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 18px;
+    z-index: 2;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+/* Input with icon */
+.input-icon-wrapper .form-control {
+    padding-left: 40px;
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Select dropdown with icon */
+.input-icon-wrapper select.form-control {
+    padding-left: 40px;
+    appearance: auto;
+    cursor: pointer;
+}
+
+/* Textarea with icon */
+.input-icon-wrapper textarea.form-control {
+    padding-left: 40px;
+    padding-top: 12px;
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Hover effect */
+.input-icon-wrapper:hover .input-icon {
+    color: #0d6efd;
+}
+
+/* Focus effect */
+.input-icon-wrapper .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-icon-wrapper .form-control:focus ~ .input-icon,
+.input-icon-wrapper .form-control:focus + .input-icon {
+    color: #0d6efd;
+}
+
+/* Error state for icon */
+.input-icon-wrapper .form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.input-icon-wrapper .form-control.is-invalid ~ .input-icon,
+.input-icon-wrapper .form-control.is-invalid + .input-icon {
+    color: #dc3545;
+}
+
+.input-icon-wrapper .form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* ===== FORM STYLES ===== */
 .form-group {
     margin-bottom: 20px;
 }
@@ -76,6 +150,7 @@
     font-weight: 500;
     margin-bottom: 5px;
     display: block;
+    color: #495057;
 }
 
 .form-control {
@@ -99,10 +174,18 @@
 .text-danger {
     color: #dc3545;
     font-size: 12px;
+    margin-top: 4px;
 }
 
+.text-danger small {
+    display: block;
+    margin-top: 2px;
+}
+
+/* ===== CHECKBOX STYLES ===== */
 .form-check {
     padding-left: 1.5rem;
+    margin-top: 10px;
 }
 
 .form-check-input {
@@ -113,11 +196,18 @@
     cursor: pointer;
 }
 
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
 .form-check-label {
     cursor: pointer;
     margin-left: 5px;
+    font-weight: 500;
 }
 
+/* ===== SIDEBAR FOOTER ===== */
 .sidebar-footer {
     padding: 20px;
     border-top: 1px solid #dee2e6;
@@ -128,8 +218,12 @@
     right: 0;
     width: 500px;
     z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
+/* ===== BUTTON STYLES ===== */
 .btn {
     padding: 10px 20px;
     border-radius: 4px;
@@ -137,6 +231,7 @@
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s ease;
+    min-width: 100px;
 }
 
 .btn-primary {
@@ -146,6 +241,8 @@
 
 .btn-primary:hover:not(:disabled) {
     background-color: #0069d9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
 }
 
 .btn-primary:disabled {
@@ -160,14 +257,153 @@
 
 .btn-secondary:hover {
     background-color: #5a6268;
+    transform: translateY(-1px);
 }
 
+.btn:active {
+    transform: translateY(0px);
+}
+
+.me-2 {
+    margin-right: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 576px) {
     .sidebar {
         width: 100%;
+        right: -100%;
     }
 
     .sidebar-footer {
         width: 100%;
     }
+
+    .sidebar-body {
+        padding: 15px;
+        padding-bottom: 100px;
+    }
+
+    .sidebar-header {
+        padding: 15px;
+    }
+
+    .btn {
+        min-width: 80px;
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ===== ANIMATION FOR FORM ELEMENTS ===== */
+.form-control,
+.input-icon-wrapper .form-control {
+    transition: all 0.3s ease;
+}
+
+/* ===== ADDITIONAL UTILITY CLASSES ===== */
+.mt-1 {
+    margin-top: 4px;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+.mb-1 {
+    margin-bottom: 4px;
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+/* Password strength indicator (optional) */
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 5px;
+    transition: width 0.3s ease;
+}
+
+/* Disabled state for form controls */
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: #6c757d;
+    opacity: 0.7;
+}
+
+/* Focus visible for accessibility */
+.form-control:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 1px;
+}
+
+/* Add these styles if not already present */
+.me-1 {
+  margin-right: 4px;
+}
+
+.mt-1 {
+  margin-top: 4px;
+}
+
+.text-danger small {
+  display: block;
+  margin-top: 2px;
+}
+
+.text-danger small i {
+  font-size: 14px;
+}
+
+/* Password toggle styles */
+.input-icon-wrapper .password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s ease;
+  padding: 4px;
+}
+
+.input-icon-wrapper .password-toggle:hover {
+  color: #0d6efd;
+}
+
+.input-icon-wrapper .form-control {
+  padding-right: 40px; /* Make room for password toggle */
+}
+
+.input-icon-wrapper .form-control.is-invalid ~ .password-toggle {
+  color: #dc3545;
 }
