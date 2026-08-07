@@ -1,20 +1,29 @@
-<!-- Add *ngIf to the overlay -->
+<!-- Sidebar Overlay -->
 <div class="sidebar-overlay" *ngIf="isVisible" (click)="close()"></div>
 
-<!-- Add *ngIf to the sidebar -->
+<!-- Sidebar -->
 <div class="sidebar" *ngIf="isVisible" [class.visible]="isVisible">
   <div class="sidebar-header">
-    <h5 class="sidebar-title">Add New User</h5>
-    <button type="button" class="close" (click)="close()" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+    <h5 class="sidebar-title">
+      <i [class.ri-user-add-line]="!isEditMode" [class.ri-edit-2-line]="isEditMode" class="me-2"></i>
+      {{ isEditMode ? 'Edit User' : 'Add New User' }}
+    </h5>
+    <button type="button" class="close-btn" (click)="close()" aria-label="Close">
+      <i class="ri-close-line"></i>
     </button>
   </div>
+
   <div class="sidebar-body">
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       
+      <!-- Hidden ID for Edit -->
+      <input type="hidden" formControlName="id" />
+
       <!-- First Name -->
       <div class="form-group">
-        <label for="firstName">First Name *</label>
+        <label for="firstName" class="form-label">
+          First Name <span class="text-danger">*</span>
+        </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-line input-icon"></i>
           <input 
@@ -26,7 +35,7 @@
             [class.is-invalid]="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="text-danger mt-1">
+        <div *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="error-messages">
           <small *ngIf="userForm.get('firstName')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>First name is required
           </small>
@@ -44,7 +53,9 @@
 
       <!-- Last Name -->
       <div class="form-group">
-        <label for="lastName">Last Name *</label>
+        <label for="lastName" class="form-label">
+          Last Name <span class="text-danger">*</span>
+        </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-follow-line input-icon"></i>
           <input 
@@ -56,7 +67,7 @@
             [class.is-invalid]="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="text-danger mt-1">
+        <div *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="error-messages">
           <small *ngIf="userForm.get('lastName')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Last name is required
           </small>
@@ -74,7 +85,9 @@
 
       <!-- Email -->
       <div class="form-group">
-        <label for="email">Email *</label>
+        <label for="email" class="form-label">
+          Email <span class="text-danger">*</span>
+        </label>
         <div class="input-icon-wrapper">
           <i class="ri-mail-line input-icon"></i>
           <input 
@@ -86,7 +99,7 @@
             [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger mt-1">
+        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-messages">
           <small *ngIf="userForm.get('email')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Email is required
           </small>
@@ -101,7 +114,9 @@
 
       <!-- Phone -->
       <div class="form-group">
-        <label for="phone">Phone *</label>
+        <label for="phone" class="form-label">
+          Phone <span class="text-danger">*</span>
+        </label>
         <div class="input-icon-wrapper">
           <i class="ri-phone-line input-icon"></i>
           <input 
@@ -113,7 +128,7 @@
             [class.is-invalid]="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="text-danger mt-1">
+        <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="error-messages">
           <small *ngIf="userForm.get('phone')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Phone number is required
           </small>
@@ -123,43 +138,47 @@
         </div>
       </div>
 
-      <!-- Password with Toggle -->
-      <div class="form-group">
-        <label for="password">Password *</label>
-        <div class="input-icon-wrapper">
-          <i class="ri-lock-line input-icon"></i>
-          <input 
-            [type]="showPassword ? 'text' : 'password'" 
-            class="form-control" 
-            id="password" 
-            formControlName="password"
-            placeholder="Enter password (min 6 characters)" 
-            [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
-          />
-          <i 
-            aria-hidden="true" 
-            class="password-toggle" 
-            [class.ri-eye-line]="showPassword"
-            [class.ri-eye-off-line]="!showPassword"
-            (click)="togglePasswordVisibility()"
-          ></i>
-        </div>
-        <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="text-danger mt-1">
-          <small *ngIf="userForm.get('password')?.errors?.['required']">
-            <i class="ri-error-warning-line me-1"></i>Password is required
-          </small>
-          <small *ngIf="userForm.get('password')?.errors?.['minlength']">
-            <i class="ri-error-warning-line me-1"></i>Minimum 6 characters required
-          </small>
-          <small *ngIf="userForm.get('password')?.errors?.['pattern']">
-            <i class="ri-error-warning-line me-1"></i>Must contain uppercase, lowercase and number
-          </small>
-        </div>
-      </div>
+      
+      <!-- Password field - Only show for Create mode -->
+<div class="form-group" *ngIf="!isEditMode">
+  <label for="password" class="form-label">
+    Password <span class="text-danger">*</span>
+  </label>
+  <div class="input-icon-wrapper">
+    <i class="ri-lock-line input-icon"></i>
+    <input 
+      [type]="showPassword ? 'text' : 'password'" 
+      class="form-control" 
+      id="password" 
+      formControlName="password"
+      placeholder="Enter password (min 6 characters)" 
+      [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+    />
+    <i 
+      class="password-toggle" 
+      [class.ri-eye-line]="showPassword"
+      [class.ri-eye-off-line]="!showPassword"
+      (click)="togglePasswordVisibility()"
+    ></i>
+  </div>
+  <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="error-messages">
+    <small *ngIf="userForm.get('password')?.errors?.['required']">
+      <i class="ri-error-warning-line me-1"></i>Password is required
+    </small>
+    <small *ngIf="userForm.get('password')?.errors?.['minlength']">
+      <i class="ri-error-warning-line me-1"></i>Minimum 6 characters required
+    </small>
+    <small *ngIf="userForm.get('password')?.errors?.['pattern']">
+      <i class="ri-error-warning-line me-1"></i>Must contain uppercase, lowercase and number
+    </small>
+  </div>
+</div>
 
       <!-- Role -->
       <div class="form-group">
-        <label for="roleId">Role *</label>
+        <label for="roleId" class="form-label">
+          Role <span class="text-danger">*</span>
+        </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-settings-line input-icon"></i>
           <select 
@@ -174,25 +193,44 @@
             </option>
           </select>
         </div>
-        <div *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched" class="text-danger mt-1">
+        <div *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched" class="error-messages">
           <small *ngIf="userForm.get('roleId')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Role is required
           </small>
         </div>
       </div>
 
-      <!-- Active Checkbox -->
-      <div class="form-group form-check">
-        <input type="checkbox" class="form-check-input" id="isActive" formControlName="isActive" />
-        <label class="form-check-label" for="isActive">Active</label>
+      <!-- Active Status Toggle -->
+      <div class="form-group status-toggle">
+        <label class="form-label">Account Status</label>
+        <div class="toggle-wrapper">
+          <div class="form-check form-switch">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="isActive" 
+              formControlName="isActive"
+            />
+            <label class="form-check-label" for="isActive">
+              <span class="status-badge" [class.active]="userForm.get('isActive')?.value">
+                {{ userForm.get('isActive')?.value ? 'Active' : 'Inactive' }}
+              </span>
+            </label>
+          </div>
+        </div>
       </div>
 
+      <!-- Footer Actions -->
       <div class="sidebar-footer">
-        <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
-        <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
-          Create User
+        <button type="button" class="btn btn-light btn-cancel" (click)="close()">
+          <i class="ri-close-line me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-primary btn-submit" [disabled]="userForm.invalid">
+          <i [class.ri-user-add-line]="!isEditMode" [class.ri-save-line]="isEditMode" class="me-1"></i>
+          {{ isEditMode ? 'Update User' : 'Create User' }}
         </button>
       </div>
+
     </form>
   </div>
 </div>
