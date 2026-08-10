@@ -1,12 +1,13 @@
-﻿using BPM.Web.API.Services;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-    public class SalesOrderController : ControllerBase
+    [BPMAuthorize]
+    public class SalesOrderController : BaseController
     {
         private readonly ISalesOrderService _service;
         private readonly ILogger<SalesOrderController> _logger;
@@ -77,7 +78,8 @@ namespace BPM.Web.API.Controllers
                     return BadRequest("Invalid Purchase Order Id.");
                 }
 
-                var salesOrder = await _service.CreateSalesOrderFromPurchaseOrderAsync(purchaseOrderId);
+                var salesOrder = await _service.CreateSalesOrderFromPurchaseOrderAsync(purchaseOrderId, UserId.Value);
+
                 return CreatedAtAction(nameof(GetAllSalesOrder), new { id = salesOrder.Id }, salesOrder);
             }
             catch (KeyNotFoundException ex)

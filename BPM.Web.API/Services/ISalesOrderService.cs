@@ -6,6 +6,6 @@ namespace BPM.Web.API.Services
     {
         Task<IEnumerable<SalesOrderDto>> GetAllSalesOrderAsync();
         Task<IEnumerable<SalesOrderDto>> GetSalesOrderByDealerAsync(Guid dealerId);
-        Task<SalesOrderDto> CreateSalesOrderFromPurchaseOrderAsync(Guid purchaseOrderId);
+        Task<SalesOrderDto> CreateSalesOrderFromPurchaseOrderAsync(Guid purchaseOrderId, Guid createdBy);
     }
 }

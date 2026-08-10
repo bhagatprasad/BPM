@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
+using log4net.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.API.Repository
@@ -55,6 +56,12 @@ namespace BPM.Web.API.Repository
                 .OrderByDescending(po => po.OrderDate)
                 .ToListAsync();
         }
-       
+
+        public async Task<PurchaseOrder> UpdatePurchaseOrderAsync(PurchaseOrder purchaseOrder)
+        {
+            _dbContext.PurchaseOrders.Update(purchaseOrder);
+            await _dbContext.SaveChangesAsync();
+            return purchaseOrder;
+        }
     }
 }

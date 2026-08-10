@@ -91,6 +91,39 @@ namespace BPM.Web.API.Models.Mappers
                     .ToList() ?? new List<PurchaseOrderItemResponseDto>()
             };
         }
+
+        public static PurchaseOrder ToPurchaseOrderFromProcessPurchaseOrderDto(this ProcessPurchaseOrderDto dto, PurchaseOrder purchaseOrder, Guid currentUserId)
+        {
+            return new PurchaseOrder
+            {
+                Id = purchaseOrder.Id,
+                PONumber = purchaseOrder.PONumber,
+                SupplierId = purchaseOrder.SupplierId,
+                DealerId = purchaseOrder.DealerId,
+                OrderDate = purchaseOrder.OrderDate,
+                ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate,
+                ActualDeliveryDate = purchaseOrder.ActualDeliveryDate,
+                Status = dto.Status,
+                SubTotal = purchaseOrder.SubTotal,
+                TaxAmount = purchaseOrder.TaxAmount,
+                DiscountAmount = purchaseOrder.DiscountAmount,
+                TotalAmount = purchaseOrder.TotalAmount,
+                PaymentTerms = purchaseOrder.PaymentTerms,
+                DeliveryTerms = purchaseOrder.DeliveryTerms,
+                Remarks = dto.Notes,
+                InternalNotes = purchaseOrder.InternalNotes,
+                IsActive = purchaseOrder.IsActive,
+                CreatedBy = purchaseOrder.CreatedBy,
+                CreatedOn = purchaseOrder.CreatedOn,
+                ModifiedBy = currentUserId,
+                ModifiedOn = DateTime.UtcNow,
+                CurrencyCode = purchaseOrder.CurrencyCode,
+                Supplier = purchaseOrder.Supplier,
+                PurchaseOrderItems = purchaseOrder.PurchaseOrderItems
+            };
+        }
+
+
         public static PurchaseOrderItemResponseDto ToDto(this PurchaseOrderItem item)
         {
             return new PurchaseOrderItemResponseDto

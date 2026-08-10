@@ -1,7 +1,6 @@
 ﻿using BPM.Web.API.CustomFilters;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
@@ -107,8 +106,34 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DealerId}", dealerId);
 
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while fetching purchase orders.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase orders.");
+            }
+        }
+
+        [HttpPost]
+        [Route("process-purchase-order")]
+        public async Task<IActionResult> ProcessPurchaseOrderAsync(ProcessPurchaseOrderDto processPurchaseOrderDto)
+        {
+            try
+            {
+                _logger.LogInformation("Processing purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
+
+                var currentUserId = UserId.Value;
+
+                var result = await _service.ProcessPurchaseOrderAsync(processPurchaseOrderDto, currentUserId);
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Failed to process purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
+                    return BadRequest("Failed to process purchase order.");
+                }
+                _logger.LogInformation("Purchase order processed successfully with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase order.");
             }
         }
     }
