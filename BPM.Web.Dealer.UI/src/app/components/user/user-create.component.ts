@@ -1,6 +1,11 @@
+// user-create.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RoleService } from '@app/services/role.service';
+import { roleInfo, userInformation } from '@app/models/user';
+import { UserUpdateDto } from '@app/models/user-update-dto';
+
 
 @Component({
   selector: 'app-user-create',
@@ -9,39 +14,60 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.css']
 })
-export class UserCreateSidebarComponent {
+export class UserCreateSidebarComponent implements OnInit {
   @Input() isVisible: boolean = false;
   @Input() dealerId: string = '';
+  @Input() editUserData: userInformation | null = null;
   @Output() closeSidebar = new EventEmitter<void>();
   @Output() formSubmit = new EventEmitter<any>();
+  @Output() userUpdate = new EventEmitter<UserUpdateDto>();
+
+  roles: roleInfo[] = [];
+  filteredRoles: roleInfo[] = [];
+  showPassword: boolean = false;
+  isEditMode: boolean = false;
+  userId: string = '';
 
   userForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private roleService: RoleService,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.userForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      id: [''],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern('^[A-Za-z ]+$')]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern('^[A-Za-z ]+$')]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10,15}$')]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.minLength(6), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$')]],
       isActive: [true],
       dealerId: [''],
       roleId: ['', Validators.required]
     });
   }
 
-  ngOnChanges() {
-    // Update dealerId if it changes from parent
-    if (this.dealerId) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dealerId'] && this.dealerId) {
       this.userForm.patchValue({
         dealerId: this.dealerId
       });
     }
+
+    if (changes['editUserData'] && this.editUserData) {
+      this.loadUserForEdit(this.editUserData);
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   close(): void {
     this.closeSidebar.emit();
     this.resetForm();
+    this.isEditMode = false;
   }
 
   onSubmit(): void {
@@ -54,9 +80,24 @@ export class UserCreateSidebarComponent {
       });
       return;
     }
-    
-    // Emit the form data to parent
-    this.formSubmit.emit(this.userForm.value);
+
+    const formData = this.userForm.value;
+
+    if (this.isEditMode) {
+      // Prepare UpdateUserDto for your API
+      const updateDto: UserUpdateDto = {
+        userId: formData.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        modifiedBy: '' // Will be set in parent component
+      };
+
+      this.userUpdate.emit(updateDto);
+    } else {
+      this.formSubmit.emit(formData);
+    }
   }
 
   resetForm(): void {
@@ -64,14 +105,80 @@ export class UserCreateSidebarComponent {
       isActive: true,
       dealerId: this.dealerId
     });
+    this.isEditMode = false;
+    this.userId = '';
+    // Reset password validators to required for create mode
+    this.userForm.get('password')?.setValidators([
+      Validators.required,
+      Validators.minLength(6),
+      Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$')
+    ]);
+    this.userForm.get('password')?.updateValueAndValidity();
+    
     Object.keys(this.userForm.controls).forEach(key => {
       this.userForm.get(key)?.markAsPristine();
       this.userForm.get(key)?.markAsUntouched();
     });
   }
 
-  // Helper method to reset form from parent
   reset(): void {
     this.resetForm();
+  }
+
+  openEditMode(user: userInformation): void {
+    this.isEditMode = true;
+    this.editUserData = user;
+    // Make password optional for edit mode
+    this.userForm.get('password')?.clearValidators();
+    this.userForm.get('password')?.setValidators([
+      Validators.minLength(6),
+      Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$')
+    ]);
+    this.userForm.get('password')?.updateValueAndValidity();
+    this.loadUserForEdit(user);
+  }
+
+  private loadUserForEdit(user: userInformation): void {
+    this.userId = user.userId || '';
+    this.userForm.patchValue({
+      id: user.userId || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      isActive: user.isActive ?? true,
+      dealerId: user.dealerId || this.dealerId,
+      roleId: user.roleId || ''
+    });
+    this.userForm.get('password')?.setValue('');
+    this.cdr.detectChanges();
+  }
+
+  ngOnInit(): void {
+    this.loadRoles();
+  }
+
+  loadRoles(): void {
+    this.roleService.getAllRolesAsync().subscribe({
+      next: (roles) => {
+        this.roles = roles || [];
+        // Filter to show only Operator and Dealer (exclude Administrator)
+        this.filteredRoles = this.roles.filter(role =>
+          role.code === 'OPERATOR'
+        );
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading roles:', error);
+      }
+    });
+  }
+
+  get formTitle(): string {
+    return this.isEditMode ? 'Edit User' : 'Add New User';
+  }
+
+  get submitButtonText(): string {
+    return this.isEditMode ? 'Update User' : 'Create User';
   }
 }

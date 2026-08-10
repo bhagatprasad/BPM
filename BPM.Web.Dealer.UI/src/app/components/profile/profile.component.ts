@@ -14,13 +14,13 @@ import { DealerInfoSectionComponent } from './dealer-info-section.component';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule,UserPersonalInfoComponent,ChangePasswordComponent,DealerInfoSectionComponent],
+  imports: [FormsModule, CommonModule, UserPersonalInfoComponent, ChangePasswordComponent, DealerInfoSectionComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
- 
+
 })
 export class ProfileComponent implements OnInit {
-    userData: any = null;
+  userData: any = null;
   dealerData: any = null;
   isAdmin: boolean = false;
 
@@ -75,7 +75,7 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
 
   userId: string = '';
-  dealerId:string='';
+  dealerId: string = '';
 
   constructor(
     private profileService: ProfileService,
@@ -99,7 +99,7 @@ export class ProfileComponent implements OnInit {
       this.userData = JSON.parse(storedData);
       console.log('Full userData:', this.userData);
       this.userId = this.userData.authenticateResponseDto.userId;
-      this.dealerId=this.userData.authenticateResponseDto.dealerId;
+      this.dealerId = this.userData.authenticateResponseDto.dealerId;
 
       this.populateFormData();
     }
@@ -209,7 +209,7 @@ export class ProfileComponent implements OnInit {
     return true;
   }
 
-  private updateUserInfo():UpdateUserRequest{
+  private updateUserInfo(): UpdateUserRequest {
     var updatedUserData = {
 
       firstName: this.userSection.firstName.trim(),
@@ -265,7 +265,7 @@ export class ProfileComponent implements OnInit {
   toggleConfirmPasswordVisibility() {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
-  updatedPasswordInfo():ChangePasswordRequest {
+  updatedPasswordInfo(): ChangePasswordRequest {
     var changedPassword = {
       userId: this.userId,
       newPassword: this.changePassword.newPassword,
@@ -345,7 +345,7 @@ export class ProfileComponent implements OnInit {
 
   }
 
-  updateDealerInfo():UpdatedDealerRequest {
+  updateDealerInfo(): UpdatedDealerRequest {
     var updatedDealer = {
       dealerId: this.dealerSection.dealerId,
       dealershipName: this.dealerSection.dealershipName.trim(),
