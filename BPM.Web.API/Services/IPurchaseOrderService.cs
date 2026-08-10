@@ -8,6 +8,7 @@ namespace BPM.Web.API.Services
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync();
         Task<PurchaseOrderResponseDto> GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
+        Task<PurchaseOrderResponseDto> ProcessPurchaseOrderAsync(ProcessPurchaseOrderDto processPurchaseOrderDto,Guid currentUserId);
 
     }
 }

@@ -22,16 +22,33 @@ namespace BPM.Web.API.Repository
             return await _dbContext.SalesOrders.Where(a => a.DealerId == dealerId).ToListAsync();
         }
 
-        public async Task<PurchaseOrder?> GetPurchaseOrderWithItemsAsync(Guid purchaseOrderId)
+        public async Task<SalesOrder> CreateSalesOrderAsync(SalesOrder salesOrder)
         {
-            return await _dbContext.PurchaseOrders.Include(a => a.PurchaseOrderItems).FirstOrDefaultAsync(a => a.Id == purchaseOrderId);
-        }
+            // Generate ID for SalesOrder if not set
+            if (salesOrder.Id == Guid.Empty)
+            {
+                salesOrder.Id = Guid.NewGuid();
+            }
 
-        public async Task<SalesOrder> CreateSalesOrderAsync(SalesOrder salesOrder, List<SalesOrderItem> salesOrderItems)
-        {
+            // Generate IDs for all items if not set
+            if (salesOrder.SalesOrderItems != null && salesOrder.SalesOrderItems.Any())
+            {
+                foreach (var item in salesOrder.SalesOrderItems)
+                {
+                    // If ID is empty, generate a new one
+                    if (item.Id == Guid.Empty)
+                    {
+                        item.Id = Guid.NewGuid();
+                    }
+
+                    // Set the foreign key
+                    item.SalesOrderId = salesOrder.Id;
+                }
+            }
+
             await _dbContext.SalesOrders.AddAsync(salesOrder);
-            await _dbContext.SalesOrderItems.AddRangeAsync(salesOrderItems);
             await _dbContext.SaveChangesAsync();
+
             return salesOrder;
         }
 

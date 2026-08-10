@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
+using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Services;
@@ -10,13 +11,16 @@ namespace BPM.Web.API.Service
     {
         private readonly IPurchaseOrderRepository _repository;
         private readonly ILogger<PurchaseOrderService> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
         public PurchaseOrderService(
             IPurchaseOrderRepository repository,
+            IServiceProvider serviceProvider,
             ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<PurchaseOrderResponseDto> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto)
@@ -134,6 +138,44 @@ namespace BPM.Web.API.Service
                 _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DealerId}", dealerId);
                 throw;
             }
+        }
+
+        public async Task<PurchaseOrderResponseDto> ProcessPurchaseOrderAsync(ProcessPurchaseOrderDto processPurchaseOrderDto, Guid currentUserId)
+        {
+            var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(processPurchaseOrderDto.PurchaseOrderId);
+
+            if (purchaseOrder == null)
+            {
+                throw new InvalidOperationException("Purchase order not found.");
+            }
+
+
+            //step 1 -- if the status == approved then we need to check if the actual delivery date is set or not if not then we need to set it to the current date and time
+
+            // creat a sales order from the purchase order and set the status to processed and set the processed date to the current date and time
+
+            var updateOrder = await _repository.UpdatePurchaseOrderAsync(processPurchaseOrderDto.ToPurchaseOrderFromProcessPurchaseOrderDto(purchaseOrder, currentUserId));
+
+            if (string.Equals(updateOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+            {
+                // update the status to purcahse ordertable 
+
+                var _salesOrderService = _serviceProvider.GetRequiredService<ISalesOrderService>();
+
+                if (_salesOrderService != null)
+                {
+                    await _salesOrderService.CreateSalesOrderFromPurchaseOrderAsync(updateOrder.Id, updateOrder.ModifiedBy.Value);
+                }
+
+                // create sales order and sales order itsm 
+
+                return updateOrder.ToDto();
+            }
+
+            // retrun the updated one 
+
+            return purchaseOrder.ToDto();
+
         }
     }
 }

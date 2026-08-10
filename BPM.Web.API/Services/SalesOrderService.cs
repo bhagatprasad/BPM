@@ -1,19 +1,20 @@
 ﻿using BPM.Web.API.Models.DTOs;
-using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Newtonsoft.Json;
 
 namespace BPM.Web.API.Services
 {
     public class SalesOrderService : ISalesOrderService
     {
+        private readonly IPurchaseOrderService _purchaseOrderService;
         private readonly ISalesOrderRepository _salesOrderRepository;
         private readonly ILogger<SalesOrderService> _logger;
 
-        public SalesOrderService(ISalesOrderRepository salesOrderRepository, ILogger<SalesOrderService> logger)
+        public SalesOrderService(ISalesOrderRepository salesOrderRepository, IPurchaseOrderService purchaseOrderService, ILogger<SalesOrderService> logger)
         {
             _salesOrderRepository = salesOrderRepository;
+            _purchaseOrderService = purchaseOrderService;
             _logger = logger;
         }
 
@@ -47,123 +48,46 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<SalesOrderDto>
-           CreateSalesOrderFromPurchaseOrderAsync(Guid purchaseOrderId)
+        public async Task<SalesOrderDto> CreateSalesOrderFromPurchaseOrderAsync(Guid purchaseOrderId, Guid createdBy)
         {
             try
             {
-                _logger.LogInformation(
-                    "Creating Sales Order from Purchase Order: {PurchaseOrderId}",
-                    purchaseOrderId);
+                _logger.LogInformation("Creating Sales Order from Purchase Order: {PurchaseOrderId}", purchaseOrderId);
 
                 // 1. Get Purchase Order with Items
-                var purchaseOrder =
-                    await _salesOrderRepository
-                        .GetPurchaseOrderWithItemsAsync(purchaseOrderId);
+                var purchaseOrder = await _purchaseOrderService.GetPurchaseOrderByIdAsync(purchaseOrderId);
 
                 // 2. Validate Purchase Order exists
                 if (purchaseOrder == null)
                 {
-                    _logger.LogWarning(
-                        "Purchase Order not found: {PurchaseOrderId}",
-                        purchaseOrderId);
+                    _logger.LogWarning("Purchase Order not found: {PurchaseOrderId}", purchaseOrderId);
 
-                    throw new KeyNotFoundException(
-                        "Purchase Order not found.");
+                    throw new KeyNotFoundException("Purchase Order not found.");
                 }
 
                 // 3. Validate Purchase Order status
-                if (!string.Equals(
-                        purchaseOrder.Status,
-                        "Approved",
-                        StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(purchaseOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase))
                 {
-                    _logger.LogWarning(
-                        "Purchase Order {PurchaseOrderId} is not approved. Current status: {Status}",
-                        purchaseOrderId,
-                        purchaseOrder.Status);
+                    _logger.LogWarning("Purchase Order {PurchaseOrderId} is not approved. Current status: {Status}", purchaseOrderId, purchaseOrder.Status);
 
-                    throw new InvalidOperationException(
-                        "Only approved Purchase Orders can be converted to Sales Orders.");
+                    throw new InvalidOperationException("Only approved Purchase Orders can be converted to Sales Orders.");
                 }
 
-                // 4. Validate Purchase Order Items
-                if (purchaseOrder.PurchaseOrderItems == null ||
-                    !purchaseOrder.PurchaseOrderItems.Any())
-                {
-                    _logger.LogWarning(
-                        "Purchase Order {PurchaseOrderId} has no items",
-                        purchaseOrderId);
+                var salesOrderAfterMapping = purchaseOrder.ToSalesOrderFromPurchaseOrder(createdBy);
 
-                    throw new InvalidOperationException(
-                        "Purchase Order does not contain any items.");
-                }
+                var order = JsonConvert.SerializeObject(salesOrderAfterMapping);
 
-                // 5. Create Sales Order
-                var salesOrder = new SalesOrder
-                {
-                    Id = Guid.NewGuid(),
 
-                    SONumber =
-                        $"SO-{DateTime.UtcNow:yyyyMM}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}",
+                var createdSalesOrder = await _salesOrderRepository.CreateSalesOrderAsync(salesOrderAfterMapping);
 
-                    PurchaseOrderId = purchaseOrder.Id,
-                    SupplierId = purchaseOrder.SupplierId,
-                    DealerId = purchaseOrder.DealerId,
-
-                    OrderDate = DateTime.UtcNow,
-
-                    ExpectedDeliveryDate =
-                        purchaseOrder.ExpectedDeliveryDate,
-
-                    Status = "Created",
-
-                    SubTotal = purchaseOrder.SubTotal,
-                    TaxAmount = purchaseOrder.TaxAmount,
-                    DiscountAmount = purchaseOrder.DiscountAmount,
-                    TotalAmount = purchaseOrder.TotalAmount,
-
-                    CurrencyCode = purchaseOrder.CurrencyCode,
-
-                    PaymentTerms = purchaseOrder.PaymentTerms,
-                    DeliveryTerms = purchaseOrder.DeliveryTerms,
-                    Remarks = purchaseOrder.Remarks,
-                    InternalNotes = purchaseOrder.InternalNotes,
-
-                    IsActive = true,
-
-                    CreatedBy = purchaseOrder.CreatedBy,
-                    CreatedOn = DateTime.UtcNow
-                };
-
-                // 6. Convert PurchaseOrderItems → SalesOrderItems
-                var salesOrderItems =
-                    purchaseOrder.PurchaseOrderItems
-                        .Select(item =>
-                            item.ToSalesOrderItem(salesOrder.Id))
-                        .ToList();
-
-                // 7. Save SalesOrder + SalesOrderItems
-                var createdSalesOrder =
-                    await _salesOrderRepository
-                        .CreateSalesOrderAsync(
-                            salesOrder,
-                            salesOrderItems);
-
-                _logger.LogInformation(
-                    "Sales Order {SONumber} created successfully from Purchase Order {PurchaseOrderId}",
-                    createdSalesOrder.SONumber,
-                    purchaseOrderId);
+                _logger.LogInformation("Sales Order {SONumber} created successfully from Purchase Order {PurchaseOrderId}", createdSalesOrder.SONumber, purchaseOrderId);
 
                 // 8. Return DTO
                 return createdSalesOrder.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error occurred while creating Sales Order from Purchase Order: {PurchaseOrderId}",
-                    purchaseOrderId);
+                _logger.LogError(ex, "Error occurred while creating Sales Order from Purchase Order: {PurchaseOrderId}", purchaseOrderId);
 
                 throw;
             }
