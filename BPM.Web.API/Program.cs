@@ -77,7 +77,7 @@ builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 builder.Services.AddScoped<IUserRespository, UserRespository>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+//builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 builder.Services.AddScoped<IDrugUomRepository, DrugUomRepository>();
 builder.Services.AddScoped<IPackagingMasterRepository, PackagingMasterRepository>();
@@ -90,6 +90,7 @@ builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRe
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -99,7 +100,7 @@ builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
+//builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IDrugUomService, DrugUomService>();
 builder.Services.AddScoped<IPackagingMasterService, PackagingMasterService>();
@@ -108,6 +109,7 @@ builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
