@@ -31,6 +31,8 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Activities> Activities { get; set; }
         public DbSet<Feature> Features { get; set; }
         public DbSet<Permission> Permissions { get; set; }
+        public DbSet<SalesOrder> SalesOrders { get; set; }
+        public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
 
 
 
