@@ -111,24 +111,12 @@
                             
                             <!-- Actions -->
                             <td>
-                                <div class="d-flex justify-content-end" style="gap: 12px;">
-                                   <button class="bg-transparent p-0 border-0 action-btn view-btn"
-                                            data-bs-toggle="tooltip" 
-                                            data-bs-placement="top" 
-                                            data-bs-title="Delete User"
-                                            (click)="confirmDeleteUser(user)">
-                                            <i class="material-symbols-outlined fs-16 fw-normal ">Visibility</i>
-                                        </button>
-                                    <button class="bg-transparent p-0 border-0 action-btn edit-btn"
+                                <div class="d-flex justify-content-end" style="gap: 12px;">                                  
+                                    <button class="btn btn-success"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit" 
                                         (click)="enableEditUser(user)">
                                         <i class="material-symbols-outlined fs-16 fw-normal">edit</i>
-                                    </button>
-                                   <button class="bg-transparent p-0 border-0 action-btn delete-btn"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deactivate"
-                                      >
-                                        <i class="material-symbols-outlined fs-16 fw-normal">delete</i>
-                                    </button>
+                                    </button>                                 
                                 </div>
                             </td>
                         </tr>

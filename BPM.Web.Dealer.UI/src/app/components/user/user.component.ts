@@ -10,6 +10,7 @@ import { UserCreateSidebarComponent } from './user-create.component';
 import { UserUpdateDto } from '@app/models/user-update-dto';
 import { UserDeactivateDto } from '@app/models/user-deactivate-dto';
 import { userDto } from '@app/models/user-profile';
+import { isActive } from '@angular/router';
 
 @Component({
   selector: 'app-user',
@@ -317,6 +318,7 @@ export class UserComponent {
       lastName: updateData.lastName,
       email: updateData.email,
       phone: updateData.phone,
+      isActive:updateData.isActive,
       modifiedBy: this.userId
     };
 
@@ -336,37 +338,5 @@ export class UserComponent {
       }
     });
   }
-  confirmDeleteUser(user: userDto): void {
-
-    if (!confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`)) {
-      return;
-    }
-
-    this.deleteUser(user);
-  }
-  deleteUser(user: userDto): void {
-    this.loader.show('Deactivating user...');
-    const userdeAcrtivate = {
-      userId: user.userId,
-      modifiedBy: this.userId
-    };
-    this.userService.deactivateUserAsync(userdeAcrtivate).subscribe({
-      next: (response) => {
-        this.loader.hide();
-        this.toastr.success(`user deactivated successfully!`);
-        this.loadUsers();
-        this.selectedUserIds = [];
-        this.isAllSelected = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        this.loader.hide();
-        console.error('Error deactivating user:', error);
-        this.toastr.error(
-          error.error?.message || 'Failed to deactivate user. Please try again.'
-        );
-        this.cdr.detectChanges();
-      }
-    });
-  }
+ 
 }
