@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.API.Models.Entities
 {
-    [Table("features")]
+    [Table("feature")]
     public class Feature
     {
         [Key]

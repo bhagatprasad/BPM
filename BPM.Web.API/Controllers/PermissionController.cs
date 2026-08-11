@@ -62,5 +62,24 @@ namespace BPM.Web.API.Controllers
 
             return Ok("Permission deleted successfully.");
         }
+
+        [HttpGet("role/{roleId}")]
+        public async Task<IActionResult> GetPermissionsByRole(Guid roleId)
+        {
+            var result = await _permissionService.GetPermissionsByRoleAsync(roleId);
+
+            return Ok(result);
+        }
+
+        [HttpGet("HasPermission")]
+        public async Task<IActionResult> HasPermission([FromQuery] Guid roleId,[FromQuery] string featureCode,[FromQuery] string activityCode)
+        {
+            var result = await _permissionService.HasPermissionAsync(
+                roleId,
+                featureCode,
+                activityCode);
+
+            return Ok(result);
+        }
     }
 }
