@@ -15,10 +15,16 @@
                         </button>
                     </li>
                     <li>
-                         <div class="d-flex flex-column justify-content-center">
-        <h5 class="mb-0 fw-semibold text-primary" id="greeting"></h5>
-        <small class="text-muted" id="currentDateTime"></small>
-    </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            <h5 class="mb-0 fw-semibold text-primary" id="greeting">
+                                <i class="ri-user-smile-line me-2"></i>
+                                <span id="greetingText"></span>
+                            </h5>
+                            <small class="text-muted" id="currentDateTime">
+                                <i class="ri-time-line me-1"></i>
+                                <span id="dateTimeText"></span>
+                            </small>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -31,10 +37,12 @@
                     <li class="header-right-item language-item">
                         <div class="dropdown notifications language">
                             <button aria-expanded="false" class="btn btn-secondary dropdown-toggle border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                                <i class="ri-global-line fs-18 me-1"></i>
                                 <span>Language</span>
                             </button>
                             <div class="dropdown-menu dropdown-lg p-0 border-0 dropdown-menu-end">
                                 <span class="fw-medium fs-16 text-secondary d-block title" style="padding-top: 20px; padding-bottom: 20px;">
+                                    <i class="ri-translate-2 me-2"></i>
                                     Choose Language
                                 </span>
                                 <div class="max-h-275" data-simplebar="">
@@ -117,8 +125,12 @@
                     <li class="header-right-item light-dark-item">
                         <div class="light-dark">
                             <button class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0" id="switch-toggle">
-                                <span class="dark">Dark</span>
-                                <span class="light">Light</span>
+                                <span class="dark">
+                                    <i class="ri-moon-line me-1"></i>Dark
+                                </span>
+                                <span class="light">
+                                    <i class="ri-sun-line me-1"></i>Light
+                                </span>
                             </button>
                         </div>
                     </li>
@@ -127,6 +139,7 @@
                     <li class="header-right-item calendar-item">
                         <div class="dropdown notifications">
                             <a class="btn btn-secondary border-0 p-0 position-relative" href="/Apps/Calendar">
+                                <i class="ri-calendar-2-line fs-18 me-1"></i>
                                 Calendar
                             </a>
                         </div>
@@ -136,18 +149,20 @@
                     <li class="header-right-item messages-item">
                         <div class="dropdown notifications noti messages">
                             <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
-                                Messages
+                                <i class="ri-message-3-line fs-20"></i>
                                 <span class="count bg-primary">5</span>
                             </button>
                             <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                                 <div class="d-flex justify-content-between align-items-center title">
                                     <span class="fw-medium fs-16 text-secondary">
+                                        <i class="ri-message-2-line me-2"></i>
                                         Messages
                                         <span class="fw-normal text-body fs-16">
                                             (03)
                                         </span>
                                     </span>
                                     <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium">
+                                        <i class="ri-check-double-line me-1"></i>
                                         Mark all as read
                                     </button>
                                 </div>
@@ -215,6 +230,7 @@
                                 </div>
                                 <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" href="/Apps/Chat">
                                     <span>
+                                        <i class="ri-arrow-right-s-line"></i>
                                         See All Messages
                                     </span>
                                 </a>
@@ -226,18 +242,20 @@
                     <li class="header-right-item">
                         <div class="dropdown notifications noti">
                             <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
-                                Notifications
+                                <i class="ri-notification-3-line fs-20"></i>
                                 <span class="count">3</span>
                             </button>
                             <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                                 <div class="d-flex justify-content-between align-items-center title">
                                     <span class="fw-medium fs-16 text-secondary">
+                                        <i class="ri-notification-2-line me-2"></i>
                                         Notifications
                                         <span class="fw-normal text-body fs-16">
                                             (03)
                                         </span>
                                     </span>
                                     <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium">
+                                        <i class="ri-close-circle-line me-1"></i>
                                         Clear All
                                     </button>
                                 </div>
@@ -246,13 +264,16 @@
                                         <a class="dropdown-item" href="/Pages/Notifications">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
-                                                    <span class="text-primary">SMS</span>
+                                                    <span class="text-primary">
+                                                        <i class="ri-sms-line fs-18"></i>
+                                                    </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <p class="fs-16 fw-medium text-secondary">
                                                         You have requested to withdrawal
                                                     </p>
                                                     <span class="fs-14 fw-medium">
+                                                        <i class="ri-time-line me-1"></i>
                                                         2 hrs ago
                                                     </span>
                                                 </div>
@@ -263,13 +284,16 @@
                                         <a class="dropdown-item" href="/Pages/Notifications">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
-                                                    <span class="text-info">User</span>
+                                                    <span class="text-info">
+                                                        <i class="ri-user-3-line fs-18"></i>
+                                                    </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <p class="fs-16 fw-medium text-secondary">
                                                         A new user added in StarCode
                                                     </p>
                                                     <span class="fs-14 fw-medium">
+                                                        <i class="ri-time-line me-1"></i>
                                                         3 hrs ago
                                                     </span>
                                                 </div>
@@ -280,13 +304,16 @@
                                         <a class="dropdown-item" href="/Pages/Notifications">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
-                                                    <span class="text-success">Email</span>
+                                                    <span class="text-success">
+                                                        <i class="ri-mail-send-line fs-18"></i>
+                                                    </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <p class="fs-16 fw-medium text-secondary">
                                                         You have requested to withdrawal
                                                     </p>
                                                     <span class="fs-14 fw-medium">
+                                                        <i class="ri-time-line me-1"></i>
                                                         1 day ago
                                                     </span>
                                                 </div>
@@ -296,6 +323,7 @@
                                 </div>
                                 <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" href="/Pages/Notifications">
                                     <span>
+                                        <i class="ri-arrow-right-s-line"></i>
                                         See All Notifications
                                     </span>
                                 </a>
@@ -323,6 +351,7 @@
                                             StarCode Kh
                                         </h3>
                                         <span class="fs-15 fw-medium">
+                                            <i class="ri-shield-user-line me-1"></i>
                                             Admin
                                         </span>
                                     </div>
@@ -330,6 +359,7 @@
                                 <ul class="admin-link mb-0 list-unstyled">
                                     <li>
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Others/MyProfile">
+                                            <i class="ri-user-3-line me-2"></i>
                                             <span class="ms-2">
                                                 My Profile
                                             </span>
@@ -337,6 +367,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Settings/AccountSettings">
+                                            <i class="ri-settings-3-line me-2"></i>
                                             <span class="ms-2">
                                                 Settings
                                             </span>
@@ -344,6 +375,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/HelpDesk/Tickets">
+                                            <i class="ri-headphone-line me-2"></i>
                                             <span class="ms-2">
                                                 Support
                                             </span>
@@ -351,6 +383,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Account/Logout">
+                                            <i class="ri-logout-box-r-line me-2"></i>
                                             <span class="ms-2">
                                                 Logout
                                             </span>
@@ -366,6 +399,7 @@
     </div>
 </header>
 <!-- End Header Area -->
+
 <script>
     function updateDateTime() {
         const now = new Date();
@@ -374,16 +408,16 @@
         let greeting = "Welcome";
 
         if (hour < 12) {
-            greeting = "Welcome | Good Morning";
+            greeting = "Good Morning";
         } else if (hour < 17) {
-            greeting = "Welcome | Good Afternoon";
+            greeting = "Good Afternoon";
         } else if (hour < 21) {
-            greeting = "Welcome | Good Evening";
+            greeting = "Good Evening";
         } else {
-            greeting = "Welcome | Good Night";
+            greeting = "Good Night";
         }
 
-        document.getElementById("greeting").innerText = greeting;
+        document.getElementById("greetingText").innerText = "Welcome | " + greeting;
 
         const options = {
             weekday: 'long',
@@ -395,7 +429,7 @@
             second: '2-digit'
         };
 
-        document.getElementById("currentDateTime").innerText =
+        document.getElementById("dateTimeText").innerText =
             now.toLocaleString('en-IN', options);
     }
 

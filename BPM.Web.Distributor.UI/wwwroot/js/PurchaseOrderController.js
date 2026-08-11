@@ -223,18 +223,28 @@
             html += '<td>' + self.getStatusBadge(order.status) + '</td>';
             html += '<td>';
             html += '<div class="d-flex justify-content-end" style="gap: 6px;">';
-            // View button - Blue
-            html += '<button class="btn btn-sm btn-outline-primary view-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="View" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">visibility</i>';
-            html += '</button>';
-            // Approve button - Green
-            html += '<button class="btn btn-sm btn-outline-success approve-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Approve" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">check_circle</i>';
-            html += '</button>';
-            // Cancel button - Red
-            html += '<button class="btn btn-sm btn-outline-danger cancel-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Cancel" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">cancel</i>';
-            html += '</button>';
+
+            // Action buttons based on status
+            var status = order.status || 'Draft';
+            console.log('Order ID:', order.Id, 'Status:', status, 'Status Type:', typeof status);
+
+            if (status === 'Draft') {
+                // Draft: Show Accept and Reject buttons
+                html += '<button class="btn btn-sm btn-outline-success accept-btn" data-order-details="' + order + '" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Accept Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
+                html += '<i class="material-symbols-outlined fs-16">accept</i>';
+                html += '</button>';
+
+                html += '<button class="btn btn-sm btn-outline-danger reject-btn" data-order-details="' + order + '" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Reject Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
+                html += '<i class="material-symbols-outlined fs-16">cancel</i>';
+                html += '</button>';
+            } else if (status === 'Accepted' || status === 'Confirmed') {
+                // Accepted/Confirmed: Show Approve button only
+                html += '<button class="btn btn-sm btn-outline-success approve-btn" data-order-details="' + order + '" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Approve Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
+                html += '<i class="material-symbols-outlined fs-16">view</i>';
+                html += '</button>';
+            }
+            // Approved, Completed, Rejected, Cancelled: No action buttons (only view)
+
             html += '</div>';
             html += '</td>';
             html += '</tr>';
@@ -318,20 +328,25 @@
             self.$checkAll.prop('checked', totalCheckboxes === checkedCheckboxes);
         });
 
-        // Bind View, Approve, Cancel events
+        // Bind View, Accept, Reject, Approve events
         self.$tableBody.find('.view-btn').on('click', function () {
             var orderId = $(this).data('order-id');
             self.viewOrder(orderId);
         });
 
+        self.$tableBody.find('.accept-btn').on('click', function () {
+            var orderId = $(this).data('order-id');
+            self.acceptOrder(orderId);
+        });
+
+        self.$tableBody.find('.reject-btn').on('click', function () {
+            var orderId = $(this).data('order-id');
+            self.rejectOrder(orderId);
+        });
+
         self.$tableBody.find('.approve-btn').on('click', function () {
             var orderId = $(this).data('order-id');
             self.approveOrder(orderId);
-        });
-
-        self.$tableBody.find('.cancel-btn').on('click', function () {
-            var orderId = $(this).data('order-id');
-            self.cancelOrder(orderId);
         });
     };
 
@@ -367,12 +382,65 @@
         }
     };
 
+    self.acceptOrder = function (orderId) {
+        console.log('Accept order:', orderId);
+        if (confirm('Are you sure you want to accept this purchase order?')) {
+            var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
+            if (order) {
+                showLoader('Accepting order...');
+
+                makeAjaxRequest({
+                    url: '/PurchaseOrder/AcceptOrder',
+                    type: 'POST',
+                    data: JSON.stringify({ orderId: orderId }),
+                    contentType: 'application/json; charset=utf-8',
+                    showLoader: false,
+                    successCallback: function (response) {
+                        hideLoader();
+                        alert('Order ' + order.PONumber + ' has been accepted successfully!');
+                        self.fetchPurchaseOrdersAsync(); // Refresh data
+                    },
+                    errorCallback: function (xhr, status, error) {
+                        hideLoader();
+                        alert('Failed to accept order. Please try again.');
+                    }
+                });
+            }
+        }
+    };
+
+    self.rejectOrder = function (orderId) {
+        console.log('Reject order:', orderId);
+        if (confirm('Are you sure you want to reject this purchase order?')) {
+            var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
+            if (order) {
+                showLoader('Rejecting order...');
+
+                makeAjaxRequest({
+                    url: '/PurchaseOrder/RejectOrder',
+                    type: 'POST',
+                    data: JSON.stringify({ orderId: orderId }),
+                    contentType: 'application/json; charset=utf-8',
+                    showLoader: false,
+                    successCallback: function (response) {
+                        hideLoader();
+                        alert('Order ' + order.PONumber + ' has been rejected.');
+                        self.fetchPurchaseOrdersAsync(); // Refresh data
+                    },
+                    errorCallback: function (xhr, status, error) {
+                        hideLoader();
+                        alert('Failed to reject order. Please try again.');
+                    }
+                });
+            }
+        }
+    };
+
     self.approveOrder = function (orderId) {
         console.log('Approve order:', orderId);
         if (confirm('Are you sure you want to approve this purchase order?')) {
             var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
             if (order) {
-                // Show loader manually
                 showLoader('Approving order...');
 
                 makeAjaxRequest({
@@ -389,34 +457,6 @@
                     errorCallback: function (xhr, status, error) {
                         hideLoader();
                         alert('Failed to approve order. Please try again.');
-                    }
-                });
-            }
-        }
-    };
-
-    self.cancelOrder = function (orderId) {
-        console.log('Cancel order:', orderId);
-        if (confirm('Are you sure you want to cancel this purchase order? This action cannot be undone.')) {
-            var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
-            if (order) {
-                // Show loader manually
-                showLoader('Cancelling order...');
-
-                makeAjaxRequest({
-                    url: '/PurchaseOrder/CancelOrder',
-                    type: 'POST',
-                    data: JSON.stringify({ orderId: orderId }),
-                    contentType: 'application/json; charset=utf-8',
-                    showLoader: false,
-                    successCallback: function (response) {
-                        hideLoader();
-                        alert('Order ' + order.PONumber + ' has been cancelled.');
-                        self.fetchPurchaseOrdersAsync(); // Refresh data
-                    },
-                    errorCallback: function (xhr, status, error) {
-                        hideLoader();
-                        alert('Failed to cancel order. Please try again.');
                     }
                 });
             }
@@ -482,12 +522,13 @@
 
     self.getStatusBadge = function (status) {
         var statusMap = {
-            'Shipped': 'text-primary bg-primary bg-opacity-10',
-            'Approved': 'text-success bg-success bg-opacity-10',
-            'Confirmed': 'text-success bg-success bg-opacity-10',
-            'Completed': 'text-success bg-success bg-opacity-10',
-            'Pending': 'text-warning bg-warning bg-opacity-10',
             'Draft': 'text-warning bg-warning bg-opacity-10',
+            'Accepted': 'text-info bg-info bg-opacity-10',
+            'Confirmed': 'text-info bg-info bg-opacity-10',
+            'Approved': 'text-success bg-success bg-opacity-10',
+            'Completed': 'text-success bg-success bg-opacity-10',
+            'Shipped': 'text-primary bg-primary bg-opacity-10',
+            'Pending': 'text-warning bg-warning bg-opacity-10',
             'Rejected': 'text-danger bg-danger bg-opacity-10',
             'Cancelled': 'text-danger bg-danger bg-opacity-10'
         };
