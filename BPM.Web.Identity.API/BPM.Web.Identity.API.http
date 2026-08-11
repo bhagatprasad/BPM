@@ -1,0 +1,6 @@
+@BPM.Web.Identity.API_HostAddress = http://localhost:5004
+
+GET {{BPM.Web.Identity.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
