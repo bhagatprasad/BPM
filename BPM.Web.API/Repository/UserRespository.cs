@@ -47,6 +47,7 @@ namespace BPM.Web.API.Repository
             dbUser.LastName = user.LastName;
             dbUser.Email = user.Email;
             dbUser.Phone = user.Phone;
+            dbUser.IsActive=user.IsActive;
             dbUser.ModifiedBy = user.ModifiedBy;
             dbUser.ModifiedOn = user.ModifiedOn;
 
