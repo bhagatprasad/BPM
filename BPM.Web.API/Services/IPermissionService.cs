@@ -13,5 +13,9 @@ namespace BPM.Web.API.Services
         Task<PermissionDto?> UpdateAsync(Guid permissionId, PermissionUpdateDto dto);
 
         Task<bool> DeleteAsync(Guid permissionId);
+
+        Task<List<PermissionFeatureDto>> GetPermissionsByRoleAsync(Guid roleId);
+
+        Task<bool> HasPermissionAsync(Guid roleId, string featureCode, string activityCode);
     }
 }
