@@ -1,29 +1,25 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, AuthenticateResponse } from '../../models/user-profile';
-import { UserService } from '../../services/profile.service';
+import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, userDto } from '../../models/user-profile';
+import { ProfileService } from '../../services/profile.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 import { DealerService } from '../../services/dealer.service';
 import { UpdatedDealerRequest, UpdatedDealerResponse } from '../../models/dealer-profile';
+import { UserPersonalInfoComponent } from './user-personal-info.component';
+import { ChangePasswordComponent } from './change-password.component';
+import { DealerInfoSectionComponent } from './dealer-info-section.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule,],
+  imports: [FormsModule, CommonModule, UserPersonalInfoComponent, ChangePasswordComponent, DealerInfoSectionComponent],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+
 })
 export class ProfileComponent implements OnInit {
-  constructor(
-    private userService: UserService,
-    private dealerService: DealerService,
-    private toastr: ToastrService,
-    private loader: SpinnerLoadingService,
-    private cdr: ChangeDetectorRef,
-  ) { }
-
   userData: any = null;
   dealerData: any = null;
   isAdmin: boolean = false;
@@ -36,6 +32,8 @@ export class ProfileComponent implements OnInit {
     email: '',
     phone: ''
   };
+
+  userInformation: userDto = {};
 
   changePassword = {
     userId: '',
@@ -77,7 +75,16 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
 
   userId: string = '';
-  dealerId:string='';
+  dealerId: string = '';
+
+  constructor(
+    private profileService: ProfileService,
+    private dealerService: DealerService,
+    private toastr: ToastrService,
+    private loader: SpinnerLoadingService,
+    private cdr: ChangeDetectorRef,
+  ) { }
+
 
 
   ngOnInit(): void {
@@ -92,7 +99,7 @@ export class ProfileComponent implements OnInit {
       this.userData = JSON.parse(storedData);
       console.log('Full userData:', this.userData);
       this.userId = this.userData.authenticateResponseDto.userId;
-      this.dealerId=this.userData.authenticateResponseDto.dealerId;
+      this.dealerId = this.userData.authenticateResponseDto.dealerId;
 
       this.populateFormData();
     }
@@ -202,7 +209,7 @@ export class ProfileComponent implements OnInit {
     return true;
   }
 
-  private updateUserInfo():UpdateUserRequest{
+  private updateUserInfo(): UpdateUserRequest {
     var updatedUserData = {
 
       firstName: this.userSection.firstName.trim(),
@@ -258,7 +265,7 @@ export class ProfileComponent implements OnInit {
   toggleConfirmPasswordVisibility() {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
-  updatedPasswordInfo():ChangePasswordRequest {
+  updatedPasswordInfo(): ChangePasswordRequest {
     var changedPassword = {
       userId: this.userId,
       newPassword: this.changePassword.newPassword,
@@ -338,7 +345,7 @@ export class ProfileComponent implements OnInit {
 
   }
 
-  updateDealerInfo():UpdatedDealerRequest {
+  updateDealerInfo(): UpdatedDealerRequest {
     var updatedDealer = {
       dealerId: this.dealerSection.dealerId,
       dealershipName: this.dealerSection.dealershipName.trim(),
@@ -373,7 +380,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
     const updateData = this.updateUserInfo();
-    this.userService.updateUserProfile(this.userId, updateData).subscribe({
+    this.profileService.updateUserProfile(this.userId, updateData).subscribe({
       next: (response) => {
         console.log(response.message);
         this.toastr.success(response.message);
@@ -400,7 +407,7 @@ export class ProfileComponent implements OnInit {
     }
     const updatedChangePassword = this.updatedPasswordInfo();
 
-    this.userService.updatedChangePassword(this.userId, updatedChangePassword).subscribe({
+    this.profileService.updatedChangePassword(this.userId, updatedChangePassword).subscribe({
       next: (response) => {
         console.log(response.message);
         this.toastr.success(response.message);

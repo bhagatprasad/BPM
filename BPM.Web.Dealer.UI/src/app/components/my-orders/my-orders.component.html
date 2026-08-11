@@ -1,181 +1,217 @@
-<div class="container-fluid">
-  <!-- =================== Section 1 : Order Summary =================== -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white">
-      <h5 class="mb-0">📊 Order Summary</h5>
-    </div>
-
-    <div class="card-body">
-      <div class="row">
-        <!-- Total Orders -->
-        <div class="col-md-4">
-          <div class="card h-100 summary-card">
-            <div class="card-body d-flex align-items-center">
-              <div class="summary-icon bg-primary text-white">📦</div>
-
-              <div class="ms-3">
-                <h6 class="text-muted mb-1">Total Orders</h6>
-                <h3 class="mb-0">{{ totalOrders }}</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Draft Orders -->
-        <div class="col-md-4">
-          <div class="card h-100 summary-card">
-            <div class="card-body d-flex align-items-center">
-              <div class="summary-icon bg-warning text-dark">📝</div>
-
-              <div class="ms-3">
-                <h6 class="text-muted mb-1">Draft Orders</h6>
-                <h3 class="mb-0">{{ draftOrders }}</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Total Order Value -->
-        <div class="col-md-4">
-          <div class="card h-100 summary-card">
-            <div class="card-body d-flex align-items-center">
-              <div class="summary-icon bg-success text-white">💰</div>
-
-              <div class="ms-3">
-                <h6 class="text-muted mb-1">Total Order Value</h6>
-                <h3 class="mb-0">₹{{ totalOrderValue | number: '1.2-2' }}</h3>
-              </div>
-            </div>
-          </div>
+<div class="mb-3 mt-4">
+  <h2 class="fw-bold mb-0">Orders</h2>
+</div>
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <div class="row align-items-center">
+      <!--Search-->
+      <div class="col-lg-4">
+        <div class="position-relative">
+          <i class="ri-search-line search-icon"></i>
+          <input
+            type="text"
+            class="form-control search-input"
+            placeholder="Search orders..."
+            [(ngModel)]="searchText"
+          />
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- =================== Section 2 : Purchase Order List =================== -->
-  <div class="card shadow-sm">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">📋 Purchase Order List</h5>
-
-      <div>
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          (click)="loadOrders()"
-          [disabled]="isLoading"
-        >
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"> </span>
-
-          Refresh
-        </button>
-
-        <button class="btn btn-outline-success btn-sm me-2" (click)="exportData()">Export</button>
-
-        <button class="btn btn-primary btn-sm" (click)="navigateToDrugCatalog()">
-          + New Order
-        </button>
+      <!--statistics-->
+      <div class="col-lg-5 d-flex align-items-center justify-content-center">
+        <span class="fw-semibold fs-6">
+          Total Orders:
+          <span class="text-primary">{{ filteredOrders().length }}</span>
+        </span>
       </div>
-    </div>
-    <div class="card-body">
-      <smart-grid
-        class="p-3"
-        #grid
-        *ngIf="orders.length > 0"
-        [dataSource]="orders"
-        [dataSourceSettings]="dataSourceSettings"
-        [columns]="columns"
-        [sorting]="{ enabled: true }"
-        [filtering]="filtering_grid"
-        [appearance]="appearancegrid"
-        [selection]="selectiongrid"
-        (onCellClick)="onCellClick($event)"
-        style="width: 100%; height: 400px"
-      >
-      </smart-grid>
 
-      <div *ngIf="orders.length === 0" class="text-center text-muted py-4">
-        No purchase orders available.
+      <!--add button-->
+      <div class="col-lg-3 text-end">
+        <button class="btn btn-primary" (click)="addNewOrder()">
+          <i class="ri-add-line me-1"></i>
+          Add New Order
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- View Purchase Order Modal -->
-<div
-  class="modal fade show"
-  *ngIf="showViewModal"
-  style="display: block; background: rgba(0, 0, 0, 0.5)"
->
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Purchase Order Details</h5>
-
-        <button type="button" class="btn-close" (click)="showViewModal = false"></button>
-      </div>
-
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">PO Number</label>
-            <div>{{ selectedOrder?.poNumber }}</div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Status</label>
-            <div>{{ selectedOrder?.status }}</div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Order Date</label>
-            <div>{{ selectedOrder?.orderDate | date: 'dd-MMM-yyyy' }}</div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Expected Delivery</label>
-            <div>{{ selectedOrder?.expectedDeliveryDate | date: 'dd-MMM-yyyy' }}</div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Supplier</label>
-            <div>{{ selectedOrder?.supplierId }}</div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Dealer</label>
-            <div>{{ selectedOrder?.dealerId }}</div>
-          </div>
-        </div>
-
-        <hr />
-
-        <h6>Amount Summary</h6>
-
-        <table class="table table-bordered">
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0 order-table">
+      <thead>
+        <tr>
+          <th width="55" class="text-center">
+            <input
+              class="form-check-input order-checkbox"
+              type="checkbox"
+              [checked]="isAllSelected"
+              (change)="toggleAll($event)"
+            />
+          </th>
+          <th width="40"></th>
+          <th>PO Number</th>
+          <th>Order Date</th>
+          <th>Supplier</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let order of filteredOrders()">
           <tr>
-            <th>Sub Total</th>
-            <td>{{ selectedOrder?.subTotal }}</td>
+            <!--checkbox-->
+            <td class="text-center">
+              <input
+                class="form-check-input order-checkbox"
+                type="checkbox"
+                [checked]="selectedOrders.includes(order.poNumber)"
+                (change)="toggleSelection(order.poNumber, $event)"
+              />
+            </td>
+            <!--expand-->
+            <td class="text-center">
+              <i
+                [class.ri-arrow-right-s-line]="expandedOrderId !== order.poNumber"
+                [class.ri-arrow-down-s-line]="expandedOrderId === order.poNumber"
+                (click)="toggleRow(order.poNumber)"
+              >
+              </i>
+            </td>
+            <td>{{ order.poNumber }}</td>
+            <!-- <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td> 5hrs30min late-->
+            <td>{{ convertToIST(order.orderDate) | date: 'dd-MMM-yyyy hh:mm a' }}</td>
+
+            <td>{{ order.supplierName }}</td>
+
+            <td>
+              <span class="badge bg-warning">
+                {{ order.status }}
+              </span>
+            </td>
+
+            <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
+
+            <td class="text-center">
+              <i
+                class="ri-eye-line me-3 text-primary action-icon"
+                title="View"
+                (click)="viewOrder(order.poNumber)"
+              >
+              </i>
+
+              <i
+                class="ri-file-pdf-line text-danger action-icon"
+                title="Download PDF"
+                (click)="downloadPdf(order.poNumber)"
+              >
+              </i>
+            </td>
           </tr>
 
-          <tr>
-            <th>Tax</th>
-            <td>{{ selectedOrder?.taxAmount }}</td>
-          </tr>
+          <tr *ngIf="expandedOrderId === order.poNumber">
+            <td colspan="8">
+              <div class="card mb-3">
+                <div class="card-header fw-semibold">Purchase Order Information</div>
 
-          <tr>
-            <th>Discount</th>
-            <td>{{ selectedOrder?.discountAmount }}</td>
-          </tr>
+                <div class="card-body p-0">
+                  <table class="table mb-0">
+                    <tbody>
+                      <tr>
+                        <th width="25%">PO Number</th>
+                        <td>{{ order.poNumber }}</td>
 
-          <tr>
-            <th>Total</th>
-            <td>{{ selectedOrder?.totalAmount }}</td>
-          </tr>
-        </table>
-      </div>
+                        <th width="25%">Supplier</th>
+                        <td>{{ order.supplierName }}</td>
+                      </tr>
 
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="showViewModal = false">Close</button>
-      </div>
-    </div>
+                      <tr>
+                        <th>Order Date</th>
+                        <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td>
+
+                        <th>Status</th>
+                        <td>{{ order.status }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Total Amount</th>
+                        <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
+
+                        <th></th>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card mb-3">
+                <div class="card-header fw-semibold">Purchase Order Items</div>
+
+                <div class="card-body p-0">
+                  <table class="table table-bordered mb-0">
+                    <thead>
+                      <tr>
+                        <th>Drug Name</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Discount</th>
+                        <th>Tax</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let item of order.purchaseOrderItemResponse">
+                        <td>{{ item.drugName }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.unitPrice | number: '1.2-2' }}</td>
+                        <td>₹{{ item.discountAmount | number: '1.2-2' }}</td>
+                        <td>₹{{ item.taxAmount | number: '1.2-2' }}</td>
+                        <td>₹{{ item.totalAmount | number: '1.2-2' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header fw-semibold">Amount Summary</div>
+
+                <div class="card-body p-0">
+                  <table class="table table-bordered mb-0">
+                    <tbody>
+                      <tr>
+                        <th>SubTotal</th>
+                        <td>₹{{ order.subTotal | number: '1.2-2' }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Discount</th>
+                        <td>₹{{ order.discountAmount | number: '1.2-2' }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Tax</th>
+                        <td>₹{{ order.taxAmount | number: '1.2-2' }}</td>
+                      </tr>
+
+                      <tr class="table-light fw-bold">
+                        <th>Grand Total</th>
+                        <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <tr *ngIf="filteredOrders().length === 0">
+          <td colspan="8" class="text-center py-4">No Purchase Orders Found</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

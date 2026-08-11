@@ -13,5 +13,10 @@ namespace BPM.Web.Distributor.UI.Services
         {
            return await _repositoryFactory.SendAsync<List<PurchaseOrderResponseDto>>(HttpMethod.Get, "PurchaseOrder/FetchPurchaseOrders");
         }
+
+        public async Task<List<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
+        {
+            return await _repositoryFactory.SendAsync<List<PurchaseOrderResponseDto>>(HttpMethod.Get, $"PurchaseOrder/FetchPurchaseOrderByDealer/{dealerId}");
+        }
     }
 }

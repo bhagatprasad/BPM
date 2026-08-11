@@ -88,8 +88,8 @@ namespace BPM.Web.API.Models.Entities
 
         // Navigation Properties
 
-        //[ForeignKey(nameof(SupplierId))]
-        //public virtual Supplier? Supplier { get; set; }
+        [ForeignKey(nameof(SupplierId))]
+        public virtual Supplier? Supplier { get; set; }
 
         //[ForeignKey(nameof(DealerId))]
         //public virtual Dealer? Dealer { get; set; }

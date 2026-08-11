@@ -90,6 +90,7 @@ builder.Services.AddScoped<IUserPasswordHistoryRepository, UserPasswordHistoryRe
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -108,6 +109,7 @@ builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
 builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();

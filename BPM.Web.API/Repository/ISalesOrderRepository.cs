@@ -1,0 +1,11 @@
+﻿using BPM.Web.API.Models.Entities;
+
+namespace BPM.Web.API.Repository
+{
+    public interface ISalesOrderRepository
+    {
+        Task<IEnumerable<SalesOrder>> GetAllSalesOrderAsync();
+        Task<IEnumerable<SalesOrder>> GetSalesOrderByDealer(Guid dealerId);
+        Task<SalesOrder> CreateSalesOrderAsync(SalesOrder salesOrder);
+    }
+}
