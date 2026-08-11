@@ -35,22 +35,44 @@ namespace BPM.Web.Distributor.UI.Services
             return await HandleResponse<TResponse>(response);
         }
 
+        //private async Task<T> HandleResponse<T>(HttpResponseMessage response)
+        //{
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        if (typeof(T) == typeof(bool) && response.StatusCode == HttpStatusCode.NoContent)
+        //        {
+        //            return (T)(object)true;
+        //        }
+
+        //        var content = await response.Content.ReadAsStringAsync();
+        //        var olcResponse = JsonConvert.DeserializeObject<T>(content);
+
+        //        return olcResponse;
+
+        //    }
+        //    return default;
+        //}
+
         private async Task<T> HandleResponse<T>(HttpResponseMessage response)
         {
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                if (typeof(T) == typeof(bool) && response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return (T)(object)true;
-                }
+                var error = await response.Content.ReadAsStringAsync();
 
-                var content = await response.Content.ReadAsStringAsync();
-                var olcResponse = JsonConvert.DeserializeObject<T>(content);
-
-                return olcResponse;
-
+                throw new Exception(
+                    $"Status: {response.StatusCode}\n{error}"
+                );
             }
-            return default;
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return default;
+            }
+
+            return JsonConvert.DeserializeObject<T>(content);
         }
+
+
     }
 }

@@ -1,0 +1,233 @@
+﻿@{
+    ViewData["Title"] = "Activities";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+
+    <h3 class="mb-0">Activities</h3>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb align-items-center mb-0 lh-1">
+
+            <li class="breadcrumb-item">
+                <a href="/" class="d-flex align-items-center text-decoration-none">
+                    <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                    <span class="text-body fs-14 hover">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="breadcrumb-item">
+                Core
+            </li>
+
+            <li class="breadcrumb-item active text-secondary">
+                Activities
+            </li>
+
+        </ol>
+    </nav>
+</div>
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+<!-- Search + Add -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0"
+              onsubmit="return false;">
+
+            <input type="text"
+                   id="searchInput"
+                   class="form-control w-350"
+                   placeholder="Search Activity..." />
+
+        </form>
+
+        <button id="btnAddActivity"
+                class="btn btn-primary btn-sm px-3">
+
+            <i class="ri-add-line me-1"></i>
+
+            Add Activity
+
+        </button>
+
+    </div>
+
+<!-- Table -->
+    <div class="default-table-area mx-minus-1">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle w-100">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Activity Name</th>
+
+                        <th>Code</th>
+
+                        <th>Description</th>
+
+                        <th>Status</th>
+
+                        <th width="170">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="activityTableBody">
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center py-5 text-muted">
+
+                            No activities found.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+            <span id="entriesInfo">
+
+                Showing 0 to 0 of 0 entries
+
+            </span>
+
+            <nav>
+
+                <ul class="pagination mb-0 justify-content-center"
+                    id="paginationControls">
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+</div>
+<!-- Activity Modal -->
+<div class="modal fade"
+     id="activityModal"
+     tabindex="-1"
+     aria-labelledby="activityModalTitle"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-md">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="activityModalTitle">
+
+                    Add Activity
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden"
+                       id="ActivityId" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Activity Name
+                    </label>
+
+                    <input type="text"
+                           id="ActivityName"
+                           class="form-control" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Code
+                    </label>
+
+                    <input type="text"
+                           id="Code"
+                           class="form-control" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea id="Description"
+                              rows="3"
+                              class="form-control"></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-light"
+                        data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button type="button"
+                        id="btnSaveActivity"
+                        class="btn btn-primary">
+
+                    Save
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="~/js/ActivitiesController.js"></script>
+
+    <script>
+
+        $(function () {
+
+            var controller = new ActivitiesController();
+
+            controller.init();
+
+        });
+
+    </script>
+}
