@@ -796,3 +796,32 @@ function mapStatusClass(statusId) {
         default: return "bg-light text-dark";
     }
 }
+
+const PO_STATUS = {
+    DRAFT: 'Draft',
+    SUBMITTED: 'Submitted',
+    PENDING_VERIFICATION: 'Pending Verification',
+    VERIFIED: 'Verified',
+    PENDING_APPROVAL: 'Pending Approval',
+    APPROVED: 'Approved',
+    REJECTED: 'Rejected',
+    CANCELLED: 'Cancelled',
+    PROCESSING: 'Processing',
+    SENT_TO_INVENTORY: 'Sent to Inventory',
+    INVENTORY_CONFIRMED: 'Inventory Confirmed',
+    PARTIALLY_AVAILABLE: 'Partially Available',
+    OUT_OF_STOCK: 'Out of Stock',
+    READY_FOR_DISPATCH: 'Ready for Dispatch',
+    DISPATCHED: 'Dispatched',
+    IN_TRANSIT: 'In Transit',
+    PARTIALLY_DELIVERED: 'Partially Delivered',
+    DELIVERED: 'Delivered',
+    BILL_GENERATED: 'Bill Generated',
+    PAYMENT_PENDING: 'Payment Pending',
+    PARTIALLY_PAID: 'Partially Paid',
+    PAID: 'Paid',
+    PAYMENT_FAILED: 'Payment Failed',
+    PAYMENT_OVERDUE: 'Payment Overdue',
+    COMPLETED: 'Completed',
+    CLOSED: 'Closed'
+};

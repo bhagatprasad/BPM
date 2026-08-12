@@ -9,12 +9,59 @@
     self.totalPages = 1;
     self.searchTerm = '';
 
+    // PO Status Constants
+    self.PO_STATUS = {
+        DRAFT: 'Draft',
+        SUBMITTED: 'Submitted',
+        ACCEPTED: 'Accepted',
+        PENDING_VERIFICATION: 'Pending Verification',
+        VERIFIED: 'Verified',
+        PENDING_APPROVAL: 'Pending Approval',
+        APPROVED: 'Approved',
+        REJECTED: 'Rejected',
+        CANCELLED: 'Cancelled',
+        PROCESSING: 'Processing',
+        SENT_TO_INVENTORY: 'Sent to Inventory',
+        INVENTORY_CONFIRMED: 'Inventory Confirmed',
+        PARTIALLY_AVAILABLE: 'Partially Available',
+        OUT_OF_STOCK: 'Out of Stock',
+        READY_FOR_DISPATCH: 'Ready for Dispatch',
+        DISPATCHED: 'Dispatched',
+        IN_TRANSIT: 'In Transit',
+        PARTIALLY_DELIVERED: 'Partially Delivered',
+        DELIVERED: 'Delivered',
+        BILL_GENERATED: 'Bill Generated',
+        PAYMENT_PENDING: 'Payment Pending',
+        PARTIALLY_PAID: 'Partially Paid',
+        PAID: 'Paid',
+        PAYMENT_FAILED: 'Payment Failed',
+        PAYMENT_OVERDUE: 'Payment Overdue',
+        COMPLETED: 'Completed',
+        CLOSED: 'Closed'
+    };
+
+    // Color palette for alternating rows
+    self.rowColors = [
+        '#f8f9fa',  // Light gray
+        '#ffffff',  // White
+        '#f0f4f8',  // Light blue
+        '#fafafa',  // Off white
+        '#f5f5f5',  // Light gray
+        '#faf3e8',  // Cream
+        '#f0f0f0',  // Gray
+        '#f8f0f0',  // Light pink
+        '#f0f8f0',  // Light green
+        '#f0f0f8'   // Light purple
+    ];
+
     // DOM references
     self.$tableBody = null;
     self.$pagination = null;
     self.$entriesInfo = null;
     self.$searchInput = null;
     self.$checkAll = null;
+    self.$modal = null;
+    self.$viewModal = null;
 
     self.init = function () {
         // Cache DOM elements
@@ -23,6 +70,10 @@
         self.$entriesInfo = $('#entriesInfo');
         self.$searchInput = $('#searchInput');
         self.$checkAll = $('#checkAll');
+        self.$modal = $('#processOrderModal');
+        self.$viewModal = $('#viewOrderModal');
+
+        console.log('Modal element:', self.$modal.length ? 'Found' : 'Not found');
 
         // Bind events
         self.bindEvents();
@@ -51,6 +102,25 @@
             var checkedCheckboxes = self.$tableBody.find('.item-checkbox:checked').length;
             self.$checkAll.prop('checked', totalCheckboxes === checkedCheckboxes);
         });
+
+        // Modal confirm button
+        $('#confirmProcessOrder').on('click', function () {
+            console.log('Confirm button clicked');
+            var orderId = $(this).data('order-id');
+            var action = $(this).data('action');
+            var notes = $('#processNotes').val();
+            console.log('OrderId:', orderId, 'Action:', action, 'Notes:', notes);
+            self.processOrder(orderId, action, notes);
+        });
+
+        // Modal close - clear notes
+        self.$modal.on('hidden.bs.modal', function () {
+            console.log('Modal hidden');
+            $('#processNotes').val('');
+            $('#confirmProcessOrder').removeData('order-id').removeData('action');
+            // Reset modal header color
+            $('#modalHeader').css('border-bottom-color', '');
+        });
     };
 
     self.fetchPurchaseOrdersAsync = function () {
@@ -61,21 +131,34 @@
         makeAjaxRequest({
             url: '/PurchaseOrder/GetAllPurchaseOrders',
             type: 'GET',
-            showLoader: false, // Manual control
+            showLoader: false,
             successCallback: function (response) {
                 console.log('PurchaseOrder response:', response);
 
-                // Map response data
                 if (response) {
                     self.PurchaseOrders = response.map(function (order) {
-                        // Map PurchaseOrderItemResponse to purchaseOrderDetails
                         var items = order.PurchaseOrderItemResponse || [];
+
+                        // Get supplier name - check if Dealer exists and use its name
+                        var supplierName = order.supplierName || '';
+
+                        // If supplier name is empty or null, try to get from Dealer
+                        if (!supplierName && order.dealer && order.dealer.dealershipName) {
+                            supplierName = order.dealer.dealershipName;
+                        }
+
+                        // If still empty, use default
+                        if (!supplierName) {
+                            supplierName = 'Supplier';
+                        }
 
                         return {
                             Id: order.Id,
                             PONumber: order.PONumber || order.Id.substring(0, 8),
                             supplierId: order.SupplierId,
-                            supplierName: order.supplierName || 'Supplier',
+                            supplierName: supplierName,
+                            dealerId: order.DealerId,
+                            dealer: order.Dealer || null,
                             subTotal: order.SubTotal || 0,
                             taxAmount: order.TaxAmount || 0,
                             totalAmount: order.TotalAmount || 0,
@@ -113,15 +196,9 @@
                     });
 
                     console.log('Mapped purchase orders:', self.PurchaseOrders);
-
-                    // Initialize filtered orders
                     self.filteredOrders = self.PurchaseOrders;
-
-                    // Render the table
-                    console.log('Rendering table...');
                     self.render();
 
-                    // Hide loader after rendering with a small delay
                     setTimeout(function () {
                         console.log('Hiding loader...');
                         hideLoader();
@@ -139,7 +216,6 @@
             },
             errorCallback: function (xhr, status, error) {
                 console.log('Failed to fetch purchase orders:', error);
-                // Show error message in table
                 self.$tableBody.html(
                     '<tr><td colspan="10" class="text-center py-4 text-danger">' +
                     '<i class="material-symbols-outlined fs-40 mb-2 d-block">error</i>' +
@@ -159,7 +235,8 @@
                     (order.supplierName && order.supplierName.toLowerCase().includes(self.searchTerm)) ||
                     (order.status && order.status.toLowerCase().includes(self.searchTerm)) ||
                     (order.deliveryTerms && order.deliveryTerms.toLowerCase().includes(self.searchTerm)) ||
-                    (order.paymentTerms && order.paymentTerms.toLowerCase().includes(self.searchTerm));
+                    (order.paymentTerms && order.paymentTerms.toLowerCase().includes(self.searchTerm)) ||
+                    (order.remarks && order.remarks.toLowerCase().includes(self.searchTerm));
             });
         }
         self.totalPages = Math.ceil(self.filteredOrders.length / self.pageSize);
@@ -197,15 +274,33 @@
 
         var html = '';
         currentPageOrders.forEach(function (order, index) {
-            // Main row
-            html += '<tr data-order-id="' + order.Id + '" data-expanded="false">';
+            // Calculate row color based on global index
+            var globalIndex = (self.currentPage - 1) * self.pageSize + index;
+            var colorIndex = globalIndex % self.rowColors.length;
+            var rowColor = self.rowColors[colorIndex];
+
+            // Prepare tooltip content with notes
+            var tooltipContent = '';
+            if (order.remarks) {
+                tooltipContent = 'Notes: ' + self.escapeHtml(order.remarks);
+            } else {
+                tooltipContent = 'No notes available';
+            }
+
+            // Get display name - show dealer name if available, otherwise supplier name
+            var displayName = order.supplierName || 'Supplier';
+
+            // If dealer exists and has dealership name, use it
+            if (order.dealer && order.dealer.DealershipName) {
+                displayName = order.dealer.DealershipName;
+            }
+
+            html += '<tr data-order-id="' + order.Id + '" data-expanded="false" style="background-color: ' + rowColor + ';" data-bs-toggle="tooltip" data-bs-placement="top" title="' + tooltipContent + '">';
             html += '<td class="text-body" style="width: 80px;">';
             html += '<div class="d-flex align-items-center" style="gap: 6px;">';
-            // Checkbox
             html += '<div class="form-check mb-0">';
             html += '<input class="form-check-input item-checkbox" type="checkbox" ' + (order.selected ? 'checked' : '') + ' />';
             html += '</div>';
-            // Expand button with > icon
             html += '<button class="bg-transparent p-0 border-0 expand-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Expand/Collapse" data-bs-toggle="tooltip">';
             html += '<span class="expand-icon" style="font-size: 18px; font-weight: bold; color: #6c757d; cursor: pointer; transition: transform 0.3s;">&#9654;</span>';
             html += '</button>';
@@ -213,7 +308,11 @@
             html += '</td>';
             html += '<td class="text-body"><span class="fw-semibold">' + self.escapeHtml(order.PONumber) + '</span></td>';
             html += '<td><div class="d-flex align-items-center">';
-            html += '<span class="fs-16 fw-medium text-secondary">' + self.escapeHtml(order.supplierName) + '</span>';
+            html += '<span class="fs-16 fw-medium text-secondary">' + self.escapeHtml(displayName) + '</span>';
+            // Show dealer badge if it's a dealer
+            if (order.dealer && order.dealer.dealershipName) {
+                html += ' <span class="badge bg-info ms-2" style="font-size: 10px;">Dealer</span>';
+            }
             html += '</div></td>';
             html += '<td class="text-body">' + (order.purchaseOrderDetails ? order.purchaseOrderDetails.length : 0) + '</td>';
             html += '<td class="text-body">$' + (order.subTotal || 0).toFixed(2) + '</td>';
@@ -223,34 +322,49 @@
             html += '<td>' + self.getStatusBadge(order.status) + '</td>';
             html += '<td>';
             html += '<div class="d-flex justify-content-end" style="gap: 6px;">';
-            // View button - Blue
-            html += '<button class="btn btn-sm btn-outline-primary view-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="View" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">visibility</i>';
-            html += '</button>';
-            // Approve button - Green
-            html += '<button class="btn btn-sm btn-outline-success approve-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Approve" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">check_circle</i>';
-            html += '</button>';
-            // Cancel button - Red
-            html += '<button class="btn btn-sm btn-outline-danger cancel-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Cancel" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-            html += '<i class="material-symbols-outlined fs-16">cancel</i>';
-            html += '</button>';
+
+            var status = order.status || 'Draft';
+
+            // Action buttons based on status
+            if (status === 'Submitted') {
+                // Submitted: Show Accept and Reject buttons
+                html += '<button class="btn btn-sm btn-outline-success accept-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Accept Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
+                html += '<i class="material-symbols-outlined fs-16">check_circle</i>';
+                html += '</button>';
+
+                html += '<button class="btn btn-sm btn-outline-danger reject-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Reject Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
+                html += '<i class="material-symbols-outlined fs-16">cancel</i>';
+                html += '</button>';
+            }
+
             html += '</div>';
             html += '</td>';
             html += '</tr>';
 
-            // Expanded row for details
-            html += '<tr class="expanded-row" data-order-id="' + order.Id + '" style="display:none;">';
+            // Expanded row
+            html += '<tr class="expanded-row" data-order-id="' + order.Id + '" style="display:none; background-color: ' + rowColor + ';">';
             html += '<td colspan="10" class="p-0">';
             html += '<div class="p-20 bg-light rounded-3 mb-10" style="margin: 0 15px 15px 15px; background-color: #f8f9fa !important;">';
-
-            // Show order summary info
             html += '<div class="row mb-15">';
             html += '<div class="col-md-3"><strong>PO Number:</strong> ' + self.escapeHtml(order.PONumber) + '</div>';
+            html += '<div class="col-md-3"><strong>Supplier/Dealer:</strong> ' + self.escapeHtml(displayName) + '</div>';
             html += '<div class="col-md-3"><strong>Delivery Terms:</strong> ' + self.escapeHtml(order.deliveryTerms || 'N/A') + '</div>';
             html += '<div class="col-md-3"><strong>Payment Terms:</strong> ' + self.escapeHtml(order.paymentTerms || 'N/A') + '</div>';
-            html += '<div class="col-md-3"><strong>Expected Delivery:</strong> ' + self.formatDate(order.expectedDeliveryDate) + '</div>';
             html += '</div>';
+            html += '<div class="row mb-15">';
+            html += '<div class="col-md-3"><strong>Expected Delivery:</strong> ' + self.formatDate(order.expectedDeliveryDate) + '</div>';
+            html += '<div class="col-md-3"><strong>Actual Delivery:</strong> ' + self.formatDate(order.actualDeliveryDate) + '</div>';
+            if (order.dealer && order.dealer.dealershipName) {
+                html += '<div class="col-md-6"><strong>Dealer Details:</strong> ' + self.escapeHtml(order.dealer.dealershipName) + ' (' + self.escapeHtml(order.dealer.contactPerson || 'N/A') + ')</div>';
+            }
+            html += '</div>';
+
+            // Display notes in expanded row with icon
+            if (order.remarks) {
+                html += '<div class="mb-15 p-10" style="background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">';
+                html += '<strong><i class="material-symbols-outlined fs-18" style="vertical-align: middle;">notes</i> Notes:</strong> ' + self.escapeHtml(order.remarks).replace(/\n/g, '<br/>');
+                html += '</div>';
+            }
 
             html += '<h6 class="mb-15">Order Items</h6>';
             html += '<div class="table-responsive">';
@@ -292,12 +406,6 @@
             html += '</tbody>';
             html += '</table>';
             html += '</div>';
-
-            // Show remarks if available
-            if (order.remarks) {
-                html += '<div class="mt-15"><strong>Remarks:</strong> ' + self.escapeHtml(order.remarks) + '</div>';
-            }
-
             html += '</div>';
             html += '</td>';
             html += '</tr>';
@@ -305,34 +413,245 @@
 
         self.$tableBody.html(html);
 
-        // Bind expand/collapse events with rotation animation
+        // Initialize tooltips for rows
+        self.$tableBody.find('tr[data-bs-toggle="tooltip"]').tooltip();
+
+        // Bind events
         self.$tableBody.find('.expand-btn').on('click', function () {
             var orderId = $(this).data('order-id');
             self.toggleExpand(orderId);
         });
 
-        // Re-bind checkbox events for new checkboxes
         self.$tableBody.find('.item-checkbox').off('change').on('change', function () {
             var totalCheckboxes = self.$tableBody.find('.item-checkbox').length;
             var checkedCheckboxes = self.$tableBody.find('.item-checkbox:checked').length;
             self.$checkAll.prop('checked', totalCheckboxes === checkedCheckboxes);
         });
 
-        // Bind View, Approve, Cancel events
-        self.$tableBody.find('.view-btn').on('click', function () {
+        self.$tableBody.find('.accept-btn').on('click', function () {
             var orderId = $(this).data('order-id');
-            self.viewOrder(orderId);
+            console.log('Accept button clicked for order:', orderId);
+            self.showProcessModal(orderId, 'Accept');
         });
 
-        self.$tableBody.find('.approve-btn').on('click', function () {
+        self.$tableBody.find('.reject-btn').on('click', function () {
             var orderId = $(this).data('order-id');
-            self.approveOrder(orderId);
+            console.log('Reject button clicked for order:', orderId);
+            self.showProcessModal(orderId, 'Reject');
         });
 
-        self.$tableBody.find('.cancel-btn').on('click', function () {
-            var orderId = $(this).data('order-id');
-            self.cancelOrder(orderId);
+        // Re-bind tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    };
+
+    self.showProcessModal = function (orderId, action) {
+        console.log('Showing modal for order:', orderId, 'Action:', action);
+
+        var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
+        if (!order) {
+            console.error('Order not found:', orderId);
+            self.showNotification('Order not found. Please refresh and try again.', 'error');
+            return;
+        }
+
+        console.log('Order found:', order);
+
+        var modalTitle = '';
+        var modalMessage = '';
+        var status = '';
+        var iconName = '';
+        var iconColor = '';
+        var bgColor = '';
+        var borderColor = '';
+        var buttonClass = '';
+        var buttonText = '';
+        var headerColor = '';
+        var headerBgColor = '';
+        var iconContainerBg = '';
+
+        // Get display name for modal
+        var displayName = order.supplierName || 'Supplier';
+        if (order.dealer && order.dealer.dealershipName) {
+            displayName = order.dealer.dealershipName;
+        }
+
+        switch (action) {
+            case 'Accept':
+                modalTitle = 'Accept Purchase Order';
+                modalMessage = 'Are you sure you want to accept this purchase order? <br/><br/> <strong>PO Number:</strong> ' + order.PONumber + '<br/> <strong>Supplier/Dealer:</strong> ' + displayName + '<br/> <strong>Total Amount:</strong> $' + (order.totalAmount || 0).toFixed(2);
+                status = self.PO_STATUS.VERIFIED;
+                iconName = 'check_circle';
+                iconColor = '#28a745';
+                bgColor = '#d4edda';
+                borderColor = '#28a745';
+                buttonClass = 'btn-success';
+                buttonText = 'Accept Order';
+                headerColor = '#28a745';
+                headerBgColor = '#f0fff4';
+                iconContainerBg = '#d4edda';
+                break;
+            case 'Reject':
+                modalTitle = 'Reject Purchase Order';
+                modalMessage = 'Are you sure you want to reject this purchase order? <br/><br/> <strong>PO Number:</strong> ' + order.PONumber + '<br/> <strong>Supplier/Dealer:</strong> ' + displayName + '<br/> <strong>Total Amount:</strong> $' + (order.totalAmount || 0).toFixed(2);
+                status = self.PO_STATUS.REJECTED;
+                iconName = 'warning';
+                iconColor = '#856404';
+                bgColor = '#fff3cd';
+                borderColor = '#ffc107';
+                buttonClass = 'btn-warning';
+                buttonText = 'Reject Order';
+                headerColor = '#ffc107';
+                headerBgColor = '#fff8e1';
+                iconContainerBg = '#fff3cd';
+                break;
+            default:
+                console.error('Unknown action:', action);
+                return;
+        }
+
+        // Update modal elements
+        $('#processOrderModalLabel').text(modalTitle);
+        $('#modalSubtitle').text('Please confirm your action for PO #' + order.PONumber);
+
+        // Update modal header
+        $('#modalHeader')
+            .css('border-bottom-color', headerColor)
+            .css('background-color', headerBgColor);
+
+        // Update header icon
+        $('#modalHeaderIcon')
+            .text(iconName)
+            .css('color', iconColor);
+
+        // Update icon container
+        $('#modalIconContainer')
+            .css('background-color', iconContainerBg);
+
+        // Update icon
+        $('#modalIcon')
+            .text(iconName)
+            .css('color', iconColor);
+
+        // Update message with border and background
+        $('#processOrderMessage')
+            .html(modalMessage)
+            .css('border-left-color', borderColor)
+            .css('background-color', bgColor);
+
+        // Update confirm button
+        var confirmBtn = $('#confirmProcessOrder');
+        confirmBtn
+            .data('order-id', orderId)
+            .data('action', status)
+            .removeClass('btn-success btn-danger btn-primary btn-warning')
+            .addClass(buttonClass)
+            .html('<span>' + buttonText + '</span>');
+
+        // Clear notes
+        $('#processNotes').val('');
+
+        console.log('Modal updated, showing...');
+
+        // Show modal using Bootstrap
+        var modalInstance = new bootstrap.Modal(document.getElementById('processOrderModal'));
+        modalInstance.show();
+    };
+
+    self.processOrder = function (orderId, status, notes) {
+        console.log('Processing order:', orderId, 'Status:', status, 'Notes:', notes);
+
+        var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
+        if (!order) {
+            console.error('Order not found:', orderId);
+            self.showNotification('Order not found. Please refresh and try again.', 'error');
+            return;
+        }
+
+        var processDto = {
+            PurchaseOrderId: orderId,
+            Status: status,
+            Notes: notes || ''
+        };
+
+        console.log('DTO:', processDto);
+
+        showLoader('Processing order...');
+
+        makeAjaxRequest({
+            url: '/PurchaseOrder/ProcessPurchaseOrder',
+            type: 'POST',
+            data: JSON.stringify(processDto),
+            contentType: 'application/json; charset=utf-8',
+            showLoader: false,
+            successCallback: function (response) {
+                console.log('Success response:', response);
+                hideLoader();
+
+                // Hide modal
+                var modalInstance = bootstrap.Modal.getInstance(document.getElementById('processOrderModal'));
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+
+                var actionText = status === 'Verified' ? 'accepted' : 'rejected';
+                self.showNotification('Order ' + order.PONumber + ' has been ' + actionText + ' successfully!', 'success');
+
+                // Refresh data
+                self.fetchPurchaseOrdersAsync();
+            },
+            errorCallback: function (xhr, status, error) {
+                console.error('Error:', error);
+                hideLoader();
+
+                var modalInstance = bootstrap.Modal.getInstance(document.getElementById('processOrderModal'));
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+
+                var errorMessage = 'Failed to process order. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                self.showNotification(errorMessage, 'error');
+            }
         });
+    };
+
+    self.showNotification = function (message, type) {
+        var colors = {
+            success: '#28a745',
+            error: '#dc3545',
+            warning: '#ffc107',
+            info: '#17a2b8'
+        };
+
+        var icons = {
+            success: 'check_circle',
+            error: 'error',
+            warning: 'warning',
+            info: 'info'
+        };
+
+        var bgColor = colors[type] || colors.info;
+        var icon = icons[type] || icons.info;
+
+        $('#customNotification').remove();
+
+        var notificationHtml = '<div id="customNotification" style="position: fixed; top: 20px; right: 20px; background: ' + bgColor + '; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; max-width: 450px; animation: slideIn 0.3s ease;">' +
+            '<div style="display: flex; align-items: center; gap: 12px;">' +
+            '<i class="material-symbols-outlined" style="font-size: 24px;">' + icon + '</i>' +
+            '<span style="font-size: 14px; line-height: 1.5;">' + message + '</span>' +
+            '<button onclick="$(\'#customNotification\').remove()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-left: auto; opacity: 0.7; padding: 0 4px;">&times;</button>' +
+            '</div>' +
+            '</div>';
+
+        $('body').append(notificationHtml);
+
+        setTimeout(function () {
+            $('#customNotification').fadeOut(300, function () {
+                $(this).remove();
+            });
+        }, 4000);
     };
 
     self.toggleExpand = function (orderId) {
@@ -345,81 +664,6 @@
         } else {
             expandedRow.show();
             expandIcon.css('transform', 'rotate(90deg)');
-        }
-    };
-
-    self.viewOrder = function (orderId) {
-        console.log('View order:', orderId);
-        var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
-        if (order) {
-            var message = 'Viewing Purchase Order:\n\n' +
-                'PO Number: ' + order.PONumber + '\n' +
-                'Supplier: ' + order.supplierName + '\n' +
-                'Sub Total: $' + order.subTotal.toFixed(2) + '\n' +
-                'Tax: $' + order.taxAmount.toFixed(2) + '\n' +
-                'Total: $' + order.totalAmount.toFixed(2) + '\n' +
-                'Status: ' + order.status + '\n' +
-                'Order Date: ' + self.formatDate(order.orderDate) + '\n' +
-                'Delivery Terms: ' + (order.deliveryTerms || 'N/A') + '\n' +
-                'Payment Terms: ' + (order.paymentTerms || 'N/A') + '\n' +
-                'Items: ' + (order.purchaseOrderDetails ? order.purchaseOrderDetails.length : 0);
-            alert(message);
-        }
-    };
-
-    self.approveOrder = function (orderId) {
-        console.log('Approve order:', orderId);
-        if (confirm('Are you sure you want to approve this purchase order?')) {
-            var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
-            if (order) {
-                // Show loader manually
-                showLoader('Approving order...');
-
-                makeAjaxRequest({
-                    url: '/PurchaseOrder/ApproveOrder',
-                    type: 'POST',
-                    data: JSON.stringify({ orderId: orderId }),
-                    contentType: 'application/json; charset=utf-8',
-                    showLoader: false,
-                    successCallback: function (response) {
-                        hideLoader();
-                        alert('Order ' + order.PONumber + ' has been approved successfully!');
-                        self.fetchPurchaseOrdersAsync(); // Refresh data
-                    },
-                    errorCallback: function (xhr, status, error) {
-                        hideLoader();
-                        alert('Failed to approve order. Please try again.');
-                    }
-                });
-            }
-        }
-    };
-
-    self.cancelOrder = function (orderId) {
-        console.log('Cancel order:', orderId);
-        if (confirm('Are you sure you want to cancel this purchase order? This action cannot be undone.')) {
-            var order = self.PurchaseOrders.find(function (o) { return o.Id === orderId; });
-            if (order) {
-                // Show loader manually
-                showLoader('Cancelling order...');
-
-                makeAjaxRequest({
-                    url: '/PurchaseOrder/CancelOrder',
-                    type: 'POST',
-                    data: JSON.stringify({ orderId: orderId }),
-                    contentType: 'application/json; charset=utf-8',
-                    showLoader: false,
-                    successCallback: function (response) {
-                        hideLoader();
-                        alert('Order ' + order.PONumber + ' has been cancelled.');
-                        self.fetchPurchaseOrdersAsync(); // Refresh data
-                    },
-                    errorCallback: function (xhr, status, error) {
-                        hideLoader();
-                        alert('Failed to cancel order. Please try again.');
-                    }
-                });
-            }
         }
     };
 
@@ -458,7 +702,6 @@
 
         self.$pagination.html(html);
 
-        // Bind pagination events
         self.$pagination.find('.page-link').on('click', function () {
             var page = $(this).data('page');
             if (page === 'prev') {
@@ -482,19 +725,38 @@
 
     self.getStatusBadge = function (status) {
         var statusMap = {
-            'Shipped': 'text-primary bg-primary bg-opacity-10',
-            'Approved': 'text-success bg-success bg-opacity-10',
-            'Confirmed': 'text-success bg-success bg-opacity-10',
-            'Completed': 'text-success bg-success bg-opacity-10',
-            'Pending': 'text-warning bg-warning bg-opacity-10',
-            'Draft': 'text-warning bg-warning bg-opacity-10',
-            'Rejected': 'text-danger bg-danger bg-opacity-10',
-            'Cancelled': 'text-danger bg-danger bg-opacity-10'
+            'Draft': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Submitted': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+            'Pending Verification': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Verified': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Pending Approval': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Approved': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Accepted': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Confirmed': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Completed': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Shipped': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
+            'Processing': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+            'Pending': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Rejected': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+            'Cancelled': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+            'Dispatched': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
+            'Delivered': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'In Transit': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+            'Ready for Dispatch': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
+            'Bill Generated': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+            'Payment Pending': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Partially Paid': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+            'Paid': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+            'Payment Failed': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+            'Payment Overdue': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+            'Closed': { text: 'text-secondary', bg: 'bg-secondary', border: 'border-secondary' }
         };
 
-        var className = statusMap[status] || 'text-secondary bg-secondary bg-opacity-10';
-        return '<span class="fs-15 fw-normal d-inline-block default-badge ' + className + '">' +
-            self.escapeHtml(status || 'Draft') + '</span>';
+        var statusKey = status || 'Draft';
+        var style = statusMap[statusKey] || { text: 'text-secondary', bg: 'bg-secondary', border: 'border-secondary' };
+
+        return '<span class="' + style.text + ' ' + style.bg + ' bg-opacity-10 fs-15 fw-normal d-inline-block default-badge style-two border ' + style.border + '">' +
+            self.escapeHtml(statusKey) + '</span>';
     };
 
     self.formatDate = function (dateString) {

@@ -48,10 +48,10 @@ namespace BPM.Web.API.Models.Mappers
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Phone = dto.Phone,
+                IsActive = dto.IsActive ?? false,
                 ModifiedBy = dto.ModifiedBy,
-                ModifiedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow
             };
-
         }
 
         public static List<UserDto> ToUserDtoList(this List<User> users)

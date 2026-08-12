@@ -66,7 +66,8 @@ namespace BPM.Web.API.Services
                 }
 
                 // 3. Validate Purchase Order status
-                if (!string.Equals(purchaseOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(purchaseOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(purchaseOrder.Status, "Verified", StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.LogWarning("Purchase Order {PurchaseOrderId} is not approved. Current status: {Status}", purchaseOrderId, purchaseOrder.Status);
 

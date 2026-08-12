@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RoleService } from '@app/services/role.service';
 import { roleInfo, userInformation } from '@app/models/user';
 import { UserUpdateDto } from '@app/models/user-update-dto';
+import { isActive } from '@angular/router';
 
 
 @Component({
@@ -25,7 +26,7 @@ export class UserCreateSidebarComponent implements OnInit {
   roles: roleInfo[] = [];
   filteredRoles: roleInfo[] = [];
   showPassword: boolean = false;
-  isEditMode: boolean = false;
+  isEditMode: boolean = false;  
   userId: string = '';
 
   userForm: FormGroup;
@@ -91,6 +92,7 @@ export class UserCreateSidebarComponent implements OnInit {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
+        isActive:formData.isActive,
         modifiedBy: '' // Will be set in parent component
       };
 
@@ -98,6 +100,7 @@ export class UserCreateSidebarComponent implements OnInit {
     } else {
       this.formSubmit.emit(formData);
     }
+     this.close();
   }
 
   resetForm(): void {

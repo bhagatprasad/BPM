@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.Entities;
 
 namespace BPM.Web.API.Repository
 {
@@ -13,5 +14,11 @@ namespace BPM.Web.API.Repository
         Task<Permission?> UpdateAsync(Permission permission);
 
         Task<bool> DeleteAsync(Guid permissionId);
+
+        Task<bool> HasPermissionAsync(Guid roleId, string featureCode, string activityCode);
+
+        Task<List<PermissionFeatureDto>> GetPermissionsByRoleAsync(Guid roleId);
+
+
     }
 }
