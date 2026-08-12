@@ -141,7 +141,7 @@ namespace BPM.Web.API.Repository
             return true;
         }
 
-       
+
         public async Task<SalesOrder> ProcessSalesOrderAsync(Guid salesOrderId, string status)
         {
             var salesOrder = await _dbContext.SalesOrders.FirstOrDefaultAsync(a => a.Id == salesOrderId);
@@ -155,13 +155,6 @@ namespace BPM.Web.API.Repository
 
             await _dbContext.SaveChangesAsync();
 
-            return salesOrder;
-        }
-
-        public async Task<SalesOrder> UpdateSalesOrderAsync(SalesOrder salesOrder)
-        {
-            _dbContext.SalesOrders.Update(salesOrder);
-            await _dbContext.SaveChangesAsync();
             return salesOrder;
         }
     }
