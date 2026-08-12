@@ -71,6 +71,14 @@ namespace BPM.Web.API.Service
 
                 _logger.LogInformation("Purchase Order created successfully. PO Number: {PONumber}", result.PONumber);
 
+                if (result != null)
+                {
+                    var dbPurchaseOrder = await _repository.GetPurchaseOrderByIdAsync(purchaseOrder.Id);
+                    return dbPurchaseOrder.ToDto();
+                }
+
+
+
                 return result.ToDto();
             }
             catch (Exception ex)

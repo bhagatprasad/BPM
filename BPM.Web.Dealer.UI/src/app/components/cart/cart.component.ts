@@ -3,7 +3,7 @@ import { CartService } from '../../services/cart.service';
 import { CartItem } from '../../models/cart-item';
 import { CommonModule } from '@angular/common';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink ,Router} from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({
@@ -21,6 +21,7 @@ export class CartComponent implements OnInit {
     private purchaseOrderService: PurchaseOrderService,
     private toasterService: ToastrService,
     private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   cartCount = 0;
@@ -105,6 +106,7 @@ export class CartComponent implements OnInit {
       deliveryTerms: 'Door Delivery',
       remarks: 'Order from Angular UI',
       internalNotes: 'Angular UI',
+      status:'Submitted',
       createdBy: auth.authenticateResponseDto.userId,
       items: this.cartItems.map((item) => ({
         drugId: item.drugId,
@@ -127,6 +129,8 @@ export class CartComponent implements OnInit {
         this.cartService.clearCart();
         this.cartItems = [];
         this.cdr.detectChanges();
+        this.router.navigateByUrl('/my-orders');
+
       },
       error: (error) => {
         console.error(error);

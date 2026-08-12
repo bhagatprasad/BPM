@@ -329,11 +329,11 @@
             if (status === 'Submitted') {
                 // Submitted: Show Accept and Reject buttons
                 html += '<button class="btn btn-sm btn-outline-success accept-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Accept Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-                html += '<i class="material-symbols-outlined fs-16">check_circle</i>';
+                html += '<i class="material-symbols-outlined fs-16">Accept</i>';
                 html += '</button>';
 
                 html += '<button class="btn btn-sm btn-outline-danger reject-btn" data-order-id="' + order.Id + '" data-bs-placement="top" data-bs-title="Reject Order" data-bs-toggle="tooltip" style="padding: 4px 10px;">';
-                html += '<i class="material-symbols-outlined fs-16">cancel</i>';
+                html += '<i class="material-symbols-outlined fs-16">Cancel</i>';
                 html += '</button>';
             }
 
@@ -580,7 +580,7 @@
         makeAjaxRequest({
             url: '/PurchaseOrder/ProcessPurchaseOrder',
             type: 'POST',
-            data: JSON.stringify(processDto),
+            data: processDto,
             contentType: 'application/json; charset=utf-8',
             showLoader: false,
             successCallback: function (response) {
