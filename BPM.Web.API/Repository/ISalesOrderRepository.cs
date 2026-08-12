@@ -5,6 +5,7 @@ namespace BPM.Web.API.Repository
     public interface ISalesOrderRepository
     {
         Task<IEnumerable<SalesOrder>> GetAllSalesOrderAsync();
+        Task<SalesOrder?> GetSalesOrderByIdAsync(Guid id);
         Task<IEnumerable<SalesOrder>> GetSalesOrderByDealer(Guid dealerId);
         Task<SalesOrder> CreateSalesOrderAsync(SalesOrder salesOrder);
     }

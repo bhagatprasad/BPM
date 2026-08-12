@@ -125,6 +125,10 @@ namespace BPM.Web.API.Repository
             return existingOrder;
         }
 
+        public async Task<SalesOrder?> GetSalesOrderByIdAsync(Guid id)
+        {
+            return await _dbContext.SalesOrders.FirstOrDefaultAsync(a => a.Id == id);
+        }
         public async Task<bool> DeleteSalesOrderAsync(Guid id)
         {
             var salesOrder = await _dbContext.SalesOrders

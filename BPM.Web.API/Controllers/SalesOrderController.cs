@@ -98,5 +98,26 @@ namespace BPM.Web.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the Sales Order.");
             }
         }
+
+        [HttpGet("GetSalesOrderById/{id}")]
+        public async Task<IActionResult> GetSalesOrderById(Guid id)
+        {
+            try
+            {
+                var salesOrder =await _service.GetSalesOrderByIdAsync(id);
+
+                if (salesOrder == null)
+                {
+                    return NotFound("Sales Order not found.");
+                }
+
+                return Ok(salesOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching Sales Order with Id: {SalesOrderId}",id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the Sales Order.");
+            }
+        }
     }
 }
