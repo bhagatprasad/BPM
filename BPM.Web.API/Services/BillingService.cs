@@ -7,16 +7,16 @@ namespace BPM.Web.API.Services
     public class BillingService : IBillingService
     {
         private readonly IBillingRepository _billingRepository;
-        private readonly ISalesOrderService _salesOrderService;
+        private readonly ISalesOrderRepository _salesOrderRepository;
         private readonly ILogger<BillingService> _logger;
 
         public BillingService(
             IBillingRepository billingRepository,
-            ISalesOrderService salesOrderService,
+            ISalesOrderRepository salesOrderRepository,
             ILogger<BillingService> logger)
         {
             _billingRepository = billingRepository;
-            _salesOrderService = salesOrderService;
+            _salesOrderRepository = salesOrderRepository;
             _logger = logger;
         }
 
@@ -27,7 +27,7 @@ namespace BPM.Web.API.Services
                 _logger.LogInformation("Creating Billing for Sales Order: {SalesOrderId}", createBillingDto.SalesOrderId);
 
                 // 1. Validate Sales Order
-                var salesOrder = await _salesOrderService.GetSalesOrderByIdAsync(createBillingDto.SalesOrderId);
+                var salesOrder = await _salesOrderRepository.GetSalesOrderByIdAsync(createBillingDto.SalesOrderId);
 
                 if (salesOrder == null)
                 {
@@ -52,7 +52,7 @@ namespace BPM.Web.API.Services
                 }
 
                 // 4. Convert Sales Order to Billing Entity
-                var billing = createBillingDto.ToEntity(salesOrder, currentUserId);
+                var billing = createBillingDto.ToEntity(salesOrder.ToDto(), currentUserId);
 
                 // 5. Generate Billing Number
                 billing.BillingNumber = $"BILL-{DateTime.UtcNow:yyyyMM}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
