@@ -91,8 +91,7 @@ namespace BPM.Web.API.Models.Entities
         [ForeignKey(nameof(SupplierId))]
         public virtual Supplier? Supplier { get; set; }
 
-        //[ForeignKey(nameof(DealerId))]
-        //public virtual Dealer? Dealer { get; set; }
+        public virtual Dealer? Dealer { get; set; }
 
         //[ForeignKey(nameof(CreatedBy))]
         //public virtual User? CreatedUser { get; set; }

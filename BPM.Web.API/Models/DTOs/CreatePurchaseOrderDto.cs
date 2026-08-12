@@ -20,6 +20,8 @@ namespace BPM.Web.API.Models.DTOs
 
         public string? Remarks { get; set; }
 
+        public string? Status { get; set; }
+
         public string? InternalNotes { get; set; }
 
         [Required]
