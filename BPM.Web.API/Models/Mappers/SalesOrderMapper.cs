@@ -74,7 +74,7 @@ namespace BPM.Web.API.Models.Mappers
                 OrderDate = DateTime.UtcNow,
                 ExpectedDeliveryDate = GetUtcDateTime(purchaseOrder.ExpectedDeliveryDate, DateTime.UtcNow.AddDays(7)),
                 ActualDeliveryDate = GetUtcDateTime(purchaseOrder.ActualDeliveryDate, DateTime.UtcNow.AddDays(7)),
-                Status = "Created",
+                Status = "Submitted",
                 SubTotal = purchaseOrder.SubTotal,
                 TaxAmount = purchaseOrder.TaxAmount,
                 DiscountAmount = purchaseOrder.DiscountAmount,
@@ -83,7 +83,7 @@ namespace BPM.Web.API.Models.Mappers
                 PaymentTerms = purchaseOrder.PaymentTerms,
                 DeliveryTerms = purchaseOrder.DeliveryTerms,
                 Remarks = purchaseOrder.Remarks,
-                InternalNotes = "",
+                InternalNotes = "Sales order generated from purchase order " + purchaseOrder.Id,
                 IsActive = true,
                 CreatedBy = createdBy,
                 CreatedOn = DateTime.UtcNow,
@@ -166,6 +166,7 @@ namespace BPM.Web.API.Models.Mappers
             salesOrder.PaymentTerms = purchaseOrder.PaymentTerms;
             salesOrder.DeliveryTerms = purchaseOrder.DeliveryTerms;
             salesOrder.Remarks = purchaseOrder.Remarks;
+            salesOrder.InternalNotes = $"Sales order generated from purchase order {purchaseOrder.Id}";
             salesOrder.ModifiedBy = modifiedBy;
             salesOrder.ModifiedOn = DateTime.UtcNow;
         }
