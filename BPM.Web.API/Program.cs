@@ -147,6 +147,7 @@ builder.Services.AddSingleton<RabbitMQPublisher>();
 builder.Services.AddSingleton<IRabbitMQPublisher>(sp => sp.GetRequiredService<RabbitMQPublisher>());
 builder.Services.AddHostedService<PasswordHistorySubscriber>();
 builder.Services.AddHostedService<UserLoginHistorySubscriber>();
+builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHostedService<RefreshTokenSubscriber>();
 
 // Health Checks

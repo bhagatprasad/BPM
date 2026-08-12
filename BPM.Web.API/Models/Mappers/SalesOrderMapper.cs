@@ -1,6 +1,7 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
+using BPM.Web.API.Models.Extensions;
 
 namespace BPM.Web.API.Models.Mappers
 {
@@ -32,7 +33,9 @@ namespace BPM.Web.API.Models.Mappers
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,
                 ModifiedBy = entity.ModifiedBy,
-                ModifiedOn = entity.ModifiedOn
+                ModifiedOn = entity.ModifiedOn,
+                PurchaseOrder = entity.PurchaseOrder.ToDto(),
+                SalesOrderItems = entity.SalesOrderItems?.Select(x => x.ToDto()).ToList() ?? new List<SalesOrderItemDto>()
             };
         }
 
@@ -59,7 +62,8 @@ namespace BPM.Web.API.Models.Mappers
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,
                 ModifiedBy = entity.ModifiedBy,
-                ModifiedOn = entity.ModifiedOn
+                ModifiedOn = entity.ModifiedOn,
+                Drug = entity.Drug?.DrugToDrugDto()
             };
         }
 
@@ -72,8 +76,8 @@ namespace BPM.Web.API.Models.Mappers
                 SupplierId = purchaseOrder.SupplierId,
                 DealerId = purchaseOrder.DealerId,
                 OrderDate = DateTime.UtcNow,
-                ExpectedDeliveryDate = GetUtcDateTime(purchaseOrder.ExpectedDeliveryDate, DateTime.UtcNow.AddDays(7)),
-                ActualDeliveryDate = GetUtcDateTime(purchaseOrder.ActualDeliveryDate, DateTime.UtcNow.AddDays(7)),
+                ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc(),
+                ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc(),
                 Status = "Submitted",
                 SubTotal = purchaseOrder.SubTotal,
                 TaxAmount = purchaseOrder.TaxAmount,
@@ -83,7 +87,7 @@ namespace BPM.Web.API.Models.Mappers
                 PaymentTerms = purchaseOrder.PaymentTerms,
                 DeliveryTerms = purchaseOrder.DeliveryTerms,
                 Remarks = purchaseOrder.Remarks,
-                InternalNotes = "Sales order generated from purchase order " + purchaseOrder.Id,
+                InternalNotes = $"Sales order generated from purchase order {purchaseOrder.PONumber} on {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC",
                 IsActive = true,
                 CreatedBy = createdBy,
                 CreatedOn = DateTime.UtcNow,
@@ -97,6 +101,46 @@ namespace BPM.Web.API.Models.Mappers
             {
                 salesOrder.SalesOrderItems = purchaseOrder.PurchaseOrderItemResponse
                     .Select(item => item.ToSalesOrderItemFromPurchaseOrderItem())
+                    .ToList();
+            }
+
+            return salesOrder;
+        }
+
+        public static SalesOrder ToSalesOrderFromPurchaseOrderEntity(this PurchaseOrder purchaseOrder, Guid createdBy)
+        {
+            var salesOrder = new SalesOrder
+            {
+                SONumber = GenerateSONumber(),
+                PurchaseOrderId = purchaseOrder.Id,
+                SupplierId = purchaseOrder.SupplierId,
+                DealerId = purchaseOrder.DealerId,
+                OrderDate = DateTime.UtcNow,
+                ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc(),
+                ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc(),
+                Status = "Submitted",
+                SubTotal = purchaseOrder.SubTotal,
+                TaxAmount = purchaseOrder.TaxAmount,
+                DiscountAmount = purchaseOrder.DiscountAmount,
+                TotalAmount = purchaseOrder.TotalAmount,
+                CurrencyCode = "INR",
+                PaymentTerms = purchaseOrder.PaymentTerms,
+                DeliveryTerms = purchaseOrder.DeliveryTerms,
+                Remarks = purchaseOrder.Remarks,
+                InternalNotes = $"Sales order generated from purchase order {purchaseOrder.PONumber} on {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC",
+                IsActive = true,
+                CreatedBy = createdBy,
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = createdBy,
+                ModifiedOn = DateTime.UtcNow,
+                SalesOrderItems = new List<SalesOrderItem>()
+            };
+
+            // Map purchase order items to sales order items
+            if (purchaseOrder.PurchaseOrderItems != null && purchaseOrder.PurchaseOrderItems.Any())
+            {
+                salesOrder.SalesOrderItems = purchaseOrder.PurchaseOrderItems
+                    .Select(item => item.ToSalesOrderItemFromPurchaseOrderItem(salesOrder.Id))
                     .ToList();
             }
 
@@ -119,7 +163,7 @@ namespace BPM.Web.API.Models.Mappers
                 ReceivedQuantity = 0,
                 PendingQuantity = item.Quantity,
                 BatchNumber = item.BatchNumber,
-                ExpiryDate = GetUtcDateTime(item.ExpiryDate, DateTime.UtcNow.AddYears(1)),
+                ExpiryDate = item.ExpiryDate.EnsureUtc() ?? DateTime.UtcNow.AddYears(1),
                 Remarks = item.Remarks,
                 CreatedBy = null,
                 CreatedOn = DateTime.UtcNow,
@@ -132,7 +176,6 @@ namespace BPM.Web.API.Models.Mappers
         {
             return new SalesOrderItem
             {
-                Id = Guid.NewGuid(),
                 SalesOrderId = salesOrderId,
                 DrugId = item.DrugId,
                 PackagingId = item.PackagingId,
@@ -146,7 +189,7 @@ namespace BPM.Web.API.Models.Mappers
                 ReceivedQuantity = 0,
                 PendingQuantity = item.Quantity,
                 BatchNumber = item.BatchNumber,
-                ExpiryDate = GetUtcDateTime(item.ExpiryDate, DateTime.UtcNow.AddYears(1)),
+                ExpiryDate = item.ExpiryDate.EnsureUtc() ?? DateTime.UtcNow.AddYears(1),
                 Remarks = item.Remarks,
                 CreatedBy = null,
                 CreatedOn = DateTime.UtcNow,
@@ -157,16 +200,64 @@ namespace BPM.Web.API.Models.Mappers
 
         public static void UpdateSalesOrderFromPurchaseOrder(this SalesOrder salesOrder, PurchaseOrderResponseDto purchaseOrder, Guid modifiedBy)
         {
-            salesOrder.ExpectedDeliveryDate = GetUtcDateTime(purchaseOrder.ExpectedDeliveryDate, salesOrder.ExpectedDeliveryDate);
-            salesOrder.ActualDeliveryDate = GetUtcDateTime(purchaseOrder.ActualDeliveryDate, salesOrder.ActualDeliveryDate.Value);
+            salesOrder.ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc();
+            salesOrder.ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc() ?? salesOrder.ActualDeliveryDate;
             salesOrder.SubTotal = purchaseOrder.SubTotal;
             salesOrder.TaxAmount = purchaseOrder.TaxAmount;
             salesOrder.DiscountAmount = purchaseOrder.DiscountAmount;
             salesOrder.TotalAmount = purchaseOrder.TotalAmount;
             salesOrder.PaymentTerms = purchaseOrder.PaymentTerms;
             salesOrder.DeliveryTerms = purchaseOrder.DeliveryTerms;
-            salesOrder.Remarks = purchaseOrder.Remarks;
-            salesOrder.InternalNotes = $"Sales order generated from purchase order {purchaseOrder.Id}";
+
+            // Append remarks instead of overwriting
+            if (!string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
+            {
+                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC");
+                var newNoteEntry = $"[{timestamp}] {purchaseOrder.Remarks}";
+
+                if (string.IsNullOrWhiteSpace(salesOrder.Remarks))
+                {
+                    salesOrder.Remarks = newNoteEntry;
+                }
+                else
+                {
+                    salesOrder.Remarks = $"{salesOrder.Remarks}\n{newNoteEntry}";
+                }
+            }
+
+            salesOrder.InternalNotes = $"Sales order updated from purchase order {purchaseOrder.PONumber} on {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC";
+            salesOrder.ModifiedBy = modifiedBy;
+            salesOrder.ModifiedOn = DateTime.UtcNow;
+        }
+
+        public static void UpdateSalesOrderFromPurchaseOrderEntity(this SalesOrder salesOrder, PurchaseOrder purchaseOrder, Guid modifiedBy)
+        {
+            salesOrder.ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc();
+            salesOrder.ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc() ?? salesOrder.ActualDeliveryDate;
+            salesOrder.SubTotal = purchaseOrder.SubTotal;
+            salesOrder.TaxAmount = purchaseOrder.TaxAmount;
+            salesOrder.DiscountAmount = purchaseOrder.DiscountAmount;
+            salesOrder.TotalAmount = purchaseOrder.TotalAmount;
+            salesOrder.PaymentTerms = purchaseOrder.PaymentTerms;
+            salesOrder.DeliveryTerms = purchaseOrder.DeliveryTerms;
+
+            // Append remarks instead of overwriting
+            if (!string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
+            {
+                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC");
+                var newNoteEntry = $"[{timestamp}] {purchaseOrder.Remarks}";
+
+                if (string.IsNullOrWhiteSpace(salesOrder.Remarks))
+                {
+                    salesOrder.Remarks = newNoteEntry;
+                }
+                else
+                {
+                    salesOrder.Remarks = $"{salesOrder.Remarks}\n{newNoteEntry}";
+                }
+            }
+
+            salesOrder.InternalNotes = $"Sales order updated from purchase order {purchaseOrder.PONumber} on {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC";
             salesOrder.ModifiedBy = modifiedBy;
             salesOrder.ModifiedOn = DateTime.UtcNow;
         }
@@ -175,34 +266,6 @@ namespace BPM.Web.API.Models.Mappers
         private static string GenerateSONumber()
         {
             return $"SO-{DateTime.UtcNow:yyyyMM}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
-        }
-
-        // Helper method to get UTC DateTime with default value
-        private static DateTime GetUtcDateTime(DateTime? dateTime, DateTime defaultValue)
-        {
-            var value = dateTime ?? defaultValue;
-            return value.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(value, DateTimeKind.Utc)
-                : value.ToUniversalTime();
-        }
-
-        // Helper method to ensure DateTime is UTC (nullable)
-        public static DateTime? EnsureUtc(DateTime? dateTime)
-        {
-            if (!dateTime.HasValue)
-                return null;
-
-            return dateTime.Value.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc)
-                : dateTime.Value.ToUniversalTime();
-        }
-
-        // Overload for non-nullable DateTime
-        public static DateTime EnsureUtc(DateTime dateTime)
-        {
-            return dateTime.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)
-                : dateTime.ToUniversalTime();
         }
     }
 }
