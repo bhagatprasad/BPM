@@ -92,5 +92,29 @@ namespace BPM.Web.API.Services
                 throw;
             }
         }
+
+        public async Task<SalesOrderDto?> GetSalesOrderByIdAsync(Guid id)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching Sales Order with Id: {SalesOrderId}", id);
+
+                var salesorder = await _salesOrderRepository.GetSalesOrderByIdAsync(id);
+
+                if (salesorder == null)
+                {
+                    _logger.LogWarning("Sales Order not found with Id: {SalesOrderId}",id);
+                     return null;
+                }
+
+                _logger.LogInformation("Sales Order found with Id: {SalesOrderId}",id);
+                return salesorder.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching Sales Order with Id: {SalesOrderId}",id);
+                throw;
+            }
+        }
     }
 }

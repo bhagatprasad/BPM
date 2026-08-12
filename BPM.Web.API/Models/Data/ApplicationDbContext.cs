@@ -33,6 +33,9 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<SalesOrder> SalesOrders { get; set; }
         public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
+        public DbSet<Billing>Billings { get; set; }
+        public DbSet<Invoice>Invoices { get; set; }
+
 
 
 
