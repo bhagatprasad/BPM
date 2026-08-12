@@ -52,5 +52,9 @@ namespace BPM.Web.API.Repository
             return salesOrder;
         }
 
+        public async Task<SalesOrder?> GetSalesOrderByIdAsync(Guid id)
+        {
+            return await _dbContext.SalesOrders.FirstOrDefaultAsync(a => a.Id == id);
+        }
     }
 }
