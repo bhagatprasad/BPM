@@ -1,4 +1,4 @@
-﻿namespace BPM.Web.API.Models.DTOs
+﻿namespace BPM.Web.Distributor.UI.Models.DTOs
 {
     public class SalesOrderItemDto
     {

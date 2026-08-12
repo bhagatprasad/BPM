@@ -10,59 +10,73 @@ namespace BPM.Web.API.Models.Entities
         [Column("id")]
         public Guid Id { get; set; }
 
+        [Required]
         [Column("sonumber")]
+        [MaxLength(20)]
         public string SONumber { get; set; } = string.Empty;
 
+        [Required]
         [Column("purchaseorderid")]
         public Guid PurchaseOrderId { get; set; }
 
+        [Required]
         [Column("supplierid")]
         public Guid SupplierId { get; set; }
 
+        [Required]
         [Column("dealerid")]
         public Guid DealerId { get; set; }
 
         [Column("orderdate")]
         public DateTime OrderDate { get; set; }
 
+        [Required]
         [Column("expecteddeliverydate")]
         public DateTime ExpectedDeliveryDate { get; set; }
 
         [Column("actualdeliverydate")]
         public DateTime? ActualDeliveryDate { get; set; }
 
+        [Required]
         [Column("status")]
+        [MaxLength(30)]
         public string Status { get; set; } = "Created";
 
-        [Column("subtotal")]
+        [Column("subtotal", TypeName = "numeric(18,2)")]
         public decimal SubTotal { get; set; }
 
-        [Column("taxamount")]
+        [Column("taxamount", TypeName = "numeric(18,2)")]
         public decimal TaxAmount { get; set; }
 
-        [Column("discountamount")]
+        [Column("discountamount", TypeName = "numeric(18,2)")]
         public decimal DiscountAmount { get; set; }
 
-        [Column("totalamount")]
+        [Column("totalamount", TypeName = "numeric(18,2)")]
         public decimal TotalAmount { get; set; }
 
         [Column("currencycode")]
+        [MaxLength(3)]
         public string CurrencyCode { get; set; } = "INR";
 
+        [Required]
         [Column("paymentterms")]
-        public string PaymentTerms { get; set; }=string.Empty;
+        [MaxLength(100)]
+        public string PaymentTerms { get; set; } = string.Empty;
 
         [Column("deliveryterms")]
+        [MaxLength(100)]
         public string? DeliveryTerms { get; set; }
 
         [Column("remarks")]
+        [MaxLength(500)]
         public string? Remarks { get; set; }
 
         [Column("internalnotes")]
+        [MaxLength(500)]
         public string? InternalNotes { get; set; }
 
         [Column("isactive")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Column("createdby")]
         public Guid? CreatedBy { get; set; }
@@ -75,10 +89,19 @@ namespace BPM.Web.API.Models.Entities
 
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
-       
+
         // Navigation Properties
 
-        public virtual List<SalesOrderItem> SalesOrderItems { get; set; } = new();
+        [ForeignKey(nameof(PurchaseOrderId))]
+        public virtual PurchaseOrder? PurchaseOrder { get; set; }
 
+        [ForeignKey(nameof(SupplierId))]
+        public virtual Supplier? Supplier { get; set; }
+
+        [ForeignKey(nameof(DealerId))]
+        public virtual Dealer? Dealer { get; set; }
+
+        public virtual ICollection<SalesOrderItem> SalesOrderItems { get; set; }
+            = new List<SalesOrderItem>();
     }
 }
