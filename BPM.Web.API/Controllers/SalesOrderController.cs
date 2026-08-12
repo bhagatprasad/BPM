@@ -19,7 +19,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("GetSalesOrders")]
+        [HttpGet("get-sales-orders")]
         public async Task<IActionResult> GetAllSalesOrder()
         {
             try

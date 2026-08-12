@@ -2,13 +2,9 @@
 using System.Text.Json;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Repository;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
 namespace BPM.Web.API.RabbitMQ.Subscriber
 {
     public class PasswordHistorySubscriber : BackgroundService

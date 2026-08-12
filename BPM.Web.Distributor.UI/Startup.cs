@@ -72,6 +72,7 @@ namespace BPM.Web.Distributor.UI
             services.AddScoped<IDealerService, DealerService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IFeatureService, FeatureService>();
+            services.AddScoped<ISalesOrderService, SalesOrderService>();
             // Add other services as needed
 
             // Configure Authentication

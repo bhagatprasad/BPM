@@ -91,14 +91,14 @@ namespace BPM.Web.API.Models.Entities
         [ForeignKey(nameof(SupplierId))]
         public virtual Supplier? Supplier { get; set; }
 
+        [ForeignKey(nameof(DealerId))]
         public virtual Dealer? Dealer { get; set; }
 
-        //[ForeignKey(nameof(CreatedBy))]
-        //public virtual User? CreatedUser { get; set; }
+        public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+            = new List<PurchaseOrderItem>();
 
-        //[ForeignKey(nameof(ModifiedBy))]
-        //public virtual User? ModifiedUser { get; set; }
-
-        public virtual List<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+        // One Purchase Order can generate one or more Sales Orders
+        public virtual ICollection<SalesOrder> SalesOrders { get; set; }
+            = new List<SalesOrder>();
     }
 }
