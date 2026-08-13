@@ -2,7 +2,7 @@
     <div class="card-header">
         <h3><i class="ri-user-3-line"></i> PERSONAL INFORMATION</h3>
         <div class="card-actions">
-            <button *ngIf="!isUserEditing" (click)="Edit.emit()" class="btn btn-edit">
+            <button *ngIf="!isUserEditing" (click)="onEdit()" class="btn btn-edit">
                 <i class="ri-edit-2-line"></i> Edit
             </button>
             <ng-container *ngIf="isUserEditing">
@@ -37,7 +37,7 @@
                         placeholder="Enter first name"
                     >
                 </div>
-                <div *ngIf="errorMsz && !userPersionalSection.firstName" class="field-error">
+                <div *ngIf="errorMsz && !userPersionalSection?.firstName" class="field-error">
                     <i class="ri-error-warning-line"></i> First name is required
                 </div>
             </div>
@@ -61,7 +61,7 @@
                         placeholder="Enter last name"
                     >
                 </div>
-                <div *ngIf="errorMsz && !userPersionalSection.lastName" class="field-error">
+                <div *ngIf="errorMsz && !userPersionalSection?.lastName" class="field-error">
                     <i class="ri-error-warning-line"></i> Last name is required
                 </div>
             </div>
@@ -85,7 +85,7 @@
                         placeholder="Enter email address"
                     >
                 </div>
-                <div *ngIf="errorMsz && !userPersionalSection.email" class="field-error">
+                <div *ngIf="errorMsz && !userPersionalSection?.email" class="field-error">
                     <i class="ri-error-warning-line"></i> Valid email is required
                 </div>
             </div>
@@ -109,7 +109,7 @@
                         placeholder="Enter phone number"
                     >
                 </div>
-                <div *ngIf="errorMsz && !userPersionalSection.phone" class="field-error">
+                <div *ngIf="errorMsz && !userPersionalSection?.phone" class="field-error">
                     <i class="ri-error-warning-line"></i> Valid phone number is required
                 </div>
             </div>

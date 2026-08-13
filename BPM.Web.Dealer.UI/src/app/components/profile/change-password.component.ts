@@ -17,7 +17,7 @@ export class ChangePasswordComponent {
   @Input() showConfirmPassword: boolean = false;
   @Input() errorMsz: string = '';
 
-  @Output() Edit = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<void>();
   @Output() togglePassword = new EventEmitter<void>();
   @Output() toggleConfirmPassword = new EventEmitter<void>();
   @Output() save = new EventEmitter<void>();
@@ -25,86 +25,76 @@ export class ChangePasswordComponent {
 
 
 
-  constructor() {
-    console.log('ChangePasswordComponent intialized with changePswd:', this.changePswd)
-    console.log('ChangePasswordComponent intialized with isChangePassword:', this.isChangePassword)
-    console.log('ChangePasswordComponent intialized with showPassword:', this.showPassword)
-    console.log('ChangePasswordComponent intialized with showConfirmPassword:', this.showConfirmPassword)
-    console.log('ChangePasswordComponent intialized with errorMsz:', this.errorMsz)
-    console.log('ChangePasswordComponent intialized with Edit:', this.Edit)
-    console.log('ChangePasswordComponent intialized with togglePassword:', this.togglePassword)
-    console.log('ChangePasswordComponent intialized with toggleConfirmPassword:', this.toggleConfirmPassword)
-    console.log('ChangePasswordComponent intialized with save:', this.save)
-    console.log('ChangePasswordComponent intialized with cancel:', this.cancel)
-  }
+  constructor() {}
   ngOnChanges(changes: SimpleChanges) {
     if (changes['changePswd']) {
-      console.log('changePwd changed to', changes['changePswd'].currentValue);
-      this.changePswd = changes['changePswd'].currentValue;
+      console.log('changePwd changed to', changes['changePswd'].currentValue);      
     }
     if (changes['isChangePassword']) {
       console.log('isChangePassword changed to', changes['isChangePassword'].currentValue);
       this.isChangePassword = changes['isChangePassword'].currentValue;
     }
     if (changes['showPassword']) {
-      console.log('showPassword changed to', changes['showPassword'].currentValue);
-      this.showPassword = changes['showPassword'].currentValue;
+      console.log('showPassword changed to', changes['showPassword'].currentValue);    
     }
     if (changes['showConfirmPassword']) {
-      console.log('showConfirmPassword changed to', changes['showConfirmPassword'].currentValue);
-      this.showConfirmPassword = changes['showConfirmPassword'].currentValue;
+      console.log('showConfirmPassword changed to', changes['showConfirmPassword'].currentValue);     
     }
     if (changes['errorMsz']) {
-      console.log('errorMsz changed to', changes['errorMsz'].currentValue);
-      this.errorMsz = changes['errorMsz'].currentValue;
+      console.log('errorMsz changed to', changes['errorMsz'].currentValue);     
     }
     if (changes['Edit']) {
-      console.log('Edit changed to', changes['Edit'].currentValue);
-      this.Edit = changes['Edit'].currentValue;
+      console.log('Edit changed to', changes['Edit'].currentValue);      
     }
     if (changes['togglePassword']) {
-      console.log('togglePassword changed to', changes['togglePassword'].currentValue);
-      this.togglePassword = changes['togglePassword'].currentValue;
+      console.log('togglePassword changed to', changes['togglePassword'].currentValue);     
     }
     if (changes['toggleConfirmPassword']) {
-      console.log('toggleConfirmPassword changed to', changes['toggleConfirmPassword'].currentValue);
-      this.toggleConfirmPassword = changes['toggleConfirmPassword'].currentValue;
+      console.log('toggleConfirmPassword changed to', changes['toggleConfirmPassword'].currentValue);      
     }
     if (changes['save']) {
-      console.log('save changed to', changes['save'].currentValue);
-      this.save = changes['save'].currentValue;
+      console.log('save changed to', changes['save'].currentValue);     
     }
     if (changes['cancel']) {
-      console.log('cancel changed to', changes['cancel'].currentValue);
-      this.cancel = changes['cancel'].currentValue;
+      console.log('cancel changed to', changes['cancel'].currentValue);      
     }
-  }
-  // Add this method to your ChangePasswordComponent class
+  } 
   getPasswordStrength(password: string): string {
     if (!password || password.length < 6) return 'weak';
 
     let strength = 0;
 
-    // Check for uppercase letters
-    if (/[A-Z]/.test(password)) strength++;
-    // Check for lowercase letters
-    if (/[a-z]/.test(password)) strength++;
-    // Check for numbers
-    if (/[0-9]/.test(password)) strength++;
-    // Check for special characters
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    // Check length
+  
+    if (/[A-Z]/.test(password)) strength++;    
+    if (/[a-z]/.test(password)) strength++;   
+    if (/[0-9]/.test(password)) strength++;    
+    if (/[^A-Za-z0-9]/.test(password)) strength++;    
     if (password.length >= 12) strength++;
-
     if (strength <= 2) return 'weak';
     if (strength <= 4) return 'medium';
     return 'strong';
   }
-
   getPasswordStrengthWidth(password: string): number {
     const strength = this.getPasswordStrength(password);
     if (strength === 'weak') return 33;
     if (strength === 'medium') return 66;
     return 100;
   }
+  onEdit():void{
+    this.edit.emit();
+  }
+  onSave():any{
+    this.save.emit(this.changePswd);
+  }
+  onCancel():void{
+    this.cancel.emit();
+  }
+
+  onTogglePassword():void{
+    this.togglePassword.emit();
+  }
+  onToggleConfirmPassword():void{
+    this.toggleConfirmPassword.emit();
+  }
+  
 }
