@@ -14,31 +14,33 @@ export class DealerInfoSectionComponent {
   @Input() isDealerEditing: boolean = false;
   @Input() errorMessage: string = '';
 
-  @Output() Edit = new EventEmitter<void>();
-  @Output() save = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<void>();
+  @Output() save = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<void>();
 
-  constructor() {
-    console.log('DealerInfoSectionComponent initialized');
-  }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isAdmin']) {
-      console.log('isAdmin changed to:', changes['isAdmin'].currentValue);
-      this.isAdmin = changes['isAdmin'].currentValue;
+      console.log('isAdmin changed to:', changes['isAdmin'].currentValue);    
     }
     if (changes['dealerSection']) {
-      console.log('dealerSection changed to:', changes['dealerSection'].currentValue);
-      this.dealerSection = changes['dealerSection'].currentValue;
+      console.log('dealerSection changed to:', changes['dealerSection'].currentValue);      
     }
     if (changes['isDealerEditing']) {
-      console.log('isDealerEditing changed to:', changes['isDealerEditing'].currentValue);
-      this.isDealerEditing = changes['isDealerEditing'].currentValue;
-    }
+      console.log('isDealerEditing changed to:', changes['isDealerEditing'].currentValue);      
     if (changes['errorMessage']) {
-      console.log('errorMessage changed to:', changes['errorMessage'].currentValue);
-      this.errorMessage = changes['errorMessage'].currentValue;
+      console.log('errorMessage changed to:', changes['errorMessage'].currentValue);     
     }
+}
   }
-
+onEdit():void{
+  this.edit.emit();
+}
+onSave():any{
+  this.save.emit(this.dealerSection);
+}
+onCancel():void{
+  this.cancel.emit();
+}
 }

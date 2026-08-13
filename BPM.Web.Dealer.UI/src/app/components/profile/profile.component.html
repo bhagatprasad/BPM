@@ -7,7 +7,7 @@
       </div>
       <div class="user-details">
         <h2>MY PROFILE</h2>
-        <p class="user-role-badge" >{{ userSection.firstName }} {{ userSection.lastName }} </p>
+        <p class="user-role-badge" >{{ userInformation.firstName }} {{ userInformation.lastName }} </p>
       </div>
     </div>
     <button class="btn-refresh" (click)="loadUserData()" title="Refresh Profile">
@@ -37,10 +37,10 @@
   <div  class="scroll-container">
        <!-- ==================== PERSONAL INFORMATION CARD ==================== -->
     <app-user-personal-info
-     [userPersionalSection]="userSection"
+     [userPersionalSection]="userInformation"
       [isUserEditing]="isEditing"
       [errorMsz]="errorMessage"
-      (Edit)="enableEdit()"
+      (edit)="enableEdit()"
       (save)="saveUserChanges()"
       (cancel)="cancelEdit()"
     >
@@ -52,7 +52,7 @@
     [isChangePassword]="isChangePassword"
     [showPassword]="showPassword"
     [showConfirmPassword]="showConfirmPassword"
-    (Edit)="enablePasswordEdit()"
+    (edit)="enablePasswordEdit()"
     (togglePassword)="togglePasswordVisibility()"
     (toggleConfirmPassword)="toggleConfirmPasswordVisibility()"
     (save)="savePasswordChanges()"
@@ -66,7 +66,7 @@
     [dealerSection]="dealerSection"
     [isDealerEditing]="isDealerEditing" 
     [errorMessage]="errorMessage"
-    (Edit)="enableDealerEdit()"      
+    (edit)="enableDealerEdit()"      
     (save)="saveDealerChanges()"
     (cancel)="cancelDealerEdit()"
     >      

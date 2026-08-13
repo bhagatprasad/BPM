@@ -7,7 +7,7 @@
                 *ngIf="!isDealerEditing"
                 type="button"
                 class="btn btn-edit"
-                (click)="Edit.emit()">
+                (click)="onEdit()">
                 <i class="ri-edit-2-line"></i>
                 Edit
             </button>
@@ -18,7 +18,7 @@
                 <button        
                     type="button"
                     class="btn btn-save"
-                    (click)="save.emit()">
+                    (click)="onSave()">
                     <i class="ri-save-2-line"></i>
                     Save
                 </button>
@@ -26,7 +26,7 @@
                 <button 
                     type="button"
                     class="btn btn-cancel" 
-                    (click)="cancel.emit()">
+                    (click)="onCancel()">
                     <i class="ri-close-line"></i> 
                     Cancel
                 </button>
@@ -63,7 +63,7 @@
                         placeholder="Enter dealership name"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.dealershipName" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.dealershipName" class="field-error">
                     <i class="ri-error-warning-line"></i> Dealer name is required
                 </div>
             </div>
@@ -87,7 +87,7 @@
                         placeholder="Enter GST number"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.gstNumber" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.gstNumber" class="field-error">
                     <i class="ri-error-warning-line"></i> GST number is required
                 </div>
             </div>
@@ -110,7 +110,7 @@
                         placeholder="Enter contact person name"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.contactPerson" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.contactPerson" class="field-error">
                     <i class="ri-error-warning-line"></i> Contact person is required
                 </div>
             </div>
@@ -134,7 +134,7 @@
                         placeholder="Enter phone number"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.phone" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.phone" class="field-error">
                     <i class="ri-error-warning-line"></i> Phone number is required
                 </div>
             </div>
@@ -157,7 +157,7 @@
                         placeholder="Enter email address"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.email" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.email" class="field-error">
                     <i class="ri-error-warning-line"></i> Valid email is required
                 </div>
             </div>
@@ -181,7 +181,7 @@
                         placeholder="Enter alternate phone number"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.alternatePhone" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.alternatePhone" class="field-error">
                     <i class="ri-error-warning-line"></i> Alternate phone is required
                 </div>
             </div>
@@ -204,7 +204,7 @@
                         placeholder="Enter website URL"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.website" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.website" class="field-error">
                     <i class="ri-error-warning-line"></i> Website is required
                 </div>
             </div>
@@ -228,7 +228,7 @@
                         placeholder="Enter address line 1"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.addressLine1" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.addressLine1" class="field-error">
                     <i class="ri-error-warning-line"></i> Address line 1 is required
                 </div>
             </div>
@@ -252,7 +252,7 @@
                         placeholder="Enter address line 2"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.addressLine2" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.addressLine2" class="field-error">
                     <i class="ri-error-warning-line"></i> Address line 2 is required
                 </div>
             </div>
@@ -276,7 +276,7 @@
                         placeholder="Enter city name"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.city" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.city" class="field-error">
                     <i class="ri-error-warning-line"></i> City is required
                 </div>
             </div>
@@ -299,7 +299,7 @@
                         placeholder="Enter state name"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.state" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.state" class="field-error">
                     <i class="ri-error-warning-line"></i> State is required
                 </div>
             </div>
@@ -322,7 +322,7 @@
                         placeholder="Enter country name"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.country" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.country" class="field-error">
                     <i class="ri-error-warning-line"></i> Country is required
                 </div>
             </div>
@@ -345,7 +345,7 @@
                         placeholder="Enter postal code"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.postalCode" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.postalCode" class="field-error">
                     <i class="ri-error-warning-line"></i> Postal code is required
                 </div>
             </div>
@@ -369,7 +369,7 @@
                         placeholder="Enter registration number"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.registrationNumber" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.registrationNumber" class="field-error">
                     <i class="ri-error-warning-line"></i> Registration number is required
                 </div>
             </div>
@@ -392,7 +392,7 @@
                         placeholder="Enter trade license number"
                     >
                 </div>
-                <div *ngIf="errorMessage && !dealerSection.tradeLicenseNumber" class="field-error">
+                <div *ngIf="errorMessage && !dealerSection?.tradeLicenseNumber" class="field-error">
                     <i class="ri-error-warning-line"></i> Trade license number is required
                 </div>
             </div>

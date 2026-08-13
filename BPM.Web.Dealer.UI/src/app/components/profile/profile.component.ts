@@ -1,15 +1,16 @@
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, userDto } from '../../models/user-profile';
+import { ChangePasswordRequest, UpdateUserRequest, UpdateUserResponse, userDto, DealerInfo } from '../../models/user-profile';
 import { ProfileService } from '../../services/profile.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { SpinnerLoadingService } from '../../common/services/spinner-loading-service';
 import { DealerService } from '../../services/dealer.service';
-import { UpdatedDealerRequest, UpdatedDealerResponse } from '../../models/dealer-profile';
+import { UpdatedDealerDto, UpdatedDealerResponse } from '../../models/dealer-profile';
 import { UserPersonalInfoComponent } from './user-personal-info.component';
 import { ChangePasswordComponent } from './change-password.component';
 import { DealerInfoSectionComponent } from './dealer-info-section.component';
+import { ChangePassword } from '@app/models/change-password';
 
 @Component({
   selector: 'app-profile',
@@ -26,41 +27,11 @@ export class ProfileComponent implements OnInit {
 
   activeTab: string = 'personal';
 
-  userSection = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  };
-
   userInformation: userDto = {};
 
-  changePassword = {
-    userId: '',
-    newPassword: '',
-    confirmPassword: '',
-    modifiedBy: '',
-    resetPassword: false
-  }
+  changePassword: ChangePassword = {};
 
-  dealerSection = {
-    dealerId: '',
-    dealershipName: '',
-    contactPerson: '',
-    email: '',
-    phone: '',
-    alternatePhone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    country: '',
-    postalCode: '',
-    gstNumber: '',
-    registrationNumber: '',
-    tradeLicenseNumber: '',
-    website: ''
-  };
+  dealerSection: UpdatedDealerDto = {};
 
   isEditing: boolean = false;
   isDealerEditing: boolean = false;
@@ -108,14 +79,14 @@ export class ProfileComponent implements OnInit {
   populateFormData(): void {
     if (this.userData?.authenticateResponseDto) {
       const dto = this.userData.authenticateResponseDto;
-      this.userSection = {
+      this.userInformation = {
         firstName: dto.firstName || '',
         lastName: dto.lastName || '',
         email: dto.email || '',
         phone: dto.phone || ''
       };
 
-      this.originalUserData = { ...this.userSection };
+      this.originalUserData = { ...this.userInformation };
 
       if (dto.dealerInfo) {
         console.log('Populating dealer data:', dto.dealerInfo);
@@ -135,7 +106,8 @@ export class ProfileComponent implements OnInit {
           gstNumber: dto.dealerInfo.gstNumber || '',
           registrationNumber: dto.dealerInfo.registrationNumber || '',
           tradeLicenseNumber: dto.dealerInfo.tradeLicenseNumber || '',
-          website: dto.dealerInfo.website || ''
+          website: dto.dealerInfo.website || '',
+          modifiedBy: dto.dealerInfo.id || ''
         };
       }
       this.originalDealerData = { ...this.dealerSection };
@@ -149,12 +121,12 @@ export class ProfileComponent implements OnInit {
 
   enableEdit(): void {
     this.isEditing = true;
-    this.originalUserData = { ...this.userSection };
+    this.originalUserData = { ...this.userInformation };
     this.clearMessages();
   }
 
   cancelEdit(): void {
-    this.userSection = { ...this.originalUserData };
+    this.userInformation = { ...this.originalUserData };
     this.isEditing = false;
     this.clearMessages();
   }
@@ -177,7 +149,7 @@ export class ProfileComponent implements OnInit {
     this.clearMessages();
   }
   cancelDealerEdit() {
-    this.originalDealerData = { ...this.dealerSection };
+    this.dealerSection = { ...this.originalDealerData };
     this.isDealerEditing = false;
     this.clearMessages();
   }
@@ -190,18 +162,18 @@ export class ProfileComponent implements OnInit {
       return false;
     }
 
-    if (!this.userSection.firstName?.trim() || !this.userSection.lastName?.trim()) {
+    if (!this.userInformation.firstName?.trim() || !this.userInformation.lastName?.trim()) {
       this.errorMessage = 'First name and last name are required';
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.userSection.email)) {
+    if (!emailRegex.test(this.userInformation.email?.trim() || '')) {
       this.errorMessage = 'Please enter a valid email address';
       return false;
     }
 
-    if (!this.userSection.phone?.trim() || this.userSection.phone.length < 10) {
+    if (!this.userInformation.phone?.trim() || this.userInformation.phone.length < 10) {
       this.errorMessage = 'Please enter a valid phone number (minimum 10 digits)';
       return false;
     }
@@ -211,16 +183,14 @@ export class ProfileComponent implements OnInit {
 
   private updateUserInfo(): UpdateUserRequest {
     var updatedUserData = {
-
-      firstName: this.userSection.firstName.trim(),
-      lastName: this.userSection.lastName.trim(),
-      email: this.userSection.email.trim(),
-      phone: this.userSection.phone.trim(),
-      userId: this.userId,
-      modifiedBy: this.userId
-
+      firstName: this.userInformation.firstName?.trim() || '',
+      lastName: this.userInformation.lastName?.trim() || '',
+      email: this.userInformation.email?.trim() || '',
+      phone: this.userInformation.phone?.trim() || '',
+      userId: this.userId || '',
+      modifiedBy: this.userId || ''
     };
-    return updatedUserData
+    return updatedUserData;
   }
 
   private validateChangePassword(): boolean {
@@ -234,22 +204,22 @@ export class ProfileComponent implements OnInit {
       this.toastr.warning('NewPassword and confirm Password should match', 'Warning')
       return false;
     }
-    if (!/[A-Z]/.test(this.changePassword.newPassword)) {
+    if (this.changePassword.newPassword && !/[A-Z]/.test(this.changePassword.newPassword)) {
       this.errorMessage = 'Password must contain at least one uppercase letter.';
       this.toastr.warning('Password must contain at least one uppercase letter.', 'Warning');
       return false;
     }
-    if (!/[a-z]/.test(this.changePassword.newPassword)) {
+    if (this.changePassword.newPassword && !/[a-z]/.test(this.changePassword.newPassword)) {
       this.errorMessage = 'Password must contain at least one lowercase letter.';
       this.toastr.warning('Password must contain at least one lowercase letter.', 'Warning');
       return false;
     }
-    if (!/[0-9]/.test(this.changePassword.newPassword)) {
+    if (this.changePassword.newPassword && !/[0-9]/.test(this.changePassword.newPassword)) {
       this.errorMessage = 'Password must contain at least one number.';
       this.toastr.warning('Password must contain at least one number.', 'Warning');
       return false;
     }
-    if (this.changePassword.newPassword.length < 6) {
+    if (this.changePassword.newPassword && this.changePassword.newPassword.length < 6) {
       this.errorMessage = 'password lenght must be atleast 6 characters long';
       this.toastr.warning('password lenght must be atleast 6 characters long', 'Warning')
       return false;
@@ -287,11 +257,11 @@ export class ProfileComponent implements OnInit {
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.dealerSection?.email)) {
+    if (this.dealerSection.email && !emailRegex.test(this.dealerSection.email)) {
       this.errorMessage = 'Please enter a valid email address';
       return false;
     }
-    if (!this.dealerSection?.phone.trim() || this.dealerSection?.phone.length < 10) {
+    if (this.dealerSection.phone && (!this.dealerSection.phone.trim() || this.dealerSection.phone.length < 10)) {
       this.errorMessage = 'please enter valid phone number(minumum 10 digits)';
       return false;
     }
@@ -337,7 +307,7 @@ export class ProfileComponent implements OnInit {
     }
     const websiteRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
 
-    if (!websiteRegex.test(this.dealerSection.website.trim())) {
+    if (this.dealerSection.website && !websiteRegex.test(this.dealerSection.website.trim())) {
       this.errorMessage = 'Please enter a valid website';
       return false;
     }
@@ -345,24 +315,24 @@ export class ProfileComponent implements OnInit {
 
   }
 
-  updateDealerInfo(): UpdatedDealerRequest {
+  updateDealerInfo(): UpdatedDealerDto {
     var updatedDealer = {
       dealerId: this.dealerSection.dealerId,
-      dealershipName: this.dealerSection.dealershipName.trim(),
-      contactPerson: this.dealerSection.contactPerson.trim(),
-      email: this.dealerSection.email.trim(),
-      phone: this.dealerSection.phone.trim(),
-      alternatePhone: this.dealerSection.alternatePhone.trim(),
-      addressLine1: this.dealerSection.addressLine1.trim(),
-      addressLine2: this.dealerSection.addressLine2.trim(),
-      city: this.dealerSection.city.trim(),
-      state: this.dealerSection.state.trim(),
-      country: this.dealerSection.country.trim(),
-      postalCode: this.dealerSection.postalCode.trim(),
-      gstNumber: this.dealerSection.gstNumber.trim(),
-      registrationNumber: this.dealerSection.registrationNumber.trim(),
-      tradeLicenseNumber: this.dealerSection.tradeLicenseNumber.trim(),
-      website: this.dealerSection.website.trim(),
+      dealershipName: this.dealerSection.dealershipName,
+      contactPerson: this.dealerSection.contactPerson,
+      email: this.dealerSection.email,
+      phone: this.dealerSection.phone,
+      alternatePhone: this.dealerSection.alternatePhone,
+      addressLine1: this.dealerSection.addressLine1,
+      addressLine2: this.dealerSection.addressLine2,
+      city: this.dealerSection.city,
+      state: this.dealerSection.state,
+      country: this.dealerSection.country,
+      postalCode: this.dealerSection.postalCode,
+      gstNumber: this.dealerSection.gstNumber,
+      registrationNumber: this.dealerSection.registrationNumber,
+      tradeLicenseNumber: this.dealerSection.tradeLicenseNumber,
+      website: this.dealerSection.website,
       modifiedBy: this.dealerId
     };
 
@@ -399,9 +369,9 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  savePasswordChanges() {
+  savePasswordChanges(): void {
     this.loader.show();
-    if (!this.validateChangePassword) {
+    if (!this.validateChangePassword()) {
       this.loader.hide();
       return;
     }
@@ -415,13 +385,19 @@ export class ProfileComponent implements OnInit {
         this.loader.hide();
         this.isChangePassword = false;
         this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error updating password:', error);
+        this.toastr.error('Error updating password: ' + error);
+        this.clearMessages();
+        this.loader.hide();
       }
-    })
+    });
 
   }
 
 
-  saveDealerChanges() {
+  saveDealerChanges(): void {
     this.loader.show();
     if (!this.validateDealerData()) {
       this.loader.hide();
@@ -458,7 +434,7 @@ export class ProfileComponent implements OnInit {
     this.userData.authenticateResponseDto.email = responseData.data?.email;
     this.userData.authenticateResponseDto.phone = responseData.data?.phone;
     localStorage.setItem('AuthenticatedUserResponse', JSON.stringify(this.userData));
-    this.originalUserData = { ...this.userSection };
+    this.originalUserData = { ...this.userInformation };
   }
 
   updateDealerDataInStorage(responseData: UpdatedDealerResponse) {
@@ -479,16 +455,8 @@ export class ProfileComponent implements OnInit {
     this.userData.authenticateResponseDto.dealerInfo.website = responseData.data?.website;
 
   }
-
-  // ============ UTILITY METHODS ============
-
   private clearMessages(): void {
     this.errorMessage = '';
     this.successMessage = '';
   }
-
-  // ============ EVENT HANDLERS ============
-
-
-
 }
