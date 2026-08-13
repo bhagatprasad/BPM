@@ -1,4 +1,6 @@
 ﻿using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.DTOs.Billing;
+using BPM.Web.API.Models.DTOs.SalesOrder;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
 using Newtonsoft.Json;
@@ -8,13 +10,15 @@ namespace BPM.Web.API.Services
     public class SalesOrderService : ISalesOrderService
     {
         private readonly IPurchaseOrderService _purchaseOrderService;
+        private readonly IBillingService _billingService;
         private readonly ISalesOrderRepository _salesOrderRepository;
         private readonly ILogger<SalesOrderService> _logger;
 
-        public SalesOrderService(ISalesOrderRepository salesOrderRepository, IPurchaseOrderService purchaseOrderService, ILogger<SalesOrderService> logger)
+        public SalesOrderService(ISalesOrderRepository salesOrderRepository, IPurchaseOrderService purchaseOrderService,IBillingService billingService, ILogger<SalesOrderService> logger)
         {
             _salesOrderRepository = salesOrderRepository;
             _purchaseOrderService = purchaseOrderService;
+            _billingService = billingService;
             _logger = logger;
         }
 
@@ -114,6 +118,61 @@ namespace BPM.Web.API.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching Sales Order with Id: {SalesOrderId}",id);
+                throw;
+            }
+        }
+
+        public async Task<SalesOrderDto> ProcessSalesOrderAsync(ProcessSalesOrderDto processSalesOrderDto, Guid currentUserId)
+        {
+            try
+            {
+                _logger.LogInformation("Processing Sales Order with Id: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+
+                var salesOrder = await _salesOrderRepository.GetSalesOrderByIdAsync(processSalesOrderDto.SalesOrderId);
+
+                if (salesOrder == null)
+                {
+                    _logger.LogWarning("Sales Order not found with Id: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+                    throw new KeyNotFoundException("Sales Order not found.");
+                }
+
+                if (string.Equals(salesOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Sales Order {SalesOrderId} is already approved.", processSalesOrderDto.SalesOrderId);
+                    throw new InvalidOperationException("Sales Order is already approved.");
+                }
+
+                if (!string.Equals(processSalesOrderDto.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Invalid Sales Order status: {Status}", processSalesOrderDto.Status);
+                    throw new InvalidOperationException("Only Approved status is allowed.");
+                }
+
+                var updatedSalesOrder = await _salesOrderRepository.ProcessSalesOrderAsync(
+                    processSalesOrderDto.SalesOrderId,
+                    processSalesOrderDto.Status);
+
+                updatedSalesOrder.ModifiedBy = currentUserId;
+                updatedSalesOrder.ModifiedOn = DateTime.UtcNow;
+
+                await _salesOrderRepository.UpdateSalesOrderAsync(updatedSalesOrder);
+
+                var createBillingDto = new CreateBillingDto
+                {
+                    SalesOrderId = updatedSalesOrder.Id,
+                    AdjustmentAmount = 0,
+                    Remarks = "Billing generated for approved sales order"
+                };
+
+                await _billingService.CreateBillingAsync(createBillingDto, currentUserId);
+
+                _logger.LogInformation("Sales Order {SalesOrderId} approved successfully.", processSalesOrderDto.SalesOrderId);
+
+                return updatedSalesOrder.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing Sales Order: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
                 throw;
             }
         }

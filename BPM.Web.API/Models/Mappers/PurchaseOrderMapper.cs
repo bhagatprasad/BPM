@@ -2,6 +2,7 @@
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Extensions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BPM.Web.API.Models.Mappers
 {
@@ -20,7 +21,7 @@ namespace BPM.Web.API.Models.Mappers
                 InternalNotes = dto.InternalNotes,
                 PONumber = string.Empty, // Generated in Service
                 OrderDate = DateTime.UtcNow, // Already UTC
-                Status = "Draft",
+                Status = !string.IsNullOrEmpty(dto.Status) ? dto.Status : "Draft",
                 SubTotal = 0,
                 TaxAmount = 0,
                 DiscountAmount = 0,
@@ -28,7 +29,9 @@ namespace BPM.Web.API.Models.Mappers
                 CurrencyCode = "INR",
                 IsActive = true,
                 CreatedBy = dto.CreatedBy,
-                CreatedOn = DateTime.UtcNow // Already UTC
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = dto.CreatedBy,
+                ModifiedOn = DateTime.UtcNow
             };
         }
 
@@ -76,7 +79,7 @@ namespace BPM.Web.API.Models.Mappers
                 Remarks = purchaseOrder.Remarks,
                 ModifiedBy = purchaseOrder.ModifiedBy,
                 ModifiedOn = purchaseOrder.ModifiedOn,
-                Dealer = purchaseOrder.Dealer.ToDto(),
+                Dealer = purchaseOrder.Dealer?.ToDto(),
                 PurchaseOrderItemResponse = purchaseOrder.PurchaseOrderItems?
                     .Select(x => x.ToDto())
                     .ToList() ?? new List<PurchaseOrderItemResponseDto>()

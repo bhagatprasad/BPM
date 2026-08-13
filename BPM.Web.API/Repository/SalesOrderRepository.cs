@@ -125,10 +125,6 @@ namespace BPM.Web.API.Repository
             return existingOrder;
         }
 
-        public async Task<SalesOrder?> GetSalesOrderByIdAsync(Guid id)
-        {
-            return await _dbContext.SalesOrders.FirstOrDefaultAsync(a => a.Id == id);
-        }
         public async Task<bool> DeleteSalesOrderAsync(Guid id)
         {
             var salesOrder = await _dbContext.SalesOrders
@@ -143,6 +139,23 @@ namespace BPM.Web.API.Repository
             await _dbContext.SaveChangesAsync();
 
             return true;
+        }
+
+
+        public async Task<SalesOrder> ProcessSalesOrderAsync(Guid salesOrderId, string status)
+        {
+            var salesOrder = await _dbContext.SalesOrders.FirstOrDefaultAsync(a => a.Id == salesOrderId);
+
+            if (salesOrder == null)
+            {
+                throw new KeyNotFoundException("Sales Order not found.");
+            }
+
+            salesOrder.Status = status;
+
+            await _dbContext.SaveChangesAsync();
+
+            return salesOrder;
         }
     }
 }

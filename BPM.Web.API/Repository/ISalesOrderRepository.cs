@@ -8,5 +8,7 @@ namespace BPM.Web.API.Repository
         Task<SalesOrder?> GetSalesOrderByIdAsync(Guid id);
         Task<IEnumerable<SalesOrder>> GetSalesOrderByDealer(Guid dealerId);
         Task<SalesOrder> CreateSalesOrderAsync(SalesOrder salesOrder);
+        Task<SalesOrder> ProcessSalesOrderAsync(Guid salesOrderId, string status);
+        Task<SalesOrder> UpdateSalesOrderAsync(SalesOrder salesOrder);
     }
 }
