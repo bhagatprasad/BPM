@@ -1,3 +1,4 @@
+// guards/authentication-guard.ts
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AccountService } from '../services/account.service';
@@ -21,10 +22,10 @@ export const authenticationGuard: CanActivateFn = async (route, state) => {
   const currentUser = accountService.getCurrentUser();
   
   if (currentUser?.jwtToken) {
-    // Check if user has dealer access or is Admin/Operator
+    // Get user details from the response
     const dealerInfo = currentUser?.authenticateResponseDto?.dealerInfo;
-    const roleName = currentUser?.authenticateResponseDto?.roleInfo?.name;
-    const isAdminOrOperator = roleName === "Administrator" || roleName === "Operator";
+    const roleName = currentUser?.authenticateResponseDto?.roleInfo?.name?.toLowerCase() || '';
+    const isAdminOrOperator = roleName === 'administrator' || roleName === 'operator';
     
     // User has access if they have dealer OR are Admin/Operator
     if (dealerInfo || isAdminOrOperator) {

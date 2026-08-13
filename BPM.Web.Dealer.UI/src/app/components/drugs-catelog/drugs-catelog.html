@@ -1,407 +1,350 @@
-<div class="container-fluid px-3 px-lg-4 py-4">
-  <div class="page-heading">
-    <div class="page-heading-copy">
-      <span class="page-icon"><i class="bi bi-capsule" aria-hidden="true"></i></span>
+<div class="main-content-container overflow-hidden">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+    <div class="d-flex align-items-center gap-3">
+      <div class="page-icon-wrapper">
+        <i class="ri-capsule-fill fs-30 text-primary"></i>
+      </div>
       <div>
-        <p class="eyebrow mb-1">Drug Catalog</p>
-        <p class="text-muted mb-0">Browse and manage your drug inventory with ease.</p>
+        <h3 class="mb-0 fw-bold">Drug Catalog</h3>
+        <p class="text-muted mb-0 fs-14">Browse and manage your drug inventory</p>
       </div>
     </div>
-    <div class="heading-actions">
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary btn-sm" type="button" (click)="toggleView()">
-          <i
-            class="bi"
-            [ngClass]="{
-              'bi-grid-3x3-gap-fill': viewMode === 'list',
-              'bi-list-ul': viewMode === 'grid',
-            }"
-            aria-hidden="true"
-          ></i>
-          {{ viewMode === 'list' ? 'Grid' : 'List' }} View
-        </button>
-        <button class="btn btn-primary btn-sm" type="button" (click)="addNewDrug()">
-          <i class="bi bi-plus-lg" aria-hidden="true"></i> Add Drug
-        </button>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a class="d-flex align-items-center text-decoration-none" href="#">
+            <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+            <span class="text-body fs-14 hover">Dashboard</span>
+          </a>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          <span>Inventory</span>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          <span class="text-secondary">Drug Catalog</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="stat-card bg-white rounded-10 p-20 border-0 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted fs-14 fw-medium">Total Drugs</span>
+            <h3 class="mb-0 fw-bold mt-1">{{ drugsCatalogs.length }}</h3>
+          </div>
+          <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+            <i class="ri-capsule-line fs-24"></i>
+          </div>
+        </div>
+        <div class="mt-2">
+          <span class="badge bg-success bg-opacity-10 text-success">Active: {{ getActiveDrugs() }}</span>
+          <span class="badge bg-danger bg-opacity-10 text-danger ms-1">Inactive: {{ getInactiveDrugs() }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="stat-card bg-white rounded-10 p-20 border-0 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted fs-14 fw-medium">Categories</span>
+            <h3 class="mb-0 fw-bold mt-1">{{ getUniqueCategories() }}</h3>
+          </div>
+          <div class="stat-icon bg-success bg-opacity-10 text-success">
+            <i class="ri-price-tag-3-line fs-24"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="stat-card bg-white rounded-10 p-20 border-0 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted fs-14 fw-medium">Manufacturers</span>
+            <h3 class="mb-0 fw-bold mt-1">{{ getUniqueManufacturers() }}</h3>
+          </div>
+          <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+            <i class="ri-building-line fs-24"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="stat-card bg-white rounded-10 p-20 border-0 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted fs-14 fw-medium">Schedule Types</span>
+            <h3 class="mb-0 fw-bold mt-1">{{ getUniqueSchedules() }}</h3>
+          </div>
+          <div class="stat-icon bg-info bg-opacity-10 text-info">
+            <i class="ri-file-list-3-line fs-24"></i>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Grid View -->
-  <section class="panel mt-3" *ngIf="viewMode === 'grid'">
-    <div class="panel-header">
-      <div>
-        <h2 class="h5 mb-1 section-title">
-          <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>
-          <span>Drug Catalog</span>
-        </h2>
-        <p class="text-muted mb-0">{{ drugsCatalogs.length }} drugs available in catalog</p>
-      </div>
-      <div class="d-flex gap-2">
-        <div class="input-group input-group-sm" style="width: 250px">
-          <span class="input-group-text"><i class="bi bi-search"></i></span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search drugs..."
-            [(ngModel)]="searchTerm"
-            (input)="filterDrugs()"
-          />
-        </div>
-        <select
-          class="form-select form-select-sm"
-          style="width: 150px"
-          (change)="sortDrugs($event)"
-        >
-          <option value="name">Sort by Name</option>
-          <option value="code">Sort by Code</option>
-          <option value="category">Sort by Category</option>
-          <option value="status">Sort by Status</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="text-muted mt-2">Loading drugs...</p>
-    </div>
-
-    <!-- Error State -->
-    <div *ngIf="error" class="alert alert-danger m-3">
-      <i class="bi bi-exclamation-triangle-fill me-2"></i>
-      {{ error }}
-    </div>
-
-    <!-- Drug Cards Grid -->
-    <div *ngIf="!isLoading && !error" class="row g-3 p-3">
-      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let drug of filteredDrugs">
-        <div class="card h-100 drug-card shadow-sm hover-shadow">
-          <!-- Drug Image/Icon -->
-          <div class="card-img-top text-center bg-light py-4 position-relative">
-            <div class="drug-icon-wrapper">
-              <!-- Image with fallback to initial letter -->
-              <div
-                *ngIf="drug.imageUrl; else initialLetter"
-                class="drug-image-wrapper"
-                style="
-                  width: 80px;
-                  height: 80px;
-                  margin: 0 auto;
-                  border-radius: 50%;
-                  overflow: hidden;
-                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                "
-              >
-                <img
-                  [src]="drug.imageUrl"
-                  [alt]="drug.drugName"
-                  class="w-100 h-100"
-                  style="object-fit: cover"
-                />
-              </div>
-              <ng-template #initialLetter>
-                <span
-                  class="drug-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                  style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto"
-                >
-                  {{ drug.drugName.charAt(0) || 'D' }}
-                </span>
-              </ng-template>
-            </div>
-            <span
-              class="badge position-absolute top-0 end-0 m-2"
-              [ngClass]="{
-                'text-bg-success': drug.isActive,
-                'text-bg-danger': !drug.isActive,
-              }"
-            >
-              {{ drug.isActive ? 'Active' : 'Inactive' }}
-            </span>
+  <!-- Toolbar -->
+  <div class="card bg-white rounded-10 border-0 shadow-sm mb-4">
+    <div class="card-body p-20">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-4">
+          <div class="position-relative">
+            <i class="ri-search-line search-icon"></i>
+            <input
+              type="text"
+              class="form-control search-input"
+              placeholder="Search drugs by name, code, manufacturer..."
+              [(ngModel)]="searchTerm"
+              (input)="filterDrugs()"
+            />
           </div>
+        </div>
+        <div class="col-lg-5 d-flex align-items-center gap-2 flex-wrap">
+          <select
+            class="form-select form-select-sm"
+            style="width: 150px;"
+            (change)="sortDrugs($event)"
+          >
+            <option value="name">Sort by Name</option>
+            <option value="code">Sort by Code</option>
+            <option value="category">Sort by Category</option>
+            <option value="status">Sort by Status</option>
+          </select>
+          <select
+            class="form-select form-select-sm"
+            style="width: 150px;"
+            (change)="filterByCategory($event)"
+          >
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of getCategoryList()" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+        <div class="col-lg-3 text-end">
+          <div class="d-flex gap-2 justify-content-end flex-wrap">
+            <button class="btn btn-outline-primary btn-sm" (click)="toggleView()">
+              <i class="ri-grid-line" *ngIf="viewMode === 'list'"></i>
+              <i class="ri-list-unordered" *ngIf="viewMode === 'grid'"></i>
+              {{ viewMode === 'list' ? 'Grid' : 'List' }} View
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="addNewDrug()">
+              <i class="ri-add-line me-1"></i> Add Drug
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-          <!-- Drug Details -->
-          <div class="card-body">
-            <h5 class="card-title fw-bold mb-1">{{ drug.drugName }}</h5>
-            <p class="text-muted small mb-2">
-              <i class="bi bi-upc-scan me-1"></i> {{ drug.drugCode }}
-            </p>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="text-muted mt-3">Loading drugs...</p>
+  </div>
 
-            <div class="drug-details mb-2">
-              <div class="row g-1 small">
-                <div class="col-6">
-                  <span class="text-muted">Generic:</span>
-                  <span class="fw-semibold">{{ drug.genericName || '-' }}</span>
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger m-3">
+    <i class="ri-error-warning-line me-2"></i>
+    {{ error }}
+  </div>
+
+  <!-- Grid View -->
+  <div *ngIf="!isLoading && !error && viewMode === 'grid'">
+    <div class="row g-4">
+      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let drug of filteredDrugs; let i = index">
+        <div class="drug-card">
+          <div class="drug-card-inner">
+            <!-- Card Header -->
+            <div class="drug-card-header">
+              <div class="drug-image-container">
+                <div *ngIf="drug.imageUrl; else drugInitial" class="drug-image">
+                  <img [src]="drug.imageUrl" [alt]="drug.drugName" />
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Brand:</span>
-                  <span class="fw-semibold">{{ drug.brandName || '-' }}</span>
+                <ng-template #drugInitial>
+                  <div class="drug-initial">
+                    {{ (drug.drugName || 'D').charAt(0) }}
+                  </div>
+                </ng-template>
+              </div>
+              <div class="drug-status">
+                <span class="status-badge" [class.active]="drug.isActive" [class.inactive]="!drug.isActive">
+                  <i class="ri-circle-fill fs-10 me-1"></i>
+                  {{ drug.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="drug-card-body">
+              <h5 class="drug-name">{{ drug.drugName || 'Unknown Drug' }}</h5>
+              <p class="drug-code">
+                <i class="ri-barcode-line me-1"></i> {{ drug.drugCode || 'N/A' }}
+              </p>
+
+              <div class="drug-info-grid">
+                <div class="drug-info-item">
+                  <span class="label">Generic</span>
+                  <span class="value">{{ drug.genericName || '-' }}</span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Manufacturer:</span>
-                  <span class="fw-semibold">{{ drug.manufacturer || '-' }}</span>
+                <div class="drug-info-item">
+                  <span class="label">Brand</span>
+                  <span class="value">{{ drug.brandName || '-' }}</span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Category:</span>
-                  <span class="fw-semibold">{{ drug.category || '-' }}</span>
+                <div class="drug-info-item">
+                  <span class="label">Manufacturer</span>
+                  <span class="value">{{ drug.manufacturer || '-' }}</span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">HSN Code:</span>
-                  <span class="fw-semibold">{{ drug.hsnCode || '-' }}</span>
+                <div class="drug-info-item">
+                  <span class="label">Category</span>
+                  <span class="value">{{ drug.category || '-' }}</span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Schedule:</span>
-                  <span
-                    class="badge"
-                    [ngClass]="{
-                      'text-bg-info': drug.scheduleType === 'OTC',
-                      'text-bg-warning': drug.scheduleType === 'Prescription',
-                      'text-bg-danger': drug.scheduleType === 'Controlled',
-                    }"
-                  >
+                <div class="drug-info-item">
+                  <span class="label">HSN Code</span>
+                  <span class="value">{{ drug.hsnCode || '-' }}</span>
+                </div>
+                <div class="drug-info-item">
+                  <span class="label">Schedule</span>
+                  <span class="schedule-badge" [class.otc]="drug.scheduleType === 'OTC'" [class.prescription]="drug.scheduleType === 'Prescription'" [class.controlled]="drug.scheduleType === 'Controlled'">
                     {{ drug.scheduleType || '-' }}
                   </span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Packing:</span>
-                  <span class="fw-semibold">{{ drug.packing || '-' }}</span>
+                <div class="drug-info-item">
+                  <span class="label">Packing</span>
+                  <span class="value">{{ drug.packing || '-' }}</span>
                 </div>
-                <div class="col-6">
-                  <span class="text-muted">Strength:</span>
-                  <span class="fw-semibold">{{ drug.strength || '-' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="text-muted small">
-              <i class="bi bi-calendar3 me-1"></i>
-              Added: {{ drug.createdOn | date: 'dd-MM-yyyy' }}
-            </div>
-
-            <div class="mt-3">
-              <h6 class="fw-bold mb-2">Available Packages</h6>
-              <div
-                *ngFor="let package of drug.drugPackagings ?? []"
-                class="border rounded p-2 mb-2"
-                (click)="selectPackage(drug.drugId, package)"
-                [class.border-primary]="
-                  selectedPackages[drug.drugId]?.packagingId === package.packagingId
-                "
-                style="cursor: pointer"
-              >
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <strong>{{ package.packageUomName }}</strong
-                    ><br />
-                    <small>{{ package.displayName }}</small>
-                  </div>
-
-                  <div class="text-primary fw-bold">₹{{ package.packagePrice }}</div>
+                <div class="drug-info-item">
+                  <span class="label">Strength</span>
+                  <span class="value">{{ drug.strength || '-' }}</span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Card Actions -->
-          <div class="card-footer bg-transparent border-top-0">
-            <div class="d-flex gap-2">
-              <button
-                class="btn btn-primary btn-sm flex-grow-1"
-                (click)="addToCart(drug)"
-                [disabled]="!drug.isActive"
-              >
-                <i class="bi bi-cart-plus me-1"></i>
-                {{ drug.isActive ? 'Add to Cart' : 'Unavailable' }}
-              </button>
-              <button
-                class="btn btn-outline-secondary btn-sm"
-                (click)="viewDrug(drug)"
-                title="View Details"
-              >
-                <i class="bi bi-eye"></i>
-              </button>
-              <button
-                class="btn btn-outline-secondary btn-sm"
-                (click)="editDrug(drug)"
-                title="Edit Drug"
-              >
-                <i class="bi bi-pencil"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- No Results Found -->
-      <div *ngIf="filteredDrugs.length === 0" class="col-12">
-        <div class="text-center text-muted py-5">
-          <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-          <h5>No Drugs Found</h5>
-          <p>Try adjusting your search or filter criteria</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- List View (Table) -->
-  <section class="panel mt-3" *ngIf="viewMode === 'list'">
-    <div class="panel-header">
-      <div>
-        <h2 class="h5 mb-1 section-title">
-          <i class="bi bi-list-ul" aria-hidden="true"></i>
-          <span>Drug Catalog</span>
-        </h2>
-        <p class="text-muted mb-0">{{ drugsCatalogs.length }} drugs available in catalog</p>
-      </div>
-      <div class="d-flex gap-2">
-        <div class="input-group input-group-sm" style="width: 250px">
-          <span class="input-group-text"><i class="bi bi-search"></i></span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search drugs..."
-            [(ngModel)]="searchTerm"
-            (input)="filterDrugs()"
-          />
-        </div>
-        <select
-          class="form-select form-select-sm"
-          style="width: 150px"
-          (change)="sortDrugs($event)"
-        >
-          <option value="name">Sort by Name</option>
-          <option value="code">Sort by Code</option>
-          <option value="category">Sort by Category</option>
-          <option value="status">Sort by Status</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table align-middle mb-0">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Drug</th>
-            <th scope="col">Generic Name</th>
-            <th scope="col">Brand Name</th>
-            <th scope="col">Manufacturer</th>
-            <th scope="col">Category</th>
-            <th scope="col">HSN Code</th>
-            <th scope="col">Schedule</th>
-            <th scope="col">Packing</th>
-            <th scope="col">Strength</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created On</th>
-            <th scope="col" class="text-end">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let drug of filteredDrugs; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>
-              <div class="d-flex align-items-center gap-2">
-                <!-- Image with fallback to initial letter -->
-                <div
-                  *ngIf="drug.imageUrl; else listInitialLetter"
-                  class="avatar-sm rounded-circle overflow-hidden"
-                  style="width: 40px; height: 40px; flex-shrink: 0; border: 1px solid #dee2e6"
-                >
-                  <img
-                    [src]="drug.imageUrl"
-                    [alt]="drug.drugName"
-                    class="w-100 h-100"
-                    style="object-fit: cover"
-                  />
-                </div>
-                <ng-template #listInitialLetter>
+              <!-- Packages -->
+              <div class="packages-section mt-3" *ngIf="drug.drugPackagings?.length">
+                <h6 class="packages-title">
+                  <i class="ri-box-3-line me-1"></i> Available Packages
+                </h6>
+                <div class="packages-list">
                   <div
-                    class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                    style="width: 40px; height: 40px; flex-shrink: 0"
+                    *ngFor="let pkg of drug.drugPackagings"
+                    class="package-item"
+                    [class.selected]="selectedPackages[drug.drugId]?.packagingId === pkg.packagingId"
+                    (click)="selectPackage(drug.drugId, pkg)"
                   >
-                    {{ drug.drugName.charAt(0) || 'D' }}
+                    <div class="package-info">
+                      <span class="package-name">{{ pkg.packageUomName }}</span>
+                      <span class="package-display">{{ pkg.displayName }}</span>
+                    </div>
+                    <div class="package-price">₹{{ pkg.packagePrice | number:'1.2-2' }}</div>
                   </div>
-                </ng-template>
-                <div>
-                  <p class="fw-semibold mb-0">{{ drug.drugName }}</p>
-                  <p class="text-muted small mb-0">{{ drug.drugCode }}</p>
                 </div>
               </div>
-            </td>
-            <td>{{ drug.genericName || '-' }}</td>
-            <td>{{ drug.brandName || '-' }}</td>
-            <td>{{ drug.manufacturer || '-' }}</td>
-            <td>{{ drug.category || '-' }}</td>
-            <td>{{ drug.hsnCode || '-' }}</td>
-            <td>
-              <span
-                class="badge"
-                [ngClass]="{
-                  'text-bg-info': drug.scheduleType === 'OTC',
-                  'text-bg-warning': drug.scheduleType === 'Prescription',
-                  'text-bg-danger': drug.scheduleType === 'Controlled',
-                }"
-              >
-                {{ drug.scheduleType || '-' }}
-              </span>
-            </td>
-            <td>{{ drug.packing || '-' }}</td>
-            <td>{{ drug.strength || '-' }}</td>
-            <td>
-              <span *ngIf="drug.isActive" class="badge text-bg-success">
-                <i class="bi bi-check-circle me-1"></i>Active
-              </span>
-              <span *ngIf="!drug.isActive" class="badge text-bg-danger">
-                <i class="bi bi-x-circle me-1"></i>Inactive
-              </span>
-            </td>
-            <td>{{ drug.createdOn | date: 'dd-MM-yyyy' }}</td>
-            <td class="text-end">
-              <div class="btn-group" role="group">
-                <button
-                  class="btn btn-primary btn-sm"
-                  (click)="addToCart(drug)"
-                  [disabled]="!drug.isActive"
-                  title="Add to Cart"
-                >
-                  <i class="bi bi-cart-plus"></i>
-                </button>
-                <button
-                  class="btn btn-outline-secondary btn-sm"
-                  (click)="viewDrug(drug)"
-                  title="View Details"
-                >
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button
-                  class="btn btn-outline-secondary btn-sm"
-                  (click)="editDrug(drug)"
-                  title="Edit Drug"
-                >
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button
-                  class="btn btn-outline-danger btn-sm"
-                  (click)="deleteDrug(drug)"
-                  title="Delete Drug"
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+            </div>
 
-          <!-- No records found row -->
-          <tr *ngIf="filteredDrugs.length === 0">
-            <td colspan="13" class="text-center text-muted py-4">
-              <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-              No Drug Records Found
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <!-- Card Footer -->
+            <div class="drug-card-footer">
+              <button
+                class="btn btn-primary btn-sm w-100"
+                (click)="addToCart(drug)"
+                [disabled]="!drug.isActive || !selectedPackages[drug.drugId]"
+              >
+                <i class="ri-shopping-cart-line me-1"></i>
+                {{ !drug.isActive ? 'Unavailable' : !selectedPackages[drug.drugId] ? 'Select Package' : 'Add to Cart' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+
+    <!-- No Results -->
+    <div *ngIf="filteredDrugs.length === 0" class="text-center py-5">
+      <i class="ri-inbox-line fs-60 text-muted d-block mb-3"></i>
+      <h5 class="text-muted">No Drugs Found</h5>
+      <p class="text-muted">Try adjusting your search or filter criteria</p>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="!isLoading && !error && viewMode === 'list'" class="card bg-white rounded-10 border-0 shadow-sm">
+    <div class="default-table-area">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th class="fw-medium" scope="col">#</th>
+              <th class="fw-medium" scope="col">Drug</th>
+              <th class="fw-medium" scope="col">Generic Name</th>
+              <th class="fw-medium" scope="col">Manufacturer</th>
+              <th class="fw-medium" scope="col">Category</th>
+              <th class="fw-medium" scope="col">Schedule</th>
+              <th class="fw-medium" scope="col">Status</th>
+              <th class="fw-medium text-center" scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let drug of filteredDrugs; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="list-drug-image" *ngIf="drug.imageUrl; else listInitial">
+                    <img [src]="drug.imageUrl" [alt]="drug.drugName" />
+                  </div>
+                  <ng-template #listInitial>
+                    <div class="list-drug-initial">
+                      {{ (drug.drugName || 'D').charAt(0) }}
+                    </div>
+                  </ng-template>
+                  <div>
+                    <p class="fw-semibold mb-0">{{ drug.drugName || 'Unknown' }}</p>
+                    <p class="text-muted small mb-0">{{ drug.drugCode || 'N/A' }}</p>
+                  </div>
+                </div>
+              </td>
+              <td>{{ drug.genericName || '-' }}</td>
+              <td>{{ drug.manufacturer || '-' }}</td>
+              <td>
+                <span class="category-badge">{{ drug.category || '-' }}</span>
+              </td>
+              <td>
+                <span class="schedule-badge" [class.otc]="drug.scheduleType === 'OTC'" [class.prescription]="drug.scheduleType === 'Prescription'" [class.controlled]="drug.scheduleType === 'Controlled'">
+                  {{ drug.scheduleType || '-' }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [class.active]="drug.isActive" [class.inactive]="!drug.isActive">
+                  <i class="ri-circle-fill fs-10 me-1"></i>
+                  {{ drug.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex gap-1 justify-content-center">
+                  <button
+                    class="btn btn-primary btn-sm"
+                    (click)="addToCart(drug)"
+                    [disabled]="!drug.isActive"
+                    title="Add to Cart"
+                  >
+                    <i class="ri-shopping-cart-line"></i>
+                  </button>
+                 
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredDrugs.length === 0">
+              <td colspan="8" class="text-center py-4 text-muted">
+                <i class="ri-inbox-line fs-40 d-block mb-2"></i>
+                No Drug Records Found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

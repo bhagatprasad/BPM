@@ -1,0 +1,417 @@
+/* ===========================
+   Main Container
+=========================== */
+.main-content-container {
+  padding: 20px;
+}
+
+.p-20 {
+  padding: 20px !important;
+}
+
+/* ===========================
+   Cards
+=========================== */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.border-white {
+  border-color: #fff !important;
+}
+
+.bg-white {
+  background-color: #fff !important;
+}
+
+.rounded-10 {
+  border-radius: 10px;
+}
+
+/* ===========================
+   Stats Cards
+=========================== */
+.fs-26 {
+  font-size: 26px;
+}
+
+.fs-40 {
+  font-size: 40px;
+}
+
+.fs-50 {
+  font-size: 50px;
+}
+
+.lh-1 {
+  line-height: 1;
+}
+
+/* ===========================
+   Progress Bar
+=========================== */
+.progress {
+  border-radius: 0;
+  background-color: #6258cc;
+}
+
+.progress-bar {
+  background-color: #fff;
+  height: 3px;
+}
+
+/* ===========================
+   Badges
+=========================== */
+.default-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bg-opacity-10 {
+  --bs-bg-opacity: 0.1;
+}
+
+.bg-primary-10 {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-danger-10 {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.bg-success-10 {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-warning-10 {
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-info-10 {
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+/* ===========================
+   Tables
+=========================== */
+.default-table-area .table {
+  margin-bottom: 0;
+}
+
+.default-table-area thead {
+  background: #edf4ff;
+  border-top: 1px solid #e9ecef;
+}
+
+.default-table-area thead th {
+  font-weight: 600;
+  color: #374151;
+  border: none;
+  padding: 14px 16px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.default-table-area tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.default-table-area tbody tr:hover {
+  background: #fafcff;
+}
+
+.default-table-area.without-header thead {
+  display: none;
+}
+
+.default-table-area.without-header tbody td {
+  padding: 10px 16px;
+}
+
+/* ===========================
+   Search
+=========================== */
+.table-src-form {
+  position: relative;
+  margin-left: 12px;
+}
+
+.table-src-form .form-control {
+  padding: 8px 15px 8px 40px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  font-size: 14px;
+  height: 38px;
+  width: 200px;
+}
+
+.table-src-form .src-btn {
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.table-src-form .src-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ===========================
+   Pagination
+=========================== */
+.custom-pagination .page-link {
+  border: none;
+  padding: 6px 12px;
+  color: #6c757d;
+  border-radius: 8px;
+  margin: 0 2px;
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.custom-pagination .page-link:hover {
+  background-color: #f1f5f9;
+  color: #0d6efd;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 8px;
+}
+
+.custom-pagination .page-link.icon {
+  padding: 6px 8px;
+}
+
+.custom-pagination .page-link.icon .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.showing-wrap {
+  border-top: 1px solid #e9ecef;
+  padding-top: 15px;
+}
+
+/* ===========================
+   Hover Effects
+=========================== */
+.hover-text {
+  transition: color 0.2s ease;
+}
+
+.hover-text:hover {
+  color: #0d6efd !important;
+}
+
+.hover-text-danger:hover {
+  color: #dc3545 !important;
+}
+
+/* ===========================
+   Dropdown
+=========================== */
+.select-dropdown .dropdown-toggle {
+  border: none;
+  padding: 4px 12px;
+  font-size: 14px;
+  color: #6c757d;
+  background: transparent;
+  cursor: pointer;
+}
+
+.select-dropdown .dropdown-toggle::after {
+  margin-left: 6px;
+}
+
+.select-dropdown .dropdown-menu {
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+  min-width: 150px;
+}
+
+.select-dropdown .dropdown-item {
+  padding: 6px 20px;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select-dropdown .dropdown-item:hover {
+  background: #f8f9fa;
+  color: #0d6efd;
+}
+
+/* ===========================
+   Avatar Stack
+=========================== */
+.global-right-list li {
+  transition: all 0.3s ease;
+}
+
+.global-right-list li:hover {
+  transform: translateY(-4px);
+  z-index: 2;
+}
+
+.global-right-list li:last-child {
+  margin-right: 0 !important;
+}
+
+.last-child-none li:last-child {
+  margin-right: 0 !important;
+}
+
+/* ===========================
+   Text Colors
+=========================== */
+.text-primary-50 {
+  color: #6258cc;
+}
+
+.bg-primary-50 {
+  background-color: #6258cc;
+}
+
+.border-primary-50 {
+  border-color: #6258cc;
+}
+
+.bg-light-40 {
+  background-color: #f8f9fa;
+}
+
+.border-light-40 {
+  border-color: #f8f9fa;
+}
+
+.text-success-60 {
+  color: #28a745;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .main-content-container {
+    padding: 15px;
+  }
+  
+  .p-20 {
+    padding: 15px !important;
+  }
+  
+  .table-src-form .form-control {
+    width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .fs-26 {
+    font-size: 20px;
+  }
+  
+  .fs-40 {
+    font-size: 30px;
+  }
+  
+  .fs-50 {
+    font-size: 36px;
+  }
+  
+  .default-table-area .table {
+    font-size: 13px;
+  }
+  
+  .default-table-area thead th,
+  .default-table-area tbody td {
+    padding: 8px 10px;
+  }
+  
+  .table-src-form .form-control {
+    width: 120px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content-container {
+    padding: 10px;
+  }
+  
+  .p-20 {
+    padding: 12px !important;
+  }
+  
+  .default-table-area .table {
+    font-size: 12px;
+  }
+  
+  .default-table-area thead th,
+  .default-table-area tbody td {
+    padding: 6px 8px;
+    white-space: nowrap;
+  }
+  
+  .custom-pagination .page-link {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* ===========================
+   Dark Mode Support
+=========================== */
+[data-bs-theme="dark"] .card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .bg-white {
+  background-color: #1e293b !important;
+}
+
+[data-bs-theme="dark"] .default-table-area thead {
+  background: #0f172a;
+}
+
+[data-bs-theme="dark"] .default-table-area tbody tr:hover {
+  background: #0f172a;
+}
+
+[data-bs-theme="dark"] .select-dropdown .dropdown-menu {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+[data-bs-theme="dark"] .select-dropdown .dropdown-item {
+  color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .select-dropdown .dropdown-item:hover {
+  background: #334155;
+}
+
+[data-bs-theme="dark"] .table-src-form .form-control {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .bg-light-40 {
+  background-color: #1e293b;
+}
