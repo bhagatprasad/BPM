@@ -1,0 +1,330 @@
+﻿@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="main-content-container overflow-hidden">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+
+        <h3 class="mb-0">Roles</h3>
+
+        <nav aria-label="breadcrumb">
+
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+
+                <li class="breadcrumb-item">
+
+                    <a href="/"
+                       class="d-flex align-items-center text-decoration-none">
+
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+
+                        <span class="text-body fs-14 hover">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+                <li class="breadcrumb-item">
+                    Core
+                </li>
+
+                <li class="breadcrumb-item active text-secondary">
+                    Roles
+                </li>
+
+            </ol>
+
+        </nav>
+
+    </div>
+
+
+    <!-- Card -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+
+        <!-- Search + Add -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+            <form class="table-src-form position-relative m-0"
+                  onsubmit="return false;">
+
+                <input type="text"
+                       id="searchInput"
+                       class="form-control w-350"
+                       placeholder="Search Role..." />
+
+            </form>
+
+
+            <button id="btnAddRole"
+                    type="button"
+                    class="btn btn-primary btn-sm px-3">
+
+                <i class="ri-add-line me-1"></i>
+
+                Add Role
+
+            </button>
+
+        </div>
+
+
+        <!-- Table -->
+        <div class="default-table-area mx-minus-1">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle w-100">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Role Name</th>
+
+                            <th>Code</th>
+
+                            <th>Description</th>
+
+                            <th>Status</th>
+
+                            <th width="170" class="text-center">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="roleTableBody">
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center py-5 text-muted">
+
+                                No roles found.
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+                <span id="entriesInfo">
+                    Showing 0 to 0 of 0 entries
+                </span>
+
+
+                <nav aria-label="Role pagination">
+
+                    <ul class="pagination mb-0 justify-content-center"
+                        id="paginationControls">
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Role Modal -->
+<div class="modal fade"
+     id="roleModal"
+     tabindex="-1"
+     aria-labelledby="roleModalTitle"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-md">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="roleModalTitle">
+
+                    Add Role
+
+                </h5>
+
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <input type="hidden"
+                       id="RoleId" />
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Role Name
+                    </label>
+
+                    <input type="text"
+                           id="RoleName"
+                           class="form-control" />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Code
+                    </label>
+
+                    <input type="text"
+                           id="Code"
+                           class="form-control" />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea id="Description"
+                              rows="3"
+                              class="form-control"></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-light"
+                        data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+
+                <button type="button"
+                        id="btnSaveRole"
+                        class="btn btn-primary">
+
+                    Save
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* -----------------------------------------
+           Role Action Buttons
+           ----------------------------------------- */
+
+    .role-action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+
+    .role-action-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 6px;
+        font-size: 18px;
+        transition: all 0.2s ease;
+    }
+
+
+        .role-action-btn i {
+            line-height: 1;
+        }
+
+
+    .role-view-btn {
+        background-color: #16a34a;
+        color: #ffffff;
+    }
+
+
+        .role-view-btn:hover {
+            background-color: #15803d;
+            color: #ffffff;
+        }
+
+
+    .role-edit-btn {
+        background-color: #0f766e;
+        color: #ffffff;
+    }
+
+
+        .role-edit-btn:hover {
+            background-color: #115e59;
+            color: #ffffff;
+        }
+
+</style>
+
+
+@section Scripts
+{
+
+    <script src="~/js/RoleController.js"></script>
+
+    <script>
+
+        $(function () {
+
+            var controller = new RolesController();
+
+            controller.init();
+
+        });
+
+    </script>
+
+}

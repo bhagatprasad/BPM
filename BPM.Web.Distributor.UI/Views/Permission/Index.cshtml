@@ -1,0 +1,575 @@
+﻿@model List<BPM.Web.Distributor.UI.Models.DTOs.PermissionDto>
+
+@{
+    ViewData["Title"] = "Permissions";
+
+    var roleName = Model != null && Model.Any()
+        ? Model.First().RoleName
+        : "Role";
+}
+
+<div class="main-content-container overflow-hidden">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+
+        <div>
+
+            <h3 class="mb-1">
+                Permissions
+            </h3>
+
+            <div class="text-muted permission-role-display">
+
+                Role:
+                <strong>@roleName</strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Breadcrumb -->
+
+        <nav aria-label="breadcrumb">
+
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+
+                <li class="breadcrumb-item">
+
+                    <a href="/"
+                       class="d-flex align-items-center text-decoration-none">
+
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+
+                        <span class="text-body fs-14">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="breadcrumb-item">
+                    Core
+                </li>
+
+
+                <li class="breadcrumb-item">
+
+                    <a href="/Role/Index"
+                       class="text-decoration-none">
+
+                        Roles
+
+                    </a>
+
+                </li>
+
+
+                <li class="breadcrumb-item active text-secondary">
+
+                    Permissions
+
+                </li>
+
+            </ol>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =========================================================
+         PERMISSIONS CARD
+         ========================================================= -->
+
+    <div class="card bg-white rounded-10 border border-white mb-4">
+
+
+        <!-- =====================================================
+             SEARCH + BACK
+             ===================================================== -->
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+
+            <!-- Search -->
+
+            <form class="table-src-form position-relative m-0"
+                  onsubmit="return false;">
+
+                <input type="text"
+                       id="permissionSearchInput"
+                       class="form-control w-350"
+                       placeholder="Search Permission..." />
+
+            </form>
+
+
+            <!-- Back -->
+
+            <button type="button"
+                    id="btnBackToRoles"
+                    class="btn btn-secondary btn-sm px-3">
+
+                <i class="ri-arrow-left-line me-1"></i>
+
+                Back to Roles
+
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             PERMISSION MATRIX
+             ===================================================== -->
+
+        <div class="default-table-area mx-minus-1">
+
+            <div class="table-responsive">
+
+
+                <table class="table align-middle w-100 permission-matrix-table">
+
+
+                    <!-- =================================================
+                         HEADER
+
+                         JavaScript will replace this header with:
+
+                         Feature | Add | Edit | Delete | View | Import ...
+
+                         ================================================= -->
+
+                    <thead id="permissionTableHead">
+
+                        <tr>
+
+                            <th class="permission-feature-header">
+
+                                Feature
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <!-- =================================================
+                         BODY
+
+                         These rows are only used by JavaScript to read
+                         the permission information rendered by Razor.
+
+                         JavaScript will rebuild this into the horizontal
+                         Feature / Activity matrix.
+                         ================================================= -->
+
+                    <tbody id="permissionTableBody">
+
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var permission in Model)
+                            {
+
+                                <tr class="permission-row"
+                                    data-id="@permission.PermissionId">
+
+
+                                    <!-- =================================
+                                         Role
+
+                                         Hidden because Role is displayed
+                                         once at the top.
+                                         ================================= -->
+
+                                    <td class="permission-role d-none">
+
+                                        @permission.RoleName
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         Feature
+                                         ================================= -->
+
+                                    <td class="permission-feature">
+
+                                        @permission.FeatureName
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         Activity
+
+                                         Hidden here because JS will create
+                                         horizontal activity columns.
+                                         ================================= -->
+
+                                    <td class="permission-activity d-none">
+
+                                        @permission.ActivityName
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         Permission Switch
+
+                                         Hidden initial checkbox.
+
+                                         JS reads its data and creates the
+                                         visible switch in the matrix.
+                                         ================================= -->
+
+                                    <td class="permission-source-checkbox d-none">
+
+
+                                        <input type="checkbox"
+                                               class="permission-toggle"
+                                               data-id="@permission.PermissionId"
+                                               data-role-id="@permission.RoleId"
+                                               data-feature-id="@permission.FeatureId"
+                                               data-activity-id="@permission.ActivityId"
+                                               @(permission.IsEnabled ? "checked" : "") />
+
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr class="no-permission-row">
+
+                                <td colspan="20"
+                                    class="text-center py-5 text-muted">
+
+                                    No permissions found for this role.
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PAGINATION + ENTRIES
+                 ===================================================== -->
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+
+                <!-- Entries -->
+
+                <span id="permissionEntriesInfo">
+
+                    Showing 0 to 0 of 0 entries
+
+                </span>
+
+
+                <!-- Pagination -->
+
+                <nav aria-label="Permission pagination">
+
+                    <ul class="pagination mb-0 justify-content-center"
+                        id="permissionPagination">
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     STYLES
+     ============================================================= -->
+
+<style>
+
+
+    /* =========================================================
+           PERMISSION MATRIX TABLE
+           ========================================================= */
+
+    .permission-matrix-table {
+        min-width: 900px;
+        margin-bottom: 0;
+    }
+
+
+        .permission-matrix-table th,
+        .permission-matrix-table td {
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+
+        .permission-matrix-table thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #374151;
+            padding: 15px 12px;
+        }
+
+
+        .permission-matrix-table tbody td {
+            padding: 14px 12px;
+        }
+
+
+    /* =========================================================
+           FEATURE COLUMN
+           ========================================================= */
+
+    .permission-feature-header {
+        min-width: 280px;
+        width: 280px;
+        text-align: left;
+    }
+
+
+    .permission-feature-cell {
+        min-width: 280px;
+        width: 280px;
+        font-weight: 600;
+        text-align: left;
+    }
+
+
+    /* =========================================================
+           ACTIVITY COLUMNS
+           ========================================================= */
+
+    .permission-activity-header {
+        min-width: 110px;
+        text-align: center;
+    }
+
+
+    .permission-activity-cell {
+        min-width: 110px;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+           CELL CONTENT
+           ========================================================= */
+
+    .permission-cell-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+
+    /* =========================================================
+           SWITCH
+           ========================================================= */
+
+    .permission-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+
+
+        .permission-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+
+    .permission-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background-color: #d1d5db;
+        border-radius: 50px;
+        transition: 0.2s;
+    }
+
+
+        .permission-slider::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transition: 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+
+
+    .permission-switch input:checked + .permission-slider {
+        background-color: #16a34a;
+    }
+
+
+        .permission-switch input:checked + .permission-slider::before {
+            transform: translateX(20px);
+        }
+
+
+    /* =========================================================
+           ENABLED / DISABLED TEXT
+           ========================================================= */
+
+    .permission-label {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        line-height: 1;
+        color: #6b7280;
+    }
+
+
+    .permission-switch input:checked ~ .permission-label {
+        color: #16a34a;
+    }
+
+
+    /* =========================================================
+           FEATURE HOVER
+           ========================================================= */
+
+    .permission-matrix-table tbody tr:hover {
+        background-color: #fafafa;
+    }
+
+
+    /* =========================================================
+           HIDDEN SOURCE DATA
+
+           These are the original Razor rows used by JS before
+           the matrix is rendered.
+           ========================================================= */
+
+    .permission-source-checkbox {
+        display: none !important;
+    }
+
+
+    /* =========================================================
+           PAGINATION
+           ========================================================= */
+
+    #permissionPagination .page-link {
+        min-width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border-radius: 6px;
+    }
+
+
+    #permissionPagination
+    .page-item:first-child
+    .page-link,
+    #permissionPagination
+    .page-item:last-child
+    .page-link {
+        font-size: 20px;
+    }
+
+
+    /* =========================================================
+           ROLE DISPLAY
+           ========================================================= */
+
+    .permission-role-display {
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+           MOBILE
+           ========================================================= */
+
+    @@media (max-width: 768px) {
+
+        .permission-matrix-table {
+            min-width: 800px;
+        }
+
+
+        .permission-feature-header,
+        .permission-feature-cell {
+            min-width: 220px;
+            width: 220px;
+        }
+
+
+        .permission-activity-header,
+        .permission-activity-cell {
+            min-width: 95px;
+        }
+    }
+
+</style>
+
+
+<!-- =============================================================
+     SCRIPTS
+     ============================================================= -->
+@section Scripts
+{
+
+    <script src="~/js/PermissionController.js"></script>
+
+
+    <script>
+
+        $(function () {
+
+            var controller =
+                new PermissionController();
+
+            controller.init();
+
+        });
+
+    </script>
+
+}

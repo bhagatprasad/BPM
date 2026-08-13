@@ -1,6 +1,6 @@
 ﻿namespace BPM.Web.Distributor.UI.Models.DTOs
 {
-    public class RoleDto
+    public class UpdateRoleDto
     {
         public Guid Id { get; set; }
 
