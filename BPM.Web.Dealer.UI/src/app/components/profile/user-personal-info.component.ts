@@ -14,8 +14,8 @@ export class UserPersonalInfoComponent {
   @Input() isUserEditing: boolean = false;
   @Input() errorMsz: string = '';
 
-  @Output() Edit = new EventEmitter<void>();
-  @Output() save = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<void>();
+  @Output() save = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<void>();
 
   constructor() {
@@ -24,26 +24,27 @@ export class UserPersonalInfoComponent {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['userId']) {
-      console.log('User ID changed to:', changes['userId'].currentValue);
-      this.userId = changes['userId'].currentValue;
+      console.log('User ID changed to:', changes['userId'].currentValue);     
     }
     if (changes['userPersionalSection']) {
-      console.log('User Data changed to:', changes['userPersionalSection'].currentValue);
-      this.userPersionalSection = changes['userPersionalSection'].currentValue;
+      console.log('User Data changed to:', changes['userPersionalSection'].currentValue);      
     }
     if (changes['isUserEditing']) {
-      console.log('isUserEditing changed to:', changes['isUserEditing'].currentValue);
-      this.isUserEditing = changes['isUserEditing'].currentValue;
+      console.log('isUserEditing changed to:', changes['isUserEditing'].currentValue);     
     }
     if (changes['errorMsz']) {
-      console.log('errorMsz changed to:', changes['errorMsz'].currentValue);
-      this.errorMsz = changes['errorMsz'].currentValue;
+      console.log('errorMsz changed to:', changes['errorMsz'].currentValue);      
     }
   }
+
+  onEdit(): void {
+    this.edit.emit();
+  }
   OnSave(): void {
-    this.save.emit();
+    this.save.emit(this.userPersionalSection);
   }
   OnCancel(): void {
     this.cancel.emit();
   }
+  
 }

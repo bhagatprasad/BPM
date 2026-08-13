@@ -6,5 +6,6 @@ namespace BPM.Web.Distributor.UI.Services
     {
         Task<List<PurchaseOrderResponseDto>> GetAllPurchaseOrdersAsync();
         Task<List<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
+        Task<PurchaseOrderResponseDto> ProcessPurchaseOrderAsync(ProcessPurchaseOrderDto purchaseOrder);
     }
 }

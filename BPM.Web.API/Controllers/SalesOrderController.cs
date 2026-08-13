@@ -1,4 +1,5 @@
 ﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.DTOs.SalesOrder;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("GetSalesOrders")]
+        [HttpGet("get-sales-orders")]
         public async Task<IActionResult> GetAllSalesOrder()
         {
             try
@@ -96,6 +97,65 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogError(ex, "Error occurred while creating Sales Order from Purchase Order: {PurchaseOrderId}", purchaseOrderId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the Sales Order.");
+            }
+        }
+
+        [HttpGet("GetSalesOrderById/{id}")]
+        public async Task<IActionResult> GetSalesOrderById(Guid id)
+        {
+            try
+            {
+                var salesOrder =await _service.GetSalesOrderByIdAsync(id);
+
+                if (salesOrder == null)
+                {
+                    return NotFound("Sales Order not found.");
+                }
+
+                return Ok(salesOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching Sales Order with Id: {SalesOrderId}",id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the Sales Order.");
+            }
+        }
+
+        [HttpPost("process-sales-order")]
+        public async Task<IActionResult> ProcessSalesOrder(ProcessSalesOrderDto processSalesOrderDto)
+        {
+            try
+            {
+                _logger.LogInformation("Processing Sales Order with Id: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+
+                if (processSalesOrderDto.SalesOrderId == Guid.Empty)
+                {
+                    _logger.LogWarning("Invalid Sales Order Id: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+                    return BadRequest("Invalid Sales Order Id.");
+                }
+
+                var currentUserId = UserId.Value;
+
+                var result = await _service.ProcessSalesOrderAsync(processSalesOrderDto, currentUserId);
+
+                _logger.LogInformation("Sales Order processed successfully with Id: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Sales Order not found: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Sales Order cannot be processed: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing Sales Order: {SalesOrderId}", processSalesOrderDto.SalesOrderId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the Sales Order.");
             }
         }
     }

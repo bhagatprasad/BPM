@@ -5,6 +5,7 @@ export interface UserUpdateDto {
   lastName: string;
   email: string;
   phone: string;
+  isActive:boolean;
   modifiedBy: string; 
 
 }

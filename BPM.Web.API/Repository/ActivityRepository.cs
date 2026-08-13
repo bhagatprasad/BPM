@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Models.Data;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ namespace BPM.Web.API.Repository
             _context = context;
         }
 
+        [Permission("USER", "VIEW")]
         public async Task<List<Activities>> GetAllAsync()
         {
             return await _context.Activities
@@ -20,12 +22,14 @@ namespace BPM.Web.API.Repository
                 .ToListAsync();
         }
 
+        [Permission("USER", "VIEW")]
         public async Task<Activities?> GetByIdAsync(Guid activityId)
         {
             return await _context.Activities
                 .FirstOrDefaultAsync(x => x.ActivityId == activityId);
         }
 
+        [Permission("USER", "ADD")]
         public async Task<Activities> AddAsync(Activities activity)
         {
             _context.Activities.Add(activity);
@@ -35,6 +39,7 @@ namespace BPM.Web.API.Repository
             return activity;
         }
 
+        [Permission("USER", "EDIT")]
         public async Task<Activities?> UpdateAsync(Activities activity)
         {
             var dbActivity = await _context.Activities
@@ -57,6 +62,7 @@ namespace BPM.Web.API.Repository
             return dbActivity;
         }
 
+        [Permission("USER", "DELETE")]
         public async Task<bool> DeleteAsync(Guid activityId)
         {
             var dbActivity = await _context.Activities

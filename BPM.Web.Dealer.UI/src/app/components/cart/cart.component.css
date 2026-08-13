@@ -1,236 +1,384 @@
 /* ===========================
-   Cart Item
+   Main Container
 =========================== */
-
-.cart-item {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 20px;
-    margin-bottom: 10px;
-    background: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
-    transition: all .3s ease;
+.main-content-container {
+  padding: 20px;
 }
 
-.cart-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
+.p-20 {
+  padding: 20px !important;
+}
+
+.mx-minus-1 {
+  margin-left: -1px;
+  margin-right: -1px;
 }
 
 /* ===========================
-   Cart Image
+   Table Styles
 =========================== */
-
-.cart-image {
-    width: 100px;
-    min-width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.default-table-area .table {
+  margin-bottom: 0;
 }
 
-.drug-image-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+.default-table-area thead {
+  background: #edf4ff;
+  border-top: 1px solid #e9ecef;
 }
 
+.default-table-area thead th {
+  font-weight: 600;
+  color: #374151;
+  border: none;
+  padding: 16px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.default-table-area tbody td {
+  padding: 14px 16px;
+  border-top: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.default-table-area tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.02);
+}
+
+/* ===========================
+   Product Image
+=========================== */
 .drug-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
-.drug-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #0d6efd;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0,0,0,.15);
-    user-select: none;
+.drug-icon-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-/* ===========================
-   Cart Details
-=========================== */
-
-.cart-details {
-    flex: 1;
-}
-
-.cart-details h4 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-.cart-details p {
-    margin-bottom: 8px;
-    color: #555;
-}
-
-.cart-details strong {
-    color: #212529;
+.ms-12 {
+  margin-left: 12px;
 }
 
 /* ===========================
-   Cart Actions
+   Quantity Controls
 =========================== */
-
-.cart-actions {
-    width: 130px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
+.countdown-for-add-to-cart {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 30px;
+  padding: 4px 8px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
 }
 
-.qty-box {
-    width: 140px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #dee2e6;
-    border-radius: 30px;
+.plus-minus {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.plus-minus:hover {
+  background: #e9ecef;
+}
+
+.plus-minus i {
+  font-size: 16px;
+}
+
+.countdown-for-add-to-cart span {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* ===========================
+   Order Summary Table
+=========================== */
+.table-order-summary tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table-order-summary tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-order-summary tbody td {
+  padding: 12px 16px;
+}
+
+.table-order-summary tbody tr:last-child td {
+  padding-bottom: 16px;
+}
+
+/* ===========================
+   Form Styles
+=========================== */
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: 58px;
+  border-radius: 8px;
+}
+
+.form-floating > textarea.form-control {
+  height: auto;
+  min-height: 80px;
+}
+
+.form-floating > label {
+  padding: 16px 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* ===========================
+   Card Styles
+=========================== */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card .card {
+  box-shadow: none;
+}
+
+/* ===========================
+   Button Styles
+=========================== */
+.btn-primary {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.btn-success {
+  background: #198754;
+  border-color: #198754;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+}
+
+.btn-success:hover {
+  background: #157347;
+  border-color: #146c43;
+}
+
+.btn-success:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline-danger {
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+/* ===========================
+   Scrollbar
+=========================== */
+.default-table-area {
+  overflow-x: auto;
+}
+
+.default-table-area::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.default-table-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.default-table-area::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.default-table-area::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .main-content-container {
+    padding: 15px;
+  }
+  
+  .p-20 {
+    padding: 15px !important;
+  }
+  
+  .default-table-area thead th,
+  .default-table-area tbody td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-lg-8,
+  .col-lg-4 {
+    padding: 0 10px;
+  }
+  
+  .default-table-area .table {
+    font-size: 13px;
+  }
+  
+  .default-table-area thead th,
+  .default-table-area tbody td {
     padding: 8px 10px;
+    white-space: nowrap;
+  }
+  
+  .countdown-for-add-to-cart {
+    padding: 2px 4px;
+  }
+  
+  .plus-minus {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .drug-image-wrapper img,
+  .drug-icon-placeholder {
+    width: 40px;
+    height: 40px;
+  }
 }
 
-.qty-box span {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.qty-box .btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    padding: 0;
-}
-
-.cart-actions .btn-outline-danger {
-    min-width: 130px;
-    
-}
-
-/* ===========================
-   Cart Scroll
-=========================== */
-
-.cart-items {
-    height: 650px;
-    overflow-y: auto;
-}
-
-.cart-items::-webkit-scrollbar {
-    width: 8px;
-}
-
-.cart-items::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.cart-items::-webkit-scrollbar-thumb {
-    background: #b5b5b5;
-    border-radius: 10px;
-}
-
-.cart-items::-webkit-scrollbar-thumb:hover {
-    background: #888;
+@media (max-width: 576px) {
+  .default-table-area .table {
+    font-size: 12px;
+  }
+  
+  .default-table-area thead th,
+  .default-table-area tbody td {
+    padding: 6px 8px;
+  }
+  
+  .btn-success {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
 }
 
 /* ===========================
-   Order Summary
+   Empty State
 =========================== */
-
-.order-summary {
-    height: 650px;
-    background: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
-    padding: 34px;
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 20px;
+.text-center.py-5 i {
+  font-size: 48px;
+  color: #adb5bd;
 }
 
-.summary-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
+/* ===========================
+   Breadcrumb
+=========================== */
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin: 0;
 }
 
-.summary-header h3 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 600;
+.breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+  color: #6c757d;
 }
 
-.summary-content {
-    flex: 1;
+.breadcrumb-item a {
+  text-decoration: none;
+  color: #0d6efd;
 }
 
-.summary-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
+.breadcrumb-item a:hover {
+  color: #0a58ca;
 }
 
-.summary-item h6 {
-    margin-bottom: 4px;
-    font-weight: 600;
+.breadcrumb-item.active {
+  color: #6c757d;
 }
 
-.summary-item small {
-    color: #6c757d;
+.breadcrumb-item .text-secondary {
+  color: #6c757d !important;
 }
 
-.dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    margin-top: 6px;
-    flex-shrink: 0;
+/* ===========================
+   Misc
+=========================== */
+.hover-text:hover {
+  color: #0d6efd !important;
 }
 
-.summary-footer {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #dee2e6;
+.fs-40 {
+  font-size: 40px;
 }
 
-.summary-footer .btn {
-    height: 54px;
-    font-size: 18px;
-    font-weight: 600;
-}
-.empty-cart{
-    padding:80px 20px;
+.fw-semibold {
+  font-weight: 600;
 }
 
-.empty-cart i{
-    font-size:70px;
-    color:#adb5bd;
+.rounded-10 {
+  border-radius: 10px;
 }
 
-.empty-cart h3{
-    font-weight:600;
-    margin-top:20px;
+.border-white {
+  border-color: #fff !important;
 }
 
-.empty-cart p{
-    font-size:15px;
-    margin-bottom:25px;
+.bg-white {
+  background-color: #fff !important;
+}
+
+.text-secondary {
+  color: #6c757d !important;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mt-2 {
+  margin-top: 10px;
+}
+
+/* Toast notification overrides */
+.ngx-toastr {
+  border-radius: 8px !important;
 }

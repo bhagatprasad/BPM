@@ -1,6 +1,8 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
+using BPM.Web.API.Models.Extensions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BPM.Web.API.Models.Mappers
 {
@@ -12,29 +14,24 @@ namespace BPM.Web.API.Models.Mappers
             {
                 SupplierId = dto.SupplierId,
                 DealerId = dto.DealerId,
-
-                ExpectedDeliveryDate = dto.ExpectedDeliveryDate,
-
+                ExpectedDeliveryDate = dto.ExpectedDeliveryDate.EnsureUtc(),
                 PaymentTerms = dto.PaymentTerms,
                 DeliveryTerms = dto.DeliveryTerms,
                 Remarks = dto.Remarks,
                 InternalNotes = dto.InternalNotes,
-
                 PONumber = string.Empty, // Generated in Service
-                OrderDate = DateTime.UtcNow,
-                Status = "Draft",
-
+                OrderDate = DateTime.UtcNow, // Already UTC
+                Status = !string.IsNullOrEmpty(dto.Status) ? dto.Status : "Draft",
                 SubTotal = 0,
                 TaxAmount = 0,
                 DiscountAmount = 0,
                 TotalAmount = 0,
-
                 CurrencyCode = "INR",
-
                 IsActive = true,
-
                 CreatedBy = dto.CreatedBy,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = dto.CreatedBy,
+                ModifiedOn = DateTime.UtcNow
             };
         }
 
@@ -46,25 +43,20 @@ namespace BPM.Web.API.Models.Mappers
                 PackagingId = dto.PackagingId,
                 Quantity = dto.Quantity,
                 UnitPrice = dto.UnitPrice,
-
                 DiscountPercentage = dto.DiscountPercentage,
                 DiscountAmount = 0,
-
                 TaxRate = dto.TaxRate,
                 TaxAmount = 0,
-
                 TotalAmount = 0,
-
                 ReceivedQuantity = 0,
                 PendingQuantity = dto.Quantity,
-
                 BatchNumber = dto.BatchNumber,
-                ExpiryDate = dto.ExpiryDate,
+                ExpiryDate = dto.ExpiryDate.EnsureUtc(),
                 Remarks = dto.Remarks,
-
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow // Already UTC
             };
         }
+
         public static PurchaseOrderResponseDto ToDto(this PurchaseOrder purchaseOrder)
         {
             return new PurchaseOrderResponseDto
@@ -85,44 +77,116 @@ namespace BPM.Web.API.Models.Mappers
                 PaymentTerms = purchaseOrder.PaymentTerms,
                 DeliveryTerms = purchaseOrder.DeliveryTerms,
                 Remarks = purchaseOrder.Remarks,
-
+                ModifiedBy = purchaseOrder.ModifiedBy,
+                ModifiedOn = purchaseOrder.ModifiedOn,
+                Dealer = purchaseOrder.Dealer?.ToDto(),
                 PurchaseOrderItemResponse = purchaseOrder.PurchaseOrderItems?
                     .Select(x => x.ToDto())
                     .ToList() ?? new List<PurchaseOrderItemResponseDto>()
             };
         }
 
-        public static PurchaseOrder ToPurchaseOrderFromProcessPurchaseOrderDto(this ProcessPurchaseOrderDto dto, PurchaseOrder purchaseOrder, Guid currentUserId)
+        // Update existing entity instead of creating new
+        public static void UpdateFromProcessDto(this PurchaseOrder purchaseOrder, ProcessPurchaseOrderDto dto, Guid currentUserId)
         {
-            return new PurchaseOrder
+            // Append new notes to existing remarks with timestamp
+            if (!string.IsNullOrWhiteSpace(dto.Notes))
             {
-                Id = purchaseOrder.Id,
-                PONumber = purchaseOrder.PONumber,
-                SupplierId = purchaseOrder.SupplierId,
-                DealerId = purchaseOrder.DealerId,
-                OrderDate = purchaseOrder.OrderDate,
-                ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate,
-                ActualDeliveryDate = purchaseOrder.ActualDeliveryDate,
-                Status = dto.Status,
-                SubTotal = purchaseOrder.SubTotal,
-                TaxAmount = purchaseOrder.TaxAmount,
-                DiscountAmount = purchaseOrder.DiscountAmount,
-                TotalAmount = purchaseOrder.TotalAmount,
-                PaymentTerms = purchaseOrder.PaymentTerms,
-                DeliveryTerms = purchaseOrder.DeliveryTerms,
-                Remarks = dto.Notes,
-                InternalNotes = purchaseOrder.InternalNotes,
-                IsActive = purchaseOrder.IsActive,
-                CreatedBy = purchaseOrder.CreatedBy,
-                CreatedOn = purchaseOrder.CreatedOn,
-                ModifiedBy = currentUserId,
-                ModifiedOn = DateTime.UtcNow,
-                CurrencyCode = purchaseOrder.CurrencyCode,
-                Supplier = purchaseOrder.Supplier,
-                PurchaseOrderItems = purchaseOrder.PurchaseOrderItems
-            };
+                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC");
+                var newNoteEntry = $"[{timestamp}] {dto.Notes}";
+
+                if (string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
+                {
+                    purchaseOrder.Remarks = newNoteEntry;
+                }
+                else
+                {
+                    purchaseOrder.Remarks = $"{purchaseOrder.Remarks}\n{newNoteEntry}";
+                }
+            }
+
+            purchaseOrder.Status = dto.Status;
+            purchaseOrder.ModifiedBy = currentUserId;
+            purchaseOrder.ModifiedOn = DateTime.UtcNow; // Already UTC
+
+            // If status is Approved or Verified, set ActualDeliveryDate if not set
+            if (string.Equals(dto.Status, "Approved", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(dto.Status, "Verified", StringComparison.OrdinalIgnoreCase))
+            {
+                if (purchaseOrder.ActualDeliveryDate == null || purchaseOrder.ActualDeliveryDate == DateTime.MinValue)
+                {
+                    purchaseOrder.ActualDeliveryDate = DateTime.UtcNow; // Already UTC
+                }
+            }
+
+            // Ensure all DateTime fields are UTC
+            purchaseOrder.OrderDate = purchaseOrder.OrderDate.ToDatabaseUtc();
+            purchaseOrder.ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.ToDatabaseUtc();
+            purchaseOrder.ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.ToDatabaseUtc();
+            purchaseOrder.ModifiedOn = purchaseOrder.ModifiedOn.ToDatabaseUtc();
+            purchaseOrder.CreatedOn = purchaseOrder.CreatedOn.ToDatabaseUtc();
         }
 
+        // Alternative: Update with separate notes parameter
+        public static void UpdateFromProcessDtoWithNotes(this PurchaseOrder purchaseOrder, ProcessPurchaseOrderDto dto, Guid currentUserId, string additionalNotes = null)
+        {
+            // Combine notes: dto.Notes + additionalNotes
+            var combinedNotes = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(dto.Notes))
+            {
+                combinedNotes = dto.Notes;
+            }
+
+            if (!string.IsNullOrWhiteSpace(additionalNotes))
+            {
+                if (!string.IsNullOrWhiteSpace(combinedNotes))
+                {
+                    combinedNotes = $"{combinedNotes}\n{additionalNotes}";
+                }
+                else
+                {
+                    combinedNotes = additionalNotes;
+                }
+            }
+
+            // Append combined notes to existing remarks with timestamp
+            if (!string.IsNullOrWhiteSpace(combinedNotes))
+            {
+                var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC");
+                var newNoteEntry = $"[{timestamp}] {combinedNotes}";
+
+                if (string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
+                {
+                    purchaseOrder.Remarks = newNoteEntry;
+                }
+                else
+                {
+                    purchaseOrder.Remarks = $"{purchaseOrder.Remarks}\n{newNoteEntry}";
+                }
+            }
+
+            purchaseOrder.Status = dto.Status;
+            purchaseOrder.ModifiedBy = currentUserId;
+            purchaseOrder.ModifiedOn = DateTime.UtcNow;
+
+            // If status is Approved or Verified, set ActualDeliveryDate if not set
+            if (string.Equals(dto.Status, "Approved", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(dto.Status, "Verified", StringComparison.OrdinalIgnoreCase))
+            {
+                if (purchaseOrder.ActualDeliveryDate == null || purchaseOrder.ActualDeliveryDate == DateTime.MinValue)
+                {
+                    purchaseOrder.ActualDeliveryDate = DateTime.UtcNow;
+                }
+            }
+
+            // Ensure all DateTime fields are UTC
+            purchaseOrder.OrderDate = purchaseOrder.OrderDate.ToDatabaseUtc();
+            purchaseOrder.ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.ToDatabaseUtc();
+            purchaseOrder.ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.ToDatabaseUtc();
+            purchaseOrder.ModifiedOn = purchaseOrder.ModifiedOn.ToDatabaseUtc();
+            purchaseOrder.CreatedOn = purchaseOrder.CreatedOn.ToDatabaseUtc();
+        }
 
         public static PurchaseOrderItemResponseDto ToDto(this PurchaseOrderItem item)
         {

@@ -64,12 +64,43 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// ============================================================
+// DATABASE CONFIGURATION - UPDATED FOR POSTGRESQL
+// ============================================================
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        // Enable retry on failure for better resilience
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null);
+
+        // Set command timeout (optional)
+        npgsqlOptions.CommandTimeout(60);
+
+        // Use query splitting behavior for better performance
+        npgsqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+
+        // Note: EnableDateTimeKindHandling is not available in all versions
+        // The DateTime handling is now done in the DbContext
+    });
+
+    // Enable sensitive data logging and detailed errors in development
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
 
 builder.Services.Configure<RabbitMQSettings>(
     builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddScoped<BPMAuthorize>();
+
 // Repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IDealerRepository, DealerRepository>();
@@ -91,6 +122,8 @@ builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -110,12 +143,15 @@ builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
 builder.Services.AddSingleton<IRabbitMQPublisher>(sp => sp.GetRequiredService<RabbitMQPublisher>());
 builder.Services.AddHostedService<PasswordHistorySubscriber>();
 builder.Services.AddHostedService<UserLoginHistorySubscriber>();
+builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHostedService<RefreshTokenSubscriber>();
 
 // Health Checks

@@ -12,6 +12,8 @@
 
         public string Phone { get; set; } = string.Empty;
 
+        public bool? IsActive { get; set; }
+
         public Guid ModifiedBy { get; set; }
     }
 }

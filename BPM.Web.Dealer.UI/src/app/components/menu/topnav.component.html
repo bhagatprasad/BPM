@@ -1,89 +1,67 @@
-<!-- Start Top Navigation Area -->
-<header
-  class="header-area bg-white mb-4 rounded-10 border border-white"
-  id="header-area"
-  [class.scrolled]="isScrolled"
->
+<!-- Start Header Area -->
+<header class="header-area bg-white mb-4 rounded-10 border border-white" id="header-area" [class.scrolled]="isScrolled">
   <div class="row align-items-center">
     <div class="col-md-6">
       <div class="left-header-content">
-        <ul
-          class="d-flex align-items-center ps-0 mb-0 list-unstyled justify-content-center justify-content-md-start"
-        >
+        <ul class="d-flex align-items-center ps-0 mb-0 list-unstyled justify-content-center justify-content-md-start">
           <!-- Mobile Burger Menu -->
           <li class="d-xl-none">
-            <button
-              class="header-burger-menu bg-transparent p-0 border-0 position-relative top-3"
-              id="header-burger-menu"
-              (click)="toggleSidebar()"
-            >
-              <span
-                class="border-1 d-block for-dark-burger"
-                style="border-bottom: 1px solid #475569; height: 1px; width: 25px"
-              >
-              </span>
-              <span
-                class="border-1 d-block for-dark-burger"
-                style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0"
-              >
-              </span>
-              <span
-                class="border-1 d-block for-dark-burger"
-                style="border-bottom: 1px solid #475569; height: 1px; width: 25px"
-              >
-              </span>
+            <button class="header-burger-menu bg-transparent p-0 border-0 position-relative top-3" id="header-burger-menu" (click)="toggleSidebar()">
+              <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;"></span>
+              <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0;"></span>
+              <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;"></span>
             </button>
           </li>
-          <!-- Search -->
+          <!-- Greeting & Dealership Name -->
           <li>
-            <form
-              class="src-form position-relative"
-              (ngSubmit)="onSearch(searchQuery)"
-              #searchForm="ngForm"
-            >
-              <input
-                class="form-control"
-                placeholder="Search here..."
-                type="text"
-                [(ngModel)]="searchQuery"
-                name="searchQuery"
-                (input)="onSearchInput(searchQuery)"
-              />
-              <i
-                class="ri-search-line position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
-              ></i>
-            </form>
+            <div class="d-flex flex-column justify-content-center">
+              <h5 class="mb-0 fw-semibold text-primary" id="greeting">
+                <i class="ri-user-smile-line me-2"></i>
+                <span id="greetingText">{{ getGreeting() }}</span>
+                <span class="ms-2 text-muted fs-14 fw-normal" *ngIf="userEmail">
+                  ({{ userEmail }})
+                </span>
+              </h5>
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                <small class="text-muted" id="currentDateTime">
+                  <i class="ri-time-line me-1"></i>
+                  <span id="dateTimeText">{{ currentDateTime | date: 'EEEE, MMMM d, yyyy h:mm:ss a' }}</span>
+                </small>
+                <!-- Dealership Name - Now properly displayed -->
+                <small class="dealership-badge" *ngIf="dealerShipName">
+                  <i class="ri-store-2-line me-1"></i>
+                  {{ dealerShipName }}
+                </small>
+                <!-- User Role Badge -->
+                <small class="role-badge" [ngClass]="getRoleBadgeClass()" *ngIf="userRole">
+                  <i [class]="getRoleIcon()"></i>
+                  {{ userRole }}
+                </small>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </div>
     <div class="col-md-6">
       <div class="right-header-content mt-3 mt-md-0">
-        <ul
-          class="d-flex align-items-center justify-content-center justify-content-md-end ps-0 mb-0 list-unstyled"
-        >
+        <ul class="d-flex align-items-center justify-content-center justify-content-md-end ps-0 mb-0 list-unstyled">
+
           <!-- Language Dropdown -->
           <li class="header-right-item language-item">
             <div class="dropdown notifications language">
-              <button
-                aria-expanded="false"
-                class="btn btn-secondary dropdown-toggle border-0 p-0 position-relative"
-                data-bs-toggle="dropdown"
-                type="button"
-              >
-                <i class="ri-global-line me-1"></i>
+              <button aria-expanded="false" class="btn btn-secondary dropdown-toggle border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                <i class="ri-global-line fs-18 me-1"></i>
                 <span>{{ selectedLanguage }}</span>
               </button>
               <div class="dropdown-menu dropdown-lg p-0 border-0 dropdown-menu-end">
-                <span
-                  class="fw-medium fs-16 text-secondary d-block title"
-                  style="padding-top: 20px; padding-bottom: 20px"
-                >
+                <span class="fw-medium fs-16 text-secondary d-block title" style="padding-top: 20px; padding-bottom: 20px;">
+                  <i class="ri-translate-2 me-2"></i>
                   Choose Language
                 </span>
                 <div class="max-h-275" data-simplebar="">
                   <div class="notification-menu" *ngFor="let lang of languages">
-                    <a class="dropdown-item" (click)="changeLanguage(lang)" style="cursor: pointer">
+                    <a class="dropdown-item" (click)="changeLanguage(lang)" style="cursor: pointer;">
                       <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                           <img [alt]="lang.name" class="wh-30 rounded-circle" [src]="lang.flag" />
@@ -104,34 +82,12 @@
           <!-- Dark/Light Mode -->
           <li class="header-right-item light-dark-item">
             <div class="light-dark">
-              <!-- <button
-                class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0"
-                id="switch-toggle"
-                type="button"
-                (click)="toggleDarkMode()"
-                style="cursor: pointer"
-                title="Toggle Dark Mode"
-              >
+              <button class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0" (click)="toggleDarkMode()" [attr.title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'" style="cursor: pointer;">
                 <span class="dark" *ngIf="!isDarkMode">
-                  <i class="ri-moon-line"></i>
+                  <i class="ri-moon-line me-1"></i>Dark
                 </span>
-
                 <span class="light" *ngIf="isDarkMode">
-                  <i class="ri-sun-line"></i>
-                </span>
-              </button> -->
-              <button
-                class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0"
-                (click)="toggleDarkMode()"
-                [attr.title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
-                style="cursor: pointer"
-              >
-                <span *ngIf="!isDarkMode">
-                  <i class="ri-moon-line"></i>
-                </span>
-
-                <span *ngIf="isDarkMode">
-                  <i class="ri-sun-line"></i>
+                  <i class="ri-sun-line me-1"></i>Light
                 </span>
               </button>
             </div>
@@ -140,12 +96,9 @@
           <!-- Calendar -->
           <li class="header-right-item calendar-item">
             <div class="dropdown notifications">
-              <a
-                class="btn btn-secondary border-0 p-0 position-relative"
-                (click)="goToCalendar()"
-                style="cursor: pointer"
-              >
-                <i class="ri-calendar-line"></i>
+              <a class="btn btn-secondary border-0 p-0 position-relative" (click)="goToCalendar()" style="cursor: pointer;">
+                <i class="ri-calendar-2-line fs-18 me-1"></i>
+                Calendar
               </a>
             </div>
           </li>
@@ -153,43 +106,30 @@
           <!-- Messages -->
           <li class="header-right-item messages-item">
             <div class="dropdown notifications noti messages">
-              <button
-                aria-expanded="false"
-                class="btn btn-secondary border-0 p-0 position-relative"
-                data-bs-toggle="dropdown"
-                type="button"
-              >
-                <i class="ri-mail-line"></i>
-                <span class="count bg-primary" *ngIf="getUnreadMessagesCount() > 0">
-                  {{ getUnreadMessagesCount() }}
-                </span>
+              <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                <i class="ri-message-3-line fs-20"></i>
+                <span class="count bg-primary" *ngIf="getUnreadMessagesCount() > 0">{{ getUnreadMessagesCount() }}</span>
               </button>
               <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                 <div class="d-flex justify-content-between align-items-center title">
                   <span class="fw-medium fs-16 text-secondary">
+                    <i class="ri-message-2-line me-2"></i>
                     Messages
                     <span class="fw-normal text-body fs-16">
                       ({{ getUnreadMessagesCount() }})
                     </span>
                   </span>
-                  <button
-                    class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium"
-                    (click)="markAllMessagesAsRead()"
-                  >
+                  <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium" (click)="markAllMessagesAsRead()">
+                    <i class="ri-check-double-line me-1"></i>
                     Mark all as read
                   </button>
                 </div>
-                <div data-simplebar="" style="max-height: 300px">
-                  <div class="notification-menu" *ngFor="let message of messages">
-                    <a class="dropdown-item" (click)="goToMessages()" style="cursor: pointer">
+                <div data-simplebar="" style="max-height: 300px;">
+                  <div class="notification-menu" [class.unseen]="!message.read" *ngFor="let message of messages">
+                    <a class="dropdown-item" (click)="goToMessages()" style="cursor: pointer;">
                       <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                          <img
-                            [alt]="message.sender"
-                            class="rounded-circle"
-                            [src]="message.avatar"
-                            style="width: 44px; height: 44px"
-                          />
+                          <img [alt]="message.sender" class="rounded-circle" [src]="message.avatar" style="width: 44px; height: 44px;" />
                         </div>
                         <div class="flex-grow-1 ms-10">
                           <p class="fs-16 fw-medium text-secondary mb-2">
@@ -198,7 +138,7 @@
                               {{ message.time }}
                             </span>
                           </p>
-                          <span class="fs-14-5 fw-medium d-inline-block" style="line-height: 1.4">
+                          <span class="fs-14-5 fw-medium d-inline-block" style="line-height: 1.4;">
                             {{ message.preview }}
                           </span>
                         </div>
@@ -206,12 +146,11 @@
                     </a>
                   </div>
                 </div>
-                <a
-                  class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3"
-                  (click)="goToMessages()"
-                  style="cursor: pointer"
-                >
-                  <span> See All Messages </span>
+                <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" (click)="goToMessages()" style="cursor: pointer;">
+                  <span>
+                    <i class="ri-arrow-right-s-line"></i>
+                    See All Messages
+                  </span>
                 </a>
               </div>
             </div>
@@ -220,35 +159,27 @@
           <!-- Notifications -->
           <li class="header-right-item">
             <div class="dropdown notifications noti">
-              <button
-                aria-expanded="false"
-                class="btn btn-secondary border-0 p-0 position-relative"
-                data-bs-toggle="dropdown"
-                type="button"
-              >
-                <i class="ri-notification-3-line"></i>
-                <span class="count" *ngIf="getUnreadNotificationsCount() > 0">
-                  {{ getUnreadNotificationsCount() }}
-                </span>
+              <button aria-expanded="false" class="btn btn-secondary border-0 p-0 position-relative" data-bs-toggle="dropdown" type="button">
+                <i class="ri-notification-3-line fs-20"></i>
+                <span class="count" *ngIf="getUnreadNotificationsCount() > 0">{{ getUnreadNotificationsCount() }}</span>
               </button>
               <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                 <div class="d-flex justify-content-between align-items-center title">
                   <span class="fw-medium fs-16 text-secondary">
+                    <i class="ri-notification-2-line me-2"></i>
                     Notifications
                     <span class="fw-normal text-body fs-16">
                       ({{ getUnreadNotificationsCount() }})
                     </span>
                   </span>
-                  <button
-                    class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium"
-                    (click)="markAllNotificationsAsRead()"
-                  >
-                    Mark all as read
+                  <button class="p-0 m-0 bg-transparent border-0 fs-15 text-primary fw-medium" (click)="clearAllNotifications()">
+                    <i class="ri-close-circle-line me-1"></i>
+                    Clear All
                   </button>
                 </div>
-                <div data-simplebar="" style="max-height: 300px">
-                  <div class="notification-menu" *ngFor="let notification of notifications">
-                    <a class="dropdown-item" (click)="goToNotifications()" style="cursor: pointer">
+                <div data-simplebar="" style="max-height: 300px;">
+                  <div class="notification-menu" [class.unseen]="!notification.read" *ngFor="let notification of notifications">
+                    <a class="dropdown-item" (click)="goToNotifications()" style="cursor: pointer;">
                       <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                           <span [class]="notification.iconClass">
@@ -260,6 +191,7 @@
                             {{ notification.message }}
                           </p>
                           <span class="fs-14 fw-medium">
+                            <i class="ri-time-line me-1"></i>
                             {{ notification.time }}
                           </span>
                         </div>
@@ -267,51 +199,51 @@
                     </a>
                   </div>
                 </div>
-                <a
-                  class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3"
-                  (click)="goToNotifications()"
-                  style="cursor: pointer"
-                >
-                  <span> See All Notifications </span>
+                <a class="dropdown-item text-center text-primary d-block view-all fw-medium rounded-bottom-3" (click)="goToNotifications()" style="cursor: pointer;">
+                  <span>
+                    <i class="ri-arrow-right-s-line"></i>
+                    See All Notifications
+                  </span>
                 </a>
               </div>
+            </div>
+          </li>
+
+          <!-- Cart -->
+          <li class="header-right-item cart-item">
+            <div class="dropdown notifications">
+              <a class="btn btn-secondary border-0 p-0 position-relative" (click)="goToCart()" style="cursor: pointer;">
+                <i class="ri-shopping-cart-line fs-20"></i>
+                <span class="count bg-danger" *ngIf="cartCount > 0">{{ cartCount }}</span>
+              </a>
             </div>
           </li>
 
           <!-- Admin Profile -->
           <li class="header-right-item">
             <div class="dropdown admin-profile">
-              <div
-                class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle"
-                data-bs-toggle="dropdown"
-              >
+              <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
                 <div class="flex-shrink-0 position-relative">
-                  <div
-                    class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                    [style.width]="'40px'"
-                    [style.height]="'40px'"
-                    [style.background]="'linear-gradient(135deg, #0d9488, #0e7490)'"
-                    style="border-radius: 50%; font-size: 16px"
-                  >
+                  <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+                       [style.width]="'40px'" 
+                       [style.height]="'40px'" 
+                       [style.background]="getAvatarGradient()" 
+                       style="border-radius: 50%; font-size: 16px;">
                     {{ getInitials() }}
                   </div>
-                  <span
-                    class="d-block bg-success-60 border border-2 border-white rounded-circle position-absolute end-0 bottom-0"
-                    style="width: 11px; height: 11px"
-                  >
+                  <span class="d-block bg-success-60 border border-2 border-white rounded-circle position-absolute end-0 bottom-0" 
+                        style="width: 11px; height: 11px;">
                   </span>
                 </div>
               </div>
               <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
                 <div class="d-flex align-items-center info">
                   <div class="flex-shrink-0">
-                    <div
-                      class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                      [style.width]="'40px'"
-                      [style.height]="'40px'"
-                      [style.background]="'linear-gradient(135deg, #0d9488, #0e7490)'"
-                      style="border-radius: 50%; font-size: 16px"
-                    >
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+                         [style.width]="'40px'" 
+                         [style.height]="'40px'" 
+                         [style.background]="getAvatarGradient()" 
+                         style="border-radius: 50%; font-size: 16px;">
                       {{ getInitials() }}
                     </div>
                   </div>
@@ -319,71 +251,51 @@
                     <h3 class="fw-medium fs-17 mb-0">
                       {{ getFullName() }}
                     </h3>
-                    <span class="fs-15 fw-medium px-2 py-1 rounded" [class]="getRoleBadgeClass()">
-                      {{ userRole || 'User' }}
-                    </span>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                      <i [class]="getRoleIcon()" class="fs-14"></i>
+                      <span class="fs-14 fw-medium px-2 py-1 rounded" [class]="getRoleBadgeClass()">
+                        {{ userRole || 'User' }}
+                      </span>
+                    </div>
+                    <div class="mt-1" *ngIf="dealerShipName">
+                      <i class="ri-store-2-line fs-12 text-muted"></i>
+                      <span class="fs-12 text-muted ms-1">{{ dealerShipName }}</span>
+                    </div>
                   </div>
                 </div>
                 <ul class="admin-link mb-0 list-unstyled">
                   <li>
-                    <a
-                      class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                      (click)="goToProfile()"
-                      style="cursor: pointer"
-                    >
-                      <i class="ri-user-line me-2"></i>
-                      <span>My Profile</span>
+                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" (click)="goToProfile()" style="cursor: pointer;">
+                      <i class="ri-user-3-line me-2"></i>
+                      <span class="ms-2">My Profile</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                      (click)="goToSettings()"
-                      style="cursor: pointer"
-                    >
+                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" (click)="goToDashboard()" style="cursor: pointer;">
+                      <i class="ri-dashboard-line me-2"></i>
+                      <span class="ms-2">Dashboard</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" (click)="goToSettings()" style="cursor: pointer;">
                       <i class="ri-settings-3-line me-2"></i>
-                      <span>Settings</span>
+                      <span class="ms-2">Settings</span>
                     </a>
                   </li>
                   <li>
-                    <a
-                      class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                      (click)="goToSupport()"
-                      style="cursor: pointer"
-                    >
+                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" (click)="goToSupport()" style="cursor: pointer;">
                       <i class="ri-headphone-line me-2"></i>
-                      <span>Support</span>
+                      <span class="ms-2">Support</span>
                     </a>
                   </li>
-                  <li>
-                    <a
-                      class="dropdown-item admin-item-link d-flex align-items-center text-body"
-                      (click)="logout()"
-                      style="cursor: pointer"
-                    >
+                  <li class="border-top mt-1 pt-1">
+                    <a class="dropdown-item admin-item-link d-flex align-items-center text-danger" (click)="logout()" style="cursor: pointer;">
                       <i class="ri-logout-box-r-line me-2"></i>
-                      <span>Logout</span>
+                      <span class="ms-2 fw-semibold">Logout</span>
                     </a>
                   </li>
                 </ul>
               </div>
-            </div>
-          </li>
-          <!-- Cart -->
-          <li class="header-right-item cart-item">
-            <div class="dropdown notifications">
-              <a
-                class="btn btn-secondary border-0 p-0 position-relative"
-                (click)="goToCart()"
-                style="cursor: pointer"
-              >
-                <i class="ri-shopping-cart-line"></i>
-
-                <!-- Cart Count Badge -->
-                <span *ngIf="cartCount > 0" class="count bg-danger">
-                  {{ cartCount }}
-                </span>
-              </a>
             </div>
           </li>
         </ul>
@@ -391,4 +303,4 @@
     </div>
   </div>
 </header>
-<!-- End Top Navigation Area -->
+<!-- End Header Area -->

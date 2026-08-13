@@ -1,0 +1,41 @@
+﻿<!-- Process Order Modal -->
+<div class="modal fade" id="processOrderModal" tabindex="-1" aria-labelledby="processOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <!-- Modal Header -->
+            <div class="modal-header" id="modalHeader" style="border-bottom: 3px solid #e0e0e0; padding: 20px 24px; transition: all 0.3s ease;">
+                <div class="d-flex align-items-center gap-3">
+                    <div id="modalIconContainer" style="width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; transition: all 0.3s ease;">
+                        <i class="material-symbols-outlined" id="modalIcon" style="font-size: 30px; color: #6c757d; transition: all 0.3s ease;">info</i>
+                    </div>
+                    <div>
+                        <h1 class="modal-title fs-5 fw-bold" id="processOrderModalLabel">Process Order</h1>
+                        <span class="text-muted fs-14" id="modalSubtitle">Confirm your action</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div id="processOrderMessage" style="padding: 16px 20px; border-left: 4px solid #e0e0e0; background-color: #f8f9fa; border-radius: 8px; font-size: 15px; line-height: 1.6; transition: all 0.3s ease;">
+                    Are you sure you want to process this order?
+                </div>
+                <div class="mt-4">
+                    <label for="processNotes" class="form-label fw-semibold">
+                        <i class="material-symbols-outlined fs-18 me-1" style="vertical-align: middle;">notes</i>
+                        Notes (Optional)
+                    </label>
+                    <textarea class="form-control" id="processNotes" rows="3" placeholder="Add any additional notes or comments..." style="border-radius: 8px; border: 1px solid #e0e0e0; padding: 12px; transition: border-color 0.3s ease;"></textarea>
+                    <small class="text-muted fs-12 mt-1 d-block">Any notes will be attached to this order for reference.</small>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #f0f0f0; padding: 16px 24px; gap: 8px;">
+                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal" style="border-radius: 8px; font-weight: 500;">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary px-4" id="confirmProcessOrder" style="border-radius: 8px; font-weight: 500; min-width: 140px; transition: all 0.3s ease;">
+                    <span>Confirm</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
