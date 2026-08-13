@@ -1,217 +1,271 @@
-<div class="mb-3 mt-4">
-  <h2 class="fw-bold mb-0">Orders</h2>
-</div>
-<div class="card shadow-sm border-0 mb-3">
-  <div class="card-body">
-    <div class="row align-items-center">
-      <!--Search-->
-      <div class="col-lg-4">
-        <div class="position-relative">
-          <i class="ri-search-line search-icon"></i>
-          <input
-            type="text"
-            class="form-control search-input"
-            placeholder="Search orders..."
-            [(ngModel)]="searchText"
-          />
-        </div>
-      </div>
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+    <h3 class="mb-0">
+      Purchase Orders
+    </h3>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a class="d-flex align-items-center text-decoration-none" href="#">
+            <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+            <span class="text-body fs-14 hover">Dashboard</span>
+          </a>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          <span>Inventory</span>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          <span class="text-secondary">Purchase Orders</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
 
-      <!--statistics-->
-      <div class="col-lg-5 d-flex align-items-center justify-content-center">
-        <span class="fw-semibold fs-6">
-          Total Orders:
-          <span class="text-primary">{{ filteredOrders().length }}</span>
+  <div class="card bg-white rounded-10 border border-white mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+      <form class="table-src-form position-relative m-0" onsubmit="return false;">
+        <input class="form-control w-350" placeholder="Search purchase order..." type="text" [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()" name="searchInput" />
+      </form>
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-15 text-muted">
+          Total: <strong class="text-primary">{{ filteredOrders().length }}</strong> orders
         </span>
+        <button class="btn btn-primary btn-sm" (click)="addNewOrder()">
+          <i class="ri-add-line me-1"></i> Add New Order
+        </button>
+      </div>
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-to-do-list">
+      <div class="table-responsive">
+        <table class="table align-middle w-100" id="purchaseOrderTable">
+          <thead>
+            <tr>
+              <th class="fw-medium" scope="col" style="width: 50px;">
+                <div class="form-check">
+                  <input class="form-check-input" id="checkAll" type="checkbox" [checked]="isAllSelected"
+                    (change)="toggleAll($event)" />
+                </div>
+              </th>
+              <th class="fw-medium" scope="col">Order ID</th>
+              <th class="fw-medium" scope="col">Supplier</th>
+              <th class="fw-medium" scope="col">Items</th>
+              <th class="fw-medium" scope="col">Sub Total</th>
+              <th class="fw-medium" scope="col">Tax</th>
+              <th class="fw-medium" scope="col">Total</th>
+              <th class="fw-medium" scope="col">Date</th>
+              <th class="fw-medium" scope="col">Status</th>
+              <th class="fw-medium" scope="col" style="width: 120px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="orderTableBody">
+            <ng-container *ngFor="let order of paginatedOrders(); let i = index">
+              <tr [attr.data-order-id]="order.poNumber" [attr.data-expanded]="expandedOrderId === order.poNumber"
+                [style.background-color]="getRowColor(i)" data-bs-toggle="tooltip" data-bs-placement="top"
+                [attr.title]="order.remarks || 'No notes available'">
+                <td class="text-body" style="width: 80px;">
+                  <div class="d-flex align-items-center" style="gap: 6px;">
+                    <div class="form-check mb-0">
+                      <input class="form-check-input item-checkbox" type="checkbox"
+                        [checked]="selectedOrders.includes(order.poNumber)"
+                        (change)="toggleSelection(order.poNumber, $event)" />
+                    </div>
+                    <button class="bg-transparent p-0 border-0 expand-btn" (click)="toggleRow(order.poNumber)"
+                      data-bs-placement="top" data-bs-title="Expand/Collapse" data-bs-toggle="tooltip">
+                      <span class="expand-icon"
+                        style="font-size: 18px; font-weight: bold; color: #6c757d; cursor: pointer; transition: transform 0.3s;"
+                        [style.transform]="expandedOrderId === order.poNumber ? 'rotate(90deg)' : 'rotate(0deg)'">&#9654;</span>
+                    </button>
+                  </div>
+                </td>
+                <td class="text-body">
+                  <span class="fw-semibold">{{ order.poNumber }}</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <span class="fs-16 fw-medium text-secondary">{{ order.supplierName }}</span>
+                    <span *ngIf="order.isDealer" class="badge bg-info ms-2" style="font-size: 10px;">Dealer</span>
+                  </div>
+                </td>
+                <td class="text-body">{{ order.purchaseOrderItemResponse?.length || 0 }}</td>
+                <td class="text-body">${{ order.subTotal || 0 | number:'1.2-2' }}</td>
+                <td class="text-body">${{ order.taxAmount || 0 | number:'1.2-2' }}</td>
+                <td class="text-body">${{ order.totalAmount || 0 | number:'1.2-2' }}</td>
+                <td class="text-body">{{ formatDate(order.orderDate) }}</td>
+                <td [innerHTML]="getStatusBadge(order.status)"></td>
+                <td>
+                  <div class="d-flex justify-content-end" style="gap: 6px;">
+                    <!-- Action buttons based on status -->
+                    <ng-container *ngIf="order.status === 'Submitted' || order.status === 'Draft'">
+
+                      <button class="btn btn-sm btn-outline-danger reject-btn"
+                        (click)="showProcessModal(order, 'Reject')" data-bs-placement="top" data-bs-title="Reject Order"
+                        data-bs-toggle="tooltip" style="padding: 4px 10px;">
+                        <i class="material-symbols-outlined fs-16">cancel</i>
+                      </button>
+                    </ng-container>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Expanded Row -->
+              <tr *ngIf="expandedOrderId === order.poNumber" class="expanded-row" [attr.data-order-id]="order.poNumber"
+                [style.background-color]="getRowColor(i)">
+                <td colspan="10" class="p-0">
+                  <div class="p-20 bg-light rounded-3 mb-10"
+                    style="margin: 0 15px 15px 15px; background-color: #f8f9fa !important;">
+                    <div class="row mb-15">
+                      <div class="col-md-3">
+                        <strong>PO Number:</strong> {{ order.poNumber }}
+                      </div>
+                      <div class="col-md-3">
+                        <strong>Supplier/Dealer:</strong> {{ order.supplierName }}
+                      </div>
+                      <div class="col-md-3">
+                        <strong>Delivery Terms:</strong> {{ order.deliveryTerms || 'N/A' }}
+                      </div>
+                      <div class="col-md-3">
+                        <strong>Payment Terms:</strong> {{ order.paymentTerms || 'N/A' }}
+                      </div>
+                    </div>
+                    <div class="row mb-15">
+                      <div class="col-md-3">
+                        <strong>Expected Delivery:</strong> {{ formatDate(order.expectedDeliveryDate) }}
+                      </div>
+                      <div class="col-md-3">
+                        <strong>Actual Delivery:</strong> {{ formatDate(order.actualDeliveryDate) }}
+                      </div>
+                      <div class="col-md-6" *ngIf="order.dealer">
+                        <strong>Dealer Details:</strong> {{ order.dealer.dealershipName }}
+                        ({{ order.dealer.contactPerson || 'N/A' }})
+                      </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div *ngIf="order.remarks" class="mb-15 p-10"
+                      style="background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                      <strong><i class="material-symbols-outlined fs-18" style="vertical-align: middle;">notes</i>
+                        Notes:</strong>
+                      {{ order.remarks }}
+                    </div>
+
+                    <h6 class="mb-15">Order Items</h6>
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered mb-0">
+                        <thead class="bg-white">
+                          <tr>
+                            <th>Drug Name</th>
+                            <th>Batch</th>
+                            <th>Quantity</th>
+                            <th>Pending</th>
+                            <th>Received</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Tax</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let detail of order.purchaseOrderItemResponse">
+                            <td>{{ detail.drugName || 'Drug' }}</td>
+                            <td>{{ detail.batchNumber || 'B001' }}</td>
+                            <td>{{ detail.quantity || 0 }}</td>
+                            <td>{{ detail.pendingQuantity || 0 }}</td>
+                            <td>{{ detail.receivedQuantity || 0 }}</td>
+                            <td>${{ (detail.unitPrice || 0) | number:'1.2-2' }}</td>
+                            <td>${{ (detail.discountAmount || 0) | number:'1.2-2' }}
+                              ({{ detail.discountPercentage || 0 }}%)
+                            </td>
+                            <td>${{ (detail.taxAmount || 0) | number:'1.2-2' }}
+                              ({{ detail.taxRate || 0 }}%)
+                            </td>
+                            <td>${{ (detail.totalAmount || 0) | number:'1.2-2' }}</td>
+                          </tr>
+                          <tr *ngIf="!order.purchaseOrderItemResponse?.length">
+                            <td colspan="9" class="text-center text-muted">No items found</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <tr *ngIf="paginatedOrders().length === 0">
+              <td colspan="10" class="text-center py-4 text-muted">
+                <i class="material-symbols-outlined fs-40 mb-2 d-block">inbox</i>
+                No purchase orders found
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!--add button-->
-      <div class="col-lg-3 text-end">
-        <button class="btn btn-primary" (click)="addNewOrder()">
-          <i class="ri-add-line me-1"></i>
-          Add New Order
-        </button>
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+        <span class="fs-15" id="entriesInfo">
+          Showing {{ getStartEntry() }} to {{ getEndEntry() }} of {{ filteredOrders().length }} entries
+        </span>
+        <nav aria-label="Page navigation example" class="custom-pagination">
+          <ul class="pagination mb-0 justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link icon" (click)="previousPage()" aria-label="Previous">
+                <i class="material-symbols-outlined">west</i>
+              </button>
+            </li>
+            <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link icon" (click)="nextPage()" aria-label="Next">
+                <i class="material-symbols-outlined">east</i>
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
 </div>
 
-<div class="card shadow-sm border-0">
-  <div class="table-responsive">
-    <table class="table align-middle mb-0 order-table">
-      <thead>
-        <tr>
-          <th width="55" class="text-center">
-            <input
-              class="form-check-input order-checkbox"
-              type="checkbox"
-              [checked]="isAllSelected"
-              (change)="toggleAll($event)"
-            />
-          </th>
-          <th width="40"></th>
-          <th>PO Number</th>
-          <th>Order Date</th>
-          <th>Supplier</th>
-          <th>Status</th>
-          <th>Total Amount</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let order of filteredOrders()">
-          <tr>
-            <!--checkbox-->
-            <td class="text-center">
-              <input
-                class="form-check-input order-checkbox"
-                type="checkbox"
-                [checked]="selectedOrders.includes(order.poNumber)"
-                (change)="toggleSelection(order.poNumber, $event)"
-              />
-            </td>
-            <!--expand-->
-            <td class="text-center">
-              <i
-                [class.ri-arrow-right-s-line]="expandedOrderId !== order.poNumber"
-                [class.ri-arrow-down-s-line]="expandedOrderId === order.poNumber"
-                (click)="toggleRow(order.poNumber)"
-              >
-              </i>
-            </td>
-            <td>{{ order.poNumber }}</td>
-            <!-- <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td> 5hrs30min late-->
-            <td>{{ convertToIST(order.orderDate) | date: 'dd-MMM-yyyy hh:mm a' }}</td>
-
-            <td>{{ order.supplierName }}</td>
-
-            <td>
-              <span class="badge bg-warning">
-                {{ order.status }}
-              </span>
-            </td>
-
-            <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
-
-            <td class="text-center">
-              <i
-                class="ri-eye-line me-3 text-primary action-icon"
-                title="View"
-                (click)="viewOrder(order.poNumber)"
-              >
-              </i>
-
-              <i
-                class="ri-file-pdf-line text-danger action-icon"
-                title="Download PDF"
-                (click)="downloadPdf(order.poNumber)"
-              >
-              </i>
-            </td>
-          </tr>
-
-          <tr *ngIf="expandedOrderId === order.poNumber">
-            <td colspan="8">
-              <div class="card mb-3">
-                <div class="card-header fw-semibold">Purchase Order Information</div>
-
-                <div class="card-body p-0">
-                  <table class="table mb-0">
-                    <tbody>
-                      <tr>
-                        <th width="25%">PO Number</th>
-                        <td>{{ order.poNumber }}</td>
-
-                        <th width="25%">Supplier</th>
-                        <td>{{ order.supplierName }}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Order Date</th>
-                        <td>{{ order.orderDate | date: 'dd-MMM-yyyy' }}</td>
-
-                        <th>Status</th>
-                        <td>{{ order.status }}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Total Amount</th>
-                        <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
-
-                        <th></th>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div class="card mb-3">
-                <div class="card-header fw-semibold">Purchase Order Items</div>
-
-                <div class="card-body p-0">
-                  <table class="table table-bordered mb-0">
-                    <thead>
-                      <tr>
-                        <th>Drug Name</th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
-                        <th>Discount</th>
-                        <th>Tax</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr *ngFor="let item of order.purchaseOrderItemResponse">
-                        <td>{{ item.drugName }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>₹{{ item.unitPrice | number: '1.2-2' }}</td>
-                        <td>₹{{ item.discountAmount | number: '1.2-2' }}</td>
-                        <td>₹{{ item.taxAmount | number: '1.2-2' }}</td>
-                        <td>₹{{ item.totalAmount | number: '1.2-2' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-header fw-semibold">Amount Summary</div>
-
-                <div class="card-body p-0">
-                  <table class="table table-bordered mb-0">
-                    <tbody>
-                      <tr>
-                        <th>SubTotal</th>
-                        <td>₹{{ order.subTotal | number: '1.2-2' }}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Discount</th>
-                        <td>₹{{ order.discountAmount | number: '1.2-2' }}</td>
-                      </tr>
-
-                      <tr>
-                        <th>Tax</th>
-                        <td>₹{{ order.taxAmount | number: '1.2-2' }}</td>
-                      </tr>
-
-                      <tr class="table-light fw-bold">
-                        <th>Grand Total</th>
-                        <td>₹{{ order.totalAmount | number: '1.2-2' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-        <tr *ngIf="filteredOrders().length === 0">
-          <td colspan="8" class="text-center py-4">No Purchase Orders Found</td>
-        </tr>
-      </tbody>
-    </table>
+<!-- Process Order Modal - Custom without Bootstrap JS -->
+<div id="processOrderModal" class="custom-modal" [class.show]="isModalOpen" style="display: none;">
+  <div class="custom-modal-overlay" (click)="closeModal()"></div>
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content border-0 shadow-lg">
+      <div class="custom-modal-header" id="modalHeader"
+        style="border-bottom: 3px solid #28a745; background-color: #f0fff4;">
+        <div class="d-flex align-items-center gap-3">
+          <div id="modalIconContainer"
+            style="width: 48px; height: 48px; border-radius: 50%; background-color: #d4edda; display: flex; align-items: center; justify-content: center;">
+            <i class="material-symbols-outlined" id="modalIcon"
+              style="font-size: 28px; color: #28a745;">check_circle</i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold" id="processOrderModalLabel">Process Order</h5>
+            <small class="text-muted" id="modalSubtitle">Please confirm your action</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      <div class="custom-modal-body p-4">
+        <div id="processOrderMessage" class="p-3 rounded-3 mb-3"
+          style="background-color: #d4edda; border-left: 4px solid #28a745;" [innerHTML]="modalMessage"></div>
+        <div class="mb-3">
+          <label for="processNotes" class="form-label fw-semibold">
+            <i class="material-symbols-outlined fs-18" style="vertical-align: middle;">notes</i> Notes
+          </label>
+          <textarea class="form-control" id="processNotes" rows="3" placeholder="Add any additional notes..."
+            [(ngModel)]="processNotes" name="processNotes"></textarea>
+        </div>
+      </div>
+      <div class="custom-modal-footer border-0 pt-0 px-4 pb-4">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+        <button type="button" class="btn" id="confirmProcessOrder" [class.btn-success]="modalAction === 'Accept'"
+          [class.btn-warning]="modalAction === 'Reject'" (click)="confirmProcessOrder()">
+          <span>Cancel Order</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
