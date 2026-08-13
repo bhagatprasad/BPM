@@ -8,8 +8,6 @@ import { ForgotPasswordRequest } from '@app/models/forgot-password-request';
 import { ResetPasswordRequest } from '@app/models/reset-password-request';
 import { ChangePasswordRequest } from '@app/models/change-password-request';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -229,6 +227,8 @@ export class AccountService {
     }
   }
 
+  // ==================== USER INFORMATION METHODS ====================
+
   /**
    * Get user's full name
    */
@@ -246,11 +246,19 @@ export class AccountService {
   }
 
   /**
-   * Get user's dealership name
+   * Get user's first name
    */
-  getDealershipName(): string {
+  getFirstName(): string {
     const user = this.getCurrentUser();
-    return user?.authenticateResponseDto?.dealerInfo?.dealershipName || '';
+    return user?.authenticateResponseDto?.firstName || '';
+  }
+
+  /**
+   * Get user's last name
+   */
+  getLastName(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.lastName || '';
   }
 
   /**
@@ -262,18 +270,265 @@ export class AccountService {
   }
 
   /**
-   * Get user's role
+   * Get user's phone number
    */
-  getUserRole(): string {
+  getUserPhone(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.phone || '';
+  }
+
+  /**
+   * Get user's role ID
+   */
+  getUserRoleId(): string {
     const user = this.getCurrentUser();
     return user?.authenticateResponseDto?.roleId || '';
   }
 
   /**
-   * Check if user has specific role
+   * Get user's role name
+   */
+  getUserRoleName(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.roleInfo?.name || '';
+  }
+
+  /**
+   * Get user's role code
+   */
+  getUserRoleCode(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.roleInfo?.code || '';
+  }
+
+  /**
+   * Get user's dealer ID
+   */
+  getDealerId(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.dealerId || '';
+  }
+
+  /**
+   * Get user's dealership name
+   */
+  getDealershipName(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.dealerInfo?.dealershipName || '';
+  }
+
+  /**
+   * Get complete dealer information
+   */
+  getDealerInfo(): any {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.dealerInfo || null;
+  }
+
+  /**
+   * Get user's user ID
+   */
+  getUserId(): string {
+    const user = this.getCurrentUser();
+    return user?.authenticateResponseDto?.userId || '';
+  }
+
+  // ==================== ROLE CHECK METHODS ====================
+
+  /**
+   * Check if user has specific role by role ID
    */
   hasRole(roleId: string): boolean {
-    const userRole = this.getUserRole();
+    const userRole = this.getUserRoleId();
     return userRole === roleId;
+  }
+
+  /**
+   * Check if user has specific role by role name
+   */
+  hasRoleByName(roleName: string): boolean {
+    const userRole = this.getUserRoleName().toLowerCase();
+    return userRole === roleName.toLowerCase();
+  }
+
+  /**
+   * Check if user is Administrator
+   */
+  isAdmin(): boolean {
+    const roleName = this.getUserRoleName().toLowerCase();
+    return roleName === 'administrator' || roleName === 'admin';
+  }
+
+  /**
+   * Check if user is Operator
+   */
+  isOperator(): boolean {
+    const roleName = this.getUserRoleName().toLowerCase();
+    return roleName === 'operator';
+  }
+
+  /**
+   * Check if user is User/Dealer
+   */
+  isUser(): boolean {
+    const roleName = this.getUserRoleName().toLowerCase();
+    return roleName === 'user' || roleName === 'dealer';
+  }
+
+  /**
+   * Check if user has admin or operator access
+   */
+  hasAdminOrOperatorAccess(): boolean {
+    const roleName = this.getUserRoleName().toLowerCase();
+    return roleName === 'administrator' || roleName === 'admin' || roleName === 'operator';
+  }
+
+  /**
+   * Check if user has dealer access
+   */
+  hasDealerAccess(): boolean {
+    const user = this.getCurrentUser();
+    return !!user?.authenticateResponseDto?.dealerInfo;
+  }
+
+  /**
+   * Check if user can access the portal
+   * (Has dealer access OR is admin/operator)
+   */
+  canAccessPortal(): boolean {
+    return this.hasDealerAccess() || this.hasAdminOrOperatorAccess();
+  }
+
+  /**
+   * Get user's access level
+   */
+  getAccessLevel(): 'admin' | 'operator' | 'user' | 'none' {
+    if (this.isAdmin()) {
+      return 'admin';
+    } else if (this.isOperator()) {
+      return 'operator';
+    } else if (this.hasDealerAccess()) {
+      return 'user';
+    }
+    return 'none';
+  }
+
+  // ==================== NAVIGATION HELPER METHODS ====================
+
+  /**
+   * Get the base path for the current user's role
+   */
+  getBasePath(): string {
+    if (this.isAdmin()) {
+      return '/admin';
+    } else if (this.isOperator() || this.isUser()) {
+      return '/operator';
+    }
+    return '';
+  }
+
+  /**
+   * Get the dashboard path for the current user
+   */
+  getDashboardPath(): string {
+    const basePath = this.getBasePath();
+    return basePath ? `${basePath}/dashboard` : '/drugs';
+  }
+
+  /**
+   * Get the redirect path based on user role
+   */
+  getRedirectPath(): string {
+    if (this.isAdmin()) {
+      return '/admin/dashboard';
+    } else if (this.isOperator() || this.isUser()) {
+      return '/operator/dashboard';
+    }
+    return '/drugs';
+  }
+
+  /**
+   * Check if current user is authenticated and has access
+   */
+  isValidUser(): boolean {
+    return this.isAuthenticatedSync && this.canAccessPortal();
+  }
+
+  // ==================== UTILITY METHODS ====================
+
+  /**
+   * Check if user has any of the given roles
+   */
+  hasAnyRole(roles: string[]): boolean {
+    const userRole = this.getUserRoleName().toLowerCase();
+    return roles.some(role => userRole === role.toLowerCase());
+  }
+
+  /**
+   * Check if user has all of the given roles
+   */
+  hasAllRoles(roles: string[]): boolean {
+    const userRole = this.getUserRoleName().toLowerCase();
+    return roles.every(role => userRole === role.toLowerCase());
+  }
+
+  /**
+   * Get user's display name (full name or email)
+   */
+  getDisplayName(): string {
+    const fullName = this.getUserFullName();
+    if (fullName) {
+      return fullName;
+    }
+    return this.getUserEmail() || 'User';
+  }
+
+  /**
+   * Get user's initials
+   */
+  getUserInitials(): string {
+    const firstName = this.getFirstName();
+    const lastName = this.getLastName();
+    const initials = (firstName?.charAt(0) || '') + (lastName?.charAt(0) || '');
+    return initials.toUpperCase() || 'U';
+  }
+
+  /**
+   * Get user's avatar color based on role
+   */
+  getAvatarColor(): string {
+    if (this.isAdmin()) {
+      return 'linear-gradient(135deg, #dc3545, #c82333)';
+    } else if (this.isOperator()) {
+      return 'linear-gradient(135deg, #ffc107, #e0a800)';
+    } else if (this.hasDealerAccess()) {
+      return 'linear-gradient(135deg, #0d9488, #0e7490)';
+    }
+    return 'linear-gradient(135deg, #6c757d, #5a6268)';
+  }
+
+  /**
+   * Get user's role badge class
+   */
+  getRoleBadgeClass(): string {
+    if (this.isAdmin()) {
+      return 'bg-danger text-white';
+    } else if (this.isOperator()) {
+      return 'bg-warning text-dark';
+    } else if (this.hasDealerAccess()) {
+      return 'bg-success text-white';
+    }
+    return 'bg-secondary text-white';
+  }
+
+  /**
+   * Get user's role display name
+   */
+  getRoleDisplayName(): string {
+    const roleName = this.getUserRoleName();
+    if (!roleName) return 'User';
+    
+    // Capitalize first letter
+    return roleName.charAt(0).toUpperCase() + roleName.slice(1).toLowerCase();
   }
 }

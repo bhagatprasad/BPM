@@ -1,5 +1,3 @@
-import { isActive } from "@angular/router";
-
 // Define the authentication response interface
 export interface  AuthResponse {
   authenticateResponseDto: {

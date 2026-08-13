@@ -40,17 +40,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('LoginComponent ngOnInit');
     
-    // Check if user is already authenticated using AccountService
+    // Check if user is already authenticated
     this.accountService.isAuthenticated().then(isAuth => {
       if (isAuth) {
         const currentUser = this.accountService.getCurrentUser();
-        const dealerInfo = currentUser?.authenticateResponseDto?.dealerInfo;
-        const roleName = currentUser?.authenticateResponseDto?.roleInfo?.name;
-        const isAdminOrOperator = roleName === "Administrator" || roleName === "Operator";
-        
-        if (dealerInfo || isAdminOrOperator) {
-          console.log('User already logged in, redirecting to drugs');
-          this.router.navigateByUrl('/drugs');
+        if (currentUser) {
+          this.redirectBasedOnRole(currentUser);
         }
       }
     });
@@ -68,6 +63,41 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.loginSubscription.unsubscribe();
     }
     this.spinnerService.hide();
+  }
+
+  /**
+   * Redirect user based on their role
+   */
+  private redirectBasedOnRole(authResponse: any): void {
+    const roleName = authResponse?.authenticateResponseDto?.roleInfo?.name?.toLowerCase() || '';
+    const dealerInfo = authResponse?.authenticateResponseDto?.dealerInfo;
+    const isAdminOrOperator = roleName === 'administrator' || roleName === 'operator';
+    
+    console.log('Redirecting based on role:', roleName);
+    
+    // Check if user has access
+    if (dealerInfo || isAdminOrOperator) {
+      // Role-based redirect
+      if (roleName === 'administrator' || roleName === 'admin') {
+        this.router.navigate(['/admin/dashboard']);
+        this.toastr.info('Welcome Admin!', 'Success');
+      } else if (roleName === 'operator') {
+        this.router.navigate(['/operator/dashboard']);
+        this.toastr.info('Welcome Operator!', 'Success');
+      } else if (roleName === 'user' || roleName === 'dealer') {
+        this.router.navigate(['/operator/dashboard']);
+        this.toastr.info('Welcome!', 'Success');
+      } else {
+        // Fallback to drugs page
+        this.router.navigate(['/drugs']);
+        this.toastr.info('Welcome!', 'Success');
+      }
+    } else {
+      // User doesn't have access
+      this.accountService.logout();
+      this.router.navigate(['/login']);
+      this.toastr.error('You do not have access to this portal.', 'Access Denied');
+    }
   }
 
   togglePasswordVisibility(): void {
@@ -162,14 +192,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           this.toastr.success('Login successful!', 'Success');
 
-          // Navigate after a short delay
+          // Redirect based on role after a short delay
           setTimeout(() => {
-            const roleName = res?.authenticateResponseDto?.roleInfo?.name;
-            if (roleName === "Administrator" || roleName === "Operator") {
-              this.router.navigateByUrl('/drugs');
-            } else {
-              this.router.navigateByUrl('/drugs');
-            }
+            this.redirectBasedOnRole(res);
           }, 500);
         } else {
           this.errorMessage = 'Invalid username or password. Please try again.';

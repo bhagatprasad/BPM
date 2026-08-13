@@ -5,12 +5,13 @@ import {
   inject,
   HostListener,
   ChangeDetectorRef,
+  NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { CartService } from '@app/services/cart.service';
 
 interface Language {
@@ -47,18 +48,22 @@ export class TopnavComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private cartService = inject(CartService);
   private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   firstName: string = '';
   lastName: string = '';
   dealerShipName: string = '';
   userRole: string = '';
+  userRoleDisplay: string = '';
+  userEmail: string = '';
   isAuthenticated = false;
   isDarkMode = false;
   selectedLanguage: string = 'English';
-  searchQuery: string = '';
-  private authSubscription?: Subscription;
   isScrolled: boolean = false;
   cartCount = 0;
+  currentDateTime: Date = new Date();
+  private authSubscription?: Subscription;
+  private clockSubscription?: Subscription;
 
   // Languages data
   languages: Language[] = [
@@ -126,10 +131,15 @@ export class TopnavComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Start real-time clock
+    this.startClock();
+
+    // Subscribe to cart count
     this.cartService.cartCount$.subscribe((count) => {
       this.cartCount = count;
       this.cdr.detectChanges();
     });
+
     // Subscribe to auth state changes
     this.authSubscription = this.accountService.authState$.subscribe((isAuth) => {
       this.isAuthenticated = isAuth;
@@ -158,16 +168,80 @@ export class TopnavComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+    if (this.clockSubscription) {
+      this.clockSubscription.unsubscribe();
+    }
+  }
+
+  private startClock(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.clockSubscription = interval(1000).subscribe(() => {
+        this.ngZone.run(() => {
+          this.currentDateTime = new Date();
+        });
+      });
+    });
   }
 
   private loadUserData(): void {
     const user = this.accountService.getCurrentUser();
     if (user) {
-      this.firstName = user.authenticateResponseDto?.firstName || '';
-      this.lastName = user.authenticateResponseDto?.lastName || '';
-      this.dealerShipName = user.authenticateResponseDto?.dealerInfo?.dealershipName || '';
-      this.userRole = user.authenticateResponseDto?.roleInfo?.name || '';
+      // Get user details from authenticateResponseDto
+      const authDto = user.authenticateResponseDto;
+      
+      this.firstName = authDto?.firstName || '';
+      this.lastName = authDto?.lastName || '';
+      this.userEmail = authDto?.email || '';
+      
+      // Get dealership name from dealerInfo
+      this.dealerShipName = authDto?.dealerInfo?.dealershipName || '';
+      
+      // Get role name from roleInfo
+      this.userRole = authDto?.roleInfo?.name || '';
+      this.userRoleDisplay = this.getRoleDisplayName(this.userRole);
+      
+      console.log('User Data Loaded:', {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        dealerShipName: this.dealerShipName,
+        userRole: this.userRole,
+        userEmail: this.userEmail
+      });
     }
+  }
+
+  /**
+   * Get formatted role display name with icon
+   */
+  getRoleDisplayName(role: string): string {
+    if (!role) return 'User';
+    
+    const roleMap: { [key: string]: string } = {
+      'Administrator': '👑 Admin',
+      'Admin': '👑 Admin',
+      'Operator': '⚙️ Operator',
+      'User': '👤 User',
+      'Dealer': '🏪 Dealer'
+    };
+    
+    return roleMap[role] || role;
+  }
+
+  getGreeting(): string {
+    const hour = new Date().getHours();
+    let greeting = 'Welcome';
+
+    if (hour < 12) {
+      greeting = 'Good Morning';
+    } else if (hour < 17) {
+      greeting = 'Good Afternoon';
+    } else if (hour < 21) {
+      greeting = 'Good Evening';
+    } else {
+      greeting = 'Good Night';
+    }
+
+    return `Welcome | ${greeting}`;
   }
 
   getFullName(): string {
@@ -184,12 +258,30 @@ export class TopnavComponent implements OnInit, OnDestroy {
   }
 
   getRoleBadgeClass(): string {
-    if (this.userRole === 'Administrator') {
-      return 'bg-danger text-white';
-    } else if (this.userRole === 'Operator') {
-      return 'bg-warning text-dark';
+    const role = this.userRole?.toLowerCase() || '';
+    
+    if (role === 'administrator' || role === 'admin') {
+      return 'bg-danger text-white px-2 py-1 rounded';
+    } else if (role === 'operator') {
+      return 'bg-warning text-dark px-2 py-1 rounded';
+    } else if (role === 'dealer') {
+      return 'bg-success text-white px-2 py-1 rounded';
     } else {
-      return 'bg-info text-white';
+      return 'bg-info text-white px-2 py-1 rounded';
+    }
+  }
+
+  getRoleIcon(): string {
+    const role = this.userRole?.toLowerCase() || '';
+    
+    if (role === 'administrator' || role === 'admin') {
+      return 'ri-admin-line';
+    } else if (role === 'operator') {
+      return 'ri-settings-5-line';
+    } else if (role === 'dealer') {
+      return 'ri-store-3-line';
+    } else {
+      return 'ri-user-3-line';
     }
   }
 
@@ -226,24 +318,6 @@ export class TopnavComponent implements OnInit, OnDestroy {
     this.selectedLanguage = language.name;
     localStorage.setItem('selectedLanguage', language.name);
     console.log('Language changed to:', language.name);
-    // Implement actual language change logic here
-    // You could use a translation service here
-  }
-
-  onSearch(query: string): void {
-    if (query.trim()) {
-      console.log('Searching for:', query);
-      // Implement search logic here
-      // You could navigate to search results page
-      // this.router.navigate(['/search'], { queryParams: { q: query } });
-    }
-  }
-
-  onSearchInput(query: string): void {
-    // Handle real-time search input
-    if (query.length > 2) {
-      console.log('Searching...', query);
-    }
   }
 
   markAllMessagesAsRead(): void {
@@ -258,16 +332,20 @@ export class TopnavComponent implements OnInit, OnDestroy {
     this.notifications = [];
   }
 
+  // Navigation methods with role-based routing
   goToProfile(): void {
-    this.router.navigate(['/profile']);
+    const basePath = this.accountService.getBasePath();
+    this.router.navigate([basePath + '/profile']);
   }
 
   goToSettings(): void {
-    this.router.navigate(['/settings/account']);
+    const basePath = this.accountService.getBasePath();
+    this.router.navigate([basePath + '/settings/account']);
   }
 
   goToSupport(): void {
-    this.router.navigate(['/helpdesk/tickets']);
+    const basePath = this.accountService.getBasePath();
+    this.router.navigate([basePath + '/helpdesk/tickets']);
   }
 
   goToMessages(): void {
@@ -281,11 +359,35 @@ export class TopnavComponent implements OnInit, OnDestroy {
   goToCalendar(): void {
     this.router.navigate(['/apps/calendar']);
   }
+
   goToCart(): void {
-    this.router.navigate(['/cart']);
+    const basePath = this.accountService.getBasePath();
+    this.router.navigate([basePath + '/cart']);
   }
+
+  goToDashboard(): void {
+    const basePath = this.accountService.getBasePath();
+    this.router.navigate([basePath + '/dashboard']);
+  }
+
   logout(): void {
     this.accountService.logout();
     this.router.navigate(['/login']);
   }
+  /**
+ * Get avatar gradient based on user role
+ */
+getAvatarGradient(): string {
+  const role = this.userRole?.toLowerCase() || '';
+  
+  if (role === 'administrator' || role === 'admin') {
+    return 'linear-gradient(135deg, #dc3545, #c82333)'; // Red gradient for Admin
+  } else if (role === 'operator') {
+    return 'linear-gradient(135deg, #ffc107, #e0a800)'; // Yellow gradient for Operator
+  } else if (role === 'dealer') {
+    return 'linear-gradient(135deg, #28a745, #1e7e34)'; // Green gradient for Dealer
+  } else {
+    return 'linear-gradient(135deg, #0d9488, #0e7490)'; // Teal gradient for default
+  }
+}
 }

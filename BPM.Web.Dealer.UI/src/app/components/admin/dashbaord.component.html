@@ -1,0 +1,600 @@
+<div class="main-content-container overflow-hidden">
+    <!-- Stats Row 1 -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <h3>Total Sales</h3>
+                    <div class="dropdown select-dropdown without-border">
+                        <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                            data-bs-toggle="dropdown" (click)="onYearChange('2025')">
+                            Year {{ currentYear }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                            <li><button class="dropdown-item text-secondary" (click)="currentYear='2025'">Year
+                                    2025</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="currentYear='2024'">Year
+                                    2024</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="currentYear='2023'">Year
+                                    2023</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="total_sales_chart" #totalSalesChart style="margin-bottom: -16px; margin-top: -1.5px;">
+                    <!-- Chart will be rendered here -->
+                    <div class="text-center py-4">
+                        <i class="ri-bar-chart-2-line fs-40 text-muted"></i>
+                        <p class="text-muted">Total Sales Chart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-xxl-3 col-xxxl-6">
+            <div class="row">
+                <div class="col-md-6 col-lg-12">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-10">Total Orders</h3>
+                                <h2 class="fs-26 fw-medium mb-0 lh-1">{{ stats.totalOrders | number }}</h2>
+                            </div>
+                            <div class="flex-shrink-0 ms-3">
+                                <div class="bg-primary text-white text-center rounded-circle d-block"
+                                    style="width: 75px; height: 75px; line-height: 105px;">
+                                    <i class="material-symbols-outlined fs-40">shopping_basket</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center" style="margin-top: 21px;">
+                            <p class="mb-0 fs-14">4.75% Increase in orders last week</p>
+                            <span
+                                class="d-flex align-content-center gap-1 bg-success bg-opacity-10 border border-success"
+                                style="padding: 3px 5px;">
+                                <i class="material-symbols-outlined fs-14 text-success">trending_up</i>
+                                <span class="lh-1 fs-14 text-success">4.75%</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-10">Total Customers</h3>
+                                <h2 class="fs-26 fw-medium mb-0 lh-1">{{ stats.totalCustomers | number }}</h2>
+                            </div>
+                            <div class="flex-shrink-0 ms-3">
+                                <div class="bg-info text-white text-center rounded-circle d-block"
+                                    style="width: 75px; height: 75px; line-height: 105px;">
+                                    <i class="material-symbols-outlined fs-40">diversity_2</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center" style="margin-top: 21px;">
+                            <p class="mb-0 fs-14">Total visitors decreased by 1.25%</p>
+                            <span class="d-flex align-content-center gap-1 bg-danger bg-opacity-10 border border-danger"
+                                style="padding: 3px 5px;">
+                                <i class="material-symbols-outlined fs-14 text-danger">trending_down</i>
+                                <span class="lh-1 fs-14 text-danger">1.25%</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-xxl-3 col-xxxl-12">
+            <div class="row">
+                <div class="col-md-6 col-xxxl-6 col-xxl-12">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-10">Total Revenue</h3>
+                                <h2 class="fs-26 fw-medium mb-0 lh-1">${{ stats.totalRevenue | number }}</h2>
+                            </div>
+                            <div class="flex-shrink-0 ms-3">
+                                <div class="bg-warning text-white text-center rounded-circle d-block"
+                                    style="width: 75px; height: 75px; line-height: 116px;">
+                                    <i class="material-symbols-outlined fs-50">attach_money</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center" style="margin-top: 23px;">
+                            <p class="mb-0 fs-14">Revenue increases this month</p>
+                            <span
+                                class="d-flex align-content-center gap-1 bg-success bg-opacity-10 border border-success"
+                                style="padding: 3px 5px;">
+                                <i class="material-symbols-outlined fs-14 text-success">trending_up</i>
+                                <span class="lh-1 fs-14 text-success">3.15%</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xxxl-6 col-xxl-12">
+                    <div class="bg-primary-50 p-20 border rounded-10 border-primary-50 mb-4">
+                        <h3 class="text-white mb-12">Sales Overview</h3>
+                        <div class="d-flex flex-wrap gap-2 justify-content-between mb-14">
+                            <div>
+                                <span class="fs-14 text-white mb-1 d-block">Total Sales</span>
+                                <h2 class="fs-20 fw-medium lh-1 text-white mb-0">{{ stats.totalSales | number }}</h2>
+                            </div>
+                            <div>
+                                <span class="fs-14 text-white mb-1 d-block">Monthly Sales</span>
+                                <h2 class="fs-20 fw-medium lh-1 text-white mb-0">{{ stats.monthlySales | number }}</h2>
+                            </div>
+                            <div>
+                                <span class="fs-14 text-white mb-1 d-block">Today's Sales</span>
+                                <h2 class="fs-20 fw-medium lh-1 text-white mb-0">{{ stats.todaySales | number }}</h2>
+                            </div>
+                        </div>
+                        <div aria-label="Basic example" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80"
+                            class="progress rounded-0 mb-6" role="progressbar"
+                            style="height: 3px; background-color: #6258cc;">
+                            <div class="progress-bar rounded-0 bg-white" style="width: 80%; height: 3px;"></div>
+                        </div>
+                        <span class="fs-14 text-white d-block" style="margin-bottom: -6px;">20% Increase in last
+                            month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row 2 -->
+    <div class="row">
+        <div class="col-xxl-6 col-xxxl-12">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                            <h3>Profit</h3>
+                            <div class="dropdown select-dropdown without-border">
+                                <button aria-expanded="false"
+                                    class="dropdown-toggle bg-transparent text-secondary fs-15"
+                                    data-bs-toggle="dropdown" (click)="onPeriodChange('Last Month')">
+                                    Last Month
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('Last Day')">Last Day</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('Last Week')">Last Week</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('Last Month')">Last Month</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('Last Year')">Last Year</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h2 class="lh-1 fs-26 fw-medium" style="margin-bottom: -10px;">${{ stats.profit | number }}K
+                        </h2>
+                        <div id="profit_chart" #profitChart style="margin-bottom: -17px;">
+                            <div class="text-center py-3">
+                                <i class="ri-line-chart-line fs-30 text-muted"></i>
+                                <p class="text-muted small">Profit Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                            <h3>Average Daily Sales</h3>
+                            <span
+                                class="d-flex align-content-center gap-1 bg-success bg-opacity-10 border border-success"
+                                style="padding: 3px 5px;">
+                                <i class="material-symbols-outlined fs-14 text-success">trending_up</i>
+                                <span class="lh-1 fs-14 text-success">5.25%</span>
+                            </span>
+                        </div>
+                        <h2 class="lh-1 fs-26 fw-medium mb-0">${{ stats.averageDailySales }}+</h2>
+                        <div id="average_daily_sales_chart" #averageDailySalesChart style="margin-bottom: -17px;">
+                            <div class="text-center py-3">
+                                <i class="ri-bar-chart-grouped-line fs-30 text-muted"></i>
+                                <p class="text-muted small">Daily Sales Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-20 bg-light-40 rounded-10 border-light-40 mb-4 position-relative z-1">
+                        <h3 class="mb-20">Best Seller Of The Month</h3>
+                        <h3 class="mb-12 text-primary-50">{{ stats.bestSeller }}!</h3>
+                        <h2 class="lh-1 fs-26 fw-medium">
+                            ${{ stats.bestSellerSales }}K
+                            <span class="fs-16 text-body">(Sales)</span>
+                        </h2>
+                        <a class="fw-medium fs-16 text-secondary hover-text d-inline-block" href="#"
+                            style="margin-top: 84px;">
+                            Details View
+                        </a>
+                        <img alt="man" class="position-absolute bottom-0 end-0 pe-3" src="assets/images/man.png"
+                            style="max-width: 120px;" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-20 bg-white rounded-10 border border-white mb-4 position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                            <h3>New Customers This Month</h3>
+                            <span
+                                class="d-flex align-content-center gap-1 bg-success bg-opacity-10 border border-success"
+                                style="padding: 3px 5px;">
+                                <i class="material-symbols-outlined fs-14 text-success">trending_up</i>
+                                <span class="lh-1 fs-14 text-success">2.75%</span>
+                            </span>
+                        </div>
+                        <h2 class="lh-1 fs-26 fw-medium">{{ stats.newCustomers | number }}</h2>
+                        <div style="margin-top: 55px;">
+                            <span class="fs-16 text-body d-block mb-10">Join Today</span>
+                            <ul class="p-0 mb-0 list-unstyled d-flex last-child-none global-right-list">
+                                <li *ngFor="let avatar of newCustomers; let i = index" style="margin-right: -20px;"
+                                    [style.margin-right]="i === newCustomers.length - 1 ? '0' : '-20px'">
+                                    <img [alt]="'user' + (i + 12)" class="border border-3 border-white rounded-circle"
+                                        [src]="avatar" style="width: 52px; height: 52px;" />
+                                </li>
+                                <li class="border border-3 border-white rounded-circle bg-primary text-center"
+                                    style="width: 52px; height: 52px; line-height: 49px;">
+                                    <span class="text-white fs-16 fw-medium">27</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Selling Products -->
+        <div class="col-xxl-6 col-xxxl-12">
+            <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                    <h3>Top Selling Products</h3>
+                    <div class="dropdown select-dropdown without-border">
+                        <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                            data-bs-toggle="dropdown" (click)="onPeriodChange('This Week')">
+                            This Week
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Day')">This
+                                    Day</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Week')">This
+                                    Week</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Month')">This
+                                    Month</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Year')">This
+                                    Year</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="default-table-area without-header table-top-selling-products">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <tbody>
+                                <tr *ngFor="let product of topProducts; let i = index">
+                                    <td class="text-body fw-medium">{{ (i + 1 < 10 ? '0' : '' ) + (i + 1) }}.</td>
+                                    <td class="ps-0">
+                                        <a class="d-flex align-items-center text-decoration-none"
+                                            href="product-details.html">
+                                            <div class="flex-shrink-0">
+                                                <img [alt]="product.name" class="rounded-circle" [src]="product.image"
+                                                    style="width: 50px; height: 50px;" />
+                                            </div>
+                                            <div class="flex-grow-1 ms-12">
+                                                <h3 class="fw-normal hover-text">{{ product.name }}</h3>
+                                                <span class="fs-14 text-body fw-normal">{{ product.itemsSold }} Items
+                                                    Sold</span>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td class="text-body">Item: {{ product.itemCode }}</td>
+                                    <td class="text-body">${{ product.revenue | number }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row 3 -->
+    <div class="row">
+        <div class="col-lg-6 col-xxl-4 col-xxxl-6 mb-4">
+            <div class="card bg-white p-20 rounded-10 border border-white">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                    <h3>Order Summary</h3>
+                    <div class="dropdown select-dropdown without-border">
+                        <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                            data-bs-toggle="dropdown" (click)="onPeriodChange('This Week')">
+                            This Week
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Day')">This
+                                    Day</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Week')">This
+                                    Week</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Month')">This
+                                    Month</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Year')">This
+                                    Year</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-20">
+                    <span class="fs-15 text-secondary">Completed 60%</span>
+                    <span class="fs-15 text-secondary">New Order 30%</span>
+                    <span class="fs-15 text-secondary">Pending 10%</span>
+                </div>
+                <div id="order_summary_chart" #orderSummaryChart>
+                    <div class="text-center py-4">
+                        <i class="ri-pie-chart-2-line fs-40 text-muted"></i>
+                        <p class="text-muted">Order Summary Chart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Sellers -->
+        <div class="col-lg-6 col-xxl-4 col-xxxl-6">
+            <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                    <h3>Top Sellers</h3>
+                    <div class="dropdown select-dropdown without-border">
+                        <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                            data-bs-toggle="dropdown" (click)="onPeriodChange('This Week')">
+                            This Week
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Day')">This
+                                    Day</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Week')">This
+                                    Week</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Month')">This
+                                    Month</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('This Year')">This
+                                    Year</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="default-table-area without-header table-top-sellers">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <tbody>
+                                <tr *ngFor="let seller of topSellers; let i = index">
+                                    <td class="text-body fw-medium">{{ (i + 1 < 10 ? '0' : '' ) + (i + 1) }}.</td>
+                                    <td class="ps-0">
+                                        <div class="d-flex align-items-center text-decoration-none">
+                                            <div class="flex-shrink-0">
+                                                <img [alt]="seller.name" class="rounded-circle" [src]="seller.avatar"
+                                                    style="width: 50px; height: 50px;" />
+                                            </div>
+                                            <div class="flex-grow-1 ms-12">
+                                                <h3 class="fw-normal">{{ seller.name }}</h3>
+                                                <span class="fs-14 text-body fw-normal">Customer ID {{ seller.customerId
+                                                    }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <ul class="p-0 mb-0 list-unstyled d-flex align-items-center justify-content-end"
+                                            style="gap: 2px;">
+                                            <li *ngFor="let star of getStars(seller.rating)">
+                                                <i [class]="star.type === 'full' ? 'ri-star-fill' : star.type === 'half' ? 'ri-star-half-fill' : 'ri-star-line'"
+                                                    class="text-warning fs-16"></i>
+                                            </li>
+                                            <li><span class="fs-14 text-body fw-normal">({{ seller.rating }})</span>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Locations & Revenue -->
+        <div class="col-lg-12 col-xxl-4 col-xxxl-12">
+            <div class="row">
+                <div class="col-xxl-12 col-lg-6 col-xxxl-6">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <h3 class="mb-20">Top Sales Locations</h3>
+                        <div class="row align-items-center">
+                            <div class="col-lg-7 col-sm-6">
+                                <div class="text-center">
+                                    <div id="sales_by_locations_map" #salesLocationsMap>
+                                        <i class="ri-global-line fs-60 text-muted"></i>
+                                        <p class="text-muted small">Sales Map</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-sm-6">
+                                <ul class="p-0 mb-0 list-unstyled last-child-none mt-4 mt-sm-0">
+                                    <li *ngFor="let location of locations" class="d-flex align-items-center gap-2 mb-9">
+                                        <img [alt]="location.name" class="rounded-circle" [src]="location.flag"
+                                            style="width: 20px; height: 20px;" />
+                                        <span class="fs-15">
+                                            {{ location.name }}
+                                            <span class="text-secondary">{{ location.percentage }}%</span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-12 col-lg-6 col-xxxl-6">
+                    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-0">
+                            <h3>Revenue</h3>
+                            <div class="dropdown select-dropdown without-border">
+                                <button aria-expanded="false"
+                                    class="dropdown-toggle bg-transparent text-secondary fs-15"
+                                    data-bs-toggle="dropdown" (click)="onPeriodChange('This Week')">
+                                    This Week
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('This Day')">This Day</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('This Week')">This Week</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('This Month')">This Month</button></li>
+                                    <li><button class="dropdown-item text-secondary"
+                                            (click)="onPeriodChange('This Year')">This Year</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="revenue_chart" #revenueChart style="margin-bottom: -17px;">
+                            <div class="text-center py-3">
+                                <i class="ri-money-dollar-circle-line fs-30 text-muted"></i>
+                                <p class="text-muted small">Revenue Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders & Transactions -->
+    <div class="row">
+        <div class="col-xxl-8 col-xxxxl-12">
+            <div class="card bg-white rounded-10 border border-white mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+                    <h3>Recent Orders</h3>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown select-dropdown without-border">
+                            <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                                data-bs-toggle="dropdown" (click)="onFilterChange('Show All')">
+                                Show All
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                                <li><button class="dropdown-item text-secondary"
+                                        (click)="onFilterChange('Shipped')">Shipped</button></li>
+                                <li><button class="dropdown-item text-secondary"
+                                        (click)="onFilterChange('Confirmed')">Confirmed</button></li>
+                                <li><button class="dropdown-item text-secondary"
+                                        (click)="onFilterChange('Pending')">Pending</button></li>
+                                <li><button class="dropdown-item text-secondary"
+                                        (click)="onFilterChange('Rejected')">Rejected</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="default-table-area mx-minus-1 table-recent-orders">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="fw-medium" scope="col">Order ID</th>
+                                    <th class="fw-medium" scope="col">Customer</th>
+                                    <th class="fw-medium" scope="col">Created</th>
+                                    <th class="fw-medium" scope="col">Total</th>
+                                    <th class="fw-medium" scope="col">Profit</th>
+                                    <th class="fw-medium" scope="col">Status</th>
+                                    <th class="fw-medium" scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let order of recentOrders">
+                                    <td class="text-body">{{ order.id }}</td>
+                                    <td>
+                                        <a class="d-flex align-items-center text-decoration-none" href="customers.html">
+                                            <div class="flex-shrink-0">
+                                                <img [alt]="order.customer" class="rounded-circle" [src]="order.avatar"
+                                                    style="width: 50px; height: 50px;" />
+                                            </div>
+                                            <div class="flex-grow-1 ms-12">
+                                                <h3 class="fw-medium hover-text mb-0 fs-16">{{ order.customer }}</h3>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td class="text-body">{{ order.date }}</td>
+                                    <td class="text-body">${{ order.total | number }}</td>
+                                    <td class="text-body">${{ order.profit | number }}</td>
+                                    <td>
+                                        <span
+                                            [class]="getStatusClass(order.status) + ' fs-15 fw-normal d-inline-block default-badge'">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-end" style="gap: 12px;">
+                                            <button class="bg-transparent p-0 border-0" data-bs-placement="top"
+                                                data-bs-title="View" data-bs-toggle="tooltip">
+                                                <i
+                                                    class="material-symbols-outlined fs-16 fw-normal text-primary">visibility</i>
+                                            </button>
+                                            <button class="bg-transparent p-0 border-0 hover-text-danger"
+                                                data-bs-placement="top" data-bs-title="Delete" data-bs-toggle="tooltip">
+                                                <i
+                                                    class="material-symbols-outlined fs-16 fw-normal text-body">delete</i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions History -->
+        <div class="col-xxl-4 col-xxxxl-12">
+            <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-20">
+                    <h3>Transactions History</h3>
+                    <div class="dropdown select-dropdown without-border">
+                        <button aria-expanded="false" class="dropdown-toggle bg-transparent text-secondary fs-15"
+                            data-bs-toggle="dropdown" (click)="onPeriodChange('Last Month')">
+                            Last Month
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('Last Day')">Last
+                                    Day</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('Last Week')">Last
+                                    Week</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('Last Month')">Last
+                                    Month</button></li>
+                            <li><button class="dropdown-item text-secondary" (click)="onPeriodChange('Last Year')">Last
+                                    Year</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="default-table-area without-header table-transactions-history">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <tbody>
+                                <tr *ngFor="let transaction of transactions">
+                                    <td class="ps-0">
+                                        <div class="d-flex align-items-center text-decoration-none">
+                                            <div class="flex-shrink-0">
+                                                <div [class]="transaction.iconClass + ' text-center rounded-circle'"
+                                                    style="width: 50px; height: 50px; line-height: 62px;"
+                                                    [style.background-color]="transaction.bgClass">
+                                                    <i class="material-symbols-outlined fs-24">{{ transaction.icon
+                                                        }}</i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-15">
+                                                <h3 class="fw-normal">{{ transaction.title }}</h3>
+                                                <span class="fs-14 text-body fw-normal">{{ transaction.date }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td [class]="getTransactionIconClass(transaction.type) + ' fw-normal fs-16'">
+                                        {{ transaction.type === 'credit' ? '+' : '-' }}${{ transaction.amount | number
+                                        }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

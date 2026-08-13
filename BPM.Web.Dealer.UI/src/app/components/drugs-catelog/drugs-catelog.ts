@@ -21,13 +21,14 @@ export class DrugsCatelogComponent implements OnInit {
   isLoading: boolean = false;
   error: string | null = null;
   selectedPackages: { [drugId: string]: DrugPackaging } = {};
+  selectedCategory: string = '';
 
   constructor(
     private drugCatalogService: DrugCatalogService,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private spinnerService: SpinnerLoadingService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchDrugsCatalog();
@@ -41,8 +42,6 @@ export class DrugsCatelogComponent implements OnInit {
     this.drugCatalogService.getDrugsCatalogAsync().subscribe({
       next: (response: drugCatelog[]) => {
         console.log('Drugs fetched successfully:', response);
-        console.log('Number of drugs:', response?.length);
-
         this.drugsCatalogs = response || [];
         this.filteredDrugs = [...this.drugsCatalogs];
         this.isLoading = false;
@@ -61,51 +60,106 @@ export class DrugsCatelogComponent implements OnInit {
     });
   }
 
+  // ========== Filter Methods ==========
   filterDrugs(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredDrugs = [...this.drugsCatalogs];
-      return;
+    let filtered = [...this.drugsCatalogs];
+
+    // Search filter
+    if (this.searchTerm.trim()) {
+      const search = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(
+        (drug) =>
+          drug.drugName?.toLowerCase().includes(search) ||
+          drug.drugCode?.toLowerCase().includes(search) ||
+          drug.genericName?.toLowerCase().includes(search) ||
+          drug.brandName?.toLowerCase().includes(search) ||
+          drug.manufacturer?.toLowerCase().includes(search) ||
+          drug.category?.toLowerCase().includes(search)
+      );
     }
 
-    const search = this.searchTerm.toLowerCase().trim();
-    this.filteredDrugs = this.drugsCatalogs.filter(
-      (drug) =>
-        drug.drugName?.toLowerCase().includes(search) ||
-        drug.drugCode?.toLowerCase().includes(search) ||
-        drug.genericName?.toLowerCase().includes(search) ||
-        drug.brandName?.toLowerCase().includes(search) ||
-        drug.manufacturer?.toLowerCase().includes(search) ||
-        drug.category?.toLowerCase().includes(search)
-    );
+    // Category filter
+    if (this.selectedCategory) {
+      filtered = filtered.filter(
+        (drug) => drug.category === this.selectedCategory
+      );
+    }
+
+    this.filteredDrugs = filtered;
+  }
+
+  filterByCategory(event: any): void {
+    this.selectedCategory = event.target.value;
+    this.filterDrugs();
   }
 
   sortDrugs(event: any): void {
     const sortBy = event.target.value;
+    const sorted = [...this.filteredDrugs];
 
     switch (sortBy) {
       case 'name':
-        this.filteredDrugs.sort((a, b) => (a.drugName || '').localeCompare(b.drugName || ''));
+        sorted.sort((a, b) => (a.drugName || '').localeCompare(b.drugName || ''));
         break;
       case 'code':
-        this.filteredDrugs.sort((a, b) => (a.drugCode || '').localeCompare(b.drugCode || ''));
+        sorted.sort((a, b) => (a.drugCode || '').localeCompare(b.drugCode || ''));
         break;
       case 'category':
-        this.filteredDrugs.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
+        sorted.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
         break;
       case 'status':
-        this.filteredDrugs.sort((a, b) => Number(b.isActive) - Number(a.isActive));
+        sorted.sort((a, b) => Number(b.isActive) - Number(a.isActive));
         break;
       default:
         break;
     }
+
+    this.filteredDrugs = sorted;
   }
 
+  // ========== Stats Methods ==========
+  getActiveDrugs(): number {
+    return this.drugsCatalogs.filter(d => d.isActive).length;
+  }
+
+  getInactiveDrugs(): number {
+    return this.drugsCatalogs.filter(d => !d.isActive).length;
+  }
+
+  getUniqueCategories(): number {
+    const categories = new Set(this.drugsCatalogs.map(d => d.category).filter(Boolean));
+    return categories.size;
+  }
+
+  getUniqueManufacturers(): number {
+    const manufacturers = new Set(this.drugsCatalogs.map(d => d.manufacturer).filter(Boolean));
+    return manufacturers.size;
+  }
+
+  getUniqueSchedules(): number {
+    const schedules = new Set(this.drugsCatalogs.map(d => d.scheduleType).filter(Boolean));
+    return schedules.size;
+  }
+
+  getCategoryList(): string[] {
+    const categories = new Set(
+      this.drugsCatalogs
+        .map(d => d.category)
+        .filter((category): category is string => category !== undefined && category !== null && category !== '')
+    );
+    return Array.from(categories);
+  }
+  // ========== UI Methods ==========
   toggleView(): void {
     this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
   }
 
   selectPackage(drugId: string, pkg: DrugPackaging): void {
-    this.selectedPackages[drugId] = pkg;
+    if (this.selectedPackages[drugId]?.packagingId === pkg.packagingId) {
+      delete this.selectedPackages[drugId];
+    } else {
+      this.selectedPackages[drugId] = pkg;
+    }
   }
 
   addToCart(drug: drugCatelog): void {
@@ -140,7 +194,7 @@ export class DrugsCatelogComponent implements OnInit {
 
     console.log(this.cartService.getCartItems());
     console.log('Cart Count:', this.cartService.getCartCount());
-    console.log(`${drug.drugName} will be added to cart Successfully.`);
+    alert(`${drug.drugName} added to cart successfully!`);
   }
 
   viewDrug(drug: drugCatelog): void {
