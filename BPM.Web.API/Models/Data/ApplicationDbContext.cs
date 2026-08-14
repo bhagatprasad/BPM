@@ -35,6 +35,7 @@ namespace BPM.Web.API.Models.Data
         public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
         public DbSet<Billing>Billings { get; set; }
         public DbSet<Invoice>Invoices { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
