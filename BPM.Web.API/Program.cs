@@ -4,9 +4,12 @@ using BPM.Web.API.Models.Data;
 using BPM.Web.API.RabbitMQ;
 using BPM.Web.API.RabbitMQ.Publisher;
 using BPM.Web.API.RabbitMQ.Subscriber;
+using BPM.Web.API.Repositories;
+using BPM.Web.API.Repositories.Interfaces;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 using BPM.Web.API.Services;
+using BPM.Web.API.Services.Interfaces;
 using log4net;
 using log4net.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -124,6 +127,7 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
 builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -145,6 +149,7 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
