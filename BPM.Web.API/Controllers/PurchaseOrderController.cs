@@ -21,7 +21,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("CreatePurchaseOrder")]
+        [HttpPost("create-purchase-order")]
         public async Task<IActionResult> CreatePurchaseOrder(CreatePurchaseOrderDto createPurchaseOrderDto)
         {
             try
@@ -43,7 +43,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("FetchPurchaseOrders")]
+        [HttpGet("get-purchase-orders")]
         public async Task<IActionResult> GetPurchaseOrdersAll()
         {
             try
@@ -65,7 +65,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("FetchPurchaseOrderById/{id:guid}")]
+        [HttpGet("get-purchase-order-by-id/{id:guid}")]
         public async Task<IActionResult> GetPurchaseOrderById(Guid id)
         {
             try
@@ -91,7 +91,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("FetchPurchaseOrderByDealer/{dealerId:guid}")]
+        [HttpGet("fetch-purchase-order-by-dealer/{dealerId:guid}")]
         public async Task<IActionResult> GetPurchaseOrdersByDealer(Guid dealerId)
         {
             try

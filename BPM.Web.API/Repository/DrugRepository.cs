@@ -1,6 +1,4 @@
-﻿using System;
-
-using BPM.Web.API.Models.Data;
+﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,7 +74,8 @@ namespace BPM.Web.API.Repository
             if (drug == null)
                 return false;
 
-            _context.Drugs.Remove(drug);
+            //_context.Drugs.Remove(drug);
+            drug.IsActive = false;
 
             return await _context.SaveChangesAsync() > 0;
         }

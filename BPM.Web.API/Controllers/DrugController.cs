@@ -20,23 +20,6 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                _logger.LogInformation("Fetching all drugs.");
-
-                var drugs = await _drugService.GetAllDrugsAsync();
-
-                return Ok(drugs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching all drugs.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
-            }
-        }
-        [HttpGet]
         [Route("get-all-drugs")]
         public async Task<IActionResult> GetAllDrugs()
         {
@@ -103,8 +86,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateDrugDto dto)
+        [HttpPut("update-drug")]
+        public async Task<IActionResult> Update(UpdateDrugDto dto)
         {
             try
             {
@@ -127,7 +110,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpDelete("{drugId:guid}")]
+        [HttpDelete("delete-drug/{drugId:guid}")]
         public async Task<IActionResult> Delete(Guid drugId)
         {
             try

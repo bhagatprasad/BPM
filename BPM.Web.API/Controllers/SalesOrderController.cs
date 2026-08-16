@@ -38,7 +38,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetSalesOrderByDealer/{dealerId}")]
+        [HttpGet("get-sales-order-by-dealer/{dealerId}")]
         public async Task<IActionResult> GetSalesOrderByDealerId(Guid dealerId)
         {
             try
@@ -66,7 +66,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPost("CreateSalesOrderFromPurchaseOrder/{purchaseOrderId}")]
+        [HttpPost("create-sales-order-From-purchase-order/{purchaseOrderId}")]
         public async Task<IActionResult> CreateSalesOrderFromPurchaseOrder(Guid purchaseOrderId)
         {
             try
@@ -100,7 +100,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetSalesOrderById/{id}")]
+        [HttpGet("get-sales-order-by-id/{id}")]
         public async Task<IActionResult> GetSalesOrderById(Guid id)
         {
             try

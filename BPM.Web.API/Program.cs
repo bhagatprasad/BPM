@@ -128,6 +128,7 @@ builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
 builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -150,6 +151,8 @@ builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+builder.Services.AddScoped<IInventoryService,InventoryService>();
+
 
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
