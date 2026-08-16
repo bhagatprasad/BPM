@@ -38,6 +38,11 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Inventory>Inventories { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; } 
+        public DbSet<BatchMaster> BatchMasters { get; set; }
+        public DbSet<SupplierDiscount> SupplierDiscounts { get; set; }
+        public DbSet<VolumeDiscountTier> VolumeDiscountTiers { get; set; }
+        public DbSet<PromotionalOffer> PromotionalOffers { get; set; }
+        public DbSet<DiscountCode> DiscountCodes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

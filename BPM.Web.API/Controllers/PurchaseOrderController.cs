@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.CustomFilters;
 using BPM.Web.API.Models.DTOs;
+using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -134,6 +135,27 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogError(ex, "Error occurred while processing purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase order.");
+            }
+        }
+
+        [HttpPost("validate-product-availability")]
+        public async Task<IActionResult> ValidateProductAvailability([FromBody] ValidateProductAvailabilityDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Validating product availability for DrugId: {DrugId}, PackagingId: {PackagingId}", dto.DrugId, dto.PackagingId);
+                var result = await _service.ValidateProductAvailabilityAsync(dto.DrugId, dto.PackagingId, dto.Quantity);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid product availability request.");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while validating product availability.");
+                return StatusCode(500, new { message = "An internal server error occurred." });
             }
         }
     }

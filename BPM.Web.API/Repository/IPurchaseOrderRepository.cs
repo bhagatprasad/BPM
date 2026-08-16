@@ -1,4 +1,5 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.API.Models.DTOs.PurchaseOrder;
+using BPM.Web.API.Models.Entities;
 
 namespace BPM.Web.API.Repository
 {
@@ -9,5 +10,6 @@ namespace BPM.Web.API.Repository
         Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
         Task<PurchaseOrder> UpdatePurchaseOrderAsync(PurchaseOrder purchaseOrder);
+        Task<ProductAvailabilityResponseDto> ValidateProductAvailabilityAsync(Guid drugId, Guid packagingId, int quantity);
     }
 }

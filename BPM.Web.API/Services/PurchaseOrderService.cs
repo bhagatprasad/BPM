@@ -277,5 +277,49 @@ namespace BPM.Web.API.Service
             // Check if new status is in allowed transitions
             return allowedTransitions[currentStatus].Contains(newStatus);
         }
+
+        public async Task<ProductAvailabilityResponseDto> ValidateProductAvailabilityAsync(Guid drugId, Guid packagingId, int quantity)
+        {
+            try
+            {
+                _logger.LogInformation("Validating product availability for DrugId: {DrugId}, PackagingId: {PackagingId}, Quantity: {Quantity}", drugId, packagingId, quantity);
+
+                if (drugId == Guid.Empty)
+                {
+                    _logger.LogWarning("DrugId is required.");
+                    throw new ArgumentException("DrugId is required.");
+                }
+
+                if (packagingId == Guid.Empty)
+                {
+                    _logger.LogWarning("PackagingId is required.");
+                    throw new ArgumentException("PackagingId is required.");
+                }
+
+                if (quantity <= 0)
+                {
+                    _logger.LogWarning("Requested quantity must be greater than zero.");
+                    throw new ArgumentException("Quantity must be greater than zero.");
+                }
+
+                var result = await _repository.ValidateProductAvailabilityAsync(drugId, packagingId, quantity);
+
+                if (!result.IsAvailable)
+                {
+                    _logger.LogWarning("Product is not available. DrugId: {DrugId}, PackagingId: {PackagingId}, RequestedQuantity: {Quantity}, AvailableQuantity: {AvailableQuantity}", drugId, packagingId, quantity, result.AvailableQuantity);
+                }
+                else
+                {
+                    _logger.LogInformation("Product is available. DrugId: {DrugId}, PackagingId: {PackagingId}, RequestedQuantity: {Quantity}, AvailableQuantity: {AvailableQuantity}", drugId, packagingId, quantity, result.AvailableQuantity);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while validating product availability for DrugId: {DrugId}, PackagingId: {PackagingId}", drugId, packagingId);
+                throw;
+            }
+        }
     }
 }
