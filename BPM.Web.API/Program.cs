@@ -4,8 +4,6 @@ using BPM.Web.API.Models.Data;
 using BPM.Web.API.RabbitMQ;
 using BPM.Web.API.RabbitMQ.Publisher;
 using BPM.Web.API.RabbitMQ.Subscriber;
-using BPM.Web.API.Repositories;
-using BPM.Web.API.Repositories.Interfaces;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 using BPM.Web.API.Services;
@@ -129,6 +127,8 @@ builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
+
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -152,6 +152,7 @@ builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<IInventoryService,InventoryService>();
+builder.Services.AddScoped<IStockMovementService,StockMovementService>();
 
 
 // RabbitMQ

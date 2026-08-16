@@ -5,7 +5,7 @@ namespace BPM.Web.API.Models.Mappers
 {
     public static class InventoryMapper
     {
-        public static Inventory ToEntity(InventoryCreateDto dto)
+        public static Inventory ToEntity(this InventoryCreateDto dto)
         {
             return new Inventory
             {
@@ -25,7 +25,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static Inventory ToEntity(InventoryUpdateDto dto,Inventory entity)
+        public static Inventory ToEntity(this InventoryUpdateDto dto,Inventory entity)
         {
             entity.DrugId = dto.DrugId;
             entity.PackagingId = dto.PackagingId;
@@ -43,7 +43,7 @@ namespace BPM.Web.API.Models.Mappers
             return entity;
         }
 
-        public static InventoryResponseDto ToDto(Inventory entity)
+        public static InventoryResponseDto ToDto(this Inventory entity)
         {
             return new InventoryResponseDto
             {
@@ -65,7 +65,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static List<InventoryResponseDto> ToDtoList(IEnumerable<Inventory> entities)
+        public static List<InventoryResponseDto> ToDtoList(this IEnumerable<Inventory> entities)
         {
             return entities.Select(ToDto).ToList();
         }
