@@ -21,7 +21,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("CreateBilling/{salesOrderId:guid}")]
+        [HttpPost("create-billing/{salesOrderId:guid}")]
         public async Task<IActionResult> CreateBilling(Guid salesOrderId, CreateBillingDto createBillingDto)
         {
             try
@@ -64,7 +64,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetBillings")]
+        [HttpGet("get-billings")]
         public async Task<IActionResult> GetAllBilling()
         {
             try
@@ -87,7 +87,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetBillingById/{id:guid}")]
+        [HttpGet("get-billing-by-id/{id:guid}")]
         public async Task<IActionResult> GetBillingById(Guid id)
         {
             try
@@ -122,7 +122,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetBillingBySalesOrder/{salesOrderId:guid}")]
+        [HttpGet("get-billing-by-sales-order/{sales-order-id:guid}")]
         public async Task<IActionResult> GetBillingBySalesOrder(Guid salesOrderId)
         {
             try

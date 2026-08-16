@@ -1,11 +1,13 @@
-﻿using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.API.CustomFilters;
+using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
+    [BPMAuthorize]
     public class WarehouseController : BaseController
     {
         private readonly IWarehouseService _warehouseService;

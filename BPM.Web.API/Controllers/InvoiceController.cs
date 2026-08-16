@@ -19,7 +19,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("CreateInvoice/{billingId:guid}")]
+        [HttpPost("create-invoice/{billingId:guid}")]
         public async Task<IActionResult> CreateInvoice(Guid billingId, CreateInvoiceDto createInvoiceDto)
         {
             try
@@ -57,7 +57,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetInvoices")]
+        [HttpGet("get-invoices")]
         public async Task<IActionResult> GetInvoices()
         {
             try
@@ -77,7 +77,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetInvoiceById/{id:guid}")]
+        [HttpGet("get-invoice-by-id/{id:guid}")]
         public async Task<IActionResult> GetInvoiceById(Guid id)
         {
             try
@@ -107,7 +107,7 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("GetInvoiceByBilling/{billingId:guid}")]
+        [HttpGet("get-invoice-by-billing/{billingId:guid}")]
         public async Task<IActionResult> GetInvoiceByBilling(Guid billingId)
         {
             try
