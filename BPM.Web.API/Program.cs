@@ -4,6 +4,7 @@ using BPM.Web.API.Models.Data;
 using BPM.Web.API.RabbitMQ;
 using BPM.Web.API.RabbitMQ.Publisher;
 using BPM.Web.API.RabbitMQ.Subscriber;
+using BPM.Web.API.Repositories;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 using BPM.Web.API.Services;
@@ -128,7 +129,10 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
-
+builder.Services.AddScoped<ISupplierDiscountRepository, SupplierDiscountRepository>();
+builder.Services.AddScoped<IVolumeDiscountTierRepository, VolumeDiscountTierRepository>();
+builder.Services.AddScoped<IPromotionalOfferRepository, PromotionalOfferRepository>();
+builder.Services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -153,6 +157,10 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<IInventoryService,InventoryService>();
 builder.Services.AddScoped<IStockMovementService,StockMovementService>();
+builder.Services.AddScoped<ISupplierDiscountService, SupplierDiscountService>();
+builder.Services.AddScoped<IVolumeDiscountTierService, VolumeDiscountTierService>();
+builder.Services.AddScoped<IPromotionalOfferService, PromotionalOfferService>();
+builder.Services.AddScoped<IDiscountCodeService, DiscountCodeService>();
 
 
 // RabbitMQ

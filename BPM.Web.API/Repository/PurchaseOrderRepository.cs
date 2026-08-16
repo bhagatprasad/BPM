@@ -1,4 +1,5 @@
 ﻿using BPM.Web.API.Models.Data;
+using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
 using log4net.Util;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,34 @@ namespace BPM.Web.API.Repository
             _dbContext.PurchaseOrders.Update(purchaseOrder);
             await _dbContext.SaveChangesAsync();
             return purchaseOrder;
+        }
+
+        public async Task<ProductAvailabilityResponseDto> ValidateProductAvailabilityAsync(Guid drugId, Guid packagingId, int quantity)
+        {
+            var inventory = await _dbContext.Inventories.AsNoTracking().FirstOrDefaultAsync(x => x.DrugId == drugId && x.PackagingId == packagingId && x.IsActive);
+            //// Read-only query; entity tracking is not required.
+            if (inventory == null)
+            {
+                return new ProductAvailabilityResponseDto
+                {
+                    DrugId = drugId,
+                    PackagingId = packagingId,
+                    RequestedQuantity = quantity,
+                    AvailableQuantity = 0,
+                    IsAvailable = false,
+                    Message = "Product is not available in inventory."
+                };
+            }
+
+            return new ProductAvailabilityResponseDto
+            {
+                DrugId = drugId,
+                PackagingId = packagingId,
+                RequestedQuantity = quantity,
+                AvailableQuantity = inventory.AvailableQuantity,
+                IsAvailable = inventory.AvailableQuantity >= quantity,
+                Message = inventory.AvailableQuantity >= quantity ? "Product is available." : "Insufficient stock available."
+            };
         }
     }
 }
