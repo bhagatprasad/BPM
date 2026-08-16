@@ -1,9 +1,8 @@
 ﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.Entities;
-using BPM.Web.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BPM.Web.API.Repositories
+namespace BPM.Web.API.Repository
 {
     public class InventoryRepository : IInventoryRepository
     {

@@ -1,6 +1,6 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Mappers;
-using BPM.Web.API.Repositories.Interfaces;
+using BPM.Web.API.Repository;
 using BPM.Web.API.Services.Interfaces;
 
 namespace BPM.Web.API.Services

@@ -5,7 +5,7 @@ namespace BPM.Web.API.Models.Mappers
 {
     public static class WarehouseMapper
     {
-        public static Warehouse ToEntity(WarehouseCreateDto dto)
+        public static Warehouse ToEntity(this WarehouseCreateDto dto)
         {
             return new Warehouse
             {
@@ -25,7 +25,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static Warehouse ToEntity(WarehouseUpdateDto dto, Warehouse entity)
+        public static Warehouse ToEntity(this WarehouseUpdateDto dto, Warehouse entity)
         {
             entity.WarehouseName = dto.WarehouseName;
             entity.DistributorId = dto.DistributorId;
@@ -42,7 +42,7 @@ namespace BPM.Web.API.Models.Mappers
             return entity;
         }
 
-        public static WarehouseResponseDto ToDto(Warehouse entity)
+        public static WarehouseResponseDto ToDto(this Warehouse entity)
         {
             return new WarehouseResponseDto
             {
@@ -64,7 +64,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static IEnumerable<WarehouseResponseDto> ToDtoList(IEnumerable<Warehouse> entities)
+        public static IEnumerable<WarehouseResponseDto> ToDtoList(this IEnumerable<Warehouse> entities)
         {
             return entities.Select(ToDto);
         }

@@ -1,6 +1,6 @@
 ﻿using BPM.Web.API.Models.Entities;
 
-namespace BPM.Web.API.Repositories.Interfaces
+namespace BPM.Web.API.Repository
 {
     public interface IWarehouseRepository
     {
