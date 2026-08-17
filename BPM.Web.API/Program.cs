@@ -163,6 +163,7 @@ builder.Services.AddScoped<IPromotionalOfferService, PromotionalOfferService>();
 builder.Services.AddScoped<IDiscountCodeService, DiscountCodeService>();
 
 
+
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQPublisher>();
 builder.Services.AddSingleton<IRabbitMQPublisher>(sp => sp.GetRequiredService<RabbitMQPublisher>());
@@ -170,6 +171,7 @@ builder.Services.AddHostedService<PasswordHistorySubscriber>();
 builder.Services.AddHostedService<UserLoginHistorySubscriber>();
 builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHostedService<RefreshTokenSubscriber>();
+builder.Services.AddHostedService<PurchaseOrderDraftCleanupService>();
 
 // Health Checks
 builder.Services.AddHealthChecks().AddCheck<RabbitMQHealthCheck>("rabbitmq");

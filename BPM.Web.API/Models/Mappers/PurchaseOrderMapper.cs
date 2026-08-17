@@ -2,7 +2,6 @@
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Extensions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BPM.Web.API.Models.Mappers
 {
@@ -80,6 +79,7 @@ namespace BPM.Web.API.Models.Mappers
                 ModifiedBy = purchaseOrder.ModifiedBy,
                 ModifiedOn = purchaseOrder.ModifiedOn,
                 Dealer = purchaseOrder.Dealer?.ToDto(),
+                IsOlderThan7Days = purchaseOrder.OrderDate <= DateTime.UtcNow.AddDays(-7),
                 PurchaseOrderItemResponse = purchaseOrder.PurchaseOrderItems?
                     .Select(x => x.ToDto())
                     .ToList() ?? new List<PurchaseOrderItemResponseDto>()

@@ -54,4 +54,8 @@ namespace BPM.Web.API.Models.DTOs
 
         public string? Remarks { get; set; }
     }
+    public class SubmitPurchaseOrderDto
+    {
+        public Guid PurchaseOrderId { get; set; }
+    }
 }

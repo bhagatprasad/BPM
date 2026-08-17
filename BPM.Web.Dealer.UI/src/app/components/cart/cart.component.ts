@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { CartItem } from '../../models/cart-item';
 import { CommonModule } from '@angular/common';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { FormsModule } from '@angular/forms';
 
@@ -13,12 +13,17 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   isPlacingOrder = false;
   couponCode: string = '';
   discountAmount: number = 0;
   discountPercentage: number = 0;
+
+  // Auto-save
+  private autoSaveInterval: any;
+  draftPurchaseOrderId: string | null = null;
+  private isSavingDraft = false;
 
   // Order Details
   orderDetails = {
@@ -26,7 +31,7 @@ export class CartComponent implements OnInit {
     paymentTerms: '',
     deliveryTerms: '',
     internalNotes: '',
-    remarks: ''
+    remarks: '',
   };
 
   constructor(
@@ -34,11 +39,24 @@ export class CartComponent implements OnInit {
     private purchaseOrderService: PurchaseOrderService,
     private toasterService: ToastrService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.cartItems = this.cartService.getCartItems();
+    this.route.queryParams.subscribe((params) => {
+      if (params['draftId']) {
+        this.draftPurchaseOrderId = params['draftId'];
+
+        console.log('Resuming Draft Purchase Order:', this.draftPurchaseOrderId);
+
+        if (this.draftPurchaseOrderId) {
+          this.loadDraft(this.draftPurchaseOrderId);
+        }
+      }
+    });
+
     this.cartService.cartCount$.subscribe(() => {
       this.cartItems = [...this.cartService.getCartItems()];
       this.cdr.detectChanges();
@@ -47,11 +65,22 @@ export class CartComponent implements OnInit {
     // Set default delivery date to 3 days from now
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() + 3);
+
     this.orderDetails.expectedDeliveryDate = this.formatDateForInput(defaultDate);
-    
+
     // Set default payment terms
     this.orderDetails.paymentTerms = 'Net 30';
     this.orderDetails.deliveryTerms = 'Door Delivery';
+
+    // Start auto-save once
+    this.startAutoSave();
+  }
+
+  ngOnDestroy(): void {
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+      this.autoSaveInterval = null;
+    }
   }
 
   get minDate(): string {
@@ -65,6 +94,7 @@ export class CartComponent implements OnInit {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
+
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
@@ -76,14 +106,17 @@ export class CartComponent implements OnInit {
     if (!confirmed) {
       return;
     }
+
     this.cartService.removeFromCart(drugId);
     this.cartItems = [...this.cartService.getCartItems()];
+
     this.toasterService.success('Medicine removed from the cart', 'Success');
   }
 
   increase(drugId: string): void {
     this.cartService.increaseQuantity(drugId);
     this.cartItems = [...this.cartService.getCartItems()];
+
     this.toasterService.success('Quantity increased', 'Success');
   }
 
@@ -116,17 +149,19 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    // Example coupon logic - you can implement your own
     if (this.couponCode.toUpperCase() === 'SAVE10') {
       this.discountPercentage = 10;
-      this.discountAmount = this.subtotal * 0.10;
+      this.discountAmount = this.subtotal * 0.1;
+
       this.toasterService.success('Coupon applied successfully! 10% off', 'Success');
     } else if (this.couponCode.toUpperCase() === 'SAVE20') {
       this.discountPercentage = 20;
-      this.discountAmount = this.subtotal * 0.20;
+      this.discountAmount = this.subtotal * 0.2;
+
       this.toasterService.success('Coupon applied successfully! 20% off', 'Success');
     } else {
       this.toasterService.error('Invalid coupon code', 'Error');
+
       this.discountPercentage = 0;
       this.discountAmount = 0;
     }
@@ -156,6 +191,10 @@ export class CartComponent implements OnInit {
     return this.subtotal + this.gst - this.discountAmount;
   }
 
+  // =========================
+  // PLACE ORDER
+  // =========================
+
   placeOrder(): void {
     if (!this.isOrderDetailsValid()) {
       this.toasterService.warning('Please fill in all required fields', 'Warning');
@@ -163,10 +202,9 @@ export class CartComponent implements OnInit {
     }
 
     this.isPlacingOrder = true;
-    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
-    console.log('User:', auth.authenticateResponseDto);
 
-    // Parse the expected delivery date
+    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
+
     const deliveryDate = new Date(this.orderDetails.expectedDeliveryDate);
 
     const request = {
@@ -179,6 +217,7 @@ export class CartComponent implements OnInit {
       internalNotes: this.orderDetails.internalNotes || 'Angular UI',
       status: 'Submitted',
       createdBy: auth.authenticateResponseDto.userId,
+
       items: this.cartItems.map((item) => ({
         drugId: item.drugId,
         packagingId: item.packagingId,
@@ -195,17 +234,131 @@ export class CartComponent implements OnInit {
     this.purchaseOrderService.createPurchaseOrder(request).subscribe({
       next: (response) => {
         console.log('Order created:', response);
+
+        // Stop auto-save after successful submission
+        if (this.autoSaveInterval) {
+          clearInterval(this.autoSaveInterval);
+          this.autoSaveInterval = null;
+        }
+
         this.isPlacingOrder = false;
+
         this.toasterService.success('Purchase Order Created Successfully');
+
         this.cartService.clearCart();
         this.cartItems = [];
+
         this.cdr.detectChanges();
+
         this.router.navigateByUrl('/my-orders');
       },
+
       error: (error) => {
         console.error('Error creating order:', error);
+
         this.isPlacingOrder = false;
+
         this.toasterService.error('Failed to create Purchase Order');
+      },
+    });
+  }
+
+  // =========================
+  // AUTO SAVE DRAFT
+  // =========================
+
+  private startAutoSave(): void {
+    this.autoSaveInterval = setInterval(() => {
+      this.saveDraft();
+    }, 30000);
+  }
+
+  private saveDraft(): void {
+    if (this.isSavingDraft || this.cartItems.length === 0) {
+      return;
+    }
+
+    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
+
+    const draftRequest = {
+      purchaseOrderId: this.draftPurchaseOrderId,
+
+      supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
+
+      dealerId: auth.authenticateResponseDto.dealerId,
+
+      expectedDeliveryDate: this.orderDetails.expectedDeliveryDate
+        ? new Date(this.orderDetails.expectedDeliveryDate).toISOString()
+        : null,
+
+      paymentTerms: this.orderDetails.paymentTerms || null,
+
+      deliveryTerms: this.orderDetails.deliveryTerms || null,
+
+      remarks: this.orderDetails.remarks || null,
+
+      internalNotes: this.orderDetails.internalNotes || null,
+
+      items: this.cartItems.map((item) => ({
+        drugId: item.drugId,
+        packagingId: item.packagingId,
+        quantity: item.quantity,
+        unitPrice: item.packagePrice,
+        discountPercentage: this.discountPercentage || 0,
+        taxRate: 12,
+        batchNumber: 'B001',
+        expiryDate: new Date().toISOString(),
+        remarks: '',
+      })),
+    };
+
+    this.isSavingDraft = true;
+
+    this.purchaseOrderService.savePurchaseOrderDraft(draftRequest).subscribe({
+      next: (response) => {
+        // Important:
+        // First call creates Draft.
+        // Next calls update the same Draft.
+        this.draftPurchaseOrderId = response.id;
+
+        this.isSavingDraft = false;
+
+        console.log('Draft auto-saved successfully:', response.poNumber);
+      },
+
+      error: (error) => {
+        this.isSavingDraft = false;
+
+        console.error('Error auto-saving draft:', error);
+      },
+    });
+  }
+
+  private loadDraft(draftId: string): void {
+    this.purchaseOrderService.getPurchaseOrderById(draftId).subscribe({
+      next: (draft) => {
+        console.log('Draft loaded:', draft);
+
+        this.draftPurchaseOrderId = draft.id;
+
+        this.orderDetails.expectedDeliveryDate = draft.expectedDeliveryDate
+          ? this.formatDateForInput(new Date(draft.expectedDeliveryDate))
+          : '';
+
+        this.orderDetails.paymentTerms = draft.paymentTerms || '';
+        this.orderDetails.deliveryTerms = draft.deliveryTerms || '';
+        this.orderDetails.remarks = draft.remarks || '';
+        this.orderDetails.internalNotes = draft.internalNotes || '';
+
+        this.discountAmount = draft.discountAmount || 0;
+
+        this.cartItems = [...this.cartService.getCartItems()];
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading draft:', error);
+        this.toasterService.error('Failed to load draft purchase order', 'Error');
       },
     });
   }

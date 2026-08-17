@@ -1,7 +1,6 @@
 ﻿using BPM.Web.API.Models.Data;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
 using BPM.Web.API.Models.Entities;
-using log4net.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.API.Repository
@@ -55,7 +54,7 @@ namespace BPM.Web.API.Repository
                 .Include(po => po.Dealer)
                 .Include(po => po.PurchaseOrderItems)
                 .ThenInclude(item => item.Drug)
-                .Where(po => po.DealerId == dealerId && po.IsActive)
+                .Where(po => po.DealerId == dealerId && po.IsActive && po.Status != "Draft")
                 .OrderByDescending(po => po.OrderDate)
                 .ToListAsync();
         }
@@ -93,6 +92,95 @@ namespace BPM.Web.API.Repository
                 IsAvailable = inventory.AvailableQuantity >= quantity,
                 Message = inventory.AvailableQuantity >= quantity ? "Product is available." : "Insufficient stock available."
             };
+        }
+
+        public async Task<PurchaseOrder> SubmitPurchaseOrderAsync(PurchaseOrder purchaseOrder)
+        {
+            _dbContext.PurchaseOrders.Update(purchaseOrder);
+            await _dbContext.SaveChangesAsync();
+            return purchaseOrder;
+        }
+
+        public async Task<PurchaseOrder> SavePurchaseOrderDraftAsync(PurchaseOrder purchaseOrder, List<PurchaseOrderItem> purchaseOrderItems)
+        {
+            if (purchaseOrder.Id == Guid.Empty)
+            {
+                await _dbContext.PurchaseOrders.AddAsync(purchaseOrder);
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                _dbContext.PurchaseOrders.Update(purchaseOrder);
+                await _dbContext.SaveChangesAsync();
+
+                var existingItems = await _dbContext.PurchaseOrderItems.Where(x => x.PurchaseOrderId == purchaseOrder.Id).ToListAsync();
+
+                if (existingItems.Any())
+                {
+                    _dbContext.PurchaseOrderItems.RemoveRange(existingItems);
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+
+            foreach (var item in purchaseOrderItems)
+            {
+                item.PurchaseOrderId = purchaseOrder.Id;
+            }
+
+            if (purchaseOrderItems.Any())
+            {
+                await _dbContext.PurchaseOrderItems.AddRangeAsync(purchaseOrderItems);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return purchaseOrder;
+        }
+
+        public async Task<IEnumerable<PurchaseOrder>> GetDraftPurchaseOrdersAsync(Guid dealerId)
+        {
+            return await _dbContext.PurchaseOrders.Where(po => po.DealerId == dealerId && po.IsActive && po.Status == "Draft").Include(po => po.Supplier).Include(po => po.Dealer).Include(po => po.PurchaseOrderItems).ThenInclude(item => item.Drug).OrderByDescending(po => po.ModifiedOn).ToListAsync();
+        }
+
+        public async Task<bool> DeletePurchaseOrderDraftAsync(Guid purchaseOrderId)
+        {
+            var purchaseOrder = await _dbContext.PurchaseOrders.FirstOrDefaultAsync(x => x.Id == purchaseOrderId && x.IsActive && x.Status == "Draft");
+
+            if (purchaseOrder == null)
+            {
+                return false;
+            }
+
+            purchaseOrder.IsActive = false;
+            purchaseOrder.ModifiedOn = DateTime.UtcNow;
+
+            await _dbContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<int> GetActiveDraftCountAsync(Guid dealerId)
+        {
+            return await _dbContext.PurchaseOrders.CountAsync(x => x.DealerId == dealerId && x.IsActive && x.Status == "Draft");
+        }
+
+        public async Task<int> DeleteExpiredDraftPurchaseOrdersAsync()
+        {
+            var expiryDate = DateTime.UtcNow.AddDays(-30);
+            var expiredDrafts = await _dbContext.PurchaseOrders.Where(x => x.Status == "Draft" && x.IsActive && x.OrderDate < expiryDate).ToListAsync();
+
+            if (!expiredDrafts.Any())
+            {
+                return 0;
+            }
+
+            foreach (var purchaseOrder in expiredDrafts)
+            {
+                purchaseOrder.IsActive = false;
+                purchaseOrder.ModifiedOn = DateTime.UtcNow;
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return expiredDrafts.Count;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace BPM.Web.API.Models.Data
         public DbSet<VolumeDiscountTier> VolumeDiscountTiers { get; set; }
         public DbSet<PromotionalOffer> PromotionalOffers { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
+        
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

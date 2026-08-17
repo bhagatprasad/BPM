@@ -30,7 +30,7 @@ import { environment } from '../../environments/environment';
 export class PurchaseOrderService {
   constructor(private apiService: ApiService) {}
 
-  //create purchase order
+  // Creates a new purchase order
   createPurchaseOrder(request: any): Observable<any> {
     return this.apiService.send<any>(
       'POST',
@@ -39,7 +39,7 @@ export class PurchaseOrderService {
     );
   }
 
-  //fetch orders by dealerId
+  // Fetches all purchase orders for a specific dealer
   getOrdersByDealer(dealerId: string): Observable<any> {
     return this.apiService.send<any>(
       'GET',
@@ -47,11 +47,45 @@ export class PurchaseOrderService {
     );
   }
 
-  //fetch order by purchaseorderbyid
+  // Fetches a purchase order by its ID
   getPurchaseOrderById(id: string): Observable<any> {
     return this.apiService.send<any>(
       'GET',
       `${environment.UrlConstants.PurchaseOrder.FetchPurchaseOrderById}/${id}`,
+    );
+  }
+
+  // Saves a purchase order as a draft
+  savePurchaseOrderDraft(request: any): Observable<any> {
+    return this.apiService.send<any>(
+      'POST',
+      environment.UrlConstants.PurchaseOrder.SavePurchaseOrderDraft,
+      request,
+    );
+  }
+
+  // Fetches draft purchase orders for a specific dealer
+  getDraftPurchaseOrders(dealerId: string): Observable<any> {
+    return this.apiService.send<any>(
+      'GET',
+      `${environment.UrlConstants.PurchaseOrder.GetDraftPurchaseOrders}/${dealerId}`,
+    );
+  }
+
+  // Process an existing purchase order
+  processPurchaseOrder(request: any): Observable<any> {
+    return this.apiService.send<any>(
+      'POST',
+      environment.UrlConstants.PurchaseOrder.ProcessPurchaseOrder,
+      request,
+    );
+  }
+
+  // Deletes a draft purchase order by its ID
+  deletePurchaseOrderDraft(id: string): Observable<any> {
+    return this.apiService.send<any>(
+      'DELETE',
+      `${environment.UrlConstants.PurchaseOrder.DeletePurchaseOrderDraft}/${id}`,
     );
   }
 }

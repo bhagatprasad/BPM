@@ -21,6 +21,99 @@
     </nav>
   </div>
 
+  <!-- Draft Purchase Orders -->
+<div class="card bg-white rounded-10 border border-white mb-4" *ngIf="draftOrders.length > 0">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+    <div>
+      <h3 class="mb-1">Draft Purchase Orders</h3>
+      <span class="text-muted">
+        {{ draftOrders.length }} draft{{ draftOrders.length > 1 ? 's' : '' }}
+      </span>
+    </div>
+
+    <span class="badge bg-warning text-dark">
+      Drafts
+    </span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>PO Number</th>
+          <th>Supplier</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Created</th>
+          <th>Status</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let draft of draftOrders">
+
+          <td>
+            <span class="fw-semibold">
+              {{ draft.poNumber }}
+            </span>
+          </td>
+
+          <td>
+            {{ draft.supplierName || 'N/A' }}
+          </td>
+
+          <td>
+            {{ draft.purchaseOrderItemResponse?.length || 0 }}
+          </td>
+
+          <td>
+            ₹{{ draft.totalAmount || 0 | number:'1.2-2' }}
+          </td>
+
+          <td>
+            {{ formatDate(draft.orderDate) }}
+          </td>
+
+          <td>
+            <span class="badge bg-warning text-dark">
+              Draft
+            </span>
+
+            <span
+              *ngIf="draft.isOlderThan7Days"
+              class="badge bg-danger ms-1">
+              Older than 7 days
+            </span>
+          </td>
+
+          <td class="text-end">
+            <div class="d-flex justify-content-end gap-2">
+
+              <button
+                class="btn btn-sm btn-primary"
+                (click)="resumeDraft(draft)">
+                <i class="ri-edit-line me-1"></i>
+                Resume
+              </button>
+
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteDraft(draft.id)">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
   <div class="card bg-white rounded-10 border border-white mb-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
       <form class="table-src-form position-relative m-0" onsubmit="return false;">

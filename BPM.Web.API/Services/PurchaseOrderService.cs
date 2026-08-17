@@ -1,6 +1,7 @@
 ﻿using BPM.Web.API.Helpes;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
+using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Extensions;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
@@ -14,10 +15,7 @@ namespace BPM.Web.API.Service
         private readonly ILogger<PurchaseOrderService> _logger;
         private readonly IServiceProvider _serviceProvider;
 
-        public PurchaseOrderService(
-            IPurchaseOrderRepository repository,
-            IServiceProvider serviceProvider,
-            ILogger<PurchaseOrderService> logger)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, IServiceProvider serviceProvider, ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -29,16 +27,9 @@ namespace BPM.Web.API.Service
             try
             {
                 _logger.LogInformation("Creating Purchase Order.");
-
                 var purchaseOrder = createPurchaseOrderDto.ToEntity();
-                var purchaseOrderItems = createPurchaseOrderDto.Items
-                    .Select(x => x.ToEntity())
-                    .ToList();
-
-                // Generate PO Number
+                var purchaseOrderItems = createPurchaseOrderDto.Items.Select(x => x.ToEntity()).ToList();
                 purchaseOrder.PONumber = $"PO-{DateTime.UtcNow:yyyyMM}-{DateTime.UtcNow.Ticks.ToString()[^4..]}";
-
-                // Ensure all DateTime fields are UTC
                 purchaseOrder.OrderDate = DateTime.UtcNow;
                 purchaseOrder.CreatedOn = DateTime.UtcNow;
                 purchaseOrder.ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc();
@@ -46,18 +37,11 @@ namespace BPM.Web.API.Service
                 foreach (var item in purchaseOrderItems)
                 {
                     var subTotal = item.UnitPrice * item.Quantity;
-
                     item.DiscountAmount = subTotal * item.DiscountPercentage / 100;
-
                     var amountAfterDiscount = subTotal - item.DiscountAmount;
-
                     item.TaxAmount = amountAfterDiscount * item.TaxRate / 100;
-
                     item.TotalAmount = amountAfterDiscount + item.TaxAmount;
-
                     item.PendingQuantity = item.Quantity;
-
-                    // Ensure ExpiryDate is UTC
                     item.ExpiryDate = item.ExpiryDate.EnsureUtc();
                     item.CreatedOn = DateTime.UtcNow;
                 }
@@ -66,9 +50,7 @@ namespace BPM.Web.API.Service
                 purchaseOrder.DiscountAmount = purchaseOrderItems.Sum(x => x.DiscountAmount);
                 purchaseOrder.TaxAmount = purchaseOrderItems.Sum(x => x.TaxAmount);
                 purchaseOrder.TotalAmount = purchaseOrderItems.Sum(x => x.TotalAmount);
-
                 var result = await _repository.CreatePurchaseOrderAsync(purchaseOrder, purchaseOrderItems);
-
                 _logger.LogInformation("Purchase Order created successfully. PO Number: {PONumber}", result.PONumber);
 
                 if (result != null)
@@ -76,8 +58,6 @@ namespace BPM.Web.API.Service
                     var dbPurchaseOrder = await _repository.GetPurchaseOrderByIdAsync(purchaseOrder.Id);
                     return dbPurchaseOrder.ToDto();
                 }
-
-
 
                 return result.ToDto();
             }
@@ -93,7 +73,6 @@ namespace BPM.Web.API.Service
             try
             {
                 _logger.LogInformation("Fetching all purchase orders.");
-
                 var purchaseOrders = await _repository.GetPurchaseOrdersAllAsync();
 
                 if (!purchaseOrders.Any())
@@ -116,7 +95,6 @@ namespace BPM.Web.API.Service
             try
             {
                 _logger.LogInformation("Fetching purchase order with Id: {Id}", id);
-
                 var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(id);
 
                 if (purchaseOrder == null)
@@ -139,7 +117,6 @@ namespace BPM.Web.API.Service
             try
             {
                 _logger.LogInformation("Fetching purchase orders for Dealer Id: {DealerId}", dealerId);
-
                 var purchaseOrders = await _repository.GetPurchaseOrdersByDealerAsync(dealerId);
 
                 if (!purchaseOrders.Any())
@@ -161,41 +138,26 @@ namespace BPM.Web.API.Service
         {
             try
             {
-                _logger.LogInformation("Processing purchase order. OrderId: {OrderId}, Status: {Status}",
-                    processPurchaseOrderDto.PurchaseOrderId,
-                    processPurchaseOrderDto.Status);
-
-                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(
-                    processPurchaseOrderDto.PurchaseOrderId);
+                _logger.LogInformation("Processing purchase order. OrderId: {OrderId}, Status: {Status}", processPurchaseOrderDto.PurchaseOrderId, processPurchaseOrderDto.Status);
+                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(processPurchaseOrderDto.PurchaseOrderId);
 
                 if (purchaseOrder == null)
                 {
-                    _logger.LogWarning("Purchase order not found. OrderId: {OrderId}",
-                        processPurchaseOrderDto.PurchaseOrderId);
+                    _logger.LogWarning("Purchase order not found. OrderId: {OrderId}", processPurchaseOrderDto.PurchaseOrderId);
                     throw new InvalidOperationException("Purchase order not found.");
                 }
 
-                // Validate status transition
                 if (!IsValidStatusTransition(purchaseOrder.Status, processPurchaseOrderDto.Status))
                 {
-                    _logger.LogWarning("Invalid status transition from {CurrentStatus} to {NewStatus}",
-                        purchaseOrder.Status,
-                        processPurchaseOrderDto.Status);
+                    _logger.LogWarning("Invalid status transition from {CurrentStatus} to {NewStatus}", purchaseOrder.Status, processPurchaseOrderDto.Status);
                     throw new InvalidOperationException($"Invalid status transition from {purchaseOrder.Status} to {processPurchaseOrderDto.Status}");
                 }
 
-                // Update the existing entity using the mapper
                 purchaseOrder.UpdateFromProcessDto(processPurchaseOrderDto, currentUserId);
-
-                // Ensure all DateTime fields are UTC
                 purchaseOrder.EnsureAllDateTimesUtc();
-
-                // Save changes
                 var updateOrder = await _repository.UpdatePurchaseOrderAsync(purchaseOrder);
 
-                // If status is Approved or Verified, create sales order
-                if (string.Equals(updateOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(updateOrder.Status, "Verified", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(updateOrder.Status, "Approved", StringComparison.OrdinalIgnoreCase) || string.Equals(updateOrder.Status, "Verified", StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {
@@ -203,46 +165,30 @@ namespace BPM.Web.API.Service
 
                         if (salesOrderService != null)
                         {
-                            _logger.LogInformation("Creating sales order from purchase order. OrderId: {OrderId}",
-                                updateOrder.Id);
-
-                            await salesOrderService.CreateSalesOrderFromPurchaseOrderAsync(
-                                updateOrder.Id,
-                                updateOrder.ModifiedBy.Value);
-
-                            _logger.LogInformation("Sales order created successfully for Purchase Order: {PONumber}",
-                                updateOrder.PONumber);
+                            _logger.LogInformation("Creating sales order from purchase order. OrderId: {OrderId}", updateOrder.Id);
+                            await salesOrderService.CreateSalesOrderFromPurchaseOrderAsync(updateOrder.Id, updateOrder.ModifiedBy.Value);
+                            _logger.LogInformation("Sales order created successfully for Purchase Order: {PONumber}", updateOrder.PONumber);
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error creating sales order from purchase order. OrderId: {OrderId}",
-                            updateOrder.Id);
-                        // Optionally: You might want to rethrow or handle this differently
+                        _logger.LogError(ex, "Error creating sales order from purchase order. OrderId: {OrderId}", updateOrder.Id);
                         throw;
                     }
                 }
 
-                _logger.LogInformation("Purchase order processed successfully. OrderId: {OrderId}, Status: {Status}",
-                    updateOrder.Id,
-                    updateOrder.Status);
-
+                _logger.LogInformation("Purchase order processed successfully. OrderId: {OrderId}, Status: {Status}", updateOrder.Id, updateOrder.Status);
                 return updateOrder.ToDto();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while processing purchase order. OrderId: {OrderId}",
-                    processPurchaseOrderDto.PurchaseOrderId);
+                _logger.LogError(ex, "Error occurred while processing purchase order. OrderId: {OrderId}", processPurchaseOrderDto.PurchaseOrderId);
                 throw;
             }
         }
 
-        /// <summary>
-        /// Validates if the status transition is allowed
-        /// </summary>
         private bool IsValidStatusTransition(string currentStatus, string newStatus)
         {
-            // Define allowed status transitions
             var allowedTransitions = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase)
             {
                 { "Draft", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Submitted", "Cancelled" } },
@@ -268,13 +214,11 @@ namespace BPM.Web.API.Service
                 { "Cancelled", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Closed" } }
             };
 
-            // If no transitions defined for current status, return false
             if (!allowedTransitions.ContainsKey(currentStatus))
             {
                 return false;
             }
 
-            // Check if new status is in allowed transitions
             return allowedTransitions[currentStatus].Contains(newStatus);
         }
 
@@ -318,6 +262,234 @@ namespace BPM.Web.API.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while validating product availability for DrugId: {DrugId}, PackagingId: {PackagingId}", drugId, packagingId);
+                throw;
+            }
+        }
+
+        public async Task<PurchaseOrderResponseDto> SubmitPurchaseOrderAsync(SubmitPurchaseOrderDto dto, Guid currentUserId)
+        {
+            try
+            {
+                _logger.LogInformation("Submitting Purchase Order. OrderId: {OrderId}", dto.PurchaseOrderId);
+                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(dto.PurchaseOrderId);
+
+                if (purchaseOrder == null)
+                {
+                    _logger.LogWarning("Purchase Order not found. OrderId: {OrderId}", dto.PurchaseOrderId);
+                    throw new InvalidOperationException("Purchase Order not found.");
+                }
+
+                if (!string.Equals(purchaseOrder.Status, "Draft", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Purchase Order cannot be submitted because current status is {Status}. OrderId: {OrderId}", purchaseOrder.Status, purchaseOrder.Id);
+                    throw new InvalidOperationException($"Purchase Order can be submitted only from Draft status. Current status: {purchaseOrder.Status}");
+                }
+
+                if (purchaseOrder.PurchaseOrderItems == null || !purchaseOrder.PurchaseOrderItems.Any())
+                {
+                    throw new InvalidOperationException("Purchase Order must contain at least one item.");
+                }
+
+                if (purchaseOrder.PurchaseOrderItems.Any(x => x.Quantity <= 0))
+                {
+                    throw new InvalidOperationException("All Purchase Order item quantities must be greater than zero.");
+                }
+
+                if (purchaseOrder.TotalAmount <= 0)
+                {
+                    throw new InvalidOperationException("Purchase Order total amount must be greater than zero.");
+                }
+
+                if (purchaseOrder.ExpectedDeliveryDate < DateTime.UtcNow)
+                {
+                    throw new InvalidOperationException("Expected delivery date must be in the future.");
+                }
+
+                purchaseOrder.Status = "Submitted";
+                purchaseOrder.ModifiedBy = currentUserId;
+                purchaseOrder.ModifiedOn = DateTime.UtcNow;
+                purchaseOrder.EnsureAllDateTimesUtc();
+                var result = await _repository.SubmitPurchaseOrderAsync(purchaseOrder);
+                _logger.LogInformation("Purchase Order submitted successfully. OrderId: {OrderId}, PONumber: {PONumber}", result.Id, result.PONumber);
+                return result.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while submitting Purchase Order. OrderId: {OrderId}", dto.PurchaseOrderId);
+                throw;
+            }
+        }
+
+        public async Task<PurchaseOrderResponseDto> SavePurchaseOrderDraftAsync(SavePurchaseOrderDraftDto dto, Guid currentUserId)
+        {
+            try
+            {
+                _logger.LogInformation("Saving Purchase Order as Draft. OrderId: {OrderId}", dto.PurchaseOrderId);
+
+                PurchaseOrder purchaseOrder;
+
+                if (dto.PurchaseOrderId.HasValue)
+                {
+                    purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(dto.PurchaseOrderId.Value);
+
+                    if (purchaseOrder == null)
+                    {
+                        _logger.LogWarning("Purchase Order not found. OrderId: {OrderId}", dto.PurchaseOrderId);
+                        throw new InvalidOperationException("Purchase Order not found.");
+                    }
+
+                    if (!string.Equals(purchaseOrder.Status, "Draft", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new InvalidOperationException("Only Draft Purchase Orders can be updated.");
+                    }
+
+                    purchaseOrder.SupplierId = dto.SupplierId ?? purchaseOrder.SupplierId;
+                    purchaseOrder.DealerId = dto.DealerId ?? purchaseOrder.DealerId;
+                    purchaseOrder.ExpectedDeliveryDate = dto.ExpectedDeliveryDate?.EnsureUtc() ?? purchaseOrder.ExpectedDeliveryDate;
+                    purchaseOrder.PaymentTerms = dto.PaymentTerms ?? purchaseOrder.PaymentTerms;
+                    purchaseOrder.DeliveryTerms = dto.DeliveryTerms ?? purchaseOrder.DeliveryTerms;
+                    purchaseOrder.Remarks = dto.Remarks ?? purchaseOrder.Remarks;
+                    purchaseOrder.InternalNotes = dto.InternalNotes ?? purchaseOrder.InternalNotes;
+                    purchaseOrder.Status = "Draft";
+                    purchaseOrder.ModifiedBy = currentUserId;
+                    purchaseOrder.ModifiedOn = DateTime.UtcNow;
+                }
+                else
+                {
+                    if (!dto.DealerId.HasValue || dto.DealerId == Guid.Empty)
+                    {
+                        throw new InvalidOperationException("DealerId is required to save a Draft Purchase Order.");
+                    }
+                    var draftCount = await _repository.GetActiveDraftCountAsync(dto.DealerId.Value);
+                    if (draftCount >= 50)
+                    {
+                        _logger.LogWarning("Maximum draft limit reached for Dealer Id: {DealerId}", dto.DealerId);
+                        throw new InvalidOperationException("Maximum 50 active Draft Purchase Orders are allowed.");
+                    }
+                    purchaseOrder = new PurchaseOrder
+                    {
+                        PONumber = $"PO-{DateTime.UtcNow:yyyyMM}-{DateTime.UtcNow.Ticks.ToString()[^4..]}",
+                        OrderDate = DateTime.UtcNow,
+                        SupplierId = dto.SupplierId ?? Guid.Empty,
+                        DealerId = dto.DealerId ?? Guid.Empty,
+                        ExpectedDeliveryDate = dto.ExpectedDeliveryDate?.EnsureUtc() ?? DateTime.UtcNow.AddDays(7),
+                        PaymentTerms = dto.PaymentTerms,
+                        DeliveryTerms = dto.DeliveryTerms,
+                        Remarks = dto.Remarks,
+                        InternalNotes = dto.InternalNotes,
+                        Status = "Draft",
+                        CurrencyCode = "INR",
+                        IsActive = true,
+                        CreatedBy = currentUserId,
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedBy = currentUserId,
+                        ModifiedOn = DateTime.UtcNow
+                    };
+                }
+
+                var purchaseOrderItems = dto.Items.Select(x => x.ToEntity()).ToList();
+
+                foreach (var item in purchaseOrderItems)
+                {
+                    var subTotal = item.UnitPrice * item.Quantity;
+                    item.DiscountAmount = subTotal * item.DiscountPercentage / 100;
+                    var amountAfterDiscount = subTotal - item.DiscountAmount;
+                    item.TaxAmount = amountAfterDiscount * item.TaxRate / 100;
+                    item.TotalAmount = amountAfterDiscount + item.TaxAmount;
+                    item.PendingQuantity = item.Quantity;
+                    item.CreatedOn = DateTime.UtcNow;
+                }
+
+                purchaseOrder.SubTotal = purchaseOrderItems.Sum(x => x.UnitPrice * x.Quantity);
+                purchaseOrder.DiscountAmount = purchaseOrderItems.Sum(x => x.DiscountAmount);
+                purchaseOrder.TaxAmount = purchaseOrderItems.Sum(x => x.TaxAmount);
+                purchaseOrder.TotalAmount = purchaseOrderItems.Sum(x => x.TotalAmount);
+                purchaseOrder.EnsureAllDateTimesUtc();
+
+                var result = await _repository.SavePurchaseOrderDraftAsync(purchaseOrder, purchaseOrderItems);
+
+                _logger.LogInformation("Purchase Order saved as Draft successfully. OrderId: {OrderId}, PONumber: {PONumber}", result.Id, result.PONumber);
+
+                var dbPurchaseOrder = await _repository.GetPurchaseOrderByIdAsync(result.Id);
+                return dbPurchaseOrder.ToDto();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while saving Purchase Order as Draft. OrderId: {OrderId}", dto.PurchaseOrderId);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<PurchaseOrderResponseDto>> GetDraftPurchaseOrdersAsync(Guid dealerId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching draft purchase orders for Dealer Id: {DealerId}", dealerId);
+                var purchaseOrders = await _repository.GetDraftPurchaseOrdersAsync(dealerId);
+
+                if (!purchaseOrders.Any())
+                {
+                    _logger.LogWarning("No draft purchase orders found for Dealer Id: {DealerId}", dealerId);
+                    return Enumerable.Empty<PurchaseOrderResponseDto>();
+                }
+
+                return purchaseOrders.Select(po => po.ToDto()).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching draft purchase orders for Dealer Id: {DealerId}", dealerId);
+                throw;
+            }
+        }
+
+        public async Task<bool> DeletePurchaseOrderDraftAsync(Guid purchaseOrderId, Guid currentUserId)
+        {
+            try
+            {
+                _logger.LogInformation("Deleting Draft Purchase Order. OrderId: {OrderId}", purchaseOrderId);
+
+                var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(purchaseOrderId);
+
+                if (purchaseOrder == null)
+                {
+                    _logger.LogWarning("Draft Purchase Order not found. OrderId: {OrderId}", purchaseOrderId);
+                    throw new InvalidOperationException("Draft Purchase Order not found.");
+                }
+
+                if (!string.Equals(purchaseOrder.Status, "Draft", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning("Purchase Order is not a Draft. OrderId: {OrderId}", purchaseOrderId);
+                    throw new InvalidOperationException("Only Draft Purchase Orders can be deleted.");
+                }
+
+                purchaseOrder.ModifiedBy = currentUserId;
+                purchaseOrder.ModifiedOn = DateTime.UtcNow;
+
+                var result = await _repository.DeletePurchaseOrderDraftAsync(purchaseOrderId);
+
+                _logger.LogInformation("Draft Purchase Order deleted successfully. OrderId: {OrderId}", purchaseOrderId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting Draft Purchase Order. OrderId: {OrderId}", purchaseOrderId);
+                throw;
+            }
+        }
+
+        public async Task<int> DeleteExpiredDraftPurchaseOrdersAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Deleting Draft Purchase Orders older than 30 days.");
+                var deletedCount = await _repository.DeleteExpiredDraftPurchaseOrdersAsync();
+                _logger.LogInformation("Expired Draft Purchase Orders deleted. Count: {Count}", deletedCount);
+                return deletedCount;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting expired Draft Purchase Orders.");
                 throw;
             }
         }

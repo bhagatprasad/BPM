@@ -1,8 +1,6 @@
 <div class="main-content-container overflow-hidden">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
-    <h3 class="mb-0">
-      Shopping Cart
-    </h3>
+    <h3 class="mb-0">Shopping Cart</h3>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb align-items-center mb-0 lh-1">
         <li class="breadcrumb-item">
@@ -62,21 +60,28 @@
                     <div class="d-flex align-items-center">
                       <div class="flex-shrink-0">
                         <div *ngIf="item.imageUrl; else drugIcon" class="drug-image-wrapper">
-                          <img [src]="item.imageUrl" [alt]="item.drugName" class="rounded-circle"
-                            style="width: 50px; height: 50px; object-fit: cover;" />
+                          <img
+                            [src]="item.imageUrl"
+                            [alt]="item.drugName"
+                            class="rounded-circle"
+                            style="width: 50px; height: 50px; object-fit: cover"
+                          />
                         </div>
                         <ng-template #drugIcon>
                           <div
                             class="drug-icon-placeholder rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                            style="width: 50px; height: 50px; font-size: 20px; font-weight: 600;">
-                            {{ item.drugName?.charAt(0) || 'D' }}
+                            style="width: 50px; height: 50px; font-size: 20px; font-weight: 600"
+                          >
+                            {{ item.drugName.charAt(0) || 'D' }}
                           </div>
                         </ng-template>
                       </div>
                       <div class="flex-grow-1 ms-12">
                         <div class="fs-16 text-secondary fw-medium">{{ item.drugName }}</div>
                         <small class="text-muted d-block">{{ item.manufacturer }}</small>
-                        <small class="text-muted">{{ item.strength }} | {{ item.packageName }}</small>
+                        <small class="text-muted"
+                          >{{ item.strength }} | {{ item.packageName }}</small
+                        >
                       </div>
                     </div>
                   </td>
@@ -95,10 +100,14 @@
                   </td>
                   <td class="text-body">₹{{ item.packagePrice | number: '1.2-2' }}</td>
                   <td class="text-body text-start fw-semibold">
-                    ₹{{ ((item.packagePrice ?? 0) * item.quantity) | number: '1.2-2' }}
+                    ₹{{ (item.packagePrice ?? 0) * item.quantity | number: '1.2-2' }}
                   </td>
                   <td class="text-center">
-                    <button class="btn btn-sm btn-outline-danger" (click)="removeItem(item.drugId)" title="Remove">
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="removeItem(item.drugId)"
+                      title="Remove"
+                    >
                       <i class="ri-delete-bin-line"></i>
                     </button>
                   </td>
@@ -108,17 +117,32 @@
           </div>
 
           <!-- Coupon Code Section -->
-          <form class="p-20" style="max-width: 430px;" (ngSubmit)="applyCoupon()" *ngIf="cartItems.length > 0">
+          <form
+            class="p-20"
+            style="max-width: 430px"
+            (ngSubmit)="applyCoupon()"
+            *ngIf="cartItems.length > 0"
+          >
             <div class="d-flex align-items-center">
               <div class="flex-grow-1 me-3">
                 <div class="form-floating">
-                  <input class="form-control bg-light border-0" id="floatingInput1" placeholder="Coupon Code"
-                    type="text" [(ngModel)]="couponCode" name="couponCode">
+                  <input
+                    class="form-control bg-light border-0"
+                    id="floatingInput1"
+                    placeholder="Coupon Code"
+                    type="text"
+                    [(ngModel)]="couponCode"
+                    name="couponCode"
+                  />
                   <label for="floatingInput1">Coupon Code</label>
                 </div>
               </div>
               <div class="flex-shrink-0">
-                <button class="btn btn-primary text-white fw-normal" style="height: 58px;" type="submit">
+                <button
+                  class="btn btn-primary text-white fw-normal"
+                  style="height: 58px"
+                  type="submit"
+                >
                   Apply
                 </button>
               </div>
@@ -156,7 +180,9 @@
                 </tr>
                 <tr>
                   <td class="text-secondary fw-semibold">Grand Total :</td>
-                  <td class="text-body fw-bold text-primary">₹{{ grandTotal | number: '1.2-2' }}</td>
+                  <td class="text-body fw-bold text-primary">
+                    ₹{{ grandTotal | number: '1.2-2' }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -169,19 +195,34 @@
 
           <!-- Expected Delivery Date -->
           <div class="mb-3">
-            <label class="form-label fw-semibold">Expected Delivery Date <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold"
+              >Expected Delivery Date <span class="text-danger">*</span></label
+            >
             <div class="form-floating">
-              <input class="form-control" id="expectedDeliveryDate" type="datetime-local"
-                [(ngModel)]="orderDetails.expectedDeliveryDate" name="expectedDeliveryDate" [min]="minDate" />
+              <input
+                class="form-control"
+                id="expectedDeliveryDate"
+                type="datetime-local"
+                [(ngModel)]="orderDetails.expectedDeliveryDate"
+                name="expectedDeliveryDate"
+                [min]="minDate"
+              />
               <label for="expectedDeliveryDate">Select Date & Time</label>
             </div>
           </div>
 
           <!-- Payment Terms -->
           <div class="mb-3">
-            <label class="form-label fw-semibold">Payment Terms <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold"
+              >Payment Terms <span class="text-danger">*</span></label
+            >
             <div class="form-floating">
-              <select class="form-select" id="paymentTerms" [(ngModel)]="orderDetails.paymentTerms" name="paymentTerms">
+              <select
+                class="form-select"
+                id="paymentTerms"
+                [(ngModel)]="orderDetails.paymentTerms"
+                name="paymentTerms"
+              >
                 <option value="">Select Payment Terms</option>
                 <option value="Net 15">Net 15</option>
                 <option value="Net 30">Net 30</option>
@@ -199,8 +240,12 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">Delivery Terms</label>
             <div class="form-floating">
-              <select class="form-select" id="deliveryTerms" [(ngModel)]="orderDetails.deliveryTerms"
-                name="deliveryTerms">
+              <select
+                class="form-select"
+                id="deliveryTerms"
+                [(ngModel)]="orderDetails.deliveryTerms"
+                name="deliveryTerms"
+              >
                 <option value="">Select Delivery Terms</option>
                 <option value="Standard Delivery">Standard Delivery</option>
                 <option value="Express Delivery">Express Delivery</option>
@@ -217,8 +262,14 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">Internal Notes</label>
             <div class="form-floating">
-              <textarea class="form-control" id="internalNotes" placeholder="Internal notes..." style="height: 80px"
-                [(ngModel)]="orderDetails.internalNotes" name="internalNotes"></textarea>
+              <textarea
+                class="form-control"
+                id="internalNotes"
+                placeholder="Internal notes..."
+                style="height: 80px"
+                [(ngModel)]="orderDetails.internalNotes"
+                name="internalNotes"
+              ></textarea>
               <label for="internalNotes">Internal Notes (Optional)</label>
             </div>
           </div>
@@ -227,19 +278,31 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">Remarks</label>
             <div class="form-floating">
-              <textarea class="form-control" id="remarks" placeholder="Remarks..." style="height: 80px"
-                [(ngModel)]="orderDetails.remarks" name="remarks"></textarea>
+              <textarea
+                class="form-control"
+                id="remarks"
+                placeholder="Remarks..."
+                style="height: 80px"
+                [(ngModel)]="orderDetails.remarks"
+                name="remarks"
+              ></textarea>
               <label for="remarks">Remarks (Optional)</label>
             </div>
           </div>
 
           <!-- Place Order Button -->
-          <button class="btn btn-success w-100" (click)="placeOrder()"
-            [disabled]="cartItems.length === 0 || isPlacingOrder || !isOrderDetailsValid()">
+          <button
+            class="btn btn-success w-100"
+            (click)="placeOrder()"
+            [disabled]="cartItems.length === 0 || isPlacingOrder || !isOrderDetailsValid()"
+          >
             <i class="ri-shopping-cart-2-line me-2"></i>
             {{ isPlacingOrder ? 'Placing Order...' : 'Place Order' }}
           </button>
-          <small class="text-muted d-block text-center mt-2" *ngIf="!isOrderDetailsValid() && cartItems.length > 0">
+          <small
+            class="text-muted d-block text-center mt-2"
+            *ngIf="!isOrderDetailsValid() && cartItems.length > 0"
+          >
             Please fill in all required fields
           </small>
         </div>
