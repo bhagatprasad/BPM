@@ -133,6 +133,8 @@ builder.Services.AddScoped<ISupplierDiscountRepository, SupplierDiscountReposito
 builder.Services.AddScoped<IVolumeDiscountTierRepository, VolumeDiscountTierRepository>();
 builder.Services.AddScoped<IPromotionalOfferRepository, PromotionalOfferRepository>();
 builder.Services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
+builder.Services.AddScoped<IDistributorRepository, DistributorRepository>();
+
 
 // Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -161,6 +163,8 @@ builder.Services.AddScoped<ISupplierDiscountService, SupplierDiscountService>();
 builder.Services.AddScoped<IVolumeDiscountTierService, VolumeDiscountTierService>();
 builder.Services.AddScoped<IPromotionalOfferService, PromotionalOfferService>();
 builder.Services.AddScoped<IDiscountCodeService, DiscountCodeService>();
+builder.Services.AddScoped<IDistributorService, DistributorService>();
+
 
 
 
