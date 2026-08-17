@@ -77,6 +77,13 @@ export class CartService {
       this.cartCountSubject.next(this.getCartCount());
     }
   }
+  loadDraftItems(items: CartItem[]): void {
+    this.cartItems = [...items];
+
+    localStorage.setItem(this.CART_KEY, JSON.stringify(this.cartItems));
+
+    this.cartCountSubject.next(this.getCartCount());
+  }
   clearCart(): void {
     this.cartItems = [];
     localStorage.removeItem(this.CART_KEY);

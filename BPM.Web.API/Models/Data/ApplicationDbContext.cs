@@ -46,6 +46,7 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Distributor> distributors { get; set; }
 
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

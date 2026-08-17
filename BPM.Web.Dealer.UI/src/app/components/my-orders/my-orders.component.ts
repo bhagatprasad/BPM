@@ -1,31 +1,45 @@
-import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef, AfterViewInit, OnDestroy, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  AfterViewInit,
+  OnDestroy,
+  Renderer2,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PurchaseOrderService } from '@app/services/purchase-order.service';
+import { CartService } from '@app/services/cart.service';
+import { CartItem } from '@app/models/cart-item';
 import { Router } from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, DatePipe, DecimalPipe, FormsModule],
+  imports: [CommonModule, DecimalPipe, FormsModule],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
 })
 export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('processOrderModal') modalElementRef!: ElementRef;
-  
+
+  draftOrders: any[] = [];
+  isLoadingDrafts = false;
+
   orders: any[] = [];
   expandedOrderId: string | null = null;
   selectedOrders: string[] = [];
   isAllSelected = false;
   searchText = '';
-  
+
   // Pagination
   currentPage = 1;
   pageSize = 10;
   totalPages = 1;
-  
+
   // Modal properties
   modalOrder: any = null;
   modalAction: string = '';
@@ -35,16 +49,16 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Color palette for alternating rows
   rowColors = [
-    '#f8f9fa',  // Light gray
-    '#ffffff',  // White
-    '#f0f4f8',  // Light blue
-    '#fafafa',  // Off white
-    '#f5f5f5',  // Light gray
-    '#faf3e8',  // Cream
-    '#f0f0f0',  // Gray
-    '#f8f0f0',  // Light pink
-    '#f0f8f0',  // Light green
-    '#f0f0f8'   // Light purple
+    '#f8f9fa', // Light gray
+    '#ffffff', // White
+    '#f0f4f8', // Light blue
+    '#fafafa', // Off white
+    '#f5f5f5', // Light gray
+    '#faf3e8', // Cream
+    '#f0f0f0', // Gray
+    '#f8f0f0', // Light pink
+    '#f0f8f0', // Light green
+    '#f0f0f8', // Light purple
   ];
 
   // PO Status Constants
@@ -75,19 +89,21 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     PAYMENT_FAILED: 'Payment Failed',
     PAYMENT_OVERDUE: 'Payment Overdue',
     COMPLETED: 'Completed',
-    CLOSED: 'Closed'
+    CLOSED: 'Closed',
   };
 
   constructor(
     private purchaseOrderService: PurchaseOrderService,
+    private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private toaster: ToastrService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
   ) {}
 
   ngOnInit(): void {
     this.loadOrders();
+    this.loadDraftOrders();
   }
 
   ngAfterViewInit(): void {
@@ -104,11 +120,11 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modalAction = action;
     this.processNotes = '';
     this.isModalOpen = true;
-    
+
     const displayName = order.supplierName || 'Supplier';
     const poNumber = order.poNumber || 'N/A';
     const totalAmount = order.totalAmount || 0;
-    
+
     if (action === 'Accept') {
       this.modalMessage = `
         Are you sure you want to accept this purchase order? <br/><br/>
@@ -124,9 +140,9 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         <strong>Total Amount:</strong> $${totalAmount.toFixed(2)}
       `;
     }
-    
+
     this.updateModalUI(action);
-    
+
     // Show modal using CSS class
     const modalElement = document.getElementById('processOrderModal');
     if (modalElement) {
@@ -134,7 +150,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderer.setStyle(modalElement, 'display', 'block');
       this.renderer.addClass(document.body, 'modal-open');
     }
-    
+
     this.cdr.detectChanges();
   }
 
@@ -143,7 +159,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modalOrder = null;
     this.modalAction = '';
     this.processNotes = '';
-    
+
     // Hide modal using CSS class
     const modalElement = document.getElementById('processOrderModal');
     if (modalElement) {
@@ -151,13 +167,13 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderer.setStyle(modalElement, 'display', 'none');
       this.renderer.removeClass(document.body, 'modal-open');
     }
-    
+
     // Remove any overlay
     const overlay = document.querySelector('.modal-overlay');
     if (overlay) {
       this.renderer.removeChild(document.body, overlay);
     }
-    
+
     this.cdr.detectChanges();
   }
 
@@ -169,7 +185,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     const title = document.getElementById('processOrderModalLabel');
     const subtitle = document.getElementById('modalSubtitle');
     const confirmBtn = document.getElementById('confirmProcessOrder');
-    
+
     if (action === 'Accept') {
       if (header) {
         header.style.borderBottomColor = '#28a745';
@@ -222,21 +238,25 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.closeModal();
       return;
     }
-    
+
     const orderId = this.modalOrder.id || this.modalOrder.poNumber;
-    const status = this.modalAction === 'Accept' ? this.PO_STATUS.VERIFIED : this.PO_STATUS.REJECTED;
-    
+    const status =
+      this.modalAction === 'Accept' ? this.PO_STATUS.VERIFIED : this.PO_STATUS.REJECTED;
+
     const processDto = {
       PurchaseOrderId: orderId,
       Status: status,
-      Notes: this.processNotes || ''
+      Notes: this.processNotes || '',
     };
-    
+
     this.toaster.info('Processing order...', 'Info');
-    
-    this.purchaseOrderService.createPurchaseOrder(processDto).subscribe({
+
+    this.purchaseOrderService.processPurchaseOrder(processDto).subscribe({
       next: (response) => {
-        this.toaster.success(`Order ${this.modalOrder.poNumber} has been ${this.modalAction === 'Accept' ? 'accepted' : 'rejected'} successfully!`, 'Success');
+        this.toaster.success(
+          `Order ${this.modalOrder.poNumber} has been ${this.modalAction === 'Accept' ? 'accepted' : 'rejected'} successfully!`,
+          'Success',
+        );
         this.closeModal();
         this.loadOrders();
       },
@@ -245,7 +265,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         const errorMessage = err.error?.message || 'Failed to process order. Please try again.';
         this.toaster.error(errorMessage, 'Error');
         this.closeModal();
-      }
+      },
     });
   }
 
@@ -253,7 +273,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   loadOrders(): void {
     const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
     const dealerId = auth.authenticateResponseDto.dealerId;
-    
+
     this.purchaseOrderService.getOrdersByDealer(dealerId).subscribe({
       next: (res) => {
         console.log('Orders loaded:', res);
@@ -270,7 +290,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mapOrders(orders: any[]): any[] {
-    return orders.map(order => ({
+    return orders.map((order) => ({
       ...order,
       poNumber: order.poNumber || order.id || 'N/A',
       supplierName: order.supplierName || order.dealer?.dealershipName || 'Supplier',
@@ -287,7 +307,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       deliveryTerms: order.deliveryTerms || '',
       paymentTerms: order.paymentTerms || '',
       remarks: order.remarks || '',
-      purchaseOrderItemResponse: order.purchaseOrderItemResponse || []
+      purchaseOrderItemResponse: order.purchaseOrderItemResponse || [],
     }));
   }
 
@@ -296,13 +316,14 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.orders;
     }
     const search = this.searchText.toLowerCase();
-    return this.orders.filter(order =>
-      order.poNumber?.toLowerCase().includes(search) ||
-      order.supplierName?.toLowerCase().includes(search) ||
-      order.status?.toLowerCase().includes(search) ||
-      order.deliveryTerms?.toLowerCase().includes(search) ||
-      order.paymentTerms?.toLowerCase().includes(search) ||
-      order.remarks?.toLowerCase().includes(search)
+    return this.orders.filter(
+      (order) =>
+        order.poNumber?.toLowerCase().includes(search) ||
+        order.supplierName?.toLowerCase().includes(search) ||
+        order.status?.toLowerCase().includes(search) ||
+        order.deliveryTerms?.toLowerCase().includes(search) ||
+        order.paymentTerms?.toLowerCase().includes(search) ||
+        order.remarks?.toLowerCase().includes(search),
     );
   }
 
@@ -328,11 +349,11 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     const maxPages = 5;
     let start = Math.max(1, this.currentPage - Math.floor(maxPages / 2));
     let end = Math.min(this.totalPages, start + maxPages - 1);
-    
+
     if (end - start < maxPages - 1) {
       start = Math.max(1, end - maxPages + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
@@ -381,14 +402,14 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAllSelected = event.target.checked;
     const currentPageOrders = this.paginatedOrders();
     if (this.isAllSelected) {
-      currentPageOrders.forEach(order => {
+      currentPageOrders.forEach((order) => {
         if (!this.selectedOrders.includes(order.poNumber)) {
           this.selectedOrders.push(order.poNumber);
         }
       });
     } else {
-      currentPageOrders.forEach(order => {
-        this.selectedOrders = this.selectedOrders.filter(id => id !== order.poNumber);
+      currentPageOrders.forEach((order) => {
+        this.selectedOrders = this.selectedOrders.filter((id) => id !== order.poNumber);
       });
     }
   }
@@ -399,12 +420,15 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedOrders.push(poNumber);
       }
     } else {
-      this.selectedOrders = this.selectedOrders.filter(id => id !== poNumber);
+      this.selectedOrders = this.selectedOrders.filter((id) => id !== poNumber);
     }
-    
+
     const currentPageOrders = this.paginatedOrders();
-    const selectedOnPage = currentPageOrders.filter(o => this.selectedOrders.includes(o.poNumber));
-    this.isAllSelected = selectedOnPage.length === currentPageOrders.length && currentPageOrders.length > 0;
+    const selectedOnPage = currentPageOrders.filter((o) =>
+      this.selectedOrders.includes(o.poNumber),
+    );
+    this.isAllSelected =
+      selectedOnPage.length === currentPageOrders.length && currentPageOrders.length > 0;
   }
 
   getRowColor(index: number): string {
@@ -415,34 +439,38 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getStatusBadge(status: string): string {
     const statusMap: any = {
-      'Draft': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
-      'Submitted': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+      Draft: { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+      Submitted: { text: 'text-info', bg: 'bg-info', border: 'border-info' },
       'Pending Verification': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
-      'Verified': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Verified: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
       'Pending Approval': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
-      'Approved': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
-      'Accepted': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
-      'Confirmed': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
-      'Completed': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
-      'Shipped': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
-      'Processing': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
-      'Pending': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
-      'Rejected': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
-      'Cancelled': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
-      'Dispatched': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
-      'Delivered': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Approved: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Accepted: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Confirmed: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Completed: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Shipped: { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
+      Processing: { text: 'text-info', bg: 'bg-info', border: 'border-info' },
+      Pending: { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
+      Rejected: { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+      Cancelled: { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
+      Dispatched: { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
+      Delivered: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
       'In Transit': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
       'Ready for Dispatch': { text: 'text-primary', bg: 'bg-primary', border: 'border-primary' },
       'Bill Generated': { text: 'text-info', bg: 'bg-info', border: 'border-info' },
       'Payment Pending': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
       'Partially Paid': { text: 'text-warning', bg: 'bg-warning', border: 'border-warning' },
-      'Paid': { text: 'text-success', bg: 'bg-success', border: 'border-success' },
+      Paid: { text: 'text-success', bg: 'bg-success', border: 'border-success' },
       'Payment Failed': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
       'Payment Overdue': { text: 'text-danger', bg: 'bg-danger', border: 'border-danger' },
-      'Closed': { text: 'text-secondary', bg: 'bg-secondary', border: 'border-secondary' }
+      Closed: { text: 'text-secondary', bg: 'bg-secondary', border: 'border-secondary' },
     };
 
-    const style = statusMap[status] || { text: 'text-secondary', bg: 'bg-secondary', border: 'border-secondary' };
+    const style = statusMap[status] || {
+      text: 'text-secondary',
+      bg: 'bg-secondary',
+      border: 'border-secondary',
+    };
     return `<span class="${style.text} ${style.bg} bg-opacity-10 fs-15 fw-normal d-inline-block default-badge style-two border ${style.border}">${this.escapeHtml(status)}</span>`;
   }
 
@@ -471,7 +499,7 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   initTooltips(): void {
     setTimeout(() => {
       const tooltipElements = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      tooltipElements.forEach(el => {
+      tooltipElements.forEach((el) => {
         const tooltip = (window as any).bootstrap?.Tooltip?.getInstance(el);
         if (tooltip) {
           tooltip.dispose();
@@ -496,5 +524,91 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   addNewOrder(): void {
     this.toaster.info('Redirecting to Drugs Catalog...', 'Info');
     this.router.navigate(['/drugs']);
+  }
+
+  loadDraftOrders(): void {
+    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
+
+    const dealerId = auth.authenticateResponseDto.dealerId;
+
+    this.isLoadingDrafts = true;
+
+    this.purchaseOrderService.getDraftPurchaseOrders(dealerId).subscribe({
+      next: (response) => {
+        this.draftOrders = response || [];
+        this.isLoadingDrafts = false;
+
+        console.log('Draft orders loaded:', this.draftOrders);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading draft orders:', error);
+        this.draftOrders = [];
+        this.isLoadingDrafts = false;
+      },
+    });
+  }
+  resumeDraft(draft: any): void {
+    if (!draft || !draft.id) {
+      this.toaster.error('Invalid draft purchase order.', 'Error');
+      return;
+    }
+
+    const items = draft.purchaseOrderItemResponse || [];
+
+    if (items.length === 0) {
+      this.toaster.warning(
+        'This draft has no products. Please add products before continuing.',
+        'Draft',
+      );
+    }
+
+    const cartItems: CartItem[] = items.map((item: any) => ({
+      drugId: item.drugId,
+      drugCode: item.drugCode,
+      drugName: item.drugName,
+      packageName: item.packageName || '',
+      packagePrice: item.unitPrice,
+      packagingId: item.packagingId,
+      quantity: item.quantity,
+      imageUrl: item.imageUrl || '',
+      genericName: item.genericName || '',
+      manufacturer: item.manufacturer || '',
+      brandName: item.brandName || '',
+      category: item.category || '',
+      packing: item.packing || '',
+      strength: item.strength || '',
+      displayName: item.displayName || '',
+    }));
+
+    this.cartService.loadDraftItems(cartItems);
+
+    this.toaster.info(`Resuming ${draft.poNumber}`, 'Draft');
+
+    this.router.navigate(['/cart'], {
+      queryParams: {
+        draftId: draft.id,
+      },
+    });
+  }
+  deleteDraft(draftId: string): void {
+    const confirmed = window.confirm('Are you sure you want to delete this draft purchase order?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.purchaseOrderService.deletePurchaseOrderDraft(draftId).subscribe({
+      next: () => {
+        this.toaster.success('Draft purchase order deleted successfully.', 'Success');
+
+        this.loadDraftOrders();
+      },
+      error: (error) => {
+        console.error('Error deleting draft:', error);
+
+        this.toaster.error('Failed to delete draft purchase order.', 'Error');
+      },
+    });
   }
 }

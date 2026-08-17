@@ -35,6 +35,7 @@
         public Guid? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public DealerDto? Dealer { get; set; }
+        public bool IsOlderThan7Days { get; set; }
         public List<PurchaseOrderItemResponseDto> PurchaseOrderItemResponse { get; set; }
     }
 }
