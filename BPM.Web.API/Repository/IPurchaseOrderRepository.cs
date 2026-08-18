@@ -17,5 +17,6 @@ namespace BPM.Web.API.Repository
         Task<bool> DeletePurchaseOrderDraftAsync(Guid purchaseOrderId);
         Task<int> GetActiveDraftCountAsync(Guid dealerId);
         Task<int> DeleteExpiredDraftPurchaseOrdersAsync();
+        Task<decimal> GetCurrentDiscountPercentageAsync(Guid supplierId, Guid drugId, Guid packagingId, int quantity);
     }
 }

@@ -611,4 +611,35 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     });
   }
+
+  // Opens confirmation before submitting the purchase order.
+  showSubmitModal(order: any): void {
+    const confirmed = window.confirm(
+      `Are you sure you want to submit ${order.poNumber} for approval?`,
+    );
+    if (!confirmed) {
+      return;
+    }
+    this.submitPurchaseOrder(order);
+  }
+
+  // Submits the purchase order for approval.
+  submitPurchaseOrder(order: any): void {
+    const request = { purchaseOrderId: order.id };
+    this.toaster.info('Submitting purchase order...', 'Please wait');
+    this.purchaseOrderService.submitPurchaseOrder(request).subscribe({
+      next: (response) => {
+        this.toaster.success(
+          `Purchase Order ${response.poNumber} submitted for approval`,
+          'Success',
+        );
+        this.loadOrders();
+        this.loadDraftOrders();
+      },
+      error: (error) => {
+        const message = error?.error?.message || 'Failed to submit purchase order';
+        this.toaster.error(message, 'Error');
+      },
+    });
+  }
 }

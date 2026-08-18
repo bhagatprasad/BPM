@@ -1,6 +1,7 @@
 ﻿using BPM.Web.API.CustomFilters;
 using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.DTOs.PurchaseOrder;
+using BPM.Web.API.Service;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -223,6 +224,34 @@ namespace BPM.Web.API.Controllers
             {
                 _logger.LogError(ex, "Error occurred while deleting Draft Purchase Order with Id: {Id}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while deleting the Draft Purchase Order." });
+            }
+        }
+
+        [HttpPost("copy-purchase-order/{purchaseOrderId}")]
+        public async Task<IActionResult> CopyPurchaseOrder(Guid purchaseOrderId)
+        {
+            try
+            {
+                _logger.LogInformation("Copying Purchase Order with Id: {Id}", purchaseOrderId);
+                var currentUserId = UserId.Value;
+                var result = await _service.CopyPurchaseOrderAsync(purchaseOrderId, currentUserId);
+                _logger.LogInformation("Purchase Order copied successfully with Id: {Id}", purchaseOrderId);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid purchase order copy request.");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Purchase Order copy validation failed.");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while copying purchase order.");
+                return StatusCode(500, new { message = "An internal server error occurred." });
             }
         }
     }

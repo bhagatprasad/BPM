@@ -39,6 +39,15 @@ export class PurchaseOrderService {
     );
   }
 
+  // Submits a draft purchase order for approval.
+  submitPurchaseOrder(request: any): Observable<any> {
+    return this.apiService.send<any>(
+      'POST',
+      environment.UrlConstants.PurchaseOrder.SubmitPurchaseOrder,
+      request,
+    );
+  }
+
   // Fetches all purchase orders for a specific dealer
   getOrdersByDealer(dealerId: string): Observable<any> {
     return this.apiService.send<any>(

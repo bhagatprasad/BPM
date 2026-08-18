@@ -203,6 +203,57 @@ export class CartComponent implements OnInit, OnDestroy {
 
     this.isPlacingOrder = true;
 
+    console.log('DRAFT ID BEFORE PLACE ORDER:', this.draftPurchaseOrderId);
+    // If this is a resumed draft, submit the existing draft
+    if (this.draftPurchaseOrderId) {
+      const request = {
+        purchaseOrderId: this.draftPurchaseOrderId,
+      };
+
+      this.toasterService.info('Submitting purchase order...', 'Please wait');
+
+      this.purchaseOrderService.submitPurchaseOrder(request).subscribe({
+        next: (response) => {
+          console.log('Draft submitted successfully:', response);
+
+          if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+            this.autoSaveInterval = null;
+          }
+
+          this.isPlacingOrder = false;
+
+          this.toasterService.success(
+            `Purchase Order ${response.poNumber || ''} submitted successfully`,
+            'Success',
+          );
+
+          this.cartService.clearCart();
+          this.cartItems = [];
+
+          this.cdr.detectChanges();
+
+          this.router.navigateByUrl('/my-orders');
+        },
+
+        error: (error) => {
+          console.error('Error submitting draft:', error);
+
+          this.isPlacingOrder = false;
+
+          const message = error?.error?.message || 'Failed to submit purchase order';
+
+          this.toasterService.error(message, 'Error');
+        },
+      });
+
+      return;
+    }
+
+    // =========================
+    // NEW PURCHASE ORDER
+    // =========================
+
     const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
 
     const deliveryDate = new Date(this.orderDetails.expectedDeliveryDate);
@@ -235,7 +286,6 @@ export class CartComponent implements OnInit, OnDestroy {
       next: (response) => {
         console.log('Order created:', response);
 
-        // Stop auto-save after successful submission
         if (this.autoSaveInterval) {
           clearInterval(this.autoSaveInterval);
           this.autoSaveInterval = null;

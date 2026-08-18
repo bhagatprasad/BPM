@@ -5,6 +5,7 @@ using BPM.Web.API.RabbitMQ;
 using BPM.Web.API.RabbitMQ.Publisher;
 using BPM.Web.API.RabbitMQ.Subscriber;
 using BPM.Web.API.Repositories;
+using BPM.Web.API.Repositories.Interfaces;
 using BPM.Web.API.Repository;
 using BPM.Web.API.Service;
 using BPM.Web.API.Services;
@@ -134,6 +135,7 @@ builder.Services.AddScoped<IVolumeDiscountTierRepository, VolumeDiscountTierRepo
 builder.Services.AddScoped<IPromotionalOfferRepository, PromotionalOfferRepository>();
 builder.Services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
 builder.Services.AddScoped<IDistributorRepository, DistributorRepository>();
+builder.Services.AddScoped<IPurchaseOrderApprovalRepository, PurchaseOrderApprovalRepository>();
 
 
 // Services

@@ -81,7 +81,10 @@ namespace BPM.Web.API.Models.Entities
         
         [ForeignKey(nameof(DrugId))]
         public virtual Drug? Drug { get; set; }
-       
-     
+
+        [ForeignKey(nameof(PackagingId))]
+        public virtual DrugPackaging? DrugPackaging { get; set; }
+
+
     }
 }

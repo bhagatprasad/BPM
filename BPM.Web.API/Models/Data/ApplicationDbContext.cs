@@ -44,6 +44,7 @@ namespace BPM.Web.API.Models.Data
         public DbSet<PromotionalOffer> PromotionalOffers { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
         public DbSet<Distributor> distributors { get; set; }
+        public DbSet<PurchaseOrderApproval> PurchaseOrderApprovals { get; set; }
 
 
 
