@@ -15,7 +15,6 @@ namespace BPM.Web.API.Services
         Task<IEnumerable<PurchaseOrderResponseDto>> GetDraftPurchaseOrdersAsync(Guid dealerId);
         Task<bool> DeletePurchaseOrderDraftAsync(Guid purchaseOrderId, Guid currentUserId);
         Task<int> DeleteExpiredDraftPurchaseOrdersAsync();
-
-
+        Task<PurchaseOrderResponseDto> CopyPurchaseOrderAsync(Guid purchaseOrderId, Guid currentUserId);
     }
 }

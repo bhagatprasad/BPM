@@ -44,6 +44,8 @@ namespace BPM.Web.API.Repository
                 .Include(po => po.Dealer)
                 .Include(po => po.PurchaseOrderItems)
                 .ThenInclude(item => item.Drug)
+                .Include(po=>po.PurchaseOrderItems)
+                .ThenInclude(item=>item.DrugPackaging)
                 .FirstOrDefaultAsync(po => po.Id == id && po.IsActive);
         }
 
@@ -181,6 +183,39 @@ namespace BPM.Web.API.Repository
 
             await _dbContext.SaveChangesAsync();
             return expiredDrafts.Count;
+        }
+
+        public async Task<decimal> GetCurrentDiscountPercentageAsync(Guid supplierId, Guid drugId, Guid packagingId, int quantity)
+        {
+            // Get the current UTC date and time for validity checks.
+            var now = DateTime.UtcNow;
+
+            // Get the current supplier discount.
+            var supplierDiscount = await _dbContext.SupplierDiscounts
+                .AsNoTracking()
+                .Where(x => x.SupplierId == supplierId && x.IsActive && x.ValidFrom <= now && (!x.ValidTo.HasValue || x.ValidTo >= now))
+                .OrderByDescending(x => x.DiscountPercentage)
+                .Select(x => (decimal?)x.DiscountPercentage)
+                .FirstOrDefaultAsync() ?? 0;
+
+            // Get the applicable volume discount for the requested quantity.
+            var volumeDiscount = await _dbContext.VolumeDiscountTiers
+                .AsNoTracking()
+                .Where(x => x.SupplierId == supplierId && x.IsActive && x.MinQuantity <= quantity && (!x.MaxQuantity.HasValue || x.MaxQuantity >= quantity))
+                .OrderByDescending(x => x.DiscountPercentage)
+                .Select(x => (decimal?)x.DiscountPercentage)
+                .FirstOrDefaultAsync() ?? 0;
+
+            // Get the current promotional offer applicable to the drug and packaging.
+            var promotionalDiscount = await _dbContext.PromotionalOffers
+                .AsNoTracking()
+                .Where(x => x.SupplierId == supplierId && x.IsActive && x.StartDate <= now && x.ExpiryDate >= now && (!x.DrugId.HasValue || x.DrugId == drugId) && (!x.PackagingId.HasValue || x.PackagingId == packagingId))
+                .OrderByDescending(x => x.DiscountPercentage)
+                .Select(x => (decimal?)x.DiscountPercentage)
+                .FirstOrDefaultAsync() ?? 0;
+
+            // Select the highest currently applicable discount.
+            return Math.Max(supplierDiscount, Math.Max(volumeDiscount, promotionalDiscount));
         }
     }
 }

@@ -1,8 +1,6 @@
 <div class="main-content-container overflow-hidden">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
-    <h3 class="mb-0">
-      Purchase Orders
-    </h3>
+    <h3 class="mb-0">Purchase Orders</h3>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb align-items-center mb-0 lh-1">
         <li class="breadcrumb-item">
@@ -22,103 +20,91 @@
   </div>
 
   <!-- Draft Purchase Orders -->
-<div class="card bg-white rounded-10 border border-white mb-4" *ngIf="draftOrders.length > 0">
+  <div class="card bg-white rounded-10 border border-white mb-4" *ngIf="draftOrders.length > 0">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+      <div>
+        <h3 class="mb-1">Draft Purchase Orders</h3>
+        <span class="text-muted">
+          {{ draftOrders.length }} draft{{ draftOrders.length > 1 ? 's' : '' }}
+        </span>
+      </div>
 
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
-    <div>
-      <h3 class="mb-1">Draft Purchase Orders</h3>
-      <span class="text-muted">
-        {{ draftOrders.length }} draft{{ draftOrders.length > 1 ? 's' : '' }}
-      </span>
+      <span class="badge bg-warning text-dark"> Drafts </span>
     </div>
 
-    <span class="badge bg-warning text-dark">
-      Drafts
-    </span>
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>PO Number</th>
+            <th>Supplier</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let draft of draftOrders">
+            <td>
+              <span class="fw-semibold">
+                {{ draft.poNumber }}
+              </span>
+            </td>
+
+            <td>
+              {{ draft.supplierName || 'N/A' }}
+            </td>
+
+            <td>
+              {{ draft.purchaseOrderItemResponse?.length || 0 }}
+            </td>
+
+            <td>₹{{ draft.totalAmount || 0 | number: '1.2-2' }}</td>
+
+            <td>
+              {{ formatDate(draft.orderDate) }}
+            </td>
+
+            <td>
+              <span class="badge bg-warning text-dark"> Draft </span>
+
+              <span *ngIf="draft.isOlderThan7Days" class="badge bg-danger ms-1">
+                Older than 7 days
+              </span>
+            </td>
+
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-primary" (click)="resumeDraft(draft)">
+                  <i class="ri-edit-line me-1"></i>
+                  Resume
+                </button>
+
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteDraft(draft.id)">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-
-  <div class="table-responsive">
-    <table class="table align-middle mb-0">
-      <thead>
-        <tr>
-          <th>PO Number</th>
-          <th>Supplier</th>
-          <th>Items</th>
-          <th>Total</th>
-          <th>Created</th>
-          <th>Status</th>
-          <th class="text-end">Action</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let draft of draftOrders">
-
-          <td>
-            <span class="fw-semibold">
-              {{ draft.poNumber }}
-            </span>
-          </td>
-
-          <td>
-            {{ draft.supplierName || 'N/A' }}
-          </td>
-
-          <td>
-            {{ draft.purchaseOrderItemResponse?.length || 0 }}
-          </td>
-
-          <td>
-            ₹{{ draft.totalAmount || 0 | number:'1.2-2' }}
-          </td>
-
-          <td>
-            {{ formatDate(draft.orderDate) }}
-          </td>
-
-          <td>
-            <span class="badge bg-warning text-dark">
-              Draft
-            </span>
-
-            <span
-              *ngIf="draft.isOlderThan7Days"
-              class="badge bg-danger ms-1">
-              Older than 7 days
-            </span>
-          </td>
-
-          <td class="text-end">
-            <div class="d-flex justify-content-end gap-2">
-
-              <button
-                class="btn btn-sm btn-primary"
-                (click)="resumeDraft(draft)">
-                <i class="ri-edit-line me-1"></i>
-                Resume
-              </button>
-
-              <button
-                class="btn btn-sm btn-outline-danger"
-                (click)="deleteDraft(draft.id)">
-                <i class="ri-delete-bin-line"></i>
-              </button>
-
-            </div>
-          </td>
-
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
 
   <div class="card bg-white rounded-10 border border-white mb-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
       <form class="table-src-form position-relative m-0" onsubmit="return false;">
-        <input class="form-control w-350" placeholder="Search purchase order..." type="text" [(ngModel)]="searchText"
-          (ngModelChange)="onSearch()" name="searchInput" />
+        <input
+          class="form-control w-350"
+          placeholder="Search purchase order..."
+          type="text"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()"
+          name="searchInput"
+        />
       </form>
       <div class="d-flex align-items-center gap-2">
         <span class="fs-15 text-muted">
@@ -135,10 +121,15 @@
         <table class="table align-middle w-100" id="purchaseOrderTable">
           <thead>
             <tr>
-              <th class="fw-medium" scope="col" style="width: 50px;">
+              <th class="fw-medium" scope="col" style="width: 50px">
                 <div class="form-check">
-                  <input class="form-check-input" id="checkAll" type="checkbox" [checked]="isAllSelected"
-                    (change)="toggleAll($event)" />
+                  <input
+                    class="form-check-input"
+                    id="checkAll"
+                    type="checkbox"
+                    [checked]="isAllSelected"
+                    (change)="toggleAll($event)"
+                  />
                 </div>
               </th>
               <th class="fw-medium" scope="col">Order ID</th>
@@ -149,26 +140,50 @@
               <th class="fw-medium" scope="col">Total</th>
               <th class="fw-medium" scope="col">Date</th>
               <th class="fw-medium" scope="col">Status</th>
-              <th class="fw-medium" scope="col" style="width: 120px;">Action</th>
+              <th class="fw-medium" scope="col" style="width: 120px">Action</th>
             </tr>
           </thead>
           <tbody id="orderTableBody">
             <ng-container *ngFor="let order of paginatedOrders(); let i = index">
-              <tr [attr.data-order-id]="order.poNumber" [attr.data-expanded]="expandedOrderId === order.poNumber"
-                [style.background-color]="getRowColor(i)" data-bs-toggle="tooltip" data-bs-placement="top"
-                [attr.title]="order.remarks || 'No notes available'">
-                <td class="text-body" style="width: 80px;">
-                  <div class="d-flex align-items-center" style="gap: 6px;">
+              <tr
+                [attr.data-order-id]="order.poNumber"
+                [attr.data-expanded]="expandedOrderId === order.poNumber"
+                [style.background-color]="getRowColor(i)"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                [attr.title]="order.remarks || 'No notes available'"
+              >
+                <td class="text-body" style="width: 80px">
+                  <div class="d-flex align-items-center" style="gap: 6px">
                     <div class="form-check mb-0">
-                      <input class="form-check-input item-checkbox" type="checkbox"
+                      <input
+                        class="form-check-input item-checkbox"
+                        type="checkbox"
                         [checked]="selectedOrders.includes(order.poNumber)"
-                        (change)="toggleSelection(order.poNumber, $event)" />
+                        (change)="toggleSelection(order.poNumber, $event)"
+                      />
                     </div>
-                    <button class="bg-transparent p-0 border-0 expand-btn" (click)="toggleRow(order.poNumber)"
-                      data-bs-placement="top" data-bs-title="Expand/Collapse" data-bs-toggle="tooltip">
-                      <span class="expand-icon"
-                        style="font-size: 18px; font-weight: bold; color: #6c757d; cursor: pointer; transition: transform 0.3s;"
-                        [style.transform]="expandedOrderId === order.poNumber ? 'rotate(90deg)' : 'rotate(0deg)'">&#9654;</span>
+                    <button
+                      class="bg-transparent p-0 border-0 expand-btn"
+                      (click)="toggleRow(order.poNumber)"
+                      data-bs-placement="top"
+                      data-bs-title="Expand/Collapse"
+                      data-bs-toggle="tooltip"
+                    >
+                      <span
+                        class="expand-icon"
+                        style="
+                          font-size: 18px;
+                          font-weight: bold;
+                          color: #6c757d;
+                          cursor: pointer;
+                          transition: transform 0.3s;
+                        "
+                        [style.transform]="
+                          expandedOrderId === order.poNumber ? 'rotate(90deg)' : 'rotate(0deg)'
+                        "
+                        >&#9654;</span
+                      >
                     </button>
                   </div>
                 </td>
@@ -178,40 +193,81 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <span class="fs-16 fw-medium text-secondary">{{ order.supplierName }}</span>
-                    <span *ngIf="order.isDealer" class="badge bg-info ms-2" style="font-size: 10px;">Dealer</span>
+                    <span *ngIf="order.isDealer" class="badge bg-info ms-2" style="font-size: 10px"
+                      >Dealer</span
+                    >
                   </div>
                 </td>
                 <td class="text-body">{{ order.purchaseOrderItemResponse?.length || 0 }}</td>
-                <td class="text-body">${{ order.subTotal || 0 | number:'1.2-2' }}</td>
-                <td class="text-body">${{ order.taxAmount || 0 | number:'1.2-2' }}</td>
-                <td class="text-body">${{ order.totalAmount || 0 | number:'1.2-2' }}</td>
+                <td class="text-body">${{ order.subTotal || 0 | number: '1.2-2' }}</td>
+                <td class="text-body">${{ order.taxAmount || 0 | number: '1.2-2' }}</td>
+                <td class="text-body">${{ order.totalAmount || 0 | number: '1.2-2' }}</td>
                 <td class="text-body">{{ formatDate(order.orderDate) }}</td>
                 <td [innerHTML]="getStatusBadge(order.status)"></td>
                 <td>
-                  <div class="d-flex justify-content-end" style="gap: 6px;">
-                    <!-- Action buttons based on status -->
+                  <div class="d-flex justify-content-end" style="gap: 6px">
+                    <!-- Show Reject button for Submitted and Draft Purchase Orders. -->
                     <ng-container *ngIf="order.status === 'Submitted' || order.status === 'Draft'">
-
-                      <button class="btn btn-sm btn-outline-danger reject-btn"
-                        (click)="showProcessModal(order, 'Reject')" data-bs-placement="top" data-bs-title="Reject Order"
-                        data-bs-toggle="tooltip" style="padding: 4px 10px;">
+                      <button
+                        class="btn btn-sm btn-outline-danger reject-btn"
+                        (click)="showProcessModal(order, 'Reject')"
+                        data-bs-placement="top"
+                        data-bs-title="Reject Order"
+                        data-bs-toggle="tooltip"
+                        style="padding: 4px 10px"
+                      >
                         <i class="material-symbols-outlined fs-16">cancel</i>
                       </button>
+                    </ng-container>
+
+                    <!-- Show Submit button only for Draft Purchase Orders. -->
+                    <ng-container *ngIf="order.status === 'Draft'">
+                      <button
+                        class="btn btn-sm btn-success"
+                        (click)="showSubmitModal(order)"
+                        data-bs-placement="top"
+                        data-bs-title="Submit for Approval"
+                        data-bs-toggle="tooltip"
+                        style="padding: 4px 10px"
+                      >
+                        <i class="material-symbols-outlined fs-16 me-1">send</i>
+                        Submit
+                      </button>
+
+                      <button
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="deleteDraft(order.id)"
+                        data-bs-placement="top"
+                        data-bs-title="Delete Draft"
+                        data-bs-toggle="tooltip"
+                        style="padding: 4px 10px"
+                      >
+                        <i class="material-symbols-outlined fs-16">delete</i>
+                      </button>
+                    </ng-container>
+
+                    <!-- Show Submitted status after successful submission. -->
+                    <ng-container *ngIf="order.status === 'Submitted'">
+                      <span class="badge bg-info">Submitted</span>
                     </ng-container>
                   </div>
                 </td>
               </tr>
 
               <!-- Expanded Row -->
-              <tr *ngIf="expandedOrderId === order.poNumber" class="expanded-row" [attr.data-order-id]="order.poNumber"
-                [style.background-color]="getRowColor(i)">
+              <tr
+                *ngIf="expandedOrderId === order.poNumber"
+                class="expanded-row"
+                [attr.data-order-id]="order.poNumber"
+                [style.background-color]="getRowColor(i)"
+              >
                 <td colspan="10" class="p-0">
-                  <div class="p-20 bg-light rounded-3 mb-10"
-                    style="margin: 0 15px 15px 15px; background-color: #f8f9fa !important;">
+                  <div
+                    class="p-20 bg-light rounded-3 mb-10"
+                    style="margin: 0 15px 15px 15px; background-color: #f8f9fa !important"
+                  >
                     <div class="row mb-15">
-                      <div class="col-md-3">
-                        <strong>PO Number:</strong> {{ order.poNumber }}
-                      </div>
+                      <div class="col-md-3"><strong>PO Number:</strong> {{ order.poNumber }}</div>
                       <div class="col-md-3">
                         <strong>Supplier/Dealer:</strong> {{ order.supplierName }}
                       </div>
@@ -224,22 +280,35 @@
                     </div>
                     <div class="row mb-15">
                       <div class="col-md-3">
-                        <strong>Expected Delivery:</strong> {{ formatDate(order.expectedDeliveryDate) }}
+                        <strong>Expected Delivery:</strong>
+                        {{ formatDate(order.expectedDeliveryDate) }}
                       </div>
                       <div class="col-md-3">
                         <strong>Actual Delivery:</strong> {{ formatDate(order.actualDeliveryDate) }}
                       </div>
                       <div class="col-md-6" *ngIf="order.dealer">
-                        <strong>Dealer Details:</strong> {{ order.dealer.dealershipName }}
-                        ({{ order.dealer.contactPerson || 'N/A' }})
+                        <strong>Dealer Details:</strong> {{ order.dealer.dealershipName }} ({{
+                          order.dealer.contactPerson || 'N/A'
+                        }})
                       </div>
                     </div>
 
                     <!-- Notes -->
-                    <div *ngIf="order.remarks" class="mb-15 p-10"
-                      style="background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                      <strong><i class="material-symbols-outlined fs-18" style="vertical-align: middle;">notes</i>
-                        Notes:</strong>
+                    <div
+                      *ngIf="order.remarks"
+                      class="mb-15 p-10"
+                      style="
+                        background-color: #fff3cd;
+                        border-radius: 8px;
+                        border-left: 4px solid #ffc107;
+                      "
+                    >
+                      <strong
+                        ><i class="material-symbols-outlined fs-18" style="vertical-align: middle"
+                          >notes</i
+                        >
+                        Notes:</strong
+                      >
                       {{ order.remarks }}
                     </div>
 
@@ -266,14 +335,18 @@
                             <td>{{ detail.quantity || 0 }}</td>
                             <td>{{ detail.pendingQuantity || 0 }}</td>
                             <td>{{ detail.receivedQuantity || 0 }}</td>
-                            <td>${{ (detail.unitPrice || 0) | number:'1.2-2' }}</td>
-                            <td>${{ (detail.discountAmount || 0) | number:'1.2-2' }}
-                              ({{ detail.discountPercentage || 0 }}%)
+                            <td>${{ detail.unitPrice || 0 | number: '1.2-2' }}</td>
+                            <td>
+                              ${{ detail.discountAmount || 0 | number: '1.2-2' }} ({{
+                                detail.discountPercentage || 0
+                              }}%)
                             </td>
-                            <td>${{ (detail.taxAmount || 0) | number:'1.2-2' }}
-                              ({{ detail.taxRate || 0 }}%)
+                            <td>
+                              ${{ detail.taxAmount || 0 | number: '1.2-2' }} ({{
+                                detail.taxRate || 0
+                              }}%)
                             </td>
-                            <td>${{ (detail.totalAmount || 0) | number:'1.2-2' }}</td>
+                            <td>${{ detail.totalAmount || 0 | number: '1.2-2' }}</td>
                           </tr>
                           <tr *ngIf="!order.purchaseOrderItemResponse?.length">
                             <td colspan="9" class="text-center text-muted">No items found</td>
@@ -295,9 +368,12 @@
         </table>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+      <div
+        class="d-flex justify-content-between align-items-center flex-wrap gap-2 showing-wrap pt-15 p-20"
+      >
         <span class="fs-15" id="entriesInfo">
-          Showing {{ getStartEntry() }} to {{ getEndEntry() }} of {{ filteredOrders().length }} entries
+          Showing {{ getStartEntry() }} to {{ getEndEntry() }} of
+          {{ filteredOrders().length }} entries
         </span>
         <nav aria-label="Page navigation example" class="custom-pagination">
           <ul class="pagination mb-0 justify-content-center">
@@ -306,7 +382,11 @@
                 <i class="material-symbols-outlined">west</i>
               </button>
             </li>
-            <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+            <li
+              class="page-item"
+              *ngFor="let page of getPageNumbers()"
+              [class.active]="page === currentPage"
+            >
               <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
             </li>
             <li class="page-item" [class.disabled]="currentPage === totalPages">
@@ -322,17 +402,34 @@
 </div>
 
 <!-- Process Order Modal - Custom without Bootstrap JS -->
-<div id="processOrderModal" class="custom-modal" [class.show]="isModalOpen" style="display: none;">
+<div id="processOrderModal" class="custom-modal" [class.show]="isModalOpen" style="display: none">
   <div class="custom-modal-overlay" (click)="closeModal()"></div>
   <div class="custom-modal-dialog">
     <div class="custom-modal-content border-0 shadow-lg">
-      <div class="custom-modal-header" id="modalHeader"
-        style="border-bottom: 3px solid #28a745; background-color: #f0fff4;">
+      <div
+        class="custom-modal-header"
+        id="modalHeader"
+        style="border-bottom: 3px solid #28a745; background-color: #f0fff4"
+      >
         <div class="d-flex align-items-center gap-3">
-          <div id="modalIconContainer"
-            style="width: 48px; height: 48px; border-radius: 50%; background-color: #d4edda; display: flex; align-items: center; justify-content: center;">
-            <i class="material-symbols-outlined" id="modalIcon"
-              style="font-size: 28px; color: #28a745;">check_circle</i>
+          <div
+            id="modalIconContainer"
+            style="
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              background-color: #d4edda;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <i
+              class="material-symbols-outlined"
+              id="modalIcon"
+              style="font-size: 28px; color: #28a745"
+              >check_circle</i
+            >
           </div>
           <div>
             <h5 class="modal-title fw-bold" id="processOrderModalLabel">Process Order</h5>
@@ -342,20 +439,37 @@
         <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
       </div>
       <div class="custom-modal-body p-4">
-        <div id="processOrderMessage" class="p-3 rounded-3 mb-3"
-          style="background-color: #d4edda; border-left: 4px solid #28a745;" [innerHTML]="modalMessage"></div>
+        <div
+          id="processOrderMessage"
+          class="p-3 rounded-3 mb-3"
+          style="background-color: #d4edda; border-left: 4px solid #28a745"
+          [innerHTML]="modalMessage"
+        ></div>
         <div class="mb-3">
           <label for="processNotes" class="form-label fw-semibold">
-            <i class="material-symbols-outlined fs-18" style="vertical-align: middle;">notes</i> Notes
+            <i class="material-symbols-outlined fs-18" style="vertical-align: middle">notes</i>
+            Notes
           </label>
-          <textarea class="form-control" id="processNotes" rows="3" placeholder="Add any additional notes..."
-            [(ngModel)]="processNotes" name="processNotes"></textarea>
+          <textarea
+            class="form-control"
+            id="processNotes"
+            rows="3"
+            placeholder="Add any additional notes..."
+            [(ngModel)]="processNotes"
+            name="processNotes"
+          ></textarea>
         </div>
       </div>
       <div class="custom-modal-footer border-0 pt-0 px-4 pb-4">
         <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
-        <button type="button" class="btn" id="confirmProcessOrder" [class.btn-success]="modalAction === 'Accept'"
-          [class.btn-warning]="modalAction === 'Reject'" (click)="confirmProcessOrder()">
+        <button
+          type="button"
+          class="btn"
+          id="confirmProcessOrder"
+          [class.btn-success]="modalAction === 'Accept'"
+          [class.btn-warning]="modalAction === 'Reject'"
+          (click)="confirmProcessOrder()"
+        >
           <span>Cancel Order</span>
         </button>
       </div>
