@@ -74,7 +74,7 @@ namespace BPM.Web.Distributor.UI.Controllers
                 {
                     // Check if user has dealer or is Admin/Operator
                     var roleName = response.AuthenticateResponseDto?.RoleInfo?.Name;
-                    var dealerInfo = response.AuthenticateResponseDto?.DealerInfo;
+                    var distributorInfo = response.AuthenticateResponseDto?.DistributorInfo;
 
                     // Check if user is Administrator or Operator
                     bool isAdminOrOperator = roleName == "Administrator" || roleName == "Operator";
@@ -82,7 +82,7 @@ namespace BPM.Web.Distributor.UI.Controllers
                     // Allow login if:
                     // 1. User has dealer info, OR
                     // 2. User is Administrator or Operator (can login without dealer)
-                    if (dealerInfo == null && !isAdminOrOperator)
+                    if (distributorInfo == null && !isAdminOrOperator)
                     {
                         // User doesn't have dealer and is not Admin/Operator - deny access
                         var errorMsg = "You are not authorized to login to this portal. Please use the dealer portal to login.";

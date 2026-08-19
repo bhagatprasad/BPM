@@ -7,6 +7,7 @@ namespace BPM.Web.API.Services
     {
         Task<List<UserDto>> GetAllUsersListAsync();
         Task<List<UserDto>> GetUsersListByDealerAsync(Guid dealerId);
+        Task<List<UserDto>> GetUserListByDistributorAsync(Guid distributorId);
         Task<bool> InsertUserAsync(UserCreateDto user);
         Task<bool> ActivateUserAync(UserActivateDto userActivateDto);
         Task<bool> DeactivateUserAync(UserDeactivateDto userDeactivateDto);

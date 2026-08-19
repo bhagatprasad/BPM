@@ -36,6 +36,27 @@ namespace BPM.Web.API.Services
                 throw;
             }
         }
+        public async Task<List<UserDto>> GetUserListByDistributorAsync(Guid distributorId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching users by distributor");
+                var users = await _userRespository.GetUserListByDistributorAsync(distributorId);
+
+                if (users == null || !users.Any())
+                {
+                    _logger.LogWarning("No users found for distributor {DistributorId}", distributorId);
+                    return new List<UserDto>();
+                }
+                return users.ToUserDtoList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users by distributor");
+                throw;
+            }
+        }
+
 
         public async Task<List<UserDto>> GetAllUsersListAsync()
         {
@@ -116,11 +137,19 @@ namespace BPM.Web.API.Services
             try
             {
                 _logger.LogInformation("Creating user");
+                if (!user.DealerId.HasValue && !user.DistributorId.HasValue)
+                {
+                    _logger.LogWarning("User must be associated with either a Dealer or Distributor");
+                    return false;
+                }
+                if (user.DealerId.HasValue && user.DistributorId.HasValue)
+                {
+                    _logger.LogWarning("User cannot be associated with both Dealer and Distributor");
+                    return false;
+                }
 
                 var newUser = user.ToEntity();
 
-
-                //first 
                 var result = await _userRespository.InsertUserAsync(newUser);
 
                 if (result == null)
@@ -128,7 +157,6 @@ namespace BPM.Web.API.Services
                     _logger.LogWarning("Failed to create user");
                     return false;
                 }
-                //create a password history new records with using userid,passwordhash and password salt 
                 return true;
             }
             catch (Exception ex)
@@ -137,6 +165,7 @@ namespace BPM.Web.API.Services
                 throw;
             }
         }
+
 
         public async Task<UserDto> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
         {

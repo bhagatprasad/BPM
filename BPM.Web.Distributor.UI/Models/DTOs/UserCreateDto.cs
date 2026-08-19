@@ -26,6 +26,8 @@ namespace BPM.Web.Distributor.UI.Models.DTOs
         public Guid RoleId { get; set; }
 
         public Guid? DealerId { get; set; }
+        public Guid? DistributorId { get; set; }
+
 
         [Required]
         [MinLength(6)]
