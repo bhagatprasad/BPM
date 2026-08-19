@@ -23,9 +23,10 @@ namespace BPM.Web.API.Services
         private readonly IDealerService _dealerService;
         private readonly IUserPasswordHistoryRepository _userPasswordHistoryRepository;
         private readonly IRoleService _roleService;
+        private readonly IDistributorService _distributorService;
         public AccountService(IAccountRepository accountRepository, IRabbitMQPublisher rabbitMQPublisher, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
             IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository,
-            IRoleService roleService)
+            IRoleService roleService, IDistributorService distributorService)
         {
             _accountRepository = accountRepository;
             _rabbitMQPublisher = rabbitMQPublisher;
@@ -37,6 +38,7 @@ namespace BPM.Web.API.Services
             _dealerService = dealerService;
             _userPasswordHistoryRepository = userPasswordHistoryRepository;
             _roleService = roleService;
+            _distributorService = distributorService;
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -105,7 +107,8 @@ namespace BPM.Web.API.Services
                                 RoleId = user.RoleId,
                                 UserId = user.Id,
                                 IsActive = user.IsActive,
-                                DealerId = user.DealerId
+                                DealerId = user.DealerId,
+                                DistributorId = user.DistributorId
                             };
 
                             if (user.DealerId != null)
@@ -113,6 +116,12 @@ namespace BPM.Web.API.Services
                                 var dealerInfo = await _dealerService.GetDealerByIdAsync(user.DealerId.Value);
                                 authResponse.authenticateResponseDto.DealerInfo = dealerInfo;
                             }
+                            if (user.DistributorId != null)
+                            {
+                                var distributorInfo = await _distributorService.GetDistributorByIdAsync(user.DistributorId.Value);
+                                authResponse.authenticateResponseDto.DistributorInfo = distributorInfo;
+                            }
+
 
                             if (user.RoleId != null)
                             {

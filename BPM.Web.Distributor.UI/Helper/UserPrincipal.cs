@@ -18,7 +18,7 @@ public static class UserPrincipal
             new Claim(ClaimTypes.Role, response.AuthenticateResponseDto.RoleInfo.Name)
         };
         
-        if (response.AuthenticateResponseDto.DealerInfo == null)
+        if (response.AuthenticateResponseDto.DistributorInfo == null)
         {
             claims.Add(new Claim("Portal", "Distributor"));
         }

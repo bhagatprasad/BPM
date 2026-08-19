@@ -7,6 +7,7 @@
     phone character varying(20) COLLATE pg_catalog."default",
     roleid uuid NOT NULL,
     dealerid uuid,
+    distributorid uuid, 
     passwordhash text COLLATE pg_catalog."default" NOT NULL,
     passwordsalt text COLLATE pg_catalog."default" NOT NULL,
     lastlogin timestamp without time zone,
@@ -24,5 +25,9 @@
     CONSTRAINT fk_users_roles FOREIGN KEY (roleid)
         REFERENCES public.roles (id) MATCH SIMPLE
         ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_users_distributors FOREIGN KEY (distributorid) 
+        REFERENCES public.distributors (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
+);

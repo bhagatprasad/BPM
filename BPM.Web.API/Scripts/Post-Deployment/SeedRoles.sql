@@ -8,7 +8,9 @@ USING (
 
         ('Operator', 'OPERATOR', 'Operator with access to manage daily operations.'),
 
-        ('Dealer', 'DEALER', 'Dealer user with access to dealer-specific features.')
+        ('Dealer', 'DEALER', 'Dealer user with access to dealer-specific features.'),
+
+        ('Distributor', 'DISTRIBUTOR', 'Distributor user with access to distributor-specific features.')
 
 ) AS source (Name, Code, Description)
 
@@ -67,4 +69,3 @@ WHEN NOT MATCHED THEN
         CURRENT_TIMESTAMP
 
     );
- 
