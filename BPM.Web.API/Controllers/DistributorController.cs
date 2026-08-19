@@ -19,7 +19,7 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
         [HttpGet]
-        [Route("GetDistributorById/{distributorId}")]
+        [Route("get-distributor-by-id/{distributorId}")]
         public async Task<IActionResult> GetDistributorById(Guid distributorId)
         {
             try
@@ -39,7 +39,7 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpGet]
-        [Route("GetAllDistributors")]
+        [Route("get-all-distributors")]
         public async Task<IActionResult> GetAllDistributors()
         {
             try
@@ -61,7 +61,7 @@ namespace BPM.Web.API.Controllers
         }
 
         [HttpPost]
-        [Route("onboardDistributor")]
+        [Route("insert-distributor")]
         public async Task<IActionResult> InsertDistributorAsync(CreateDistributorDto distributorDto)
         {
             try
@@ -82,7 +82,7 @@ namespace BPM.Web.API.Controllers
             }
         }
         [HttpPut]
-        [Route("updateDistributor/{disributorId}")]
+        [Route("update-distributor/{distributorId}")]
         public async Task<IActionResult> UpdateDistributorAsync(Guid disributorId, UpdateDistributorDto updateDistributorDto)
         {
             try
@@ -103,7 +103,7 @@ namespace BPM.Web.API.Controllers
 
         }
         [HttpDelete]
-        [Route("DeleteDistributor/{disributorId}")]
+        [Route("delete-distributor/{disributorId}")]
         public async Task<IActionResult> DeleteDistributorAsync(Guid disributorId)
         {
             try

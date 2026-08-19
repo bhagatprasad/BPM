@@ -14,6 +14,7 @@ namespace BPM.Web.API.Repository
         public async Task<List<User>> GetUserListByDealerAsync(Guid dealerId)
         {
             return await _context.Users.Include(x => x.Dealer)
+                                       .Include(x=>x.Distributor)
                                        .Include(x => x.Role)
                                        .Where(x => x.DealerId == dealerId).ToListAsync();
         }
@@ -137,7 +138,23 @@ namespace BPM.Web.API.Repository
 
         public async Task<List<User>> GetAllUsersAsync()
         {
-            return await _context.Users.Include(x => x.Role).Include(x => x.Dealer).ToListAsync();
+            return await _context.Users.Include(x => x.Role).Include(x => x.Dealer).Include(x=> x.Distributor).ToListAsync();
+        }
+
+        public async Task<bool> UpdateUserDistributorAsync(User user)
+        {
+            var dbUser = await _context.Users.FindAsync(user.Id);
+
+            if (dbUser == null)
+            {
+                return false;
+            }
+
+            dbUser.DistributorId = user.DistributorId;
+            dbUser.ModifiedBy = user.ModifiedBy;
+            dbUser.ModifiedOn = user.ModifiedOn;
+
+            return await _context.SaveChangesAsync() > 0;
         }
         public async Task<List<User>> GetUserListByDistributorAsync(Guid distributorId)
         {

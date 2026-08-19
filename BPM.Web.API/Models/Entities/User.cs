@@ -67,6 +67,6 @@ namespace BPM.Web.API.Models.Entities
         public DateTime? ModifiedOn { get; set; }
         public virtual Role? Role { get; set; }
         public virtual Dealer? Dealer { get; set; }
-        public virtual Distributor Distributor { get; set; }
+        public virtual Distributor? Distributor { get; set; }
     }
 }

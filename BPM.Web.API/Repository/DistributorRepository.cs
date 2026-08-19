@@ -15,12 +15,12 @@ namespace BPM.Web.API.Repository
 
         public async Task<List<Distributor>> GetAllDistributorsAsync()
         {
-            return await _context.distributors.OrderBy(x => x.DistributorId).ToListAsync();
+            return await _context.Distributors.OrderBy(x => x.DistributorId).ToListAsync();
         }
 
         public async Task<Distributor?> GetDistributorByIdAsync(Guid distributorId)
         {
-            return await _context.distributors.FirstOrDefaultAsync(x => x.DistributorId == distributorId);
+            return await _context.Distributors.FirstOrDefaultAsync(x => x.DistributorId == distributorId);
         }
 
         public async Task<bool> InsertDistributorAsync(Distributor distributor)
@@ -32,7 +32,7 @@ namespace BPM.Web.API.Repository
             {
                 distributor.CreatedOn = DateTime.UtcNow;
                 distributor.ModifiedOn = DateTime.UtcNow;
-                _context.distributors.Add(distributor);
+                _context.Distributors.Add(distributor);
                 return await _context.SaveChangesAsync() > 0;
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace BPM.Web.API.Repository
         }
         public async Task<bool> UpdateDistributorAsync(Distributor distributor)
         {
-            var existingDistributor = await _context.distributors.FindAsync(distributor.DistributorId);
+            var existingDistributor = await _context.Distributors.FindAsync(distributor.DistributorId);
             if (existingDistributor == null)
             {
                 return false;
@@ -64,14 +64,15 @@ namespace BPM.Web.API.Repository
 
         public async Task<bool> DeleteDistributorAsync(Guid distributorId)
         {
-            var distributor = await _context.distributors.FindAsync(distributorId);
+            var distributor = await _context.Distributors.FindAsync(distributorId);
 
             if (distributor == null)
             {
                 return false;
             }
 
-            _context.distributors.Remove(distributor);
+            distributor.IsActive = false;
+            distributor.ModifiedOn = DateTime.UtcNow;
 
             return await _context.SaveChangesAsync() > 0;
         }

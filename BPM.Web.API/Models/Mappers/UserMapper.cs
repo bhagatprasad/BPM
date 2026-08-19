@@ -80,6 +80,7 @@ namespace BPM.Web.API.Models.Mappers
 
         }
 
+
         public static User ToEntity(this UserActivateDto dto)
         {
             return new User
@@ -118,6 +119,17 @@ namespace BPM.Web.API.Models.Mappers
             {
                 Id = dto.UserId,
                 DealerId = dto.DealerId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+
+        public static User ToEntity(this UserDistributorUpdateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                DistributorId = dto.DistributorId,
                 ModifiedBy = dto.ModifiedBy,
                 ModifiedOn = DateTime.UtcNow
             };

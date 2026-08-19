@@ -23,6 +23,14 @@ export const environment = {
       SavePurchaseOrderDraft: 'PurchaseOrder/save-purchase-order-draft',
       DeletePurchaseOrderDraft: 'PurchaseOrder/delete-purchase-order-draft',
     },
+    Warehouse: {
+      CreateWarehouse: 'Warehouse/create-warehouse',
+      GetAllWarehouses: 'Warehouse/get-all-warehouses',
+      GetWarehouseById: 'Warehouse/get-warehouse-by-id',
+      GetWarehouseByDistributor: 'Warehouse/get-warehouse-by-distributor',
+      UpdateWarehouse: 'Warehouse/update-warehouse',
+      DeleteWarehouse: 'Warehouse/delete-warehouse',
+    },
 
     User: {
       UpdateUserProfileAsync: 'user/updateuser',

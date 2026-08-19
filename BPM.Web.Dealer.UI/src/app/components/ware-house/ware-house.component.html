@@ -1,0 +1,232 @@
+<div class="main-content-container overflow-hidden pt-3">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+    <h3 class="mb-0">Warehouses</h3>
+
+    <button class="btn btn-primary" (click)="openCreateForm()">
+      <i class="ri-add-line me-1"></i>
+      Add Warehouse
+    </button>
+  </div>
+
+  <div class="card bg-white rounded-10 border border-white mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+      <form class="table-src-form position-relative m-0">
+        <input
+          class="form-control w-350"
+          type="text"
+          placeholder="Search warehouse..."
+          [(ngModel)]="searchText"
+          name="searchText"
+          (input)="onSearch()"
+        />
+
+        <i class="ri-search-line search-icon"></i>
+      </form>
+
+      <span class="text-body"> {{ filteredWarehouses.length }} warehouse(s) </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle w-100">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Warehouse Code</th>
+            <th>Warehouse Name</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let warehouse of filteredWarehouses; let i = index">
+            <td>{{ i + 1 }}</td>
+
+            <td>
+              {{ warehouse.warehouseCode }}
+            </td>
+
+            <td class="fw-medium">
+              {{ warehouse.warehouseName }}
+            </td>
+
+            <td>
+              {{ warehouse.city || '-' }}
+            </td>
+
+            <td>
+              {{ warehouse.state || '-' }}
+            </td>
+
+            <td>
+              {{ warehouse.country || '-' }}
+            </td>
+
+            <td>
+              <span
+                *ngIf="warehouse.isActive; else inactive"
+                class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
+              >
+                Active
+              </span>
+
+              <ng-template #inactive>
+                <span
+                  class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
+                >
+                  Inactive
+                </span>
+              </ng-template>
+            </td>
+
+            <td>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-success"
+                  title="Edit"
+                  [disabled]="!warehouse.isActive"
+                  (click)="openEditForm(warehouse)"
+                >
+                  <i class="material-symbols-outlined fs-16"> edit </i>
+                </button>
+
+                <button
+                  class="btn btn-danger"
+                  title="Deactivate"
+                  [disabled]="!warehouse.isActive"
+                  (click)="deleteWarehouse(warehouse)"
+                >
+                  <i class="material-symbols-outlined fs-16"> delete </i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!isLoading && filteredWarehouses.length === 0">
+            <td colspan="8" class="text-center py-4">No warehouses found.</td>
+          </tr>
+
+          <tr *ngIf="isLoading">
+            <td colspan="8" class="text-center py-4">Loading warehouses...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Create / Edit Warehouse -->
+<div class="modal fade show" *ngIf="isFormVisible" style="display: block" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ isEditMode ? 'Edit Warehouse' : 'Add Warehouse' }}
+        </h5>
+
+        <button type="button" class="btn-close" (click)="closeForm()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label"> Warehouse Code </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.warehouseCode"
+              name="warehouseCode"
+              [disabled]="isEditMode"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label"> Warehouse Name </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.warehouseName"
+              name="warehouseName"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label"> Address Line 1 </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.addressLine1"
+              name="addressLine1"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label"> Address Line 2 </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.addressLine2"
+              name="addressLine2"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label"> City </label>
+
+            <input type="text" class="form-control" [(ngModel)]="warehouseForm.city" name="city" />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label"> State </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.state"
+              name="state"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label"> Country </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.country"
+              name="country"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label"> Postal Code </label>
+
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="warehouseForm.postalCode"
+              name="postalCode"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+
+        <button type="button" class="btn btn-primary" (click)="saveWarehouse()">
+          {{ isEditMode ? 'Update Warehouse' : 'Create Warehouse' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isFormVisible" class="modal-backdrop fade show"></div>
