@@ -21,6 +21,7 @@ namespace BPM.Web.API.Models.Mappers
                 PasswordHash = passwordHashSalt.Hash,
                 PasswordSalt = passwordHashSalt.Salt,
                 DealerId = dto.DealerId,
+                DistributorId = dto.DistributorId,
                 IsActive = dto.IsActive,
                 CreatedOn = DateTime.UtcNow
             };
@@ -71,11 +72,14 @@ namespace BPM.Web.API.Models.Mappers
                 IsActive = dto.IsActive,
                 RoleId = dto.RoleId,
                 DealerId = dto.DealerId,
+                DistributorId= dto.DistributorId,
                 DealerInfo = dto.Dealer != null ? dto.Dealer.ToDto() : null,
+                DistributorInfo=dto.Distributor != null ? dto.Distributor.ToDto() : null,
                 RoleInfo = dto.Role != null ? dto.Role.ToDto() : null,
             };
 
         }
+
 
         public static User ToEntity(this UserActivateDto dto)
         {
@@ -115,6 +119,17 @@ namespace BPM.Web.API.Models.Mappers
             {
                 Id = dto.UserId,
                 DealerId = dto.DealerId,
+                ModifiedBy = dto.ModifiedBy,
+                ModifiedOn = DateTime.UtcNow
+            };
+        }
+
+        public static User ToEntity(this UserDistributorUpdateDto dto)
+        {
+            return new User
+            {
+                Id = dto.UserId,
+                DistributorId = dto.DistributorId,
                 ModifiedBy = dto.ModifiedBy,
                 ModifiedOn = DateTime.UtcNow
             };

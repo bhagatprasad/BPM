@@ -220,5 +220,27 @@ namespace BPM.Web.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
+
+        [HttpPut]
+        [Route("updatedistributor")]
+        public async Task<IActionResult> UpdateUserDistributorAsync(UserDistributorUpdateDto userDistributorUpdateDto)
+        {
+            try
+            {
+                _logger.LogInformation("Updating distributor for UserId {UserId}", userDistributorUpdateDto.UserId);
+                var result = await _userServiec.UpdateUserDistributorAsync(userDistributorUpdateDto);
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to update distributor for UserId {UserId}", userDistributorUpdateDto.UserId);
+                    return BadRequest("Unable to update user distributor.");
+                }
+                return Ok(new { Message = "User distributor updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating distributor for UserId {UserId}", userDistributorUpdateDto.UserId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
     }
 }

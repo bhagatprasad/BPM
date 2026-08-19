@@ -33,17 +33,17 @@ namespace BPM.Web.API.Models.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<SalesOrder> SalesOrders { get; set; }
         public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
-        public DbSet<Billing>Billings { get; set; }
-        public DbSet<Invoice>Invoices { get; set; }
+        public DbSet<Billing> Billings { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
-        public DbSet<Inventory>Inventories { get; set; }
-        public DbSet<StockMovement> StockMovements { get; set; } 
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<BatchMaster> BatchMasters { get; set; }
         public DbSet<SupplierDiscount> SupplierDiscounts { get; set; }
         public DbSet<VolumeDiscountTier> VolumeDiscountTiers { get; set; }
         public DbSet<PromotionalOffer> PromotionalOffers { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
-        public DbSet<Distributor> distributors { get; set; }
+        public DbSet<Distributor> Distributors { get; set; }
         public DbSet<PurchaseOrderApproval> PurchaseOrderApprovals { get; set; }
 
 
@@ -82,6 +82,13 @@ namespace BPM.Web.API.Models.Data
                 // You can add additional fluent configuration here if needed
                 // But your Data Annotations should handle most of it
             });
+            // User -> Distributor relationship
+            modelBuilder.Entity<User>()
+               .HasOne(u => u.Distributor)
+               .WithMany()
+               .HasForeignKey(u => u.DistributorId)
+               .HasPrincipalKey(d => d.DistributorId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
 
         public override int SaveChanges()

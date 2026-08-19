@@ -21,10 +21,13 @@ namespace BPM.Web.API.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IDealerService _dealerService;
+        private readonly IDistributorService _distributorService;
         private readonly IUserPasswordHistoryRepository _userPasswordHistoryRepository;
         private readonly IRoleService _roleService;
+       
+
         public AccountService(IAccountRepository accountRepository, IRabbitMQPublisher rabbitMQPublisher, ILogger<AccountService> logger, IConfiguration configuration, IUserLoginHistoryRepository loginHistoryRepository,
-            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IUserPasswordHistoryRepository userPasswordHistoryRepository,
+            IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepository, IDealerService dealerService, IDistributorService distributorService, IUserPasswordHistoryRepository userPasswordHistoryRepository,
             IRoleService roleService)
         {
             _accountRepository = accountRepository;
@@ -35,8 +38,10 @@ namespace BPM.Web.API.Services
             _httpContextAccessor = httpContextAccessor;
             _refreshTokenRepository = refreshTokenRepository;
             _dealerService = dealerService;
+            _distributorService = distributorService;
             _userPasswordHistoryRepository = userPasswordHistoryRepository;
             _roleService = roleService;
+            
         }
 
         public async Task<AuthResponse> AuthenticateAsync(AuthenticateUserDto dto)
@@ -105,7 +110,8 @@ namespace BPM.Web.API.Services
                                 RoleId = user.RoleId,
                                 UserId = user.Id,
                                 IsActive = user.IsActive,
-                                DealerId = user.DealerId
+                                DealerId = user.DealerId,
+                                DistributorId=user.DistributorId
                             };
 
                             if (user.DealerId != null)
@@ -113,6 +119,13 @@ namespace BPM.Web.API.Services
                                 var dealerInfo = await _dealerService.GetDealerByIdAsync(user.DealerId.Value);
                                 authResponse.authenticateResponseDto.DealerInfo = dealerInfo;
                             }
+
+                            if (user.DistributorId != null) 
+                            {
+                              var distributorInfo=await _distributorService.GetDistributorByIdAsync(user.DistributorId.Value);
+                                authResponse.authenticateResponseDto.DistributorInfo = distributorInfo;
+                            }
+  
 
                             if (user.RoleId != null)
                             {

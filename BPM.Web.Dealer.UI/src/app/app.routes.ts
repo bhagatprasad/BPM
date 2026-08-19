@@ -40,27 +40,38 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./components/admin/dashbaord.component').then(m => m.DashBoardComponent),
+        loadComponent: () =>
+          import('./components/admin/dashbaord.component').then((m) => m.DashBoardComponent),
       },
       {
         path: 'profile',
-        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
+        loadComponent: () =>
+          import('./components/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'drugs',
-        loadComponent: () => import('./components/drugs-catelog/drugs-catelog').then(m => m.DrugsCatelogComponent),
+        loadComponent: () =>
+          import('./components/drugs-catelog/drugs-catelog').then((m) => m.DrugsCatelogComponent),
       },
       {
         path: 'cart',
-        loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent),
+        loadComponent: () =>
+          import('./components/cart/cart.component').then((m) => m.CartComponent),
       },
       {
         path: 'my-orders',
-        loadComponent: () => import('./components/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+        loadComponent: () =>
+          import('./components/my-orders/my-orders.component').then((m) => m.MyOrdersComponent),
       },
       {
         path: 'users',
-        loadComponent: () => import('./components/user/user.component').then(m => m.UserComponent),
+        loadComponent: () =>
+          import('./components/user/user.component').then((m) => m.UserComponent),
+      },
+      {
+        path: 'ware-house',
+        loadComponent: () =>
+          import('./components/ware-house/ware-house.component').then((a) => a.WarehouseComponent),
       },
       {
         path: '**',
@@ -81,23 +92,33 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./components/operator/dashbaord.component').then(m => m.DashBoardComponent),
+        loadComponent: () =>
+          import('./components/operator/dashbaord.component').then((m) => m.DashBoardComponent),
       },
       {
         path: 'profile',
-        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
+        loadComponent: () =>
+          import('./components/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'drugs',
-        loadComponent: () => import('./components/drugs-catelog/drugs-catelog').then(m => m.DrugsCatelogComponent),
+        loadComponent: () =>
+          import('./components/drugs-catelog/drugs-catelog').then((m) => m.DrugsCatelogComponent),
       },
       {
         path: 'cart',
-        loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent),
+        loadComponent: () =>
+          import('./components/cart/cart.component').then((m) => m.CartComponent),
       },
       {
         path: 'my-orders',
-        loadComponent: () => import('./components/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+        loadComponent: () =>
+          import('./components/my-orders/my-orders.component').then((m) => m.MyOrdersComponent),
+      },
+      {
+        path: 'ware-house',
+        loadComponent: () =>
+          import('./components/ware-house/ware-house.component').then((b) => b.WarehouseComponent),
       },
       {
         path: '**',
@@ -109,31 +130,41 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authenticationGuard],
-    loadComponent: () => import('./components/admin/dashbaord.component').then(m => m.DashBoardComponent),
+    loadComponent: () =>
+      import('./components/admin/dashbaord.component').then((m) => m.DashBoardComponent),
   },
   {
     path: 'profile',
-    loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
+    loadComponent: () =>
+      import('./components/profile/profile.component').then((m) => m.ProfileComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'drugs',
-    loadComponent: () => import('./components/drugs-catelog/drugs-catelog').then(m => m.DrugsCatelogComponent),
+    loadComponent: () =>
+      import('./components/drugs-catelog/drugs-catelog').then((m) => m.DrugsCatelogComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'cart',
-    loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent),
+    loadComponent: () => import('./components/cart/cart.component').then((m) => m.CartComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'my-orders',
-    loadComponent: () => import('./components/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+    loadComponent: () =>
+      import('./components/my-orders/my-orders.component').then((m) => m.MyOrdersComponent),
     canActivate: [authenticationGuard],
   },
   {
     path: 'users',
-    loadComponent: () => import('./components/user/user.component').then(m => m.UserComponent),
+    loadComponent: () => import('./components/user/user.component').then((m) => m.UserComponent),
+    canActivate: [authenticationGuard],
+  },
+  {
+    path: 'ware-house',
+    loadComponent: () =>
+      import('./components/ware-house/ware-house.component').then((a) => a.WarehouseComponent),
     canActivate: [authenticationGuard],
   },
   {

@@ -37,6 +37,9 @@ namespace BPM.Web.API.Models.Entities
         [Column("dealerid")]
         public Guid? DealerId { get; set; }
 
+        [Column("distributorid")]
+        public Guid? DistributorId { get; set; }
+
         [Required]
         [Column("passwordhash")]
         public string PasswordHash { get; set; } = string.Empty;
@@ -64,5 +67,6 @@ namespace BPM.Web.API.Models.Entities
         public DateTime? ModifiedOn { get; set; }
         public virtual Role? Role { get; set; }
         public virtual Dealer? Dealer { get; set; }
+        public virtual Distributor? Distributor { get; set; }
     }
 }

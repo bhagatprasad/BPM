@@ -244,5 +244,32 @@ namespace BPM.Web.API.Services
                 throw;
             }
         }
+
+        public async Task<bool> UpdateUserDistributorAsync(UserDistributorUpdateDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Updating distributor for UserId {UserId}", dto.UserId);
+
+                var user = dto.ToEntity();
+                var result = await _userRespository.UpdateUserDistributorAsync(user);
+
+                if (!result)
+                {
+                    _logger.LogWarning("User not found while updating distributor. UserId {UserId}", dto.UserId);
+                    return false;
+                }
+
+                _logger.LogInformation("Distributor updated successfully for UserId {UserId}", dto.UserId);
+                 return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex, "Error while updating distributor for UserId {UserId}", dto.UserId);
+
+                throw;
+            }
+        }
     }
 }

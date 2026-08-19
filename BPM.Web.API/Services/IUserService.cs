@@ -1,5 +1,4 @@
-﻿
-using BPM.Web.API.Models.DTOs;
+﻿using BPM.Web.API.Models.DTOs;
 
 namespace BPM.Web.API.Services
 {
@@ -14,5 +13,6 @@ namespace BPM.Web.API.Services
         Task<bool> UpdateUserRoleAsync(UserRoleUpdateDto userRoleUpdateDto);
         Task<bool> UpdateUserDealerAsync(UserDealerUpdateDto userDealerUpdateDto);
         Task<bool> ChangePasswordAsync(UserChangePasswordDto userChangePasswordDto);
+        Task<bool> UpdateUserDistributorAsync(UserDistributorUpdateDto dto);
     }
 }
