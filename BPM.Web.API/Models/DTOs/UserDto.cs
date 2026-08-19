@@ -12,7 +12,7 @@
         public Guid? DistributorId { get; set; }
         public Guid? RoleId { get; set; }
         public DealerDto DealerInfo { get; set; }
-        public DistributorDto? DistributorInfo { get; set; }
+        public DistributorDto DistributorInfo { get; set; }
         public RoleDto RoleInfo { get; set; }
     }
 }

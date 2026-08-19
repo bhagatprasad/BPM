@@ -52,6 +52,24 @@ namespace BPM.Web.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
+        [HttpGet]
+        [Route("get-all-users-by-distributor/{distributorId}")]
+        public async Task<IActionResult> GetUsersListByDistributorAsync(Guid distributorId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching users by distributor.");
+                var users = await _userServiec.GetUserListByDistributorAsync(distributorId);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users by distributor.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+
+        }
+
 
         [HttpPost]
         [Route("insert-user")]

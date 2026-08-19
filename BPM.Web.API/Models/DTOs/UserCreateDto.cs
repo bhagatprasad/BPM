@@ -26,6 +26,7 @@ namespace BPM.Web.API.Models.DTOs
         public Guid RoleId { get; set; }
 
         public Guid? DealerId { get; set; }
+        public Guid? DistributorId { get; set; }
 
         public Guid? DistributorId { get; set; }
 

@@ -14,7 +14,8 @@
 
         public Guid RoleId { get; set; }
 
-        public Guid? DealerId { get; set; }
+        public Guid? DistributorId { get; set; }
+
 
         public bool IsActive { get; set; }
 

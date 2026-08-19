@@ -8,11 +8,14 @@
         public string Email { get; set; }
         public string Phone { get; set; }
         public Guid? DealerId { get; set; }
+
         public Guid? DistributorId { get; set; }
+
         public Guid RoleId { get; set; }
         public bool IsActive { get; set; }
         public DealerDto DealerInfo { get; set; }
-        public DistributorDto? DistributorInfo { get; set; }
+
+        public DistributorDto DistributorInfo { get; set; }
         public RoleDto RoleInfo { get; set; }
 
     }

@@ -14,6 +14,7 @@ namespace BPM.Web.API.Repository
         Task<User> GetUserByIdAsync(Guid userId);
         Task<List<User>> GetAllUsersAsync();
         Task<List<User>> GetUserListByDealerAsync(Guid dealerId);
+        Task<List<User>> GetUserListByDistributorAsync(Guid distributorId);
         Task<User> GetUserByUsernameOrPhoneAsync(string username, string phone);
         Task<bool> UpdateUserDistributorAsync(User user);
     }

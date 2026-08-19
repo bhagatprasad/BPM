@@ -156,5 +156,12 @@ namespace BPM.Web.API.Repository
 
             return await _context.SaveChangesAsync() > 0;
         }
+        public async Task<List<User>> GetUserListByDistributorAsync(Guid distributorId)
+        {
+            return await _context.Users.Include(x => x.Distributor)
+                                       .Include(x => x.Role)
+                                       .Where(x => x.DistributorId == distributorId).ToListAsync(); ;
+        }
+
     }
 }
