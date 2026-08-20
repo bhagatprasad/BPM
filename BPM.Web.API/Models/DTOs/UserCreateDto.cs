@@ -28,8 +28,6 @@ namespace BPM.Web.API.Models.DTOs
         public Guid? DealerId { get; set; }
         public Guid? DistributorId { get; set; }
 
-        public Guid? DistributorId { get; set; }
-
         [Required]
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
