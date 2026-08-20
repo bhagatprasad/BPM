@@ -12,5 +12,6 @@ namespace BPM.Web.API.Repository
         Task<Inventory?> GetInventoryForAvailabilityAsync(Guid drugId, Guid packagingId, Guid batchId, Guid warehouseId);
         Task<bool> UpdateAsync(Inventory inventory);
         Task<bool> DeleteAsync(Guid id);
+        Task<IEnumerable<Inventory>> OnBoardingInventoryAsync(List<Inventory> inventory);
     }
 }

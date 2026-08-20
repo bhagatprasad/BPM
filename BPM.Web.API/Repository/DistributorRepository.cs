@@ -23,22 +23,13 @@ namespace BPM.Web.API.Repository
             return await _context.Distributors.FirstOrDefaultAsync(x => x.DistributorId == distributorId);
         }
 
-        public async Task<bool> InsertDistributorAsync(Distributor distributor)
+        public async Task<Distributor> InsertDistributorAsync(Distributor distributor)
         {
-            if (distributor == null)
-                throw new ArgumentNullException(nameof(distributor));
+            await _context.Distributors.AddAsync(distributor);
 
-            try
-            {
-                distributor.CreatedOn = DateTime.UtcNow;
-                distributor.ModifiedOn = DateTime.UtcNow;
-                _context.Distributors.Add(distributor);
-                return await _context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {                
-                throw; 
-            }
+            await _context.SaveChangesAsync();
+
+            return distributor;
         }
         public async Task<bool> UpdateDistributorAsync(Distributor distributor)
         {

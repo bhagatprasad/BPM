@@ -13,5 +13,6 @@ namespace BPM.Web.API.Services.Interfaces
         Task<InventoryAvailabilityDto> CheckAvailabilityAsync(InventoryAvailabilityDto dto);
         Task<InventoryResponseDto?> UpdateAsync(InventoryUpdateDto dto);
         Task<bool> DeleteAsync(Guid id);
+        Task<IEnumerable<InventoryResponseDto>> OnBoardInventoryAsync(DistributorDto distributor, WarehouseResponseDto warehouse,List<DrugDto> drugs);
     }
 }

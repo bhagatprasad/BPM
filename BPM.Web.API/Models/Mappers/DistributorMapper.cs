@@ -1,5 +1,6 @@
 ﻿using BPM.Web.API.Models.DTOs;
 using BPM.Web.API.Models.Entities;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace BPM.Web.API.Models.Mappers
 {
@@ -89,6 +90,41 @@ namespace BPM.Web.API.Models.Mappers
                 return new List<DistributorDto>();
 
             return distributors.Select(d => d.ToDto()).ToList();
+        }
+
+
+        public static UserCreateDto ToUserCreateDtoFromDistiutor(this Distributor distributor, List<RoleDto> roles)
+        {
+            UserCreateDto userCreateDto = new UserCreateDto();
+
+            var adminRole = roles.Where(x => x.Name == "Administrator").FirstOrDefault();
+
+            userCreateDto.IsActive = true;
+            userCreateDto.DistributorId = distributor.DistributorId;
+            userCreateDto.Phone = distributor.Phone;
+            userCreateDto.Email = distributor.Email;
+            userCreateDto.FirstName = distributor.DistributorName;
+            userCreateDto.LastName = distributor.DistributorName;
+            userCreateDto.Password = "Admin@2026";
+            userCreateDto.RoleId = adminRole.Id;
+            return userCreateDto;
+        }
+
+        public static WarehouseCreateDto ToWarehouseCreateDtoFromDistributor(this Distributor distributor)
+        {
+            return new WarehouseCreateDto()
+            {
+                AddressLine1 = distributor.AddressLine1,
+                AddressLine2 = distributor.AddressLine2,
+                City = distributor.City,
+                Country = distributor.Country,
+                DistributorId = distributor.DistributorId,
+                CreatedBy = distributor.CreatedBy,
+                PostalCode = distributor.PostalCode,
+                State = distributor.State,
+                WarehouseCode = distributor.DistributorCode,
+                WarehouseName = distributor.DistributorName
+            };
         }
     }
 }

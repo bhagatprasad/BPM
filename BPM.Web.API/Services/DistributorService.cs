@@ -1,9 +1,9 @@
 ﻿
 using BPM.Web.API.Models.DTOs;
-using BPM.Web.API.Models.Entities;
 using BPM.Web.API.Models.Mappers;
 using BPM.Web.API.Repository;
-using Microsoft.EntityFrameworkCore;
+using BPM.Web.API.Service;
+using BPM.Web.API.Services.Interfaces;
 
 namespace BPM.Web.API.Services
 {
@@ -11,10 +11,14 @@ namespace BPM.Web.API.Services
     {
         private readonly IDistributorRepository _distributorRepository;
         private readonly ILogger<DistributorService> _logger;
-        public DistributorService(IDistributorRepository distributorRepository, ILogger<DistributorService> logger)
+        private readonly IServiceProvider _serviceProvider;
+        public DistributorService(IDistributorRepository distributorRepository,
+            ILogger<DistributorService> logger,
+            IServiceProvider serviceProvider)
         {
             _distributorRepository = distributorRepository;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<DistributorDto> GetDistributorByIdAsync(Guid distributorId)
@@ -54,19 +58,51 @@ namespace BPM.Web.API.Services
             }
         }
 
-        public async Task<bool> InsertDistributorAsync(CreateDistributorDto distributorDto)
+        public async Task<DistributorDto> InsertDistributorAsync(CreateDistributorDto distributorDto)
         {
             try
             {
                 _logger.LogInformation("Creating Distributor");
-                var distributor = distributorDto.ToEntity();
-                var result = await _distributorRepository.InsertDistributorAsync(distributor);
-                if (!result)
+
+                var distributorResponse = await _distributorRepository.InsertDistributorAsync(distributorDto.ToEntity());
+
+                if (distributorResponse != null)
                 {
-                    _logger.LogError("Failed to create Distributor");
-                    return false;
+                    if (distributorResponse.DistributorId != Guid.Empty || distributorResponse.DistributorId != null)
+                    {
+                        //create a distibutor user 
+
+
+                        var _userService = _serviceProvider.GetRequiredService<IUserService>();
+
+                        var _roleService = _serviceProvider.GetRequiredService<IRoleService>();
+
+                        var _drugService = _serviceProvider.GetRequiredService<IDrugService>();
+
+                        var _inventoryService = _serviceProvider.GetRequiredService<IInventoryService>();
+
+
+                        var roles = await _roleService.GetAllRolesAsync();
+
+                        var drgus = await _drugService.GetAllDrugsAsync();
+
+                        await _userService.InsertUserAsync(distributorResponse.ToUserCreateDtoFromDistiutor(roles));
+
+
+                        //creaete  werehouse for distibutor
+
+                        var _wereHouseService = _serviceProvider.GetRequiredService<IWarehouseService>();
+
+
+                        var warehouseResponse = await _wereHouseService.CreateAsync(distributorResponse.ToWarehouseCreateDtoFromDistributor());
+
+
+                        //create a distibutor inventory
+
+                        await _inventoryService.OnBoardInventoryAsync(distributorResponse.ToDto(), warehouseResponse, drgus);
+                    }
                 }
-                return true;
+                return distributorResponse.ToDto();
             }
             catch (Exception ex)
             {
