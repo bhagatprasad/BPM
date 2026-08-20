@@ -25,7 +25,7 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
-        public static Inventory ToEntity(this InventoryUpdateDto dto,Inventory entity)
+        public static Inventory ToEntity(this InventoryUpdateDto dto, Inventory entity)
         {
             entity.DrugId = dto.DrugId;
             entity.PackagingId = dto.PackagingId;
@@ -68,6 +68,47 @@ namespace BPM.Web.API.Models.Mappers
         public static List<InventoryResponseDto> ToDtoList(this IEnumerable<Inventory> entities)
         {
             return entities.Select(ToDto).ToList();
+        }
+
+
+        public static List<Inventory> ToInventoryEntries(this DistributorDto distributor, WarehouseResponseDto warehouse, List<DrugDto> drugs)
+        {
+            List<Inventory> inventorys = new List<Inventory>();
+
+            if (drugs.Any())
+            {
+                foreach (DrugDto drug in drugs)
+                {
+                    if (drug.DrugPackagings.Any())
+                    {
+                        foreach (var item in drug.DrugPackagings)
+                        {
+                            inventorys.Add(new Inventory()
+                            {
+                                AvailableQuantity = 10 * 10,
+                                BatchId = Guid.NewGuid(),
+                                CreatedBy = distributor.CreatedBy,
+                                CreatedOn = distributor.CreatedOn,
+                                DistributorId = distributor.DistributorId,
+                                DrugId = drug.DrugId,
+                                IsActive = drug.IsActive,
+                                ModifiedBy = distributor.ModifiedBy,
+                                ModifiedOn = distributor.ModifiedOn,
+                                PackagingId = item.PackagingId,
+                                Quantity = 10 * 10,
+                                ReorderLevel = 1,
+                                ReservedQuantity = 10 * 10,
+                                WarehouseId = warehouse.Id,
+                                Id = Guid.NewGuid(),
+                            });
+                        }
+                    }
+
+                }
+            }
+
+            return inventorys;
+
         }
     }
 }

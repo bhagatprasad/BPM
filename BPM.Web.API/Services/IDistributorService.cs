@@ -5,11 +5,10 @@ namespace BPM.Web.API.Services
 {
     public interface IDistributorService
     {
-        Task<bool> InsertDistributorAsync(CreateDistributorDto distributorDto);
+        Task<DistributorDto> InsertDistributorAsync(CreateDistributorDto distributorDto);
         Task<DistributorDto> GetDistributorByIdAsync(Guid distributorId);
         Task<List<DistributorDto>> GetDistributorListAsync();
         Task<DistributorDto> UpdateDistributorAsync(Guid distributorId, UpdateDistributorDto updateDistributor);
         Task<bool> DeleteDistributorById(Guid distributorId);
     }
-
 }

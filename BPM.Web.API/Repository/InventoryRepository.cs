@@ -67,5 +67,42 @@ namespace BPM.Web.API.Repository
 
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<Inventory>> OnBoardingInventoryAsync(List<Inventory> inventories)
+        {
+            await _context.Inventories.AddRangeAsync(inventories);
+
+            await _context.SaveChangesAsync();
+
+
+            List<StockMovement> movements = new List<StockMovement>();
+
+            foreach (var inventory in inventories)
+            {
+                movements.Add(new StockMovement()
+                {
+                    BatchId = inventory.BatchId,
+                    CreatedBy = inventory.CreatedBy,
+                    CreatedOn = inventory.CreatedOn,
+                    DistributorId = inventory.DistributorId,
+                    DrugId = inventory.DrugId,
+                    Id = Guid.NewGuid(),
+                    InventoryId = inventory.Id,
+                    PackagingId = inventory.PackagingId,
+                    Quantity = inventory.Quantity,
+                    QuantityAfter = inventory.Quantity,
+                    QuantityBefore = 0,
+                    MovementType = "+",
+                    WarehouseId = inventory.WarehouseId,
+                    Remarks = "NA"
+                });
+            }
+
+            await _context.StockMovements.AddRangeAsync(movements);
+
+            await _context.SaveChangesAsync();
+
+            return inventories;
+        }
     }
 }

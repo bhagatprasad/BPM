@@ -67,11 +67,14 @@ namespace BPM.Web.API.Controllers
             try
             {
                 _logger.LogInformation("Creating Distributor");
+              
                 var newDistributor = await _distributorService.InsertDistributorAsync(distributorDto);
-                if (!newDistributor)
+              
+                if (newDistributor == null)
                 {
                     return BadRequest("Unable to create Distributor");
                 }
+
                 return Ok(newDistributor);
             }
             catch (Exception ex)
@@ -113,7 +116,7 @@ namespace BPM.Web.API.Controllers
                 if (result != null)
                 {
                     return Ok(new { data = result, message = "distributor deleted successfully" });
-                   
+
                 }
                 return null;
             }
@@ -125,6 +128,6 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-       
+
     }
 }

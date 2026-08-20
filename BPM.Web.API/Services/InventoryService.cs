@@ -227,5 +227,14 @@ namespace BPM.Web.API.Services
                 throw;
             }
         }
+
+        public async Task<IEnumerable<InventoryResponseDto>> OnBoardInventoryAsync(DistributorDto distributor, WarehouseResponseDto warehouse, List<DrugDto> drugs)
+        {
+            var inventoryEntries = distributor.ToInventoryEntries(warehouse, drugs);
+
+            var inventorys = await _inventoryRepository.OnBoardingInventoryAsync(inventoryEntries);
+
+            return inventorys.ToDtoList();
+        }
     }
 }
