@@ -3,14 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SpinnerLoadingService } from '@app/common/services/spinner-loading-service';
-import { userInformation } from '@app/models/user';
+import { userInformation, UserDistributorUpdateDto } from '@app/models/user';
 import { UserService } from '@app/services/user.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { UserCreateSidebarComponent } from './user-create.component';
 import { UserUpdateDto } from '@app/models/user-update-dto';
 import { UserDeactivateDto } from '@app/models/user-deactivate-dto';
-import { userDto } from '@app/models/user-profile';
-import { isActive } from '@angular/router';
 
 @Component({
   selector: 'app-user',
@@ -55,8 +53,8 @@ export class UserComponent {
     private userService: UserService,
     private toastr: ToastrService,
     private loader: SpinnerLoadingService,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loader.show('Loading users, please wait...');
@@ -88,7 +86,7 @@ export class UserComponent {
         this.allUsers = [];
         this.loader.hide();
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -100,7 +98,7 @@ export class UserComponent {
     if (!searchText) {
       this.userInformation = [...this.allUsers];
     } else {
-      this.userInformation = this.allUsers.filter(user => {
+      this.userInformation = this.allUsers.filter((user) => {
         const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.toLowerCase();
         return (
           fullName.includes(searchText) ||
@@ -289,6 +287,9 @@ export class UserComponent {
   handleUserUpdate(updateData: UserUpdateDto): void {
     this.updateUser(updateData);
   }
+  handleUserDistributorUpdate(updateData: UserDistributorUpdateDto): void {
+    this.updateUserDistributor(updateData);
+  }
 
   createUser(userData: any): void {
     this.loader.show('Creating user...');
@@ -305,7 +306,7 @@ export class UserComponent {
         console.error('Error creating user:', error);
         this.toastr.error(error.error?.message || 'Failed to create user. Please try again.');
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -318,8 +319,8 @@ export class UserComponent {
       lastName: updateData.lastName,
       email: updateData.email,
       phone: updateData.phone,
-      isActive:updateData.isActive,
-      modifiedBy: this.userId
+      isActive: updateData.isActive,
+      modifiedBy: this.userId,
     };
 
     this.userService.updateUserAsync(updateData.userId, updateUserDto).subscribe({
@@ -335,8 +336,35 @@ export class UserComponent {
         console.error('Error updating user:', error);
         this.toastr.error(error.error?.message || 'Failed to update user. Please try again.');
         this.cdr.detectChanges();
-      }
+      },
     });
   }
- 
+
+  updateUserDistributor(updateData: UserDistributorUpdateDto): void {
+    this.loader.show('Updating distributor...');
+
+    const distributorUpdateDto: UserDistributorUpdateDto = {
+      userId: updateData.userId,
+      distributorId: updateData.distributorId,
+      modifiedBy: this.userId,
+    };
+
+    this.userService.updateUserDistributor(distributorUpdateDto).subscribe({
+      next: () => {
+        this.loader.hide();
+        this.toastr.success('User distributor updated successfully!');
+        this.closeSidebar();
+        this.loadUsers();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.loader.hide();
+        console.error('Error updating user distributor:', error);
+        this.toastr.error(
+          error.error?.message || 'Failed to update user distributor. Please try again.',
+        );
+        this.cdr.detectChanges();
+      },
+    });
+  }
 }
