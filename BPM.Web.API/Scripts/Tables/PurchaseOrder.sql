@@ -4,6 +4,7 @@
     ponumber character varying(20) COLLATE pg_catalog."default" NOT NULL,
     supplierid uuid NOT NULL,
     dealerid uuid NOT NULL,
+    distributorid uuid NOT NULL, 
     orderdate timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expecteddeliverydate timestamp without time zone NOT NULL,
     actualdeliverydate timestamp without time zone,
@@ -32,6 +33,10 @@
         REFERENCES public.dealers (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
+    CONSTRAINT fk_purchaseorders_distributor FOREIGN KEY (distributorid)  
+        REFERENCES public.distributors (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
     CONSTRAINT fk_purchaseorders_modifiedby FOREIGN KEY (modifiedby)
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -40,4 +45,4 @@
         REFERENCES public.suppliers (supplierid) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
+);
