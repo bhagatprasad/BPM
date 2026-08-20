@@ -1,195 +1,235 @@
 <div class="main-content-container overflow-hidden pt-3">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
-        <h3 class="mb-0">
-            User Management
-        </h3>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb align-items-center mb-0 lh-1">
-                <li class="breadcrumb-item">
-                    <a class="d-flex align-items-center text-decoration-none" href="index.html">
-                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
-                        <span class="text-body fs-14 hover">Dashboard</span>
-                    </a>
-                </li>               
-                <li aria-current="page" class="breadcrumb-item active">
-                    <span class="text-secondary">Users</span>
-                </li>
-            </ol>
-        </nav>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+    <h3 class="mb-0">User Management</h3>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a class="d-flex align-items-center text-decoration-none" href="index.html">
+            <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+            <span class="text-body fs-14 hover">Dashboard</span>
+          </a>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">
+          <span class="text-secondary">Users</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="card bg-white rounded-10 border border-white mb-4">
+    <!-- Search and Add Button -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+      <form class="table-src-form position-relative m-0">
+        <input
+          class="form-control w-350"
+          placeholder="Search user..."
+          type="text"
+          (input)="onSearch($event)"
+        />
+        <i class="ri-search-line search-icon"></i>
+      </form>
+      <div class="col-lg-3 text-end">
+        <button class="btn btn-primary" (click)="openSidebar()">
+          <i class="ri-add-line me-1"></i>
+          Add New User
+        </button>
+      </div>
     </div>
 
-    <div class="card bg-white rounded-10 border border-white mb-4">
-        <!-- Search and Add Button -->
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
-            <form class="table-src-form position-relative m-0">
-                <input class="form-control w-350" placeholder="Search user..." type="text" (input)="onSearch($event)"/>
-                <i class="ri-search-line search-icon"></i>
-            </form>
-            <div class="col-lg-3 text-end">
-                <button class="btn btn-primary" (click)="openSidebar()">
-                    <i class="ri-add-line me-1"></i>
-                    Add New User
-                </button>
-            </div>
-        </div>
-
-        <!-- Table -->
-        <div class="default-table-area mx-minus-1 table-to-do-list">
-            <div class="table-responsive">
-                <table class="table align-middle w-100">
-                    <thead>
-                        <tr>
-                            <th width="55" class="text-center">
-                                <input
-                                    class="form-check-input order-checkbox"
-                                    type="checkbox"
-                                    [checked]="isAllSelected"
-                                    (change)="toggleAll($event)"
-                                />
-                            </th>
-                            <th class="fw-medium" scope="col">#</th>
-                            <th class="fw-medium" scope="col">Full Name</th>
-                            <th class="fw-medium" scope="col">Email</th>
-                            <th class="fw-medium" scope="col">Phone</th>
-                            <th class="fw-medium" scope="col">Role</th>
-                            <th class="fw-medium" scope="col">IsActive</th>
-                            <th class="fw-medium" scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Using paginatedUsers with index -->
-                        <tr *ngFor="let user of paginatedUsers; let i = index">
-                            <!-- Checkbox -->
-                            <td class="text-body" style="width: 62px;">
-                                <div class="form-check">
-                                    <input 
-                                        class="form-check-input order-checkbox"
-                                        type="checkbox"
-                                        [checked]="isUserSelected(user.userId)"
-                                        (change)="toggleUser(user)"
-                                    />
-                                </div>
-                            </td>
-                            
-                            <!-- Row Number (Index) -->
-                            <td class="text-body">
-                                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
-                            </td>
-                            
-                            <!-- Full Name -->
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="assets/images/user5.jpg" alt="user" class="rounded-circle"
-                                        style="width: 35px; height: 35px;" />
-                                    <span class="fs-16 fw-medium text-secondary ms-12">
-                                        {{ user.firstName }} {{ user.lastName }}
-                                    </span>
-                                </div>
-                            </td>
-                            
-                            <!-- Email -->
-                            <td class="text-body">{{ user.email }}</td>
-                            
-                            <!-- Phone -->
-                            <td class="text-body">{{ user.phone }}</td>
-                            
-                            <!-- Role -->
-                            <td class="text-body">{{ user.roleInfo?.name }}</td>
-                            
-                            <!-- Status -->
-                            <td>
-                                <span class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
-                                    *ngIf="user.isActive; else inactive">
-                                    Active
-                                </span>
-                                <ng-template #inactive>
-                                    <span class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge">
-                                        Inactive
-                                    </span>
-                                </ng-template>
-                            </td>
-                            
-                            <!-- Actions -->
-                            <td>
-                                <div class="d-flex justify-content-end" style="gap: 12px;">                                  
-                                    <button class="btn btn-success"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit" 
-                                        (click)="enableEditUser(user)">
-                                        <i class="material-symbols-outlined fs-16 fw-normal">edit</i>
-                                    </button>                                 
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
-                <!-- Left: Showing entries info and page size -->
-                <div class="d-flex align-items-center gap-3">
-                    <span class="fs-15">
-                        {{ getPaginationText() }}
-                    </span>
-                    
-                    <!-- Items per page dropdown -->
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="fs-15">Show:</span>
-                        <select class="form-select form-select-sm" style="width: auto;"
-                                (change)="onItemsPerPageChange($event)">
-                            <option *ngFor="let size of pageSizeOptions" [value]="size"
-                                    [selected]="size === itemsPerPage">
-                                {{ size }}
-                            </option>
-                        </select>
-                    </div>
+    <!-- Table -->
+    <div class="default-table-area mx-minus-1 table-to-do-list">
+      <div class="table-responsive">
+        <table class="table align-middle w-100">
+          <thead>
+            <tr>
+              <th width="55" class="text-center">
+                <input
+                  class="form-check-input order-checkbox"
+                  type="checkbox"
+                  [checked]="isAllSelected"
+                  (change)="toggleAll($event)"
+                />
+              </th>
+              <th class="fw-medium" scope="col">#</th>
+              <th class="fw-medium" scope="col">Full Name</th>
+              <th class="fw-medium" scope="col">Email</th>
+              <th class="fw-medium" scope="col">Phone</th>
+              <th class="fw-medium" scope="col">Role</th>
+              <th class="fw-medium" scope="col">Distributor</th>
+              <th class="fw-medium" scope="col">IsActive</th>
+              <th class="fw-medium" scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Using paginatedUsers with index -->
+            <tr *ngFor="let user of paginatedUsers; let i = index">
+              <!-- Checkbox -->
+              <td class="text-body" style="width: 62px">
+                <div class="form-check">
+                  <input
+                    class="form-check-input order-checkbox"
+                    type="checkbox"
+                    [checked]="isUserSelected(user.userId)"
+                    (change)="toggleUser(user)"
+                  />
                 </div>
+              </td>
 
-                <!-- Right: Pagination buttons -->
-                <nav aria-label="Page navigation" class="custom-pagination">
-                    <ul class="pagination mb-0 justify-content-center">
-                        <!-- Previous Button -->
-                        <li class="page-item" [class.disabled]="currentPage === 1">
-                            <button aria-label="Previous" class="page-link icon"
-                                    (click)="previousPage()" [disabled]="currentPage === 1">
-                                <i class="material-symbols-outlined">west</i>
-                            </button>
-                        </li>
+              <!-- Row Number (Index) -->
+              <td class="text-body">
+                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+              </td>
 
-                        <!-- Page Numbers with Ellipsis -->
-                        <li class="page-item" *ngFor="let page of pages">
-                            <!-- Ellipsis -->
-                            <span class="page-link" *ngIf="page === -1">…</span>
-                            
-                            <!-- Page number -->
-                            <button class="page-link" *ngIf="page !== -1"
-                                    [class.active]="page === currentPage"
-                                    (click)="goToPage(page)">
-                                {{ page }}
-                            </button>
-                        </li>
+              <!-- Full Name -->
+              <td>
+                <div class="d-flex align-items-center">
+                  <img
+                    src="assets/images/user5.jpg"
+                    alt="user"
+                    class="rounded-circle"
+                    style="width: 35px; height: 35px"
+                  />
+                  <span class="fs-16 fw-medium text-secondary ms-12">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </span>
+                </div>
+              </td>
 
-                        <!-- Next Button -->
-                        <li class="page-item" [class.disabled]="currentPage === totalPages">
-                            <button aria-label="Next" class="page-link icon"
-                                    (click)="nextPage()" [disabled]="currentPage === totalPages">
-                                <i class="material-symbols-outlined">east</i>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+              <!-- Email -->
+              <td class="text-body">{{ user.email }}</td>
+
+              <!-- Phone -->
+              <td class="text-body">{{ user.phone }}</td>
+
+              <!-- Role -->
+              <td class="text-body">{{ user.roleInfo?.name }}</td>
+
+              <!--Distributor-->
+              <td class="text-body">{{ user.distributorInfo?.distributorName }}</td>
+
+              <!-- Status -->
+              <td>
+                <span
+                  class="text-success bg-success bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
+                  *ngIf="user.isActive; else inactive"
+                >
+                  Active
+                </span>
+                <ng-template #inactive>
+                  <span
+                    class="text-danger bg-danger bg-opacity-10 fs-15 fw-normal d-inline-block default-badge"
+                  >
+                    Inactive
+                  </span>
+                </ng-template>
+              </td>
+
+              <!-- Actions -->
+              <td>
+                <div class="d-flex justify-content-end" style="gap: 12px">
+                  <button
+                    class="btn btn-success"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Edit"
+                    (click)="enableEditUser(user)"
+                  >
+                    <i class="material-symbols-outlined fs-16 fw-normal">Edit</i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20"
+      >
+        <!-- Left: Showing entries info and page size -->
+        <div class="d-flex align-items-center gap-3">
+          <span class="fs-15">
+            {{ getPaginationText() }}
+          </span>
+
+          <!-- Items per page dropdown -->
+          <div class="d-flex align-items-center gap-2">
+            <span class="fs-15">Show:</span>
+            <select
+              class="form-select form-select-sm"
+              style="width: auto"
+              (change)="onItemsPerPageChange($event)"
+            >
+              <option
+                *ngFor="let size of pageSizeOptions"
+                [value]="size"
+                [selected]="size === itemsPerPage"
+              >
+                {{ size }}
+              </option>
+            </select>
+          </div>
         </div>
+
+        <!-- Right: Pagination buttons -->
+        <nav aria-label="Page navigation" class="custom-pagination">
+          <ul class="pagination mb-0 justify-content-center">
+            <!-- Previous Button -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button
+                aria-label="Previous"
+                class="page-link icon"
+                (click)="previousPage()"
+                [disabled]="currentPage === 1"
+              >
+                <i class="material-symbols-outlined">west</i>
+              </button>
+            </li>
+
+            <!-- Page Numbers with Ellipsis -->
+            <li class="page-item" *ngFor="let page of pages">
+              <!-- Ellipsis -->
+              <span class="page-link" *ngIf="page === -1">…</span>
+
+              <!-- Page number -->
+              <button
+                class="page-link"
+                *ngIf="page !== -1"
+                [class.active]="page === currentPage"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            </li>
+
+            <!-- Next Button -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button
+                aria-label="Next"
+                class="page-link icon"
+                (click)="nextPage()"
+                [disabled]="currentPage === totalPages"
+              >
+                <i class="material-symbols-outlined">east</i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Sidebar Component -->
-<app-user-create 
-    #userSidebar 
-    [isVisible]="isSidebarVisible" 
-    [dealerId]="dealerId"
-    [editUserData]="selectedUser"
-    (closeSidebar)="closeSidebar()"
-    (formSubmit)="handleFormSubmit($event)"
-    (userUpdate)="handleUserUpdate($event)">
+<app-user-create
+  #userSidebar
+  [isVisible]="isSidebarVisible"
+  [dealerId]="dealerId"
+  [editUserData]="selectedUser"
+  (closeSidebar)="closeSidebar()"
+  (formSubmit)="handleFormSubmit($event)"
+  (userUpdate)="handleUserUpdate($event)"
+  (userDistributorUpdate)="handleUserDistributorUpdate($event)"
+>
 </app-user-create>

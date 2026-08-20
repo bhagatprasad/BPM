@@ -5,7 +5,11 @@
 <div class="sidebar" *ngIf="isVisible" [class.visible]="isVisible">
   <div class="sidebar-header">
     <h5 class="sidebar-title">
-      <i [class.ri-user-add-line]="!isEditMode" [class.ri-edit-2-line]="isEditMode" class="me-2"></i>
+      <i
+        [class.ri-user-add-line]="!isEditMode"
+        [class.ri-edit-2-line]="isEditMode"
+        class="me-2"
+      ></i>
       {{ isEditMode ? 'Edit User' : 'Add New User' }}
     </h5>
     <button type="button" class="close-btn" (click)="close()" aria-label="Close">
@@ -15,7 +19,6 @@
 
   <div class="sidebar-body">
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      
       <!-- Hidden ID for Edit -->
       <input type="hidden" formControlName="id" />
 
@@ -26,16 +29,21 @@
         </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-line input-icon"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="firstName" 
+          <input
+            type="text"
+            class="form-control"
+            id="firstName"
             formControlName="firstName"
             placeholder="Enter first name"
-            [class.is-invalid]="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
+            [class.is-invalid]="
+              userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched
+            "
           />
         </div>
-        <div *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="error-messages">
+        <div
+          *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
+          class="error-messages"
+        >
           <small *ngIf="userForm.get('firstName')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>First name is required
           </small>
@@ -58,16 +66,21 @@
         </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-follow-line input-icon"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="lastName" 
+          <input
+            type="text"
+            class="form-control"
+            id="lastName"
             formControlName="lastName"
             placeholder="Enter last name"
-            [class.is-invalid]="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched"
+            [class.is-invalid]="
+              userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched
+            "
           />
         </div>
-        <div *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="error-messages">
+        <div
+          *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched"
+          class="error-messages"
+        >
           <small *ngIf="userForm.get('lastName')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Last name is required
           </small>
@@ -85,21 +98,22 @@
 
       <!-- Email -->
       <div class="form-group">
-        <label for="email" class="form-label">
-          Email <span class="text-danger">*</span>
-        </label>
+        <label for="email" class="form-label"> Email <span class="text-danger">*</span> </label>
         <div class="input-icon-wrapper">
           <i class="ri-mail-line input-icon"></i>
-          <input 
-            type="email" 
-            class="form-control" 
-            id="email" 
-            formControlName="email" 
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
             placeholder="Enter email address"
             [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-messages">
+        <div
+          *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          class="error-messages"
+        >
           <small *ngIf="userForm.get('email')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Email is required
           </small>
@@ -114,76 +128,116 @@
 
       <!-- Phone -->
       <div class="form-group">
-        <label for="phone" class="form-label">
-          Phone <span class="text-danger">*</span>
-        </label>
+        <label for="phone" class="form-label"> Phone <span class="text-danger">*</span> </label>
         <div class="input-icon-wrapper">
           <i class="ri-phone-line input-icon"></i>
-          <input 
-            type="tel" 
-            class="form-control" 
-            id="phone" 
-            formControlName="phone" 
+          <input
+            type="tel"
+            class="form-control"
+            id="phone"
+            formControlName="phone"
             placeholder="Enter phone number"
             [class.is-invalid]="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
           />
         </div>
-        <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="error-messages">
+        <div
+          *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
+          class="error-messages"
+        >
           <small *ngIf="userForm.get('phone')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Phone number is required
           </small>
           <small *ngIf="userForm.get('phone')?.errors?.['pattern']">
-            <i class="ri-error-warning-line me-1"></i>Please enter a valid phone number (10-15 digits)
+            <i class="ri-error-warning-line me-1"></i>Please enter a valid phone number (10-15
+            digits)
           </small>
         </div>
       </div>
 
-      
       <!-- Password field - Only show for Create mode -->
-<div class="form-group" *ngIf="!isEditMode">
-  <label for="password" class="form-label">
-    Password <span class="text-danger">*</span>
-  </label>
-  <div class="input-icon-wrapper">
-    <i class="ri-lock-line input-icon"></i>
-    <input 
-      [type]="showPassword ? 'text' : 'password'" 
-      class="form-control" 
-      id="password" 
-      formControlName="password"
-      placeholder="Enter password (min 6 characters)" 
-      [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
-    />
-    <i 
-      class="password-toggle" 
-      [class.ri-eye-line]="showPassword"
-      [class.ri-eye-off-line]="!showPassword"
-      (click)="togglePasswordVisibility()"
-    ></i>
-  </div>
-  <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="error-messages">
-    <small *ngIf="userForm.get('password')?.errors?.['required']">
-      <i class="ri-error-warning-line me-1"></i>Password is required
-    </small>
-    <small *ngIf="userForm.get('password')?.errors?.['minlength']">
-      <i class="ri-error-warning-line me-1"></i>Minimum 6 characters required
-    </small>
-    <small *ngIf="userForm.get('password')?.errors?.['pattern']">
-      <i class="ri-error-warning-line me-1"></i>Must contain uppercase, lowercase and number
-    </small>
-  </div>
-</div>
+      <div class="form-group" *ngIf="!isEditMode">
+        <label for="password" class="form-label">
+          Password <span class="text-danger">*</span>
+        </label>
+        <div class="input-icon-wrapper">
+          <i class="ri-lock-line input-icon"></i>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            placeholder="Enter password (min 6 characters)"
+            [class.is-invalid]="
+              userForm.get('password')?.invalid && userForm.get('password')?.touched
+            "
+          />
+          <i
+            class="password-toggle"
+            [class.ri-eye-line]="showPassword"
+            [class.ri-eye-off-line]="!showPassword"
+            (click)="togglePasswordVisibility()"
+          ></i>
+        </div>
+        <div
+          *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+          class="error-messages"
+        >
+          <small *ngIf="userForm.get('password')?.errors?.['required']">
+            <i class="ri-error-warning-line me-1"></i>Password is required
+          </small>
+          <small *ngIf="userForm.get('password')?.errors?.['minlength']">
+            <i class="ri-error-warning-line me-1"></i>Minimum 6 characters required
+          </small>
+          <small *ngIf="userForm.get('password')?.errors?.['pattern']">
+            <i class="ri-error-warning-line me-1"></i>Must contain uppercase, lowercase and number
+          </small>
+        </div>
+      </div>
+
+      <!-- Distributor -->
+      <div class="form-group">
+        <label for="distributorId" class="form-label">
+          Distributor <span class="text-danger">*</span>
+        </label>
+
+        <div class="input-icon-wrapper">
+          <i class="ri-building-line input-icon"></i>
+
+          <select
+            class="form-control"
+            id="distributorId"
+            formControlName="distributorId"
+            [class.is-invalid]="
+              userForm.get('distributorId')?.invalid && userForm.get('distributorId')?.touched
+            "
+          >
+            <option value="">Select Distributor</option>
+
+            <option *ngFor="let distributor of distributors" [value]="distributor.distributorId">
+              {{ distributor.distributorName }}
+            </option>
+          </select>
+        </div>
+
+        <div
+          *ngIf="userForm.get('distributorId')?.invalid && userForm.get('distributorId')?.touched"
+          class="error-messages"
+        >
+          <small *ngIf="userForm.get('distributorId')?.errors?.['required']">
+            <i class="ri-error-warning-line me-1"></i>
+            Distributor is required
+          </small>
+        </div>
+      </div>
 
       <!-- Role -->
       <div class="form-group">
-        <label for="roleId" class="form-label">
-          Role <span class="text-danger">*</span>
-        </label>
+        <label for="roleId" class="form-label"> Role <span class="text-danger">*</span> </label>
         <div class="input-icon-wrapper">
           <i class="ri-user-settings-line input-icon"></i>
-          <select 
-            class="form-control" 
-            id="roleId" 
+          <select
+            class="form-control"
+            id="roleId"
             formControlName="roleId"
             [class.is-invalid]="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched"
           >
@@ -193,7 +247,10 @@
             </option>
           </select>
         </div>
-        <div *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched" class="error-messages">
+        <div
+          *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched"
+          class="error-messages"
+        >
           <small *ngIf="userForm.get('roleId')?.errors?.['required']">
             <i class="ri-error-warning-line me-1"></i>Role is required
           </small>
@@ -205,10 +262,10 @@
         <label class="form-label">Account Status</label>
         <div class="toggle-wrapper">
           <div class="form-check form-switch">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="isActive" 
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isActive"
               formControlName="isActive"
             />
             <label class="form-check-label" for="isActive">
@@ -226,11 +283,14 @@
           <i class="ri-close-line me-1"></i>Cancel
         </button>
         <button type="submit" class="btn btn-primary btn-submit" [disabled]="userForm.invalid">
-          <i [class.ri-user-add-line]="!isEditMode" [class.ri-save-line]="isEditMode" class="me-1"></i>
+          <i
+            [class.ri-user-add-line]="!isEditMode"
+            [class.ri-save-line]="isEditMode"
+            class="me-1"
+          ></i>
           {{ isEditMode ? 'Update User' : 'Create User' }}
         </button>
       </div>
-
     </form>
   </div>
 </div>

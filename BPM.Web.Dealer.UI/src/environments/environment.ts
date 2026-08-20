@@ -33,12 +33,12 @@ export const environment = {
     },
 
     User: {
-      UpdateUserProfileAsync: 'user/updateuser',
       ChangePasswordAsync: 'user/changepassword',
       GetAllUsersByDealerIdAsync: 'user/get-all-users-by-dealer',
+      GetAllUsersByDistributorIdAsync: 'user/get-all-users-by-distributor',
       InsertUserAsync: 'user/insert-user',
-      CreateUserAsync: 'user/create-user',
       updateUserAsync: 'user/updateuser',
+      UpdateUserDistributorAsync: 'user/updatedistributor',
       deactivateUserAsync: 'user/deactivateuser',
     },
 
@@ -48,6 +48,9 @@ export const environment = {
 
     Dealer: {
       updateDealerAsync: 'dealer/updatedealer',
+    },
+    Distributor: {
+      GetAllDistributors: 'Distributor/get-all-distributors',
     },
   },
 };

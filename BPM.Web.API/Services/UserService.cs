@@ -137,14 +137,10 @@ namespace BPM.Web.API.Services
             try
             {
                 _logger.LogInformation("Creating user");
+
                 if (!user.DealerId.HasValue && !user.DistributorId.HasValue)
                 {
-                    _logger.LogWarning("User must be associated with either a Dealer or Distributor");
-                    return false;
-                }
-                if (user.DealerId.HasValue && user.DistributorId.HasValue)
-                {
-                    _logger.LogWarning("User cannot be associated with both Dealer and Distributor");
+                    _logger.LogWarning("User must be associated with a Dealer or Distributor");
                     return false;
                 }
 
@@ -157,6 +153,7 @@ namespace BPM.Web.API.Services
                     _logger.LogWarning("Failed to create user");
                     return false;
                 }
+
                 return true;
             }
             catch (Exception ex)
@@ -179,22 +176,25 @@ namespace BPM.Web.API.Services
 
                 var result = await _userRespository.UpdateUserInfoAsync(user);
 
+                if (!result)
+                {
+                    _logger.LogWarning("Failed to update user. UserId {UserId}", userId);
+                    return null;
+                }
+
                 var dbUser = await _userRespository.GetUserByIdAsync(userId);
 
                 if (dbUser == null)
                 {
-                    _logger.LogWarning("Failed to update user");
+                    _logger.LogWarning("User not found after update. UserId {UserId}", userId);
                     return null;
                 }
 
-                UserDto userUpdateResponse = dbUser.ToEntity();
-
-                return userUpdateResponse;
-
+                return dbUser.ToEntity();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating user");
+                _logger.LogError(ex, "Error occurred while updating user. UserId {UserId}", userId);
                 throw;
             }
         }
