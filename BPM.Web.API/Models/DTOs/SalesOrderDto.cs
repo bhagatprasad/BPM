@@ -14,6 +14,8 @@ namespace BPM.Web.API.Models.DTOs
 
         public Guid DealerId { get; set; }
 
+        public Guid DistributorId { get; set; }
+
         public DateTime OrderDate { get; set; }
 
         public DateTime ExpectedDeliveryDate { get; set; }

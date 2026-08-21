@@ -23,6 +23,10 @@ namespace BPM.Web.API.Models.Entities
         [Column("dealerid")]
         public Guid DealerId { get; set; }
 
+        [Required]
+        [Column("distributorid")]
+        public Guid DistributorId { get; set; }
+
         [Column("orderdate")]
         public DateTime OrderDate { get; set; }
 
@@ -86,7 +90,6 @@ namespace BPM.Web.API.Models.Entities
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
 
-        // Navigation Properties
 
         [ForeignKey(nameof(SupplierId))]
         public virtual Supplier? Supplier { get; set; }
@@ -94,10 +97,13 @@ namespace BPM.Web.API.Models.Entities
         [ForeignKey(nameof(DealerId))]
         public virtual Dealer? Dealer { get; set; }
 
+        
+        [ForeignKey(nameof(DistributorId))]
+        public virtual Distributor? Distributor { get; set; }
+
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; }
             = new List<PurchaseOrderItem>();
 
-        // One Purchase Order can generate one or more Sales Orders
         public virtual ICollection<SalesOrder> SalesOrders { get; set; }
             = new List<SalesOrder>();
     }

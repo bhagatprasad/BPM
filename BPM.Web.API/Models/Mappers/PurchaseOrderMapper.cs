@@ -13,6 +13,7 @@ namespace BPM.Web.API.Models.Mappers
             {
                 SupplierId = dto.SupplierId,
                 DealerId = dto.DealerId,
+                DistributorId = dto.DistributorId,
                 ExpectedDeliveryDate = dto.ExpectedDeliveryDate.EnsureUtc(),
                 PaymentTerms = dto.PaymentTerms,
                 DeliveryTerms = dto.DeliveryTerms,
@@ -65,6 +66,7 @@ namespace BPM.Web.API.Models.Mappers
                 SupplierId = purchaseOrder.SupplierId,
                 SupplierName = purchaseOrder.Supplier?.SupplierName ?? string.Empty,
                 DealerId = purchaseOrder.DealerId,
+                DistributorId = purchaseOrder.DistributorId,
                 OrderDate = purchaseOrder.OrderDate,
                 ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate,
                 ActualDeliveryDate = purchaseOrder.ActualDeliveryDate,

@@ -11,6 +11,9 @@ namespace BPM.Web.API.Models.DTOs
         public Guid DealerId { get; set; }
 
         [Required]
+        public Guid DistributorId { get; set; }
+
+        [Required]
         public DateTime ExpectedDeliveryDate { get; set; }
 
         [Required]
@@ -30,32 +33,6 @@ namespace BPM.Web.API.Models.DTOs
         public List<CreatePurchaseOrderItemDto> Items { get; set; } = new();
     }
 
-    public class CreatePurchaseOrderItemDto
-    {
-        [Required]
-        public Guid DrugId { get; set; }
-
-        [Required]
-        public Guid PackagingId { get; set; }
-
-        [Required]
-        public int Quantity { get; set; }
-
-        [Required]
-        public decimal UnitPrice { get; set; }
-
-        public decimal DiscountPercentage { get; set; }
-
-        public decimal TaxRate { get; set; }
-
-        public string? BatchNumber { get; set; }
-
-        public DateTime? ExpiryDate { get; set; }
-
-        public string? Remarks { get; set; }
-    }
-    public class SubmitPurchaseOrderDto
-    {
-        public Guid PurchaseOrderId { get; set; }
-    }
+   
+   
 }

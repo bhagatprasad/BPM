@@ -27,6 +27,9 @@ namespace BPM.Web.API.Models.Entities
         [Column("dealerid")]
         public Guid DealerId { get; set; }
 
+        [Required]
+        [Column("distributorid")]
+        public Guid DistributorId { get; set; }
         [Column("orderdate")]
         public DateTime OrderDate { get; set; }
 
@@ -100,6 +103,9 @@ namespace BPM.Web.API.Models.Entities
 
         [ForeignKey(nameof(DealerId))]
         public virtual Dealer? Dealer { get; set; }
+
+        [ForeignKey(nameof(DistributorId))]
+        public virtual Distributor? Distributor { get; set; }
 
         public virtual ICollection<SalesOrderItem> SalesOrderItems { get; set; }
             = new List<SalesOrderItem>();
