@@ -16,6 +16,7 @@ namespace BPM.Web.API.Models.Mappers
                 PurchaseOrderId = entity.PurchaseOrderId,
                 SupplierId = entity.SupplierId,
                 DealerId = entity.DealerId,
+                DistributorId = entity.DistributorId,
                 OrderDate = entity.OrderDate,
                 ExpectedDeliveryDate = entity.ExpectedDeliveryDate,
                 ActualDeliveryDate = entity.ActualDeliveryDate,
@@ -75,6 +76,7 @@ namespace BPM.Web.API.Models.Mappers
                 PurchaseOrderId = purchaseOrder.Id,
                 SupplierId = purchaseOrder.SupplierId,
                 DealerId = purchaseOrder.DealerId,
+                DistributorId = purchaseOrder.DistributorId,
                 OrderDate = DateTime.UtcNow,
                 ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc(),
                 ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc(),
@@ -115,6 +117,7 @@ namespace BPM.Web.API.Models.Mappers
                 PurchaseOrderId = purchaseOrder.Id,
                 SupplierId = purchaseOrder.SupplierId,
                 DealerId = purchaseOrder.DealerId,
+                DistributorId = purchaseOrder.DistributorId,
                 OrderDate = DateTime.UtcNow,
                 ExpectedDeliveryDate = purchaseOrder.ExpectedDeliveryDate.EnsureUtc(),
                 ActualDeliveryDate = purchaseOrder.ActualDeliveryDate.EnsureUtc(),
@@ -209,6 +212,10 @@ namespace BPM.Web.API.Models.Mappers
             salesOrder.PaymentTerms = purchaseOrder.PaymentTerms;
             salesOrder.DeliveryTerms = purchaseOrder.DeliveryTerms;
 
+            if (salesOrder.DistributorId != purchaseOrder.DistributorId)
+            {
+                salesOrder.DistributorId = purchaseOrder.DistributorId;
+            }
             // Append remarks instead of overwriting
             if (!string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
             {
@@ -241,6 +248,10 @@ namespace BPM.Web.API.Models.Mappers
             salesOrder.PaymentTerms = purchaseOrder.PaymentTerms;
             salesOrder.DeliveryTerms = purchaseOrder.DeliveryTerms;
 
+            if (salesOrder.DistributorId != purchaseOrder.DistributorId)
+            {
+                salesOrder.DistributorId = purchaseOrder.DistributorId;
+            }
             // Append remarks instead of overwriting
             if (!string.IsNullOrWhiteSpace(purchaseOrder.Remarks))
             {

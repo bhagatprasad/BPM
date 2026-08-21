@@ -10,6 +10,7 @@
         public string SupplierName { get; set; } = string.Empty;
 
         public Guid DealerId { get; set; }
+        public Guid DistributorId { get; set; }
 
         public DateTime OrderDate { get; set; }
 
