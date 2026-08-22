@@ -14,6 +14,174 @@
         AllowsTransparency="True"
         Background="Transparent">
 
+    <Window.Resources>
+        <!-- Email/Username TextBox Style with Left Icon -->
+        <Style x:Key="BpmTextBoxWithLeftIcon" TargetType="TextBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="45,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- PasswordBox Style with Left Icon -->
+        <Style x:Key="BpmPasswordBoxWithLeftIcon" TargetType="PasswordBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Password Visible TextBox Style with Left Icon -->
+        <Style x:Key="BpmVisibleTextBoxWithLeftIcon" TargetType="TextBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <!-- Background -->
         <Border Background="{StaticResource LoginBackgroundGradient}">
@@ -88,16 +256,50 @@
                            HorizontalAlignment="Center"
                            Margin="0,5,0,30" />
 
-                <!-- Email -->
+                <!-- Email with User Icon -->
                 <TextBox x:Name="EmailTextBox"
-                         Style="{StaticResource BpmTextBox}"
+                         Style="{StaticResource BpmTextBoxWithLeftIcon}"
+                         Tag="👤"
                          Margin="0,0,0,15"
-                         Text="admin@bpm.com" />
+                         Text="super@admin.com" />
 
-                <!-- Password -->
-                <PasswordBox x:Name="PasswordBoxControl"
-                             Style="{StaticResource BpmPasswordBox}"
-                             Margin="0,0,0,15" />
+                <!-- Password with Key Icon and Toggle -->
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Password Box -->
+                    <PasswordBox x:Name="PasswordBoxControl"
+                                 Style="{StaticResource BpmPasswordBoxWithLeftIcon}"
+                                 Tag="🔑" />
+
+                    <!-- Visible Text Box (Hidden by default) -->
+                    <TextBox x:Name="PasswordVisibleTextBox"
+                             Style="{StaticResource BpmVisibleTextBoxWithLeftIcon}"
+                             Tag="🔑"
+                             Visibility="Collapsed"
+                             TextChanged="PasswordVisibleTextBox_TextChanged" />
+
+                    <!-- Eye Icon Button - Overlay on right side -->
+                    <Button x:Name="TogglePasswordButton"
+                            Width="45"
+                            Height="45"
+                            Margin="0,0,5,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="TogglePassword_Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            ToolTip="Show/Hide Password"
+                            Focusable="False">
+                        <TextBlock x:Name="EyeIcon" 
+                                   Text="👁️" 
+                                   FontSize="20" 
+                                   Foreground="#94a3b8" />
+                    </Button>
+                </Grid>
 
                 <!-- Remember Me -->
                 <CheckBox x:Name="RememberMeCheck"
@@ -127,8 +329,7 @@
                            FontWeight="SemiBold"
                            Margin="0,15,0,0">
                     <TextBlock.InputBindings>
-                        <MouseBinding MouseAction="LeftClick"
-                                      Command="{Binding ForgotPasswordCommand}" />
+                        <MouseBinding MouseAction="LeftClick" />
                     </TextBlock.InputBindings>
                 </TextBlock>
 

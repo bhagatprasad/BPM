@@ -88,19 +88,16 @@ namespace BPM.Web.Operations.UI
                     builder.SetMinimumLevel(LogLevel.Information);
                 });
 
-                // Register Services
+                // Register Services - Singleton for SessionManager
                 services.AddSingleton<SessionManager>();
+
+                // Register HttpClientService as Scoped (or Singleton if you prefer)
                 services.AddScoped<HttpClientService>();
-                services.AddTransient<TokenAuthorizationHandler>();
 
-                // HTTP Client with Authorization Handler
-                services.AddHttpClient("AuthorizedClient")
-                    .AddHttpMessageHandler<TokenAuthorizationHandler>()
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-                // Repository Factory & Services
+                // Register Repository Factory and Services
                 services.AddScoped<IRepositoryFactory, RepositoryFactory>();
                 services.AddScoped<IAuthenticateService, AuthenticateService>();
+                services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
                 services.AddSingleton<INavigationService, NavigationService>();
 
                 // ViewModels

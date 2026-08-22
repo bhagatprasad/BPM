@@ -3,8 +3,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using BPM.Web.Operations.UI.Views.Shared;
 using BPM.Web.Operations.UI.Views.Account;
+using BPM.Web.Operations.UI.Views.Dashboard;
 
 namespace BPM.Web.Operations.UI.Views.Dashboard
 {
@@ -58,7 +58,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
                     content = CreateOrdersContent();
                     break;
                 case "PurchaseOrders":
-                    content = CreatePurchaseOrdersContent();
+                    content = CreatePurchaseOrdersContent(); // Now returns actual control
                     break;
                 case "SalesOrders":
                     content = CreateSalesOrdersContent();
@@ -280,32 +280,61 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
             return card;
         }
 
-        private UserControl CreateOrdersContent() =>
-            CreatePlaceholderContent("📋 Orders Management", "Manage all orders here");
+        private UserControl CreateOrdersContent()
+        {
+            return CreatePlaceholderContent("📋 Orders Management", "Manage all orders here");
+        }
 
-        private UserControl CreatePurchaseOrdersContent() =>
-            CreatePlaceholderContent("📋 Purchase Orders", "Manage purchase orders here");
+        // FIXED: This now returns the actual PurchaseOrderView
+        private UserControl CreatePurchaseOrdersContent()
+        {
+            try
+            {
+                // Create the actual PurchaseOrderView control
+                var purchaseOrderView = new PurchaseOrderView();
+                return purchaseOrderView;
+            }
+            catch (Exception ex)
+            {
+                // If there's an error, show placeholder with error message
+                return CreatePlaceholderContent("❌ Error Loading Purchase Orders", ex.Message);
+            }
+        }
 
-        private UserControl CreateSalesOrdersContent() =>
-            CreatePlaceholderContent("🛍️ Sales Orders", "Manage sales orders here");
+        private UserControl CreateSalesOrdersContent()
+        {
+            return CreatePlaceholderContent("🛍️ Sales Orders", "Manage sales orders here");
+        }
 
-        private UserControl CreateUsersContent() =>
-            CreatePlaceholderContent("👥 Users", "Manage users here");
+        private UserControl CreateUsersContent()
+        {
+            return CreatePlaceholderContent("👥 Users", "Manage users here");
+        }
 
-        private UserControl CreateDealersContent() =>
-            CreatePlaceholderContent("🏪 Dealers", "Manage dealers here");
+        private UserControl CreateDealersContent()
+        {
+            return CreatePlaceholderContent("🏪 Dealers", "Manage dealers here");
+        }
 
-        private UserControl CreateDrugsContent() =>
-            CreatePlaceholderContent("💊 Drugs", "Manage drugs inventory here");
+        private UserControl CreateDrugsContent()
+        {
+            return CreatePlaceholderContent("💊 Drugs", "Manage drugs inventory here");
+        }
 
-        private UserControl CreateCoreContent() =>
-            CreatePlaceholderContent("⚙️ Core Settings", "Manage core settings here");
+        private UserControl CreateCoreContent()
+        {
+            return CreatePlaceholderContent("⚙️ Core Settings", "Manage core settings here");
+        }
 
-        private UserControl CreateChatContent() =>
-            CreatePlaceholderContent("💬 Chat", "Chat with team members");
+        private UserControl CreateChatContent()
+        {
+            return CreatePlaceholderContent("💬 Chat", "Chat with team members");
+        }
 
-        private UserControl CreateEmailContent() =>
-            CreatePlaceholderContent("✉️ Email", "Manage emails here");
+        private UserControl CreateEmailContent()
+        {
+            return CreatePlaceholderContent("✉️ Email", "Manage emails here");
+        }
 
         private UserControl CreatePlaceholderContent(string title, string description)
         {

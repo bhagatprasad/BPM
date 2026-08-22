@@ -25,6 +25,9 @@ namespace BPM.Web.Operations.UI.Helper
             _sessionManager = sessionManager;
             _authService = authService;
             _logger = logger;
+
+            // Set inner handler
+            InnerHandler = new HttpClientHandler();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -36,6 +39,11 @@ namespace BPM.Web.Operations.UI.Helper
             if (authResponse != null && !string.IsNullOrWhiteSpace(authResponse.JwtToken))
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.JwtToken);
+                _logger?.LogDebug("Authorization header added to request.");
+            }
+            else
+            {
+                _logger?.LogWarning("No token available for request.");
             }
 
             var response = await base.SendAsync(request, cancellationToken);

@@ -9,21 +9,23 @@ namespace BPM.Web.Operations.UI.Helper
     {
         private readonly HttpClient _httpClient;
         private readonly SessionManager _sessionManager;
+        private readonly BPMConfig _config;
 
         public HttpClientService(
             IOptions<BPMConfig> bpmConfig,
-            IHttpClientFactory httpClientFactory,
             SessionManager sessionManager)
         {
             _sessionManager = sessionManager;
+            _config = bpmConfig.Value;
 
-            // Create client without the handler
-            _httpClient = httpClientFactory.CreateClient();
+            // Create client WITHOUT the authorization handler
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(_config.BaseUrl),
+                Timeout = TimeSpan.FromSeconds(_config.TimeoutSeconds)
+            };
 
-            var config = bpmConfig.Value;
-            _httpClient.BaseAddress = new Uri(config.BaseUrl);
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.Timeout = TimeSpan.FromSeconds(config.TimeoutSeconds);
 
             // Add authorization header if token exists
             AddAuthorizationHeader();
@@ -37,6 +39,11 @@ namespace BPM.Web.Operations.UI.Helper
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", authResponse.JwtToken);
             }
+            else
+            {
+                // Clear authorization header if no token
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
         }
 
         public HttpClient GetHttpClient()
@@ -46,11 +53,23 @@ namespace BPM.Web.Operations.UI.Helper
             return _httpClient;
         }
 
-        // Method to update token when it changes
         public void UpdateToken(string token)
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+
+        // Force refresh of token
+        public void RefreshAuthorizationHeader()
+        {
+            AddAuthorizationHeader();
         }
     }
 }
