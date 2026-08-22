@@ -74,7 +74,7 @@ namespace BPM.Web.API.Models.Mappers
                 DealerId = dto.DealerId,
                 DistributorId = dto.DistributorId,
                 DealerInfo = dto.Dealer != null ? dto.Dealer.ToDto() : null,
-                DistributorInfo = dto.Distributor != null ? dto.Distributor.ToDto() : null,               
+                DistributorInfo = dto.Distributor != null ? dto.Distributor.ToDto() : null,
                 RoleInfo = dto.Role != null ? dto.Role.ToDto() : null,
             };
 

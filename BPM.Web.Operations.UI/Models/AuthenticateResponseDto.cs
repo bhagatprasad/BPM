@@ -1,4 +1,4 @@
-﻿namespace BPM.Web.API.Models.DTOs
+﻿namespace BPM.Web.Operations.UI.Models
 {
     public class AuthenticateResponseDto
     {
@@ -14,6 +14,5 @@
         public DealerDto DealerInfo { get; set; }
         public DistributorDto DistributorInfo { get; set; }
         public RoleDto RoleInfo { get; set; }
-
     }
 }

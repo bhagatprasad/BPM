@@ -81,7 +81,7 @@
         </Setter>
     </Style>
 
-    <!-- CheckBox (plain WPF CheckBox, restyled) -->
+    <!-- CheckBox -->
     <Style x:Key="BpmCheckBox" TargetType="CheckBox">
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
@@ -117,6 +117,107 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Social Button (Button variant) -->
+    <Style x:Key="SocialButton" TargetType="Button">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="22">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Social Button (ToggleButton variant, e.g. dark-mode toggle) -->
+    <Style x:Key="SocialToggleButton" TargetType="ToggleButton">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="22">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Sidebar Container -->
+    <Style x:Key="DashboardSidebar" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource WhiteBrush}" />
+        <Setter Property="BorderBrush" Value="#e2e8f0" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+        <Setter Property="Width" Value="260" />
+    </Style>
+
+    <!-- Sidebar Menu Item -->
+    <Style x:Key="SidebarMenuItem" TargetType="Button">
+        <Setter Property="Height" Value="44" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}">
+                        <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Top Bar -->
+    <Style x:Key="TopBar" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource WhiteBrush}" />
+        <Setter Property="BorderBrush" Value="#e2e8f0" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Height" Value="70" />
+        <Setter Property="Padding" Value="25,0" />
+    </Style>
+
+    <!-- Dashboard Content wrapper -->
+    <Style x:Key="DashboardContent" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+    </Style>
+
+    <!-- Dashboard Card -->
+    <Style x:Key="DashboardCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource WhiteBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="#000000" Direction="270" ShadowDepth="2" BlurRadius="12" Opacity="0.08" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Stat Card -->
+    <Style x:Key="StatCard" TargetType="Border" BasedOn="{StaticResource DashboardCard}">
+        <Setter Property="Padding" Value="18" />
     </Style>
 
 </ResourceDictionary>

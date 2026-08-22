@@ -1,0 +1,137 @@
+﻿<!-- Views/Shared/TopBarView.xaml -->
+<UserControl x:Class="BPM.Web.Operations.UI.Views.Shared.TopBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <Border Style="{StaticResource TopBar}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Side - Greeting -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="👋" FontSize="20" Margin="0,0,10,0" />
+                <StackPanel>
+                    <TextBlock x:Name="GreetingText" 
+                               Text="Welcome | Good Morning" 
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource PrimaryBrush}" />
+                    <TextBlock x:Name="DateTimeText" 
+                               Text="Loading..."
+                               FontSize="12"
+                               Foreground="#94a3b8" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Right Side - Actions -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Language -->
+                <Button Style="{StaticResource SocialButton}" 
+                        Background="Transparent"
+                        Foreground="#475569"
+                        Margin="0,0,8,0"
+                        ToolTip="Language">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🌐" FontSize="18" Margin="0,0,4,0" />
+                        <TextBlock Text="EN" FontSize="12" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Dark Mode Toggle -->
+                <ToggleButton x:Name="DarkModeToggle"
+                              Style="{StaticResource SocialToggleButton}"
+                              Background="Transparent"
+                              Foreground="#475569"
+                              Checked="DarkModeToggle_Checked"
+                              Unchecked="DarkModeToggle_Unchecked"
+                              Margin="0,0,8,0"
+                              ToolTip="Toggle Dark Mode">
+                    <TextBlock Text="🌙" FontSize="18" />
+                </ToggleButton>
+
+                <!-- Notifications -->
+                <Button Style="{StaticResource SocialButton}"
+                        Background="Transparent"
+                        Foreground="#475569"
+                        Margin="0,0,8,0"
+                        ToolTip="Notifications">
+                    <Grid>
+                        <TextBlock Text="🔔" FontSize="18" />
+                        <Border Background="#ef4444"
+                                CornerRadius="10"
+                                Width="18"
+                                Height="18"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,-5,-5,0">
+                            <TextBlock Text="3" 
+                                       Foreground="White"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Button>
+
+                <!-- Messages -->
+                <Button Style="{StaticResource SocialButton}"
+                        Background="Transparent"
+                        Foreground="#475569"
+                        Margin="0,0,8,0"
+                        ToolTip="Messages">
+                    <Grid>
+                        <TextBlock Text="💬" FontSize="18" />
+                        <Border Background="#ef4444"
+                                CornerRadius="10"
+                                Width="18"
+                                Height="18"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,-5,-5,0">
+                            <TextBlock Text="5" 
+                                       Foreground="White"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </Button>
+
+                <!-- User Profile -->
+                <Button Style="{StaticResource SocialButton}"
+                        Background="Transparent"
+                        Foreground="#475569"
+                        Click="Profile_Click"
+                        ToolTip="Profile">
+                    <Grid>
+                        <Border Background="{StaticResource PrimaryBrush}"
+                                CornerRadius="20"
+                                Width="36"
+                                Height="36"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="👤" 
+                                       FontSize="18"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <Border Background="#22c55e"
+                                CornerRadius="10"
+                                Width="12"
+                                Height="12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,-2,-2"
+                                BorderBrush="White"
+                                BorderThickness="2" />
+                    </Grid>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
