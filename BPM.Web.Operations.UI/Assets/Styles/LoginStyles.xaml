@@ -1,0 +1,39 @@
+﻿<!-- Assets/Styles/LoginStyles.xaml -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <!-- Floating Medical Icon Style - TextBlock-based (correct approach) -->
+    <Style x:Key="FloatingMedicalIconText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="40" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Opacity" Value="0.12" />
+        <Setter Property="FontFamily" Value="Segoe UI Emoji" />
+    </Style>
+
+    <!-- Medical Stat Badge -->
+    <Style x:Key="MedicalStatBadge" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Opacity" Value="0.15" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="20,10" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
+
+    <!-- Trust Badge -->
+    <Style x:Key="TrustBadge" TargetType="Border">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#e2e8f0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Margin" Value="0,0,15,0" />
+    </Style>
+
+    <!-- Divider Line -->
+    <Style x:Key="DividerLine" TargetType="Border">
+        <Setter Property="Width" Value="60" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Background" Value="#e2e8f0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+</ResourceDictionary>
