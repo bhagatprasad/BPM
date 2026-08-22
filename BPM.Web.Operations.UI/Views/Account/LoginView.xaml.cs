@@ -7,6 +7,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace BPM.Web.Operations.UI.Views.Account
 {
@@ -15,6 +16,8 @@ namespace BPM.Web.Operations.UI.Views.Account
         private readonly IAuthenticateService _authService;
         private readonly SessionManager _sessionManager;
         private readonly IServiceProvider _serviceProvider;
+        private readonly HttpClientService _httpClientService;
+        private bool _isPasswordVisible = false;
 
         public LoginView()
         {
@@ -23,8 +26,22 @@ namespace BPM.Web.Operations.UI.Views.Account
             _serviceProvider = ((App)Application.Current).ServiceProvider;
             _authService = _serviceProvider.GetRequiredService<IAuthenticateService>();
             _sessionManager = _serviceProvider.GetRequiredService<SessionManager>();
+            _httpClientService = _serviceProvider.GetRequiredService<HttpClientService>();
+
+            this.Loaded += (s, e) =>
+            {
+                PasswordBoxControl.Focus();
+            };
 
             PasswordBoxControl.KeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Enter)
+                {
+                    LoginButton_Click(s, e);
+                }
+            };
+
+            PasswordVisibleTextBox.KeyDown += (s, e) =>
             {
                 if (e.Key == Key.Enter)
                 {
@@ -39,12 +56,20 @@ namespace BPM.Web.Operations.UI.Views.Account
                     PasswordBoxControl.Focus();
                 }
             };
+
+            PasswordBoxControl.PasswordChanged += (s, e) =>
+            {
+                if (_isPasswordVisible)
+                {
+                    PasswordVisibleTextBox.Text = PasswordBoxControl.Password;
+                }
+            };
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             var email = EmailTextBox.Text?.Trim();
-            var password = PasswordBoxControl.Password;
+            var password = GetPassword();
 
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -83,10 +108,6 @@ namespace BPM.Web.Operations.UI.Views.Account
                     var roleName = response.AuthenticateResponseDto?.RoleInfo?.Name;
 
                     bool isSuperAdmin = roleName == "SuperAdmin";
-                    bool isAdministratorOrOperator = roleName == "Administrator" || roleName == "Operator";
-                    bool isDealer = roleName == "Dealer";
-                    bool isDistributor = roleName == "Distributor";
-
                     var authDto = response.AuthenticateResponseDto;
 
                     bool isAuthorized = isSuperAdmin && (authDto?.DealerInfo == null && authDto?.DistributorInfo == null);
@@ -94,14 +115,20 @@ namespace BPM.Web.Operations.UI.Views.Account
                     if (!isAuthorized)
                     {
                         ShowError("You are not authorized to login to this portal.");
-
                         LoginButton.IsEnabled = true;
                         LoginButton.Content = "Sign In";
                         return;
                     }
 
+                    // IMPORTANT: Update session and token
                     _sessionManager.SetAuthResponse(response);
                     _sessionManager.SetToken(response.JwtToken, response.RefreshToken);
+
+                    // IMPORTANT: Update HttpClient with new token
+                    _httpClientService.UpdateToken(response.JwtToken);
+
+                    // Force refresh of authorization header
+                    _httpClientService.RefreshAuthorizationHeader();
 
                     MessageBox.Show($"Welcome, {authDto?.FirstName} {authDto?.LastName}!",
                         "Login Successful",
@@ -125,6 +152,48 @@ namespace BPM.Web.Operations.UI.Views.Account
             {
                 LoginButton.IsEnabled = true;
                 LoginButton.Content = "Sign In";
+            }
+        }
+
+        private void TogglePassword_Click(object sender, RoutedEventArgs e)
+        {
+            _isPasswordVisible = !_isPasswordVisible;
+
+            if (_isPasswordVisible)
+            {
+                PasswordVisibleTextBox.Text = PasswordBoxControl.Password;
+                PasswordBoxControl.Visibility = Visibility.Collapsed;
+                PasswordVisibleTextBox.Visibility = Visibility.Visible;
+                EyeIcon.Text = "🙈";
+                EyeIcon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0d9488"));
+                PasswordVisibleTextBox.Focus();
+                PasswordVisibleTextBox.CaretIndex = PasswordVisibleTextBox.Text.Length;
+            }
+            else
+            {
+                PasswordBoxControl.Password = PasswordVisibleTextBox.Text;
+                PasswordVisibleTextBox.Visibility = Visibility.Collapsed;
+                PasswordBoxControl.Visibility = Visibility.Visible;
+                EyeIcon.Text = "👁️";
+                EyeIcon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#94a3b8"));
+                PasswordBoxControl.Focus();
+            }
+        }
+
+        private void PasswordVisibleTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Sync when visible text changes
+        }
+
+        private string GetPassword()
+        {
+            if (_isPasswordVisible)
+            {
+                return PasswordVisibleTextBox.Text;
+            }
+            else
+            {
+                return PasswordBoxControl.Password;
             }
         }
 
