@@ -10,6 +10,8 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
 {
     public partial class DashboardView : Window
     {
+        private UserControl _currentContent;
+
         public DashboardView()
         {
             InitializeComponent();
@@ -58,7 +60,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
                     content = CreateOrdersContent();
                     break;
                 case "PurchaseOrders":
-                    content = CreatePurchaseOrdersContent(); // Now returns actual control
+                    content = CreatePurchaseOrdersContent();
                     break;
                 case "SalesOrders":
                     content = CreateSalesOrdersContent();
@@ -86,6 +88,13 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
                     break;
             }
 
+            // Dispose old content if it's a disposable control
+            if (_currentContent is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            _currentContent = content;
             ContentArea.Content = content;
         }
 
@@ -285,25 +294,36 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
             return CreatePlaceholderContent("📋 Orders Management", "Manage all orders here");
         }
 
-        // FIXED: This now returns the actual PurchaseOrderView
         private UserControl CreatePurchaseOrdersContent()
         {
             try
             {
-                // Create the actual PurchaseOrderView control
                 var purchaseOrderView = new PurchaseOrderView();
                 return purchaseOrderView;
             }
             catch (Exception ex)
             {
-                // If there's an error, show placeholder with error message
                 return CreatePlaceholderContent("❌ Error Loading Purchase Orders", ex.Message);
             }
         }
 
         private UserControl CreateSalesOrdersContent()
         {
-            return CreatePlaceholderContent("🛍️ Sales Orders", "Manage sales orders here");
+            try
+            {
+                var salesOrderView = new SalesOrderView();
+                // SalesOrderView is a Window, but we need UserControl
+                // Convert to UserControl
+                var contentControl = new ContentControl
+                {
+                    Content = salesOrderView.Content
+                };
+                return new UserControl { Content = contentControl };
+            }
+            catch (Exception ex)
+            {
+                return CreatePlaceholderContent("❌ Error Loading Sales Orders", ex.Message);
+            }
         }
 
         private UserControl CreateUsersContent()

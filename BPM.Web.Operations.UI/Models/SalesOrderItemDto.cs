@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BPM.Web.Operations.UI.Models
+{
+    public class SalesOrderItemDto
+    {
+        public Guid Id { get; set; }
+
+        public Guid SalesOrderId { get; set; }
+
+        public Guid DrugId { get; set; }
+
+        public int Quantity { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public decimal DiscountPercentage { get; set; }
+
+        public decimal DiscountAmount { get; set; }
+
+        public decimal TaxRate { get; set; }
+
+        public decimal TaxAmount { get; set; }
+
+        public decimal TotalAmount { get; set; }
+
+        public int ReceivedQuantity { get; set; }
+
+        public int PendingQuantity { get; set; }
+
+        public string? BatchNumber { get; set; }
+
+        public DateTime? ExpiryDate { get; set; }
+
+        public string? Remarks { get; set; }
+
+        public Guid? CreatedBy { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
+        public Guid? ModifiedBy { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
+
+        public Guid PackagingId { get; set; }
+
+        // Navigation / Response DTO
+        public DrugDto? Drug { get; set; }
+    }
+}

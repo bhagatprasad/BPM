@@ -98,6 +98,7 @@ namespace BPM.Web.Operations.UI
                 services.AddScoped<IRepositoryFactory, RepositoryFactory>();
                 services.AddScoped<IAuthenticateService, AuthenticateService>();
                 services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+                services.AddScoped<ISalesOrderService, SalesOrderService>();
                 services.AddSingleton<INavigationService, NavigationService>();
 
                 // ViewModels
