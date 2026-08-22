@@ -1,0 +1,101 @@
+﻿<!-- Assets/Styles/DashboardStyles.xaml -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <!-- Dashboard Layout Styles -->
+    <Style x:Key="DashboardSidebar" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Width" Value="280" />
+        <Setter Property="BorderBrush" Value="#e2e8f0" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+    </Style>
+
+    <Style x:Key="DashboardContent" TargetType="Border">
+        <Setter Property="Background" Value="#f8fafc" />
+        <Setter Property="Padding" Value="20" />
+    </Style>
+
+    <!-- Menu Item Style -->
+    <Style x:Key="SidebarMenuItem" TargetType="Button">
+        <Setter Property="Height" Value="45" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="Foreground" Value="#475569" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderThickness="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="ActiveIndicator"
+                                    Grid.Column="0"
+                                    Background="{StaticResource PrimaryBrush}"
+                                    Visibility="Collapsed"
+                                    CornerRadius="0,4,4,0" />
+                            <ContentPresenter Grid.Column="1"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Margin="12,0,0,0" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#f1f5f9" />
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#e2e8f0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Top Bar Style -->
+    <Style x:Key="TopBar" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="BorderBrush" Value="#e2e8f0" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+
+    <!-- Card Style for Dashboard -->
+    <Style x:Key="DashboardCard" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="20"
+                                ShadowDepth="0"
+                                Opacity="0.06"
+                                Color="#000000" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Stat Card Style -->
+    <Style x:Key="StatCard" TargetType="Border" BasedOn="{StaticResource DashboardCard}">
+        <Setter Property="Padding" Value="20,24" />
+        <Setter Property="Height" Value="120" />
+    </Style>
+
+    <!-- Status Badge -->
+    <Style x:Key="StatusBadge" TargetType="Border">
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="8,12" />
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+</ResourceDictionary>

@@ -74,7 +74,7 @@ namespace BPM.Web.API.Controllers
         [HttpPost]
         [Route("insert-user")]
         public async Task<IActionResult> InsertUserAsync(UserCreateDto user)
-        {
+       {
             try
             {
                 _logger.LogInformation("Creating user.");
