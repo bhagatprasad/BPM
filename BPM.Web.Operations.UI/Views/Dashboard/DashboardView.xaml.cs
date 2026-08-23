@@ -398,9 +398,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
         {
             try
             {
-                // If you have a DistributorView class, use it here
-                // return new DistributorView();
-                return CreatePlaceholderContent("🏢 Distributors", "Manage distributor information and records");
+                return new DistributorView();
             }
             catch (Exception ex)
             {
