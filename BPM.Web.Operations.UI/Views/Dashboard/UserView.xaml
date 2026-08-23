@@ -1,0 +1,979 @@
+﻿<!-- Views/Dashboard/UserView.xaml -->
+<UserControl x:Class="BPM.Web.Operations.UI.Views.Dashboard.UserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:converters="clr-namespace:BPM.Web.Operations.UI.Helper">
+
+    <UserControl.Resources>
+
+        <!-- ============================= -->
+        <!-- Converters -->
+        <!-- ============================= -->
+
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+
+        <!-- ============================= -->
+        <!-- ComboBox Style -->
+        <!-- ============================= -->
+
+        <Style x:Key="BpmComboBox" TargetType="ComboBox">
+
+            <Setter Property="Height" Value="38" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ComboBox">
+
+                        <Grid>
+
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentPresenter Grid.Column="0"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Left" />
+
+                                    <ToggleButton Grid.Column="1"
+                                                  Focusable="False"
+                                                  IsChecked="{Binding IsDropDownOpen,
+                                                        Mode=TwoWay,
+                                                        RelativeSource={RelativeSource TemplatedParent}}"
+                                                  Background="Transparent"
+                                                  BorderThickness="0"
+                                                  Width="30"
+                                                  Height="30"
+                                                  Margin="0,0,5,0">
+
+                                        <ToggleButton.Template>
+
+                                            <ControlTemplate TargetType="ToggleButton">
+
+                                                <Grid>
+
+                                                    <Path x:Name="Arrow"
+                                                          Fill="#64748b"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Data="M0,0 L4,5 L8,0 Z"
+                                                          RenderTransformOrigin="0.5,0.5">
+
+                                                        <Path.RenderTransform>
+                                                            <RotateTransform Angle="0" />
+                                                        </Path.RenderTransform>
+
+                                                    </Path>
+
+                                                </Grid>
+
+                                                <ControlTemplate.Triggers>
+
+                                                    <Trigger Property="IsChecked"
+                                                             Value="True">
+
+                                                        <Setter TargetName="Arrow"
+                                                                Property="RenderTransform">
+
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="180" />
+                                                            </Setter.Value>
+
+                                                        </Setter>
+
+                                                    </Trigger>
+
+                                                </ControlTemplate.Triggers>
+
+                                            </ControlTemplate>
+
+                                        </ToggleButton.Template>
+
+                                    </ToggleButton>
+
+                                </Grid>
+
+                            </Border>
+
+
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+
+                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}">
+
+                                    <Border x:Name="DropDownBorder"
+                                            Background="White"
+                                            BorderBrush="#e2e8f0"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            Padding="4">
+
+                                        <ScrollViewer x:Name="PART_ScrollViewer"
+                                                      CanContentScroll="True">
+
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"
+                                                             SnapsToDevicePixels="True" />
+
+                                        </ScrollViewer>
+
+                                    </Border>
+
+                                </Grid>
+
+                            </Popup>
+
+                        </Grid>
+
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsFocused"
+                                     Value="True">
+
+                                <Setter TargetName="Border"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource PrimaryBrush}" />
+
+                                <Setter TargetName="Border"
+                                        Property="BorderThickness"
+                                        Value="2" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="Border"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource PrimaryBrush}" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+
+                                <Setter TargetName="Border"
+                                        Property="Opacity"
+                                        Value="0.6" />
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+        <!-- ============================= -->
+        <!-- ComboBox Item -->
+        <!-- ============================= -->
+
+        <Style TargetType="ComboBoxItem">
+
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ComboBoxItem">
+
+                        <Border x:Name="Border"
+                                Background="Transparent"
+                                CornerRadius="6"
+                                Margin="2">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        </Border>
+
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="#f1f5f9" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+
+                                <Setter TargetName="Border"
+                                        Property="Background"
+                                        Value="#e0f2fe" />
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+        <!-- ============================= -->
+        <!-- Row Details Template -->
+        <!-- ============================= -->
+
+        <DataTemplate x:Key="UserDetailsTemplate">
+
+            <Border Background="#f8fafc"
+                    Padding="18,14,18,18"
+                    BorderBrush="#e2e8f0"
+                    BorderThickness="0,1,0,0">
+
+                <StackPanel>
+
+
+                    <!-- ============================= -->
+                    <!-- Details Header -->
+                    <!-- ============================= -->
+
+                    <Grid Margin="0,0,0,14">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+
+                        <StackPanel>
+
+                            <TextBlock Text="User Details"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#0f172a" />
+
+                            <TextBlock Text="{Binding Email,
+                                                       StringFormat=User {0}}"
+                                       FontSize="12"
+                                       Foreground="#64748b"
+                                       Margin="0,3,0,0" />
+
+                        </StackPanel>
+
+
+                        <!-- Role Badge -->
+
+                        <Border Grid.Column="1"
+                                Background="{Binding RoleInfo.Name,
+                                    Converter={StaticResource StatusToColorConverter}}"
+                                CornerRadius="12"
+                                Padding="12,5"
+                                VerticalAlignment="Center">
+
+                            <TextBlock Text="{Binding RoleInfo.Name}"
+                                       Foreground="White"
+                                       FontSize="11"
+                                       FontWeight="SemiBold" />
+
+                        </Border>
+
+                    </Grid>
+
+
+                    <!-- ============================= -->
+                    <!-- User Information -->
+                    <!-- ============================= -->
+
+                    <Border Background="White"
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderBrush="#e2e8f0"
+                            BorderThickness="1"
+                            Margin="0,0,0,12">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- Full Name -->
+
+                            <StackPanel Grid.Column="0"
+                                        Margin="0,0,12,0">
+
+                                <TextBlock Text="FULL NAME"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="#94a3b8" />
+
+                                <TextBlock Text="{Binding FirstName,
+                                                           StringFormat={}{0} {1},
+                                                           ConverterParameter={Binding LastName}}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#0d9488"
+                                           Margin="0,3,0,0" />
+
+                            </StackPanel>
+
+
+                            <!-- Email -->
+
+                            <StackPanel Grid.Column="1"
+                                        Margin="0,0,12,0">
+
+                                <TextBlock Text="EMAIL"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="#94a3b8" />
+
+                                <TextBlock Text="{Binding Email}"
+                                           FontSize="13"
+                                           Foreground="#1e293b"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,3,0,0" />
+
+                            </StackPanel>
+
+
+                            <!-- Phone -->
+
+                            <StackPanel Grid.Column="2"
+                                        Margin="0,0,12,0">
+
+                                <TextBlock Text="PHONE"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="#94a3b8" />
+
+                                <TextBlock Text="{Binding Phone,
+                                                           FallbackValue=N/A}"
+                                           FontSize="13"
+                                           Foreground="#1e293b"
+                                           Margin="0,3,0,0" />
+
+                            </StackPanel>
+
+
+                            <!-- Role -->
+
+                            <StackPanel Grid.Column="3">
+
+                                <TextBlock Text="ROLE"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="#94a3b8" />
+
+                                <TextBlock Text="{Binding RoleInfo.Name,
+                                                           FallbackValue=N/A}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#0d9488"
+                                           Margin="0,3,0,0" />
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </Border>
+
+
+                    <!-- ============================= -->
+                    <!-- Dealer Information -->
+                    <!-- ============================= -->
+
+                    <Border Background="#f0fdf4"
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderBrush="#86efac"
+                            BorderThickness="1"
+                            Margin="0,0,0,12"
+                            Visibility="{Binding DealerInfo,
+                                Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="🏪"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"
+                                       VerticalAlignment="Center" />
+
+
+                            <TextBlock Grid.Column="1"
+                                       Text="Dealer:"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#64748b"
+                                       VerticalAlignment="Center" />
+
+
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding DealerInfo.DealershipName,
+                                           FallbackValue=N/A}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="#0d9488"
+                                       VerticalAlignment="Center" />
+
+                        </Grid>
+
+                    </Border>
+
+
+                    <!-- ============================= -->
+                    <!-- No Dealer Information -->
+                    <!-- ============================= -->
+
+                    <Border Background="#fef2f2"
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderBrush="#fca5a5"
+                            BorderThickness="1"
+                            Margin="0,0,0,12"
+                            Visibility="{Binding DealerInfo,
+                                Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="⚠️"
+                                       FontSize="16"
+                                       Margin="0,0,10,0"
+                                       VerticalAlignment="Center" />
+
+
+                            <TextBlock Grid.Column="1"
+                                       Text="No Dealer Assigned"
+                                       FontSize="13"
+                                       Foreground="#991b1b"
+                                       VerticalAlignment="Center" />
+
+                        </Grid>
+
+                    </Border>
+
+                </StackPanel>
+
+            </Border>
+
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+
+    <!-- ===================================================== -->
+    <!-- MAIN USER CARD -->
+    <!-- ===================================================== -->
+
+    <Border Style="{StaticResource DashboardCard}">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+
+            </Grid.RowDefinitions>
+
+
+            <!-- ============================= -->
+            <!-- Title -->
+            <!-- ============================= -->
+
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,15">
+
+                <TextBlock Text="👥"
+                           FontSize="22"
+                           Margin="0,0,10,0" />
+
+                <TextBlock Text="Users"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextBrush}"
+                           VerticalAlignment="Center" />
+
+
+                <Border Background="{StaticResource PrimaryBrush}"
+                        CornerRadius="10"
+                        Padding="10,3"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center">
+
+                    <TextBlock x:Name="UserCountText"
+                               Text="0"
+                               Foreground="White"
+                               FontSize="13"
+                               FontWeight="Bold" />
+
+                </Border>
+
+            </StackPanel>
+
+
+            <!-- ============================= -->
+            <!-- Search / Filter -->
+            <!-- ============================= -->
+
+            <Grid Grid.Row="1"
+                  Margin="0,0,0,15">
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+
+                </Grid.ColumnDefinitions>
+
+
+                <!-- Search -->
+
+                <TextBox x:Name="SearchBox"
+                         Grid.Column="0"
+                         Width="350"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         Height="38"
+                         FontSize="14"
+                         Style="{StaticResource BpmTextBox}"
+                         TextChanged="SearchBox_TextChanged">
+
+                    <TextBox.ToolTip>
+                        <ToolTip Content="Search by Name, Email, or Role" />
+                    </TextBox.ToolTip>
+
+                </TextBox>
+
+
+                <!-- Role Filter -->
+
+                <ComboBox x:Name="RoleFilter"
+                          Grid.Column="1"
+                          Width="160"
+                          Margin="10,0,0,0"
+                          VerticalAlignment="Center"
+                          Height="38"
+                          FontSize="14"
+                          Style="{StaticResource BpmComboBox}"
+                          SelectionChanged="RoleFilter_SelectionChanged">
+
+                    <ComboBoxItem Tag="All"
+                                  Content="📋 All Roles"
+                                  IsSelected="True" />
+
+                    <ComboBoxItem Tag="Administrator"
+                                  Content="👑 Administrator" />
+
+                    <ComboBoxItem Tag="Operator"
+                                  Content="⚙️ Operator" />
+
+                    <ComboBoxItem Tag="Dealer"
+                                  Content="🏪 Dealer" />
+
+                    <ComboBoxItem Tag="Distributor"
+                                  Content="📦 Distributor" />
+
+                    <ComboBoxItem Tag="SuperAdmin"
+                                  Content="⭐ Super Admin" />
+
+                </ComboBox>
+
+
+                <!-- Refresh -->
+
+                <Button Grid.Column="2"
+                        Style="{StaticResource SocialButton}"
+                        Background="{StaticResource PrimaryBrush}"
+                        Foreground="White"
+                        Width="38"
+                        Height="38"
+                        Margin="10,0,0,0"
+                        Click="Refresh_Click"
+                        ToolTip="Refresh">
+
+                    <TextBlock Text="🔄"
+                               FontSize="20" />
+
+                </Button>
+
+            </Grid>
+
+
+            <!-- ================================================= -->
+            <!-- MAIN USER GRID -->
+            <!-- ================================================= -->
+
+            <DataGrid x:Name="UsersGrid"
+                      Grid.Row="2"
+                      AutoGenerateColumns="False"
+                      CanUserSortColumns="True"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      HeadersVisibility="Column"
+                      RowHeaderWidth="0"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      Margin="0,0,0,10"
+                      Background="White"
+                      BorderBrush="#e2e8f0"
+                      BorderThickness="1"
+                      RowBackground="White"
+                      AlternatingRowBackground="#f8fafc"
+                      LoadingRow="UsersGrid_LoadingRow"
+                      MouseDoubleClick="UsersGrid_MouseDoubleClick"
+                      RowDetailsVisibilityMode="Collapsed"
+                      RowDetailsTemplate="{StaticResource UserDetailsTemplate}">
+
+
+                <DataGrid.Resources>
+
+
+                    <!-- Parent Header -->
+
+                    <Style TargetType="DataGridColumnHeader">
+
+                        <Setter Property="Background"
+                                Value="#f1f5f9" />
+
+                        <Setter Property="Foreground"
+                                Value="#1e293b" />
+
+                        <Setter Property="FontWeight"
+                                Value="Bold" />
+
+                        <Setter Property="FontSize"
+                                Value="14" />
+
+                        <Setter Property="Height"
+                                Value="44" />
+
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Left" />
+
+                        <Setter Property="Padding"
+                                Value="10,0" />
+
+                        <Setter Property="BorderBrush"
+                                Value="#e2e8f0" />
+
+                        <Setter Property="BorderThickness"
+                                Value="0,0,1,1" />
+
+                    </Style>
+
+
+                    <!-- Parent Cell -->
+
+                    <Style TargetType="DataGridCell">
+
+                        <Setter Property="Padding"
+                                Value="10,8" />
+
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+
+                        <Setter Property="BorderBrush"
+                                Value="#e2e8f0" />
+
+                        <Setter Property="BorderThickness"
+                                Value="0,0,1,0" />
+
+                        <Setter Property="FontSize"
+                                Value="14" />
+
+                    </Style>
+
+
+                    <!-- Parent Row -->
+
+                    <Style TargetType="DataGridRow">
+
+                        <Setter Property="Height"
+                                Value="48" />
+
+                        <Style.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter Property="Background"
+                                        Value="#f1f5f9" />
+
+                                <Setter Property="Cursor"
+                                        Value="Hand" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+
+                                <Setter Property="Background"
+                                        Value="#e0f2fe" />
+
+                            </Trigger>
+
+                        </Style.Triggers>
+
+                    </Style>
+
+                </DataGrid.Resources>
+
+
+                <!-- ============================= -->
+                <!-- Parent Columns -->
+                <!-- ============================= -->
+
+                <DataGrid.Columns>
+
+
+                    <!-- Expand -->
+
+                    <DataGridTemplateColumn Header=""
+                                            Width="45">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <Button Width="30"
+                                        Height="30"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Click="ExpandRow_Click"
+                                        Tag="{Binding UserId}"
+                                        ToolTip="Expand / Collapse">
+
+                                    <TextBlock x:Name="ExpandIcon"
+                                               Text="▶"
+                                               FontSize="16"
+                                               Foreground="#64748b"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+
+                                </Button>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <!-- First Name -->
+
+                    <DataGridTextColumn Header="First Name"
+                                        Binding="{Binding FirstName}"
+                                        Width="*" />
+
+
+                    <!-- Last Name -->
+
+                    <DataGridTextColumn Header="Last Name"
+                                        Binding="{Binding LastName}"
+                                        Width="*" />
+
+
+                    <!-- Email -->
+
+                    <DataGridTextColumn Header="Email"
+                                        Binding="{Binding Email}"
+                                        Width="*" />
+
+
+                    <!-- Phone -->
+
+                    <DataGridTextColumn Header="Phone"
+                                        Binding="{Binding Phone}"
+                                        Width="*" />
+
+
+                    <!-- Role -->
+
+                    <DataGridTemplateColumn Header="Role"
+                                            Width="*">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <Border CornerRadius="12"
+                                        Padding="10,5"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding RoleInfo.Name,
+                                            Converter={StaticResource StatusToColorConverter}}">
+
+                                    <TextBlock Text="{Binding RoleInfo.Name}"
+                                               Foreground="White"
+                                               FontSize="13"
+                                               FontWeight="SemiBold" />
+
+                                </Border>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <!-- Dealer -->
+
+                    <DataGridTextColumn Header="Dealer"
+                                        Binding="{Binding DealerInfo.DealershipName}"
+                                        Width="*" />
+
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+
+            <!-- ============================= -->
+            <!-- Pagination -->
+            <!-- ============================= -->
+
+            <Border Grid.Row="3"
+                    Background="#f8fafc"
+                    CornerRadius="8"
+                    Padding="12">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <!-- Records -->
+
+                    <TextBlock x:Name="RecordsInfo"
+                               Text="Showing 0 of 0 records"
+                               FontSize="14"
+                               Foreground="#64748b"
+                               VerticalAlignment="Center" />
+
+
+                    <!-- Pagination -->
+
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal">
+
+
+                        <!-- Previous -->
+
+                        <Button x:Name="PreviousPageButton"
+                                Content="◀"
+                                Style="{StaticResource SocialButton}"
+                                Background="Transparent"
+                                Foreground="#475569"
+                                Width="38"
+                                Height="38"
+                                FontSize="16"
+                                Click="PreviousPage_Click"
+                                ToolTip="Previous Page" />
+
+
+                        <!-- Page -->
+
+                        <TextBlock x:Name="PageInfo"
+                                   Text="1 / 1"
+                                   FontSize="14"
+                                   Foreground="#64748b"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0" />
+
+
+                        <!-- Next -->
+
+                        <Button x:Name="NextPageButton"
+                                Content="▶"
+                                Style="{StaticResource SocialButton}"
+                                Background="Transparent"
+                                Foreground="#475569"
+                                Width="38"
+                                Height="38"
+                                FontSize="16"
+                                Click="NextPage_Click"
+                                ToolTip="Next Page" />
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

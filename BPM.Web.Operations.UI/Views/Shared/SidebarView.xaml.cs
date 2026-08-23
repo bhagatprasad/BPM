@@ -15,7 +15,7 @@ namespace BPM.Web.Operations.UI.Views.Shared
             InitializeComponent();
         }
 
-        private void Menu_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is string menuItem)
             {
@@ -23,7 +23,7 @@ namespace BPM.Web.Operations.UI.Views.Shared
             }
         }
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        private void LogoutBtn_Click(object sender, RoutedEventArgs e)
         {
             LogoutRequested?.Invoke(this, EventArgs.Empty);
         }
