@@ -88,11 +88,11 @@
                   <td>
                     <div class="d-inline-block">
                       <div class="d-flex align-items-center countdown-for-add-to-cart bg-light">
-                        <button class="plus-minus bg-transparent" (click)="decrease(item.drugId)">
+                        <button type="button" class="plus-minus bg-transparent" (click)="decrease(item.drugId)">
                           <i class="ri-subtract-line"></i>
                         </button>
                         <span class="fw-semibold mx-2">{{ item.quantity }}</span>
-                        <button class="plus-minus bg-transparent" (click)="increase(item.drugId)">
+                        <button type="button" class="plus-minus bg-transparent" (click)="increase(item.drugId)">
                           <i class="ri-add-line"></i>
                         </button>
                       </div>
@@ -104,6 +104,7 @@
                   </td>
                   <td class="text-center">
                     <button
+                      type="button"
                       class="btn btn-sm btn-outline-danger"
                       (click)="removeItem(item.drugId)"
                       title="Remove"
@@ -189,9 +190,63 @@
           </div>
         </div>
 
-        <!-- Order Details Form -->
+        <!-- Order Details -->
         <div class="p-20 mt-2" *ngIf="cartItems.length > 0">
           <h5 class="mb-3">Order Details</h5>
+
+          <!-- Distributor Selection - Dropdown -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold"
+              >Select Distributor <span class="text-danger">*</span></label
+            >
+            <div class="form-floating">
+              <select
+                class="form-select"
+                id="distributor"
+                [ngModel]="selectedDistributorId"
+                name="distributorSelect"
+                [disabled]="isLoadingDistributors"
+                (change)="onDistributorChange($event)"
+              >
+                <option value="">-- Select Distributor --</option>
+                <option
+                  *ngFor="let distributor of distributors"
+                  [value]="getDistributorId(distributor)"
+                >
+                  {{ distributor.distributorName }}
+                  ({{ distributor.distributorCode }})
+                  <span *ngIf="distributor.city"> - {{ distributor.city }}</span>
+                </option>
+              </select>
+              <label for="distributor">
+                <i class="ri-store-line me-1"></i>
+                Select Distributor
+              </label>
+            </div>
+
+            <!-- Selected Distributor Details Display -->
+            <div *ngIf="selectedDistributor" class="mt-2 p-3 bg-light rounded-3">
+              <div class="d-flex align-items-start gap-2">
+                <i class="ri-building-4-line fs-18 text-primary mt-1"></i>
+                <div>
+                  <strong>{{ selectedDistributor.distributorName }}</strong>
+                  <span class="badge bg-primary ms-2">{{ selectedDistributor.distributorCode }}</span>
+                  <div class="small text-muted mt-1">
+                    <div><i class="ri-map-pin-line me-1"></i> {{ getDistributorAddress(selectedDistributor) }}</div>
+                    <div><i class="ri-phone-line me-1"></i> {{ selectedDistributor.phone }}</div>
+                    <div><i class="ri-mail-line me-1"></i> {{ selectedDistributor.email }}</div>
+                    <div *ngIf="selectedDistributor.gstNumber">
+                      <i class="ri-file-text-line me-1"></i> GST: {{ selectedDistributor.gstNumber }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <small class="text-muted" *ngIf="!isLoadingDistributors && distributors.length === 0">
+              No active distributors available
+            </small>
+          </div>
 
           <!-- Expected Delivery Date -->
           <div class="mb-3">
@@ -290,11 +345,33 @@
             </div>
           </div>
 
+          <!-- Save as Draft Button -->
+          <button
+            type="button"
+            class="btn btn-outline-secondary w-100 mb-2"
+            (click)="saveDraftManually($event)"
+            [disabled]="
+              cartItems.length === 0 || 
+              isSavingDraft || 
+              isPlacingOrder || 
+              !selectedDistributorId || 
+              selectedDistributorId === '' || 
+              selectedDistributorId === 'undefined' ||
+              selectedDistributorId === 'null' ||
+              !orderDetails.expectedDeliveryDate ||
+              !orderDetails.paymentTerms
+            "
+          >
+            <i class="ri-save-line me-2"></i>
+            {{ isSavingDraft ? 'Saving Draft...' : 'Save as Draft' }}
+          </button>
+
           <!-- Place Order Button -->
           <button
+            type="button"
             class="btn btn-success w-100"
-            (click)="placeOrder()"
-            [disabled]="cartItems.length === 0 || isPlacingOrder || !isOrderDetailsValid()"
+            (click)="placeOrder($event)"
+            [disabled]="!isOrderDetailsValid() || isPlacingOrder || isSavingDraft"
           >
             <i class="ri-shopping-cart-2-line me-2"></i>
             {{ isPlacingOrder ? 'Placing Order...' : 'Place Order' }}
@@ -303,7 +380,7 @@
             class="text-muted d-block text-center mt-2"
             *ngIf="!isOrderDetailsValid() && cartItems.length > 0"
           >
-            Please fill in all required fields
+            Please fill in all required fields (Distributor, Delivery Date, Payment Terms)
           </small>
         </div>
 

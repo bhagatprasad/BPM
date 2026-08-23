@@ -1,0 +1,366 @@
+﻿<Window x:Class="BPM.Web.Operations.UI.Views.Account.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:BPM.Web.Operations.UI.Views.Account"
+        mc:Ignorable="d"
+        Title="BPM Medicals - Login"
+        Height="800" 
+        Width="1200"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <!-- Email/Username TextBox Style with Left Icon -->
+        <Style x:Key="BpmTextBoxWithLeftIcon" TargetType="TextBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="45,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- PasswordBox Style with Left Icon -->
+        <Style x:Key="BpmPasswordBoxWithLeftIcon" TargetType="PasswordBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Password Visible TextBox Style with Left Icon -->
+        <Style x:Key="BpmVisibleTextBoxWithLeftIcon" TargetType="TextBox">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0,0,12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Left Icon -->
+                                    <ContentPresenter x:Name="LeftIcon"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding Tag}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="12,0,8,0" />
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Grid.Column="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Background -->
+        <Border Background="{StaticResource LoginBackgroundGradient}">
+            <Grid>
+                <!-- Floating Medical Icons -->
+                <TextBlock Text="🏥" 
+                           FontSize="80" 
+                           Foreground="White" 
+                           Opacity="0.08"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Margin="80,60,0,0" />
+
+                <TextBlock Text="💊" 
+                           FontSize="60" 
+                           Foreground="White" 
+                           Opacity="0.08"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom"
+                           Margin="100,0,0,80" />
+
+                <TextBlock Text="❤️" 
+                           FontSize="70" 
+                           Foreground="White" 
+                           Opacity="0.08"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Top"
+                           Margin="0,100,80,0" />
+
+                <TextBlock Text="🏥" 
+                           FontSize="60" 
+                           Foreground="White" 
+                           Opacity="0.08"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,120,60" />
+
+                <TextBlock Text="💉" 
+                           FontSize="50" 
+                           Foreground="White" 
+                           Opacity="0.08"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0,-50,0,0" />
+            </Grid>
+        </Border>
+
+        <!-- Login Card -->
+        <Border Style="{StaticResource BpmCard}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="500">
+            <StackPanel VerticalAlignment="Center">
+
+                <!-- Logo -->
+                <TextBlock Text="🏥 BPM Medicals"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10" />
+
+                <TextBlock Text="Welcome Back!"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextBrush}"
+                           HorizontalAlignment="Center" />
+
+                <TextBlock Text="Sign in to continue"
+                           FontSize="13"
+                           Foreground="{StaticResource TextLightBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,5,0,30" />
+
+                <!-- Email with User Icon -->
+                <TextBox x:Name="EmailTextBox"
+                         Style="{StaticResource BpmTextBoxWithLeftIcon}"
+                         Tag="👤"
+                         Margin="0,0,0,15"
+                         Text="super@admin.com" />
+
+                <!-- Password with Key Icon and Toggle -->
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Password Box -->
+                    <PasswordBox x:Name="PasswordBoxControl"
+                                 Style="{StaticResource BpmPasswordBoxWithLeftIcon}"
+                                 Tag="🔑" />
+
+                    <!-- Visible Text Box (Hidden by default) -->
+                    <TextBox x:Name="PasswordVisibleTextBox"
+                             Style="{StaticResource BpmVisibleTextBoxWithLeftIcon}"
+                             Tag="🔑"
+                             Visibility="Collapsed"
+                             TextChanged="PasswordVisibleTextBox_TextChanged" />
+
+                    <!-- Eye Icon Button - Overlay on right side -->
+                    <Button x:Name="TogglePasswordButton"
+                            Width="45"
+                            Height="45"
+                            Margin="0,0,5,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="TogglePassword_Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            ToolTip="Show/Hide Password"
+                            Focusable="False">
+                        <TextBlock x:Name="EyeIcon" 
+                                   Text="👁️" 
+                                   FontSize="20" 
+                                   Foreground="#94a3b8" />
+                    </Button>
+                </Grid>
+
+                <!-- Remember Me -->
+                <CheckBox x:Name="RememberMeCheck"
+                          Content="Remember me"
+                          Style="{StaticResource BpmCheckBox}"
+                          Margin="0,0,0,20" />
+
+                <!-- Login Button -->
+                <Button x:Name="LoginButton"
+                        Style="{StaticResource BpmPrimaryButton}"
+                        Content="Sign In"
+                        Click="LoginButton_Click" />
+
+                <!-- Error Message -->
+                <TextBlock x:Name="ErrorMessage"
+                           Foreground="{StaticResource DangerBrush}"
+                           FontSize="13"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"
+                           Visibility="Collapsed" />
+
+                <!-- Forgot Password Link -->
+                <TextBlock Text="Forgot Password?"
+                           Foreground="{StaticResource PrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           Cursor="Hand"
+                           FontWeight="SemiBold"
+                           Margin="0,15,0,0">
+                    <TextBlock.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+
+                <!-- Divider -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,20,0,15">
+                    <Border Width="60" Height="1" Background="#e2e8f0" VerticalAlignment="Center" />
+                    <TextBlock Text="or continue with"
+                               Foreground="#94a3b8"
+                               FontSize="12"
+                               Margin="15,0" />
+                    <Border Width="60" Height="1" Background="#e2e8f0" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Social Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Style="{StaticResource SocialButton}" Background="#1877f2" Margin="0,0,8,0">
+                        <TextBlock Text="f" FontSize="20" FontWeight="Bold" Foreground="White" />
+                    </Button>
+                    <Button Style="{StaticResource SocialButton}" Background="#1da1f2" Margin="0,0,8,0">
+                        <TextBlock Text="🐦" FontSize="20" Foreground="White" />
+                    </Button>
+                    <Button Style="{StaticResource SocialButton}" Background="#ea4335" Margin="0,0,8,0">
+                        <TextBlock Text="G" FontSize="20" FontWeight="Bold" Foreground="White" />
+                    </Button>
+                    <Button Style="{StaticResource SocialButton}" Background="#0a66c2">
+                        <TextBlock Text="in" FontSize="16" FontWeight="Bold" Foreground="White" />
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

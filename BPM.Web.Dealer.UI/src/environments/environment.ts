@@ -20,8 +20,8 @@ export const environment = {
       ProcessPurchaseOrder: 'PurchaseOrder/process-purchase-order',
       ValidateProductAvailability: 'PurchaseOrder/validate-product-availability',
       SubmitPurchaseOrder: 'PurchaseOrder/submit-purchase-order',
-      SavePurchaseOrderDraft: 'PurchaseOrder/save-purchase-order-draft',
-      DeletePurchaseOrderDraft: 'PurchaseOrder/delete-purchase-order-draft',
+      SavePurchaseOrderDraft: 'PurchaseOrder/create-purchase-order',
+      DeletePurchaseOrderDraft: 'PurchaseOrder/delete-purchase-order-draft',     
     },
     Warehouse: {
       CreateWarehouse: 'Warehouse/create-warehouse',
@@ -50,7 +50,8 @@ export const environment = {
       updateDealerAsync: 'dealer/updatedealer',
     },
     Distributor: {
-      GetAllDistributors: 'Distributor/get-all-distributors',
+      GetAllDistributors: 'distributor/get-all-distributors',
+      GetDistributorById:'distributor'
     },
   },
 };
