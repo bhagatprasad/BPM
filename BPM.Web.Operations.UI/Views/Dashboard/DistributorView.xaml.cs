@@ -17,7 +17,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
     /// <summary>
     /// Interaction logic for DistributorView.xaml
     /// </summary>
-    public partial class DistributorView : UserControl
+    public partial class DistributorView : Window
     {
         public DistributorView()
         {
