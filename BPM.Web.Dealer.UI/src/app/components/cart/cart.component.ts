@@ -18,19 +18,19 @@ import { DistributorService } from '@app/services/distributor.service';
 export class CartComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   isPlacingOrder = false;
+  isSavingDraft = false;
   couponCode: string = '';
   discountAmount: number = 0;
   discountPercentage: number = 0;
-  
+
   // Distributors
   distributors: DistributorDto[] = [];
   isLoadingDistributors = false;
   selectedDistributor: DistributorDto | null = null;
-  
-  // Auto-save
-  private autoSaveInterval: any;
+  selectedDistributorId: string = '';
+
+  // Draft tracking
   draftPurchaseOrderId: string | null = null;
-  private isSavingDraft = false;
 
   // Order Details
   orderDetails = {
@@ -49,7 +49,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
-    private distributorService:DistributorService,
+    private distributorService: DistributorService,
   ) { }
 
   ngOnInit(): void {
@@ -57,7 +57,6 @@ export class CartComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       if (params['draftId']) {
         this.draftPurchaseOrderId = params['draftId'];
-        console.log('Resuming Draft Purchase Order:', this.draftPurchaseOrderId);
         if (this.draftPurchaseOrderId) {
           this.loadDraft(this.draftPurchaseOrderId);
         }
@@ -79,14 +78,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.orderDetails.deliveryTerms = 'Door Delivery';
 
     this.loadDistributors();
-    this.startAutoSave();
   }
 
   ngOnDestroy(): void {
-    if (this.autoSaveInterval) {
-      clearInterval(this.autoSaveInterval);
-      this.autoSaveInterval = null;
-    }
+    // Nothing to clean up
   }
 
   private loadDistributors(): void {
@@ -97,13 +92,9 @@ export class CartComponent implements OnInit, OnDestroy {
         this.distributors = response.filter(d => d.isActive === true);
         this.isLoadingDistributors = false;
 
-        console.log('Distributors loaded:', this.distributors.length);
-
-        if (this.distributors.length === 0) {
-          console.warn('⚠️ No active distributors found');
-          this.toasterService.warning('No distributors available', 'Warning');
-        } else {
-          console.log('✅ Please select a distributor from the dropdown');
+        // Auto-select first distributor if available
+        if (this.distributors.length > 0) {
+          this.selectDistributor(this.distributors[0]);
         }
 
         this.cdr.detectChanges();
@@ -115,9 +106,6 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  // ✅ Distributor selection is now handled by [(ngModel)] binding
-  // No need for onDistributorChange method
 
   getDistributorDisplay(distributor: DistributorDto): string {
     return getDistributorDisplayName(distributor);
@@ -195,11 +183,25 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDistributorId(distributor: DistributorDto): string {
+    return (distributor as any).id || 
+           (distributor as any).distributorId || 
+           (distributor as any).distributor_Id ||
+           (distributor as any).Id || 
+           '';
+  }
+
   isOrderDetailsValid(): boolean {
+    const distributorId = this.selectedDistributorId || this.orderDetails.distributorId;
     return !!(
       this.orderDetails.expectedDeliveryDate &&
+      this.orderDetails.expectedDeliveryDate.trim() !== '' &&
       this.orderDetails.paymentTerms &&
-      this.orderDetails.distributorId &&
+      this.orderDetails.paymentTerms.trim() !== '' &&
+      distributorId &&
+      distributorId.trim() !== '' &&
+      distributorId !== 'undefined' &&
+      distributorId !== 'null' &&
       this.cartItems.length > 0
     );
   }
@@ -220,45 +222,143 @@ export class CartComponent implements OnInit, OnDestroy {
     return this.subtotal + this.gst - this.discountAmount;
   }
 
-  placeOrder(): void {
-    // ✅ 1. Prevent multiple submissions
-    if (this.isPlacingOrder) {
-      console.warn('⚠️ Order already being placed');
+  private getAuthOrFail(): any | null {
+    const raw = localStorage.getItem('AuthenticatedUserResponse');
+    const auth = raw ? JSON.parse(raw) : null;
+    if (!auth || !auth.authenticateResponseDto) {
+      this.toasterService.error('User not authenticated', 'Error');
+      return null;
+    }
+    return auth;
+  }
+
+  private buildItems() {
+    return this.cartItems.map((item) => ({
+      drugId: item.drugId,
+      packagingId: item.packagingId,
+      quantity: item.quantity,
+      unitPrice: item.packagePrice,
+      discountPercentage: this.discountPercentage || 0,
+      taxRate: 12,
+      batchNumber: 'B001',
+      expiryDate: new Date().toISOString(),
+      remarks: '',
+    }));
+  }
+
+  /**
+   * Called ONLY when the user explicitly clicks "Save as Draft".
+   */
+  saveDraftManually(event?: Event): void {
+    // Stop event propagation
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Prevent multiple clicks
+    if (this.isSavingDraft || this.isPlacingOrder) {
+      console.log('Operation already in progress');
       return;
     }
 
-    // ✅ 2. Validate all required fields
+    if (this.cartItems.length === 0) {
+      this.toasterService.warning('Your cart is empty', 'Warning');
+      return;
+    }
+
+    const distributorId = this.selectedDistributorId || this.orderDetails.distributorId;
+    const trimmedDistributorId = distributorId?.trim() || '';
+    
+    if (!trimmedDistributorId || trimmedDistributorId === '' || trimmedDistributorId === 'undefined' || trimmedDistributorId === 'null') {
+      this.toasterService.warning('Please select a distributor before saving draft', 'Warning');
+      return;
+    }
+
+    const auth = this.getAuthOrFail();
+    if (!auth) return;
+
+    const draftRequest = {
+      purchaseOrderId: this.draftPurchaseOrderId,
+      supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
+      dealerId: auth.authenticateResponseDto.dealerId,
+      distributorId: trimmedDistributorId,
+      expectedDeliveryDate: this.orderDetails.expectedDeliveryDate
+        ? new Date(this.orderDetails.expectedDeliveryDate).toISOString()
+        : null,
+      paymentTerms: this.orderDetails.paymentTerms || null,
+      deliveryTerms: this.orderDetails.deliveryTerms || null,
+      remarks: this.orderDetails.remarks || null,
+      internalNotes: this.orderDetails.internalNotes || null,
+      status: 'Draft',
+      items: this.buildItems(),
+    };
+
+    console.log('Saving draft...', draftRequest);
+    this.isSavingDraft = true;
+
+    this.purchaseOrderService.savePurchaseOrderDraft(draftRequest).subscribe({
+      next: (response) => {
+        this.draftPurchaseOrderId = response.id;
+        this.isSavingDraft = false;
+        this.toasterService.success(
+          `Draft saved${response.poNumber ? ' (' + response.poNumber + ')' : ''}`,
+          'Success',
+        );
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.isSavingDraft = false;
+        const message = error?.error?.message || 'Failed to save draft';
+        this.toasterService.error(message, 'Error');
+        console.error('Error saving draft:', error);
+      },
+    });
+  }
+
+  /**
+   * Called ONLY when the user explicitly clicks "Place Order".
+   */
+  placeOrder(event?: Event): void {
+    // Stop event propagation
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Prevent multiple clicks
+    if (this.isPlacingOrder || this.isSavingDraft) {
+      console.log('Operation already in progress');
+      return;
+    }
+
     if (!this.isOrderDetailsValid()) {
       this.toasterService.warning('Please fill in all required fields', 'Warning');
       return;
     }
 
-    // ✅ 3. Specifically validate distributor is selected
-    if (!this.orderDetails.distributorId) {
-      this.toasterService.error('Please select a distributor', 'Error');
+    const distributorId = this.selectedDistributorId || this.orderDetails.distributorId;
+    const trimmedDistributorId = distributorId?.trim() || '';
+    
+    if (!trimmedDistributorId || trimmedDistributorId === '' || trimmedDistributorId === 'undefined' || trimmedDistributorId === 'null') {
+      this.toasterService.error('Please select a valid distributor', 'Error');
       return;
     }
 
-    // ✅ 4. Set placing order flag
     this.isPlacingOrder = true;
 
-    console.log('📦 DRAFT ID BEFORE PLACE ORDER:', this.draftPurchaseOrderId);
-
-    // ✅ 5. Handle draft submission
+    // If a draft already exists, submit it
     if (this.draftPurchaseOrderId) {
       const request = {
         purchaseOrderId: this.draftPurchaseOrderId,
+        distributorId: trimmedDistributorId,
       };
 
+      console.log('Submitting draft...', request);
       this.toasterService.info('Submitting purchase order...', 'Please wait');
 
       this.purchaseOrderService.submitPurchaseOrder(request).subscribe({
         next: (response) => {
-          console.log('✅ Draft submitted successfully:', response);
-          if (this.autoSaveInterval) {
-            clearInterval(this.autoSaveInterval);
-            this.autoSaveInterval = null;
-          }
           this.isPlacingOrder = false;
           this.toasterService.success(
             `Purchase Order ${response.poNumber || ''} submitted successfully`,
@@ -270,7 +370,6 @@ export class CartComponent implements OnInit, OnDestroy {
           this.router.navigateByUrl('/my-orders');
         },
         error: (error) => {
-          console.error('❌ Error submitting draft:', error);
           this.isPlacingOrder = false;
           const message = error?.error?.message || 'Failed to submit purchase order';
           this.toasterService.error(message, 'Error');
@@ -279,30 +378,19 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ 6. Log distributor details for new order
-    console.log('📦 Placing new order with distributor:', {
-      distributorId: this.orderDetails.distributorId,
-      distributorName: this.selectedDistributor?.distributorName,
-      distributorCode: this.selectedDistributor?.distributorCode
-    });
-
-    // ✅ 7. Get authenticated user
-    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
-
-    // ✅ 8. Validate auth exists
-    if (!auth || !auth.authenticateResponseDto) {
-      this.toasterService.error('User not authenticated', 'Error');
+    // No draft yet — create a brand-new order
+    const auth = this.getAuthOrFail();
+    if (!auth) {
       this.isPlacingOrder = false;
       return;
     }
 
     const deliveryDate = new Date(this.orderDetails.expectedDeliveryDate);
 
-    // ✅ 9. Build request payload
     const request = {
       supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
       dealerId: auth.authenticateResponseDto.dealerId,
-      distributorId: this.orderDetails.distributorId,
+      distributorId: trimmedDistributorId,
       expectedDeliveryDate: deliveryDate.toISOString(),
       paymentTerms: this.orderDetails.paymentTerms,
       deliveryTerms: this.orderDetails.deliveryTerms || 'Door Delivery',
@@ -310,30 +398,13 @@ export class CartComponent implements OnInit, OnDestroy {
       internalNotes: this.orderDetails.internalNotes || 'Angular UI',
       status: 'Submitted',
       createdBy: auth.authenticateResponseDto.userId,
-      items: this.cartItems.map((item) => ({
-        drugId: item.drugId,
-        packagingId: item.packagingId,
-        quantity: item.quantity,
-        unitPrice: item.packagePrice,
-        discountPercentage: this.discountPercentage || 0,
-        taxRate: 12,
-        batchNumber: 'B001',
-        expiryDate: new Date().toISOString(),
-        remarks: '',
-      })),
+      items: this.buildItems(),
     };
 
-    // ✅ 10. Log the final payload for debugging
-    console.log('📤 Final order payload:', request);
+    console.log('Creating new order...', request);
 
-    // ✅ 11. Create purchase order
     this.purchaseOrderService.createPurchaseOrder(request).subscribe({
       next: (response) => {
-        console.log('✅ Order created successfully:', response);
-        if (this.autoSaveInterval) {
-          clearInterval(this.autoSaveInterval);
-          this.autoSaveInterval = null;
-        }
         this.isPlacingOrder = false;
         this.toasterService.success('Purchase Order Created Successfully');
         this.cartService.clearCart();
@@ -342,7 +413,6 @@ export class CartComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/my-orders');
       },
       error: (error) => {
-        console.error('❌ Error creating order:', error);
         this.isPlacingOrder = false;
         const errorMessage = error?.error?.message || error?.message || 'Failed to create Purchase Order';
         this.toasterService.error(errorMessage, 'Error');
@@ -350,63 +420,9 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  private startAutoSave(): void {
-    this.autoSaveInterval = setInterval(() => {
-      this.saveDraft();
-    }, 30000);
-  }
-
-  private saveDraft(): void {
-    if (this.isSavingDraft || this.cartItems.length === 0) {
-      return;
-    }
-
-    const auth = JSON.parse(localStorage.getItem('AuthenticatedUserResponse')!);
-
-    const draftRequest = {
-      purchaseOrderId: this.draftPurchaseOrderId,
-      supplierId: '7c2ef8df-8f70-49f5-aa73-32288f4abda3',
-      dealerId: auth.authenticateResponseDto.dealerId,
-      distributorId: this.orderDetails.distributorId,
-      expectedDeliveryDate: this.orderDetails.expectedDeliveryDate
-        ? new Date(this.orderDetails.expectedDeliveryDate).toISOString()
-        : null,
-      paymentTerms: this.orderDetails.paymentTerms || null,
-      deliveryTerms: this.orderDetails.deliveryTerms || null,
-      remarks: this.orderDetails.remarks || null,
-      internalNotes: this.orderDetails.internalNotes || null,
-      items: this.cartItems.map((item) => ({
-        drugId: item.drugId,
-        packagingId: item.packagingId,
-        quantity: item.quantity,
-        unitPrice: item.packagePrice,
-        discountPercentage: this.discountPercentage || 0,
-        taxRate: 12,
-        batchNumber: 'B001',
-        expiryDate: new Date().toISOString(),
-        remarks: '',
-      })),
-    };
-
-    this.isSavingDraft = true;
-
-    this.purchaseOrderService.savePurchaseOrderDraft(draftRequest).subscribe({
-      next: (response) => {
-        this.draftPurchaseOrderId = response.id;
-        this.isSavingDraft = false;
-        console.log('Draft auto-saved successfully:', response.poNumber);
-      },
-      error: (error) => {
-        this.isSavingDraft = false;
-        console.error('Error auto-saving draft:', error);
-      },
-    });
-  }
-
   private loadDraft(draftId: string): void {
     this.purchaseOrderService.getPurchaseOrderById(draftId).subscribe({
       next: (draft) => {
-        console.log('Draft loaded:', draft);
         this.draftPurchaseOrderId = draft.id;
         this.orderDetails.expectedDeliveryDate = draft.expectedDeliveryDate
           ? this.formatDateForInput(new Date(draft.expectedDeliveryDate))
@@ -415,12 +431,13 @@ export class CartComponent implements OnInit, OnDestroy {
         this.orderDetails.deliveryTerms = draft.deliveryTerms || '';
         this.orderDetails.remarks = draft.remarks || '';
         this.orderDetails.internalNotes = draft.internalNotes || '';
+        
         this.orderDetails.distributorId = draft.distributorId || '';
+        this.selectedDistributorId = draft.distributorId || '';
 
-        // ✅ Update selected distributor when loading draft
         if (this.orderDetails.distributorId) {
           this.selectedDistributor = this.distributors.find(
-            d => d.id === this.orderDetails.distributorId
+            d => this.getDistributorId(d) === this.orderDetails.distributorId
           ) || null;
         }
 
@@ -433,5 +450,38 @@ export class CartComponent implements OnInit, OnDestroy {
         this.toasterService.error('Failed to load draft purchase order', 'Error');
       },
     });
+  }
+
+  // Method to select a distributor from dropdown
+  onDistributorChange(event: any): void {
+    const value = event?.target?.value;
+    console.log('Distributor selected from dropdown:', value);
+    
+    if (value && value !== '' && value !== 'undefined' && value !== 'null') {
+      const selected = this.distributors.find(d => this.getDistributorId(d) === value);
+      if (selected) {
+        this.selectDistributor(selected);
+      }
+    } else {
+      this.selectedDistributor = null;
+      this.selectedDistributorId = '';
+      this.orderDetails.distributorId = '';
+    }
+    this.cdr.detectChanges();
+  }
+
+  // Method to select a distributor from cards
+  selectDistributor(distributor: DistributorDto): void {
+    const id = this.getDistributorId(distributor);
+    
+    if (!id) {
+      this.toasterService.error('Invalid distributor data', 'Error');
+      return;
+    }
+    
+    this.selectedDistributor = distributor;
+    this.selectedDistributorId = id;
+    this.orderDetails.distributorId = id;
+    this.cdr.detectChanges();
   }
 }
