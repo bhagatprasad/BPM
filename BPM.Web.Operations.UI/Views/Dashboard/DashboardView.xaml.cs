@@ -74,8 +74,33 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
                 case "Drugs":
                     content = CreateDrugsContent();
                     break;
+                // Core Sub-items
                 case "Core":
-                    content = CreateCoreContent();
+                case "Features":
+                    content = CreateFeaturesContent();
+                    break;
+                case "Activity":
+                    content = CreateActivityContent();
+                    break;
+                case "Roles":
+                    content = CreateRolesContent();
+                    break;
+                case "Batch":
+                    content = CreateBatchContent();
+                    break;
+                // Distributor Sub-items
+                case "Distributor":
+                case "DistributorList":
+                    content = CreateDistributorListContent();
+                    break;
+                case "Warehouse":
+                    content = CreateWarehouseContent();
+                    break;
+                case "Inventory":
+                    content = CreateInventoryContent();
+                    break;
+                case "StockMovements":
+                    content = CreateStockMovementsContent();
                     break;
                 case "Chat":
                     content = CreateChatContent();
@@ -298,8 +323,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
         {
             try
             {
-                var purchaseOrderView = new PurchaseOrderView();
-                return purchaseOrderView;
+                return new PurchaseOrderView();
             }
             catch (Exception ex)
             {
@@ -311,14 +335,7 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
         {
             try
             {
-                var salesOrderView = new SalesOrderView();
-                // SalesOrderView is a Window, but we need UserControl
-                // Convert to UserControl
-                var contentControl = new ContentControl
-                {
-                    Content = salesOrderView.Content
-                };
-                return new UserControl { Content = contentControl };
+                return new SalesOrderView();
             }
             catch (Exception ex)
             {
@@ -328,17 +345,82 @@ namespace BPM.Web.Operations.UI.Views.Dashboard
 
         private UserControl CreateUsersContent()
         {
-            return CreatePlaceholderContent("👥 Users", "Manage users here");
+            try
+            {
+                return new UserView();
+            }
+            catch (Exception ex)
+            {
+                return CreatePlaceholderContent("❌ Error Loading Users", ex.Message);
+            }
         }
 
         private UserControl CreateDealersContent()
         {
-            return CreatePlaceholderContent("🏪 Dealers", "Manage dealers here");
+            try
+            {
+                return new DealerView();
+            }
+            catch (Exception ex)
+            {
+                return CreatePlaceholderContent("❌ Error Loading Dealers", ex.Message);
+            }
         }
 
         private UserControl CreateDrugsContent()
         {
             return CreatePlaceholderContent("💊 Drugs", "Manage drugs inventory here");
+        }
+
+        // Core Sub-item Methods
+        private UserControl CreateFeaturesContent()
+        {
+            return CreatePlaceholderContent("⚙️ Features", "Manage system features and configurations");
+        }
+
+        private UserControl CreateActivityContent()
+        {
+            return CreatePlaceholderContent("📊 Activity", "View system activity logs and reports");
+        }
+
+        private UserControl CreateRolesContent()
+        {
+            return CreatePlaceholderContent("👤 Roles", "Manage user roles and permissions");
+        }
+
+        private UserControl CreateBatchContent()
+        {
+            return CreatePlaceholderContent("📦 Batch", "Manage batch operations and processes");
+        }
+
+        // Distributor Sub-item Methods
+        private UserControl CreateDistributorListContent()
+        {
+            try
+            {
+                // If you have a DistributorView class, use it here
+                // return new DistributorView();
+                return CreatePlaceholderContent("🏢 Distributors", "Manage distributor information and records");
+            }
+            catch (Exception ex)
+            {
+                return CreatePlaceholderContent("❌ Error Loading Distributors", ex.Message);
+            }
+        }
+
+        private UserControl CreateWarehouseContent()
+        {
+            return CreatePlaceholderContent("🏭 Warehouse", "Manage warehouse locations and facilities");
+        }
+
+        private UserControl CreateInventoryContent()
+        {
+            return CreatePlaceholderContent("📦 Inventory", "Manage inventory levels and stock items");
+        }
+
+        private UserControl CreateStockMovementsContent()
+        {
+            return CreatePlaceholderContent("🔄 Stock Movements", "Track inventory movements and transactions");
         }
 
         private UserControl CreateCoreContent()

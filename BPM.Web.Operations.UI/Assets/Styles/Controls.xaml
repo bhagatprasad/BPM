@@ -163,25 +163,190 @@
 
     <!-- Sidebar Menu Item -->
     <Style x:Key="SidebarMenuItem" TargetType="Button">
-        <Setter Property="Height" Value="44" />
+        <Setter Property="Height" Value="45" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Padding" Value="20,0" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="Foreground" Value="#475569" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border" Background="{TemplateBinding Background}">
-                        <ContentPresenter VerticalAlignment="Center"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          Margin="{TemplateBinding Padding}" />
+                    <Border Background="{TemplateBinding Background}"
+                            BorderThickness="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="ActiveIndicator"
+                                    Grid.Column="0"
+                                    Background="{StaticResource PrimaryBrush}"
+                                    Visibility="Collapsed"
+                                    CornerRadius="0,4,4,0" />
+                            <ContentPresenter Grid.Column="1"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Margin="12,0,0,0" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+                            <Setter Property="Background" Value="#f1f5f9" />
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#e2e8f0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Sidebar Sub Menu Item (for expander sub-items) -->
+    <Style x:Key="SidebarSubMenuItem" TargetType="Button">
+        <Setter Property="Height" Value="35" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="0,0" />
+        <Setter Property="Foreground" Value="#64748b" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            CornerRadius="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="ActiveIndicator"
+                                    Grid.Column="0"
+                                    Background="{StaticResource PrimaryBrush}"
+                                    Visibility="Collapsed"
+                                    CornerRadius="0,4,4,0" />
+                            <ContentPresenter Grid.Column="1"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              Margin="36,0,0,0" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#f1f5f9" />
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#e2e8f0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Sidebar Expander Style - FIXED to look like regular menu item -->
+    <Style x:Key="SidebarExpander" TargetType="Expander">
+        <Setter Property="Foreground" Value="#475569" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Expander">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="true">
+                        <DockPanel>
+                            <ToggleButton x:Name="HeaderSite"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          FontFamily="{TemplateBinding FontFamily}"
+                                          FontSize="{TemplateBinding FontSize}"
+                                          FontStretch="{TemplateBinding FontStretch}"
+                                          FontStyle="{TemplateBinding FontStyle}"
+                                          FontWeight="{TemplateBinding FontWeight}"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          HorizontalContentAlignment="Left"
+                                          VerticalContentAlignment="Center"
+                                          DockPanel.Dock="Top"
+                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          Cursor="Hand"
+                                          Height="45"
+                                          Padding="20,0">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="border" 
+                                                Background="{TemplateBinding Background}"
+                                                BorderThickness="0"
+                                                CornerRadius="0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="4" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="ActiveIndicator"
+                                                        Grid.Column="0"
+                                                        Background="{StaticResource PrimaryBrush}"
+                                                        Visibility="Collapsed"
+                                                        CornerRadius="0,4,4,0" />
+                                                <ContentPresenter Grid.Column="1"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"
+                                                                  Margin="12,0,0,0" />
+                                                <TextBlock x:Name="Arrow"
+                                                           Grid.Column="2"
+                                                           Text="▶"
+                                                           FontSize="10"
+                                                           Foreground="#94a3b8"
+                                                           Margin="0,0,16,0"
+                                                           VerticalAlignment="Center">
+                                                    <TextBlock.RenderTransform>
+                                                        <RotateTransform Angle="0" />
+                                                    </TextBlock.RenderTransform>
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#f1f5f9" />
+                                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Arrow" Property="Text" Value="▼" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ExpandSite"
+                                              DockPanel.Dock="Bottom"
+                                              Visibility="Collapsed"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Margin="0,0,0,0" />
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
