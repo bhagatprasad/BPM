@@ -2,11 +2,9 @@
 using BPM.Web.Identity.API.Models.DTOs;
 using BPM.Web.Identity.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace BPM.Web.Identity.API.Controllers
 {
-    [BPMAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : BaseController

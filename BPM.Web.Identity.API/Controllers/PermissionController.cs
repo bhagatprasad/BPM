@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Identity.API.Controllers
 {
-    [BPMAuthorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PermissionController : BaseController
@@ -18,12 +17,14 @@ namespace BPM.Web.Identity.API.Controllers
         }
 
         [HttpGet]
+        [Route("get-all-permissions")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _permissionService.GetAllAsync());
         }
 
-        [HttpGet("{permissionId:guid}")]
+        [HttpGet]
+        [Route("get-permissions-by-id/{permissionId}")]
         public async Task<IActionResult> GetById(Guid permissionId)
         {
             var result = await _permissionService.GetByIdAsync(permissionId);
@@ -35,13 +36,15 @@ namespace BPM.Web.Identity.API.Controllers
         }
 
         [HttpPost]
+        [Route("create-permission")]
         public async Task<IActionResult> Create([FromBody] PermissionCreateDto dto)
         {
             var result = await _permissionService.AddAsync(dto);
             return Ok(result);
         }
 
-        [HttpPut("{permissionId:guid}")]
+        [HttpPut]
+        [Route("update-permission/{permissionId}")]
         public async Task<IActionResult> Update(Guid permissionId, [FromBody] PermissionUpdateDto dto)
         {
             var result = await _permissionService.UpdateAsync(permissionId, dto);
@@ -52,7 +55,8 @@ namespace BPM.Web.Identity.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{permissionId:guid}")]
+        [HttpDelete]
+        [Route("delete-permission/{permissionId}")]
         public async Task<IActionResult> Delete(Guid permissionId)
         {
             var result = await _permissionService.DeleteAsync(permissionId);
@@ -63,7 +67,8 @@ namespace BPM.Web.Identity.API.Controllers
             return Ok("Permission deleted successfully.");
         }
 
-        [HttpGet("role/{roleId:guid}")]
+        [HttpGet]
+        [Route("get-permissions-by-role/{roleId}")]
         public async Task<IActionResult> GetPermissionsByRole(Guid roleId)
         {
             var result = await _permissionService.GetPermissionsByRoleAsync(roleId);
@@ -71,7 +76,8 @@ namespace BPM.Web.Identity.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("has-permission")]
+        [HttpGet]
+        [Route("has-permission")]
         public async Task<IActionResult> HasPermission([FromQuery] Guid roleId,[FromQuery] string featureCode,[FromQuery] string activityCode)
         {
             var result = await _permissionService.HasPermissionAsync(

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BPM.Web.Identity.API.Repository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
-using BPM.Web.API.Repository;
 
 namespace BPM.Web.Identity.API.CustomFilters
 {
