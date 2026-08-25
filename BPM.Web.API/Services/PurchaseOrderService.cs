@@ -17,7 +17,7 @@ namespace BPM.Web.API.Service
         private readonly ILogger<PurchaseOrderService> _logger;
         private readonly IServiceProvider _serviceProvider;
 
-        public PurchaseOrderService(IPurchaseOrderRepository repository,IPurchaseOrderApprovalRepository approvalRepository, IServiceProvider serviceProvider, ILogger<PurchaseOrderService> logger)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, IPurchaseOrderApprovalRepository approvalRepository, IServiceProvider serviceProvider, ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
             _approvalRepository = approvalRepository;
@@ -757,6 +757,13 @@ namespace BPM.Web.API.Service
             }
 
             return 3;
+        }
+
+        public async Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDistributorAsync(Guid distributorId)
+        {
+            var purchaseOrders = await _repository.GetPurchaseOrdersByDistributorAsync(distributorId);
+
+            return purchaseOrders.Select(po => po.ToDto()).ToList();
         }
     }
 }

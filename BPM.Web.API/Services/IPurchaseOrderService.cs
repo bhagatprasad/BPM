@@ -8,6 +8,7 @@ namespace BPM.Web.API.Services
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersAllAsync();
         Task<PurchaseOrderResponseDto> GetPurchaseOrderByIdAsync(Guid id);
         Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDealerAsync(Guid dealerId);
+        Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDistributorAsync(Guid distributorId);
         Task<PurchaseOrderResponseDto> ProcessPurchaseOrderAsync(ProcessPurchaseOrderDto processPurchaseOrderDto,Guid currentUserId);
         Task<ProductAvailabilityResponseDto> ValidateProductAvailabilityAsync(Guid drugId, Guid packagingId, int quantity);
         Task<PurchaseOrderResponseDto> SubmitPurchaseOrderAsync(SubmitPurchaseOrderDto dto,Guid currentUserId);

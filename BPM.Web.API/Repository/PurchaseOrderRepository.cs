@@ -44,8 +44,8 @@ namespace BPM.Web.API.Repository
                 .Include(po => po.Dealer)
                 .Include(po => po.PurchaseOrderItems)
                 .ThenInclude(item => item.Drug)
-                .Include(po=>po.PurchaseOrderItems)
-                .ThenInclude(item=>item.DrugPackaging)
+                .Include(po => po.PurchaseOrderItems)
+                .ThenInclude(item => item.DrugPackaging)
                 .FirstOrDefaultAsync(po => po.Id == id && po.IsActive);
         }
 
@@ -216,6 +216,18 @@ namespace BPM.Web.API.Repository
 
             // Select the highest currently applicable discount.
             return Math.Max(supplierDiscount, Math.Max(volumeDiscount, promotionalDiscount));
+        }
+
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDistributorAsync(Guid distributorId)
+        {
+            return await _dbContext.PurchaseOrders
+                 .Include(po => po.Supplier)
+                 .Include(po => po.Dealer)
+                 .Include(po => po.PurchaseOrderItems)
+                 .ThenInclude(item => item.Drug)
+                 .Where(po => po.DistributorId == distributorId && po.IsActive && po.Status != "Draft")
+                 .OrderByDescending(po => po.ModifiedOn)
+                 .ToListAsync();
         }
     }
 }
