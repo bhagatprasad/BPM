@@ -1,7 +1,5 @@
 ﻿using BPM.Web.API.CustomFilters;
 using BPM.Web.API.Models.DTOs;
-using BPM.Web.API.Models.DTOs.PurchaseOrder;
-using BPM.Web.API.Service;
 using BPM.Web.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +19,8 @@ namespace BPM.Web.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("create-purchase-order")]
+        [HttpPost]
+        [Route("create-purchase-order")]
         public async Task<IActionResult> CreatePurchaseOrder(CreatePurchaseOrderDto createPurchaseOrderDto)
         {
             try
@@ -38,7 +37,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("get-purchase-orders")]
+        [HttpGet]
+        [Route("get-purchase-orders")]
         public async Task<IActionResult> GetPurchaseOrdersAll()
         {
             try
@@ -55,16 +55,18 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("get-purchase-order-by-id/{id:guid}")]
-        public async Task<IActionResult> GetPurchaseOrderById(Guid id)
+
+        [HttpGet]
+        [Route("get-purchase-order-by-id/{purchaseOrderId}")]
+        public async Task<IActionResult> GetPurchaseOrderById(Guid purchaseOrderId)
         {
             try
             {
-                _logger.LogInformation("Fetching purchase order with Id: {Id}", id);
-                var purchaseOrder = await _service.GetPurchaseOrderByIdAsync(id);
+                _logger.LogInformation("Fetching purchase order with Id: {Id}", purchaseOrderId);
+                var purchaseOrder = await _service.GetPurchaseOrderByIdAsync(purchaseOrderId);
                 if (purchaseOrder == null)
                 {
-                    _logger.LogWarning("Purchase order not found with Id: {Id}", id);
+                    _logger.LogWarning("Purchase order not found with Id: {Id}", purchaseOrderId);
                     return NotFound("Purchase Order Not Found.");
                 }
                 return Ok(purchaseOrder);
@@ -76,7 +78,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("fetch-purchase-order-by-dealer/{dealerId:guid}")]
+        [HttpGet]
+        [Route("fetch-purchase-order-by-dealer/{dealerId}")]
         public async Task<IActionResult> GetPurchaseOrdersByDealer(Guid dealerId)
         {
             try
@@ -88,6 +91,23 @@ namespace BPM.Web.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DealerId}", dealerId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase orders.");
+            }
+        }
+
+        [HttpGet]
+        [Route("fetch-purchase-order-by-distributor/{distributorId}")]
+        public async Task<IActionResult> GetPurchaseOrdersByDistributor(Guid distributorId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching purchase orders for Distributor Id: {DistributorId}", distributorId);
+                var purchaseOrders = await _service.GetPurchaseOrdersByDistributorAsync(distributorId);
+                return Ok(purchaseOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching purchase orders for Dealer Id: {DistributorId}", distributorId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching purchase orders.");
             }
         }
@@ -116,8 +136,9 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPost("validate-product-availability")]
-        public async Task<IActionResult> ValidateProductAvailability([FromBody] ValidateProductAvailabilityDto dto)
+        [HttpPost]
+        [Route("validate-product-availability")]
+        public async Task<IActionResult> ValidateProductAvailability(ValidateProductAvailabilityDto dto)
         {
             try
             {
@@ -137,7 +158,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPost("submit-purchase-order")]
+        [HttpPost]
+        [Route("submit-purchase-order")]
         public async Task<IActionResult> SubmitPurchaseOrder([FromBody] SubmitPurchaseOrderDto dto)
         {
             try
@@ -160,7 +182,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpPost("save-purchase-order-draft")]
+        [HttpPost]
+        [Route("save-purchase-order-draft")]
         public async Task<IActionResult> SavePurchaseOrderDraft([FromBody] SavePurchaseOrderDraftDto dto)
         {
             try
@@ -183,7 +206,8 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpGet("get-draft-purchase-orders/{dealerId:guid}")]
+        [HttpGet]
+        [Route("get-draft-purchase-orders/{dealerId}")]
         public async Task<IActionResult> GetDraftPurchaseOrders(Guid dealerId)
         {
             try
@@ -199,14 +223,15 @@ namespace BPM.Web.API.Controllers
             }
         }
 
-        [HttpDelete("delete-purchase-order-draft/{id:guid}")]
-        public async Task<IActionResult> DeletePurchaseOrderDraft(Guid id)
+        [HttpDelete]
+        [Route("delete-purchase-order-draft/{purchaseOrderId}")]
+        public async Task<IActionResult> DeletePurchaseOrderDraft(Guid purchaseOrderId)
         {
             try
             {
-                _logger.LogInformation("Deleting Draft Purchase Order with Id: {Id}", id);
+                _logger.LogInformation("Deleting Draft Purchase Order with Id: {Id}", purchaseOrderId);
                 var currentUserId = UserId.Value;
-                var result = await _service.DeletePurchaseOrderDraftAsync(id, currentUserId);
+                var result = await _service.DeletePurchaseOrderDraftAsync(purchaseOrderId, currentUserId);
 
                 if (!result)
                 {
@@ -217,17 +242,18 @@ namespace BPM.Web.API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, "Unable to delete Draft Purchase Order with Id: {Id}", id);
+                _logger.LogWarning(ex, "Unable to delete Draft Purchase Order with Id: {Id}", purchaseOrderId);
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting Draft Purchase Order with Id: {Id}", id);
+                _logger.LogError(ex, "Error occurred while deleting Draft Purchase Order with Id: {Id}", purchaseOrderId);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while deleting the Draft Purchase Order." });
             }
         }
 
-        [HttpPost("copy-purchase-order/{purchaseOrderId}")]
+        [HttpPost]
+        [Route("copy-purchase-order/{purchaseOrderId}")]
         public async Task<IActionResult> CopyPurchaseOrder(Guid purchaseOrderId)
         {
             try

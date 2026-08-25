@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Identity.API.Controllers
 {
-    [BPMAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RoleController : BaseController
@@ -39,14 +38,15 @@ namespace BPM.Web.Identity.API.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetRole(Guid id)
+        [HttpGet]
+        [Route("get-role-by-id/{roleId}")]
+        public async Task<IActionResult> GetRole(Guid roleId)
         {
             try
             {
-                _logger.LogInformation("Fetching role with Id {RoleId}", id);
+                _logger.LogInformation("Fetching role with Id {RoleId}", roleId);
 
-                var role = await _roleService.GetRoleByIdAsync(id);
+                var role = await _roleService.GetRoleByIdAsync(roleId);
 
                 if (role == null)
                 {
@@ -57,12 +57,13 @@ namespace BPM.Web.Identity.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching role with Id {RoleId}", id);
+                _logger.LogError(ex, "Error occurred while fetching role with Id {RoleId}", roleId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
 
         [HttpPost]
+        [Route("create-role")]
         public async Task<IActionResult> Create([FromBody] CreateRoleDto roleDto)
         {
             try
@@ -85,14 +86,15 @@ namespace BPM.Web.Identity.API.Controllers
             }
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRoleDto roleDto)
+        [HttpPut]
+        [Route("update-role/{roleId}")]
+        public async Task<IActionResult> Update(Guid roleId, [FromBody] UpdateRoleDto roleDto)
         {
             try
             {
                 _logger.LogInformation("Updating role.");
 
-                if (id != roleDto.Id)
+                if (roleId != roleDto.Id)
                 {
                     return BadRequest("Route Id and Role Id do not match.");
                 }
@@ -108,19 +110,20 @@ namespace BPM.Web.Identity.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating role with Id {RoleId}", id);
+                _logger.LogError(ex, "Error occurred while updating role with Id {RoleId}", roleId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete]
+        [Route("delete-role/{roleId}")]
+        public async Task<IActionResult> Delete(Guid roleId)
         {
             try
             {
-                _logger.LogInformation("Deleting role with Id {RoleId}", id);
+                _logger.LogInformation("Deleting role with Id {RoleId}", roleId);
 
-                var result = await _roleService.DeleteRoleAsync(id);
+                var result = await _roleService.DeleteRoleAsync(roleId);
 
                 if (!result)
                 {
@@ -131,7 +134,7 @@ namespace BPM.Web.Identity.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting role with Id {RoleId}", id);
+                _logger.LogError(ex, "Error occurred while deleting role with Id {RoleId}", roleId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }

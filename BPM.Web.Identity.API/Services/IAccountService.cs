@@ -1,4 +1,5 @@
 ﻿using BPM.Web.Identity.API.Models.DTOs;
+using BPM.Web.Identity.API.Models.Entities;
 
 namespace BPM.Web.Identity.API.Services
 {

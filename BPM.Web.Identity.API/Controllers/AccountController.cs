@@ -1,15 +1,12 @@
 ﻿using BPM.Web.Identity.API.Models.DTOs;
 using BPM.Web.Identity.API.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BPM.Web.Identity.API.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : BaseController
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService _service;
         private readonly ILogger<AccountController> _logger;
@@ -19,7 +16,8 @@ namespace BPM.Web.Identity.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("authenticate")]
+        [HttpPost]
+        [Route("authenticate")]
         public async Task<IActionResult> AuthenticateAsync(AuthenticateUserDto dto)
         {
             try
@@ -39,7 +37,8 @@ namespace BPM.Web.Identity.API.Controllers
             }
         }
 
-        [HttpPost("reset-password")]
+        [HttpPost]
+        [Route("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
         {
             try
@@ -73,7 +72,8 @@ namespace BPM.Web.Identity.API.Controllers
         }
 
 
-        [HttpPost("forgot-password")]
+        [HttpPost]
+        [Route("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
         {
             try
@@ -94,40 +94,13 @@ namespace BPM.Web.Identity.API.Controllers
             }
         }
 
-        [HttpPost("refresh-token")]
+        [HttpPost]
+        [Route("refresh-token")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto request)
         {
             var response = await _service.RefreshTokenAsync(request.RefreshToken);
 
             return Ok(response);
-        }
-
-        [Authorize]
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout(string refreshToken)
-        {
-            var token = await _service.GetByTokenAsync(refreshToken);
-
-            if (token == null)
-                return NotFound();
-
-            token.IsRevoked = true;
-            token.RevokedOn = DateTime.UtcNow;
-
-            await _service.UpdateAsync(token);
-
-            return Ok("Logout Successful");
-        }
-
-        [Authorize]
-        [HttpPost("logout-all")]
-        public async Task<IActionResult> LogoutAll()
-        {
-            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-            await _service.RevokeAllAsync(userId);
-
-            return Ok("Logged out from all devices.");
         }
 
     }

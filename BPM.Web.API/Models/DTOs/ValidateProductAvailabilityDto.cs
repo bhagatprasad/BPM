@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BPM.Web.API.Models.DTOs.PurchaseOrder
+namespace BPM.Web.API.Models.DTOs
 {
     public class ValidateProductAvailabilityDto
     {

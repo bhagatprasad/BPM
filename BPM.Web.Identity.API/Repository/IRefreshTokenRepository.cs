@@ -1,4 +1,6 @@
-﻿namespace BPM.Web.Identity.API.Repository
+﻿using BPM.Web.Identity.API.Models.Entities;
+
+namespace BPM.Web.Identity.API.Repository
 {
     public interface IRefreshTokenRepository
     {

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using BPM.Web.Identity.API.Models.Entities;
 using BPM.Web.Identity.API.Repository;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
