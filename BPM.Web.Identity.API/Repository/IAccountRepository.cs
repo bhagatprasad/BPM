@@ -1,0 +1,16 @@
+﻿using BPM.Web.Identity.API.Models.Entities;
+
+namespace BPM.Web.Identity.API.Repository
+{
+    public interface IAccountRepository
+    {
+        Task<User> AuthenticateAsync(string username);
+        Task UpdateUserAsync(User user);
+        Task<User> GetUserByUsernameAsync(string username);
+        Task<User> GetUserByIdAsync(Guid userId);
+
+        Task<RefreshToken?> GetByRefreshTokenAsync(string refreshToken);
+
+        Task<bool> UpdateAsync(RefreshToken refreshToken);
+    }
+}
