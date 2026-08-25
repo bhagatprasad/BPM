@@ -138,12 +138,6 @@ namespace BPM.Web.API.Services
             {
                 _logger.LogInformation("Creating user");
 
-                if (!user.DealerId.HasValue && !user.DistributorId.HasValue)
-                {
-                    _logger.LogWarning("User must be associated with a Dealer or Distributor");
-                    return false;
-                }
-
                 var newUser = user.ToEntity();
 
                 var result = await _userRespository.InsertUserAsync(newUser);

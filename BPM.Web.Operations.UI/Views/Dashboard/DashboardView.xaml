@@ -1,0 +1,46 @@
+﻿<!-- Views/Dashboard/DashboardView.xaml -->
+<Window x:Class="BPM.Web.Operations.UI.Views.Dashboard.DashboardView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:shared="clr-namespace:BPM.Web.Operations.UI.Views.Shared"
+        Title="BPM Medicals - Dashboard"
+        Height="768"
+        Width="1366"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <shared:SidebarView x:Name="Sidebar"
+                            Grid.Column="0"
+                            MenuItemSelected="Sidebar_MenuItemSelected"
+                            LogoutRequested="Sidebar_LogoutRequested" />
+
+        <!-- Main Content -->
+        <Border Grid.Column="1" Style="{StaticResource DashboardContent}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Top Bar -->
+                <shared:TopBarView Grid.Row="0" />
+
+                <!-- Content Area -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Content will be dynamically loaded here -->
+                        <ContentControl x:Name="ContentArea" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

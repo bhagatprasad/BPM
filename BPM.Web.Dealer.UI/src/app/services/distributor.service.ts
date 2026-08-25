@@ -8,11 +8,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DistributorService {
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) { }
 
-  //getalldistributors
-  getAllDistributors(): Observable<DistributorInfo[]> {
+  getAllDistributors(): Observable<any> {
     const url = environment.UrlConstants.Distributor.GetAllDistributors;
-    return this.apiService.send<DistributorInfo[]>('GET', url);
+    return this.apiService.send<any>('GET', url);
+  }
+  getDistributorById(): Observable<DistributorInfo> {
+    const url = environment.UrlConstants.Distributor.GetAllDistributors;
+    return this.apiService.send<DistributorInfo>('GET', url);
   }
 }

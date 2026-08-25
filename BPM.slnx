@@ -1,5 +1,7 @@
 <Solution>
+  <Project Path="BPM.Drug.API/BPM.Web.Drug.API.csproj" Id="d6120be7-03b5-419a-b09a-c9e6c6b26ea7" />
   <Project Path="BPM.Web.API/BPM.Web.API.csproj" />
   <Project Path="BPM.Web.Distributor.UI/BPM.Web.Distributor.UI.csproj" Id="00e42427-5ae3-4efd-bee7-a942767977a6" />
   <Project Path="BPM.Web.Identity.API/BPM.Web.Identity.API.csproj" Id="536d4c5e-a5d6-4b17-890c-dc025d34dac0" />
+  <Project Path="BPM.Web.Operations.UI/BPM.Web.Operations.UI.csproj" Id="9eb9862a-ecaa-40d2-803b-4df7d5a3c0a0" />
 </Solution>

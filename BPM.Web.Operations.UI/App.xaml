@@ -1,0 +1,22 @@
+﻿<Application x:Class="BPM.Web.Operations.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:BPM.Web.Operations.UI"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+    <!-- StartupUri removed: OnStartup decides Login vs Dashboard manually -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- HandyControl Default Themes -->
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
+
+                <!-- Custom BPM Theme -->
+                <ResourceDictionary Source="Assets/Styles/Theme.xaml"/>
+                <ResourceDictionary Source="Assets/Styles/Controls.xaml"/>
+                <ResourceDictionary Source="Assets/Styles/LoginStyles.xaml"/>
+                <ResourceDictionary Source="Assets/Styles/DashboardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,461 @@
+﻿<!-- Views/Dashboard/DistributorView.xaml -->
+<UserControl x:Class="BPM.Web.Operations.UI.Views.Dashboard.DistributorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:converters="clr-namespace:BPM.Web.Operations.UI.Helper">
+
+    <UserControl.Resources>
+        <!-- Converters -->
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+        <converters:BooleanToActiveStatusConverter x:Key="BooleanToActiveStatusConverter" />
+
+        <!-- ComboBox Style -->
+        <Style x:Key="BpmComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="38" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="#e2e8f0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Grid.Column="0"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Left" />
+                                    <ToggleButton Grid.Column="1"
+                                                  Focusable="False"
+                                                  IsChecked="{Binding IsDropDownOpen,
+                                                        Mode=TwoWay,
+                                                        RelativeSource={RelativeSource TemplatedParent}}"
+                                                  Background="Transparent"
+                                                  BorderThickness="0"
+                                                  Width="30"
+                                                  Height="30"
+                                                  Margin="0,0,5,0">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Grid>
+                                                    <Path x:Name="Arrow"
+                                                          Fill="#64748b"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Data="M0,0 L4,5 L8,0 Z"
+                                                          RenderTransformOrigin="0.5,0.5">
+                                                        <Path.RenderTransform>
+                                                            <RotateTransform Angle="0" />
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="Arrow" Property="RenderTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="180" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="White"
+                                            BorderBrush="#e2e8f0"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            Padding="4">
+                                        <ScrollViewer x:Name="PART_ScrollViewer"
+                                                      CanContentScroll="True">
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"
+                                                             SnapsToDevicePixels="True" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBox Item -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border"
+                                Background="Transparent"
+                                CornerRadius="6"
+                                Margin="2">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#f1f5f9" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#e0f2fe" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- MAIN DISTRIBUTOR CARD -->
+    <Border Style="{StaticResource DashboardCard}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ============================= -->
+            <!-- Title with Add Button -->
+            <!-- ============================= -->
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🏢" FontSize="22" Margin="0,0,10,0" />
+                    <TextBlock Text="Distributors"
+                               FontSize="20"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextBrush}"
+                               VerticalAlignment="Center" />
+                    <Border Background="{StaticResource PrimaryBrush}"
+                            CornerRadius="10"
+                            Padding="10,3"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="DistributorCountText"
+                                   Text="0"
+                                   Foreground="White"
+                                   FontSize="13"
+                                   FontWeight="Bold" />
+                    </Border>
+                </StackPanel>
+
+                <!-- Add Button -->
+                <Button x:Name="AddButton"
+                        Grid.Column="1"
+                        Style="{StaticResource BpmPrimaryButton}"
+                        Content="➕ Add Distributor"
+                        Width="160"
+                        Height="38"
+                        VerticalAlignment="Center"
+                        Click="AddButton_Click" />
+            </Grid>
+
+            <!-- ============================= -->
+            <!-- Search / Filter -->
+            <!-- ============================= -->
+            <Grid Grid.Row="1" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Search -->
+                <TextBox x:Name="SearchBox"
+                         Grid.Column="0"
+                         Width="350"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         Height="38"
+                         FontSize="14"
+                         Style="{StaticResource BpmTextBox}"
+                         TextChanged="SearchBox_TextChanged">
+                    <TextBox.ToolTip>
+                        <ToolTip Content="Search by Code, Name, Email, Phone, or City" />
+                    </TextBox.ToolTip>
+                </TextBox>
+
+                <!-- Status Filter -->
+                <ComboBox x:Name="StatusFilter"
+                          Grid.Column="1"
+                          Width="160"
+                          Margin="10,0,0,0"
+                          VerticalAlignment="Center"
+                          Height="38"
+                          FontSize="14"
+                          Style="{StaticResource BpmComboBox}"
+                          SelectionChanged="StatusFilter_SelectionChanged">
+                    <ComboBoxItem Tag="All" Content="📋 All Status" IsSelected="True" />
+                    <ComboBoxItem Tag="Active" Content="✅ Active" />
+                    <ComboBoxItem Tag="Inactive" Content="⛔ Inactive" />
+                </ComboBox>
+
+                <!-- Refresh -->
+                <Button Grid.Column="2"
+                        Style="{StaticResource SocialButton}"
+                        Background="{StaticResource PrimaryBrush}"
+                        Foreground="White"
+                        Width="38"
+                        Height="38"
+                        Margin="10,0,0,0"
+                        Click="Refresh_Click"
+                        ToolTip="Refresh">
+                    <TextBlock Text="🔄" FontSize="20" />
+                </Button>
+            </Grid>
+
+            <!-- ================================================= -->
+            <!-- MAIN DISTRIBUTOR GRID -->
+            <!-- ================================================= -->
+            <DataGrid x:Name="DistributorsGrid"
+                      Grid.Row="2"
+                      AutoGenerateColumns="False"
+                      CanUserSortColumns="True"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      HeadersVisibility="Column"
+                      RowHeaderWidth="0"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      Margin="0,0,0,10"
+                      Background="White"
+                      BorderBrush="#e2e8f0"
+                      BorderThickness="1"
+                      RowBackground="White"
+                      AlternatingRowBackground="#f8fafc"
+                      LoadingRow="DistributorsGrid_LoadingRow">
+
+                <DataGrid.Resources>
+                    <!-- Parent Header -->
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#f1f5f9" />
+                        <Setter Property="Foreground" Value="#1e293b" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="Height" Value="44" />
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        <Setter Property="Padding" Value="10,0" />
+                        <Setter Property="BorderBrush" Value="#e2e8f0" />
+                        <Setter Property="BorderThickness" Value="0,0,1,1" />
+                    </Style>
+
+                    <!-- Parent Cell -->
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,8" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="BorderBrush" Value="#e2e8f0" />
+                        <Setter Property="BorderThickness" Value="0,0,1,0" />
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+
+                    <!-- Parent Row -->
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Height" Value="48" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#f1f5f9" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#e0f2fe" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <!-- ============================= -->
+                <!-- Parent Columns -->
+                <!-- ============================= -->
+                <DataGrid.Columns>
+                    <!-- Distributor Code -->
+                    <DataGridTextColumn Header="Code"
+                                        Binding="{Binding DistributorCode}"
+                                        Width="120" />
+
+                    <!-- Distributor Name -->
+                    <DataGridTextColumn Header="Distributor Name"
+                                        Binding="{Binding DistributorName}"
+                                        Width="*" />
+
+                    <!-- Contact Person -->
+                    <DataGridTextColumn Header="Contact Person"
+                                        Binding="{Binding ContactPerson}"
+                                        Width="*" />
+
+                    <!-- Email -->
+                    <DataGridTextColumn Header="Email"
+                                        Binding="{Binding Email}"
+                                        Width="*" />
+
+                    <!-- Phone -->
+                    <DataGridTextColumn Header="Phone"
+                                        Binding="{Binding Phone}"
+                                        Width="*" />
+
+                    <!-- City -->
+                    <DataGridTextColumn Header="City"
+                                        Binding="{Binding City}"
+                                        Width="*" />
+
+                    <!-- State -->
+                    <DataGridTextColumn Header="State"
+                                        Binding="{Binding State}"
+                                        Width="*" />
+
+                    <!-- GST Number -->
+                    <DataGridTextColumn Header="GST Number"
+                                        Binding="{Binding GSTNumber}"
+                                        Width="*" />
+
+                    <!-- Status -->
+                    <DataGridTemplateColumn Header="Status" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="12"
+                                        Padding="10,5"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding IsActive,
+                                            Converter={StaticResource StatusToColorConverter}}">
+                                    <TextBlock Text="{Binding IsActive,
+                                                               Converter={StaticResource BooleanToActiveStatusConverter}}"
+                                               Foreground="White"
+                                               FontSize="13"
+                                               FontWeight="SemiBold" />
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Actions -->
+                    <DataGridTemplateColumn Header="Actions" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="✏️"
+                                            Style="{StaticResource IconButton}"
+                                            ToolTip="Edit"
+                                            Tag="{Binding Id}"
+                                            Click="EditButton_Click" />
+                                    <Button Content="🗑️"
+                                            Style="{StaticResource IconButton}"
+                                            ToolTip="Delete"
+                                            Tag="{Binding Id}"
+                                            Click="DeleteButton_Click"
+                                            Margin="5,0,0,0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- ============================= -->
+            <!-- Pagination -->
+            <!-- ============================= -->
+            <Border Grid.Row="3"
+                    Background="#f8fafc"
+                    CornerRadius="8"
+                    Padding="12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Records -->
+                    <TextBlock x:Name="RecordsInfo"
+                               Text="Showing 0 of 0 records"
+                               FontSize="14"
+                               Foreground="#64748b"
+                               VerticalAlignment="Center" />
+
+                    <!-- Pagination -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <!-- Previous -->
+                        <Button x:Name="PreviousPageButton"
+                                Content="◀"
+                                Style="{StaticResource SocialButton}"
+                                Background="Transparent"
+                                Foreground="#475569"
+                                Width="38"
+                                Height="38"
+                                FontSize="16"
+                                Click="PreviousPage_Click"
+                                ToolTip="Previous Page" />
+
+                        <!-- Page -->
+                        <TextBlock x:Name="PageInfo"
+                                   Text="1 / 1"
+                                   FontSize="14"
+                                   Foreground="#64748b"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0" />
+
+                        <!-- Next -->
+                        <Button x:Name="NextPageButton"
+                                Content="▶"
+                                Style="{StaticResource SocialButton}"
+                                Background="Transparent"
+                                Foreground="#475569"
+                                Width="38"
+                                Height="38"
+                                FontSize="16"
+                                Click="NextPage_Click"
+                                ToolTip="Next Page" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

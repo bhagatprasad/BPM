@@ -102,7 +102,7 @@ export class UserCreateSidebarComponent implements OnInit {
   loadDistributors(): void {
     this.distributorService.getAllDistributors().subscribe({
       next: (distributors) => {
-        this.distributors = (distributors || []).filter((distributor) => distributor.isActive);
+        this.distributors = distributors;
         this.cdr.detectChanges();
       },
       error: (error) => {
