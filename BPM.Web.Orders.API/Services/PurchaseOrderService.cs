@@ -1,27 +1,26 @@
-﻿using BPM.Web.API.Models.Extensions;
-using BPM.Web.API.Models.Mappers;
-using BPM.Web.API.Repositories.Interfaces;
-using BPM.Web.Orders.API.Helpers;
+﻿using BPM.Web.Orders.API.Helpers;
+using BPM.Web.Orders.API.Integrations;
 using BPM.Web.Orders.API.Models.DTOs;
 using BPM.Web.Orders.API.Models.Entities;
+using BPM.Web.Orders.API.Models.Extensions;
 using BPM.Web.Orders.API.Models.Mappers;
 using BPM.Web.Orders.API.Repository;
 
 namespace BPM.Web.Orders.API.Services
 {
-  /*  public class PurchaseOrderService : IPurchaseOrderService
+    public class PurchaseOrderService : IPurchaseOrderService
     {
         private readonly IPurchaseOrderRepository _repository;
-        private readonly IPurchaseOrderApprovalRepository _approvalRepository;
         private readonly ILogger<PurchaseOrderService> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDrugService _drugService;
 
-        public PurchaseOrderService(IPurchaseOrderRepository repository, IPurchaseOrderApprovalRepository approvalRepository, IServiceProvider serviceProvider, ILogger<PurchaseOrderService> logger)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, IDrugService drugService, IServiceProvider serviceProvider, ILogger<PurchaseOrderService> logger)
         {
             _repository = repository;
-            _approvalRepository = approvalRepository;
-            _logger = logger;
             _serviceProvider = serviceProvider;
+            _logger = logger;
+            _drugService = drugService;
         }
 
         public async Task<PurchaseOrderResponseDto> CreatePurchaseOrderAsync(CreatePurchaseOrderDto createPurchaseOrderDto)
@@ -75,12 +74,47 @@ namespace BPM.Web.Orders.API.Services
             try
             {
                 _logger.LogInformation("Fetching all purchase orders.");
+
                 var purchaseOrders = await _repository.GetPurchaseOrdersAllAsync();
 
                 if (!purchaseOrders.Any())
                 {
                     _logger.LogWarning("No purchase orders found.");
                     return Enumerable.Empty<PurchaseOrderResponseDto>();
+                }
+
+                if (purchaseOrders.Any())
+                {
+                    //get drugs from drug api
+
+                    var drugs = await _drugService.GetAllDrugsAsync();
+
+                    if (drugs.Any())
+                    {
+                        var orders = purchaseOrders.Select(po => po.ToDto()).ToList();
+
+                        orders.ForEach(x =>
+                        {
+                            
+                            if (x.PurchaseOrderItemResponse.Any())
+                            {
+                                x.PurchaseOrderItemResponse.ForEach(y =>
+                                {
+                                    var drug = drugs.Where(m => m.DrugId == y.DrugId).FirstOrDefault();
+
+                                    if (drug != null)
+                                    {
+                                        y.DrugName = drug.DrugName;
+                                        y.DrugCode = drug.DrugCode;
+                                    }
+
+                                });
+                            }
+                        });
+
+                        return orders;
+                    }
+
                 }
 
                 return purchaseOrders.Select(po => po.ToDto()).ToList();
@@ -272,84 +306,22 @@ namespace BPM.Web.Orders.API.Services
         {
             try
             {
-                _logger.LogInformation("Submitting Purchase Order. OrderId: {OrderId}", dto.PurchaseOrderId);
+
                 var purchaseOrder = await _repository.GetPurchaseOrderByIdAsync(dto.PurchaseOrderId);
 
-                if (purchaseOrder == null)
+                if (purchaseOrder != null)
                 {
-                    _logger.LogWarning("Purchase Order not found. OrderId: {OrderId}", dto.PurchaseOrderId);
-                    throw new InvalidOperationException("Purchase Order not found.");
+                    purchaseOrder.Status = "Approved";
+                    purchaseOrder.ModifiedBy = currentUserId;
+                    purchaseOrder.ModifiedOn = DateTime.Now;
+
+                    await _repository.UpdatePurchaseOrderAsync(purchaseOrder);
+
+                    //sales order creation
+
                 }
 
-                if (!string.Equals(purchaseOrder.Status, "Draft", StringComparison.OrdinalIgnoreCase))
-                {
-                    _logger.LogWarning("Purchase Order cannot be submitted because current status is {Status}. OrderId: {OrderId}", purchaseOrder.Status, purchaseOrder.Id);
-                    throw new InvalidOperationException($"Purchase Order can be submitted only from Draft status. Current status: {purchaseOrder.Status}");
-                }
-
-                if (purchaseOrder.PurchaseOrderItems == null || !purchaseOrder.PurchaseOrderItems.Any())
-                {
-                    throw new InvalidOperationException("Purchase Order must contain at least one item.");
-                }
-
-                if (purchaseOrder.PurchaseOrderItems.Any(x => x.Quantity <= 0))
-                {
-                    throw new InvalidOperationException("All Purchase Order item quantities must be greater than zero.");
-                }
-
-                if (purchaseOrder.TotalAmount <= 0)
-                {
-                    throw new InvalidOperationException("Purchase Order total amount must be greater than zero.");
-                }
-
-                if (purchaseOrder.ExpectedDeliveryDate < DateTime.UtcNow)
-                {
-                    throw new InvalidOperationException("Expected delivery date must be in the future.");
-                }
-
-                var requiredApprovalLevels = GetRequiredApprovalLevels(purchaseOrder.TotalAmount);
-                _logger.LogInformation("Purchase Order {OrderId} requires {ApprovalLevels} approval level(s). Total Amount: {TotalAmount}", purchaseOrder.Id, requiredApprovalLevels, purchaseOrder.TotalAmount);
-
-                var approvers = await _approvalRepository.GetActiveApproversAsync();
-
-                if (approvers.Count < requiredApprovalLevels)
-                {
-                    _logger.LogWarning("Insufficient active approvers for Purchase Order {OrderId}. Required: {Required}, Available: {Available}", purchaseOrder.Id, requiredApprovalLevels, approvers.Count);
-                    throw new InvalidOperationException("Insufficient active approvers are available for this Purchase Order.");
-                }
-
-                var approvalRecords = new List<PurchaseOrderApproval>();
-
-                for (int level = 1; level <= requiredApprovalLevels; level++)
-                {
-                    var approver = approvers[level - 1];
-                    approvalRecords.Add(new PurchaseOrderApproval
-                    {
-                        Id = Guid.NewGuid(),
-                        PurchaseOrderId = purchaseOrder.Id,
-                        ApproverId = approver.Id,
-                        ApprovalLevel = level,
-                        Status = "Pending",
-                        CreatedBy = currentUserId,
-                        CreatedOn = DateTime.UtcNow
-                    });
-                }
-
-                purchaseOrder.Status = "Submitted";
-                purchaseOrder.ModifiedBy = currentUserId;
-                purchaseOrder.ModifiedOn = DateTime.UtcNow;
-                purchaseOrder.EnsureAllDateTimesUtc();
-
-                await _approvalRepository.SubmitPurchaseOrderWithApprovalsAsync(purchaseOrder, approvalRecords);
-
-                _logger.LogInformation("Purchase Order submitted successfully. OrderId: {OrderId}, PONumber: {PONumber}", purchaseOrder.Id, purchaseOrder.PONumber);
-
-                var result = await _repository.GetPurchaseOrderByIdAsync(purchaseOrder.Id);
-
-                if (result == null)
-                {
-                    throw new InvalidOperationException("Purchase Order was submitted but could not be retrieved.");
-                }
+                var result = await _repository.GetPurchaseOrderByIdAsync(dto.PurchaseOrderId);
 
                 return result.ToDto();
             }
@@ -615,29 +587,14 @@ namespace BPM.Web.Orders.API.Services
                 // Process each item from the original Purchase Order.
                 foreach (var sourceItem in sourcePurchaseOrder.PurchaseOrderItems)
                 {
-                    // Validate that the Drug is active.
-                    if (sourceItem.Drug == null || !sourceItem.Drug.IsActive)
-                    {
-                        throw new InvalidOperationException($"Drug is inactive or unavailable. DrugId: {sourceItem.DrugId}");
-                    }
-
-                    // Validate that the Drug Packaging is active.
-                    if (sourceItem.DrugPackaging == null || !sourceItem.DrugPackaging.IsActive)
-                    {
-                        throw new InvalidOperationException($"Drug packaging is inactive or unavailable. PackagingId: {sourceItem.PackagingId}");
-                    }
 
                     // Validate current inventory availability for the requested quantity.
                     var availability = await _repository.ValidateProductAvailabilityAsync(sourceItem.DrugId, sourceItem.PackagingId, sourceItem.Quantity);
 
-                    // Stop the copy operation when the requested quantity is unavailable.
-                    if (!availability.IsAvailable)
-                    {
-                        throw new InvalidOperationException($"Product {sourceItem.Drug?.DrugName ?? sourceItem.DrugId.ToString()} is not available in the requested quantity. {availability.Message}");
-                    }
+
 
                     // Get the current packaging price instead of using the historical PO price.
-                    var currentUnitPrice = sourceItem.DrugPackaging.PackagePrice;
+                    var currentUnitPrice = sourceItem.UnitPrice;
 
                     // Get the current applicable discount based on supplier, product, packaging, and quantity.
                     var currentDiscountPercentage = await _repository.GetCurrentDiscountPercentageAsync(sourcePurchaseOrder.SupplierId, sourceItem.DrugId, sourceItem.PackagingId, sourceItem.Quantity);
@@ -757,5 +714,10 @@ namespace BPM.Web.Orders.API.Services
 
             return 3;
         }
-    }*/
+
+        public Task<IEnumerable<PurchaseOrderResponseDto>> GetPurchaseOrdersByDistributorAsync(Guid distributorId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

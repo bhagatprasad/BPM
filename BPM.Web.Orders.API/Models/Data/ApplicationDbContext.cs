@@ -1,7 +1,7 @@
 ﻿using BPM.Web.Orders.API.Models.Entities;
+using BPM.Web.Orders.API.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BPM.Web.Orders.API.Models.Data
 {
@@ -14,8 +14,8 @@ namespace BPM.Web.Orders.API.Models.Data
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
         public DbSet<PurchaseOrderApproval> PurchaseOrderApprovals { get; set; }
-        public DbSet<SalesOrder> salesOrders { get; set; }
-        public DbSet<SalesOrderItem> salesOrderItems { get; set; }
+        public DbSet<SalesOrder> SalesOrders { get; set; }
+        public DbSet<SalesOrderItem> SalesOrderItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -50,13 +50,7 @@ namespace BPM.Web.Orders.API.Models.Data
                 // You can add additional fluent configuration here if needed
                 // But your Data Annotations should handle most of it
             });
-            // User -> Distributor relationship
-            modelBuilder.Entity<User>()
-               .HasOne(u => u.Distributor)
-               .WithMany()
-               .HasForeignKey(u => u.DistributorId)
-               .HasPrincipalKey(d => d.DistributorId)
-               .OnDelete(DeleteBehavior.Restrict);
+            
         }
 
         public override int SaveChanges()

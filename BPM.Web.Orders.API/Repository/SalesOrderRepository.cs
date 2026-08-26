@@ -1,5 +1,6 @@
-﻿using BPM.Web.API.Models.Entities;
-using BPM.Web.Orders.API.Models.Data;
+﻿using BPM.Web.Orders.API.Models.Data;
+using BPM.Web.Orders.API.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.Orders.API.Repository
 {
@@ -14,11 +15,9 @@ namespace BPM.Web.Orders.API.Repository
 
         public async Task<IEnumerable<SalesOrder>> GetAllSalesOrderAsync()
         {
-            return await _dbContext.SalesOrders.AsNoTracking().Include(x => x.PurchaseOrder).ThenInclude(x => x.Dealer)
+            return await _dbContext.SalesOrders.AsNoTracking().Include(x => x.PurchaseOrder)
                 .Include(x => x.PurchaseOrder).ThenInclude(x => x.PurchaseOrderItems)
-                .Include(x => x.Dealer)
-                .Include(x => x.Supplier)
-                .Include(x => x.SalesOrderItems).ThenInclude(x => x.Drug).OrderByDescending(x => x.ModifiedOn)
+                .Include(x => x.SalesOrderItems).OrderByDescending(x => x.ModifiedOn)
                 .ToListAsync();
         }
 
@@ -26,11 +25,10 @@ namespace BPM.Web.Orders.API.Repository
         {
             return await _dbContext.SalesOrders
                 .AsNoTracking()
-                .Include(x => x.PurchaseOrder).ThenInclude(x => x.Dealer)
-                .Include(x => x.PurchaseOrder).ThenInclude(x => x.PurchaseOrderItems)
-                .Include(x => x.Dealer)
-                .Include(x => x.Supplier)
-                .Include(x => x.SalesOrderItems).ThenInclude(x => x.Drug)
+                .Include(x => x.PurchaseOrder)
+                .Include(x => x.PurchaseOrder)
+                .ThenInclude(x => x.PurchaseOrderItems)
+                .Include(x => x.SalesOrderItems)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -39,11 +37,11 @@ namespace BPM.Web.Orders.API.Repository
             return await _dbContext.SalesOrders
                 .AsNoTracking()
                 .Where(x => x.DealerId == dealerId)
-                .Include(x => x.PurchaseOrder).ThenInclude(x => x.Dealer)
-                .Include(x => x.PurchaseOrder).ThenInclude(x => x.PurchaseOrderItems)
-                .Include(x => x.Dealer)
-                .Include(x => x.Supplier)
-                .Include(x => x.SalesOrderItems).ThenInclude(x => x.Drug).OrderByDescending(x => x.ModifiedOn)
+                .Include(x => x.PurchaseOrder)
+                .Include(x => x.PurchaseOrder)
+                .ThenInclude(x => x.PurchaseOrderItems)
+                .Include(x => x.SalesOrderItems)
+                .OrderByDescending(x => x.ModifiedOn)
                 .ToListAsync();
         }
 
@@ -52,11 +50,9 @@ namespace BPM.Web.Orders.API.Repository
             return await _dbContext.SalesOrders
                 .AsNoTracking()
                 .Where(x => x.PurchaseOrderId == purchaseOrderId)
-                .Include(x => x.PurchaseOrder).ThenInclude(x => x.Dealer)
+                .Include(x => x.PurchaseOrder)
                 .Include(x => x.PurchaseOrder).ThenInclude(x => x.PurchaseOrderItems)
-                .Include(x => x.Dealer)
-                .Include(x => x.Supplier)
-                .Include(x => x.SalesOrderItems).ThenInclude(x => x.Drug).OrderByDescending(x => x.ModifiedOn)
+                .Include(x => x.SalesOrderItems).OrderByDescending(x => x.ModifiedOn)
                 .ToListAsync();
         }
 

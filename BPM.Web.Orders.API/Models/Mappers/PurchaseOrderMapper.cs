@@ -1,5 +1,6 @@
 ﻿using BPM.Web.Orders.API.Models.DTOs;
 using BPM.Web.Orders.API.Models.Entities;
+using BPM.Web.Orders.API.Models.Extensions;
 
 namespace BPM.Web.Orders.API.Models.Mappers
 {
@@ -62,7 +63,6 @@ namespace BPM.Web.Orders.API.Models.Mappers
                 Id = purchaseOrder.Id,
                 PONumber = purchaseOrder.PONumber,
                 SupplierId = purchaseOrder.SupplierId,
-                SupplierName = purchaseOrder.Supplier?.SupplierName ?? string.Empty,
                 DealerId = purchaseOrder.DealerId,
                 DistributorId = purchaseOrder.DistributorId,
                 OrderDate = purchaseOrder.OrderDate,
@@ -78,7 +78,6 @@ namespace BPM.Web.Orders.API.Models.Mappers
                 Remarks = purchaseOrder.Remarks,
                 ModifiedBy = purchaseOrder.ModifiedBy,
                 ModifiedOn = purchaseOrder.ModifiedOn,
-                Dealer = purchaseOrder.Dealer?.ToDto(),
                 IsOlderThan7Days = purchaseOrder.OrderDate <= DateTime.UtcNow.AddDays(-7),
                 PurchaseOrderItemResponse = purchaseOrder.PurchaseOrderItems?
                     .Select(x => x.ToDto())
@@ -193,8 +192,6 @@ namespace BPM.Web.Orders.API.Models.Mappers
                 Id = item.Id,
                 PurchaseOrderId = item.PurchaseOrderId,
                 DrugId = item.DrugId,
-                DrugName = item.Drug?.DrugName ?? string.Empty,
-                DrugCode = item.Drug?.DrugCode ?? string.Empty,
                 PackagingId = item.PackagingId,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,

@@ -1,0 +1,6 @@
+@BPM.Web.Billing.API_HostAddress = http://localhost:5031
+
+GET {{BPM.Web.Billing.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

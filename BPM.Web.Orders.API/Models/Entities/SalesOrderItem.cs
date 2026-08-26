@@ -1,5 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.Orders.API.Models.Entities
@@ -73,8 +72,5 @@ namespace BPM.Web.Orders.API.Models.Entities
         [ForeignKey(nameof(SalesOrderId))]
         public virtual SalesOrder? SalesOrder { get; set; }
 
-        [ForeignKey(nameof(DrugId))]
-        public virtual Drug? Drug { get; set; }
     }
-}
 }

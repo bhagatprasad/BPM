@@ -1,5 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.Orders.API.Models.Entities
@@ -91,16 +90,6 @@ namespace BPM.Web.Orders.API.Models.Entities
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
 
-
-        [ForeignKey(nameof(SupplierId))]
-        public virtual Supplier? Supplier { get; set; }
-
-        [ForeignKey(nameof(DealerId))]
-        public virtual Dealer? Dealer { get; set; }
-
-
-        [ForeignKey(nameof(DistributorId))]
-        public virtual Distributor? Distributor { get; set; }
 
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; }
             = new List<PurchaseOrderItem>();

@@ -1,6 +1,4 @@
-﻿using BPM.Web.API.Models.DTOs;
-
-namespace BPM.Web.Orders.API.Models.DTOs
+﻿namespace BPM.Web.Orders.API.Models.DTOs
 {
     public class PurchaseOrderResponseDto
     {

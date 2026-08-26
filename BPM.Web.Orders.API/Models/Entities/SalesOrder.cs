@@ -1,4 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -98,15 +98,6 @@ namespace BPM.Web.Orders.API.Models.Entities
 
         [ForeignKey(nameof(PurchaseOrderId))]
         public virtual PurchaseOrder? PurchaseOrder { get; set; }
-
-        [ForeignKey(nameof(SupplierId))]
-        public virtual Supplier? Supplier { get; set; }
-
-        [ForeignKey(nameof(DealerId))]
-        public virtual Dealer? Dealer { get; set; }
-
-        [ForeignKey(nameof(DistributorId))]
-        public virtual Distributor? Distributor { get; set; }
 
         public virtual ICollection<SalesOrderItem> SalesOrderItems { get; set; }
             = new List<SalesOrderItem>();

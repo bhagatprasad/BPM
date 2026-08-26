@@ -1,16 +1,14 @@
-﻿using BPM.Web.Drug.API.Models.Entities;
-
-namespace BPM.Web.Drug.API.Repositories
+﻿namespace BPM.Web.Drug.API.Repositories
 {
     public interface IDrugRepository
     {
-        Task<List<DrugEntity>> GetAllDrugsAsync();
+        Task<List<BPM.Web.Drug.API.Models.Entities.Drug>> GetAllDrugsAsync();
 
-        Task<DrugEntity?> GetDrugByIdAsync(Guid drugId);
+        Task<BPM.Web.Drug.API.Models.Entities.Drug?> GetDrugByIdAsync(Guid drugId);
 
-        Task<bool> InsertDrugAsync(DrugEntity drug);
+        Task<bool> InsertDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug);
 
-        Task<bool> UpdateDrugAsync(DrugEntity drug);
+        Task<bool> UpdateDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug);
 
         Task<bool> DeleteDrugAsync(Guid drugId);
     }

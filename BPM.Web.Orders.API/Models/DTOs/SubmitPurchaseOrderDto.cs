@@ -3,5 +3,6 @@
     public class SubmitPurchaseOrderDto
     {
         public Guid PurchaseOrderId { get; set; }
+        public Guid? CurrentUserId { get; set; }
     }
 }

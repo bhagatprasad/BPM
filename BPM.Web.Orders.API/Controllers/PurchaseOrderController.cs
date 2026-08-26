@@ -1,13 +1,13 @@
-﻿using BPM.Web.API.Models.DTOs;
+﻿
+using BPM.Web.Orders.API.Models.DTOs;
 using BPM.Web.Orders.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Orders.API.Controllers
 {
-   /*[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class PurchaseOrderController : BaseController
+    public class PurchaseOrderController : ControllerBase
     {
         private readonly IPurchaseOrderService _service;
         private readonly ILogger<PurchaseOrderController> _logger;
@@ -118,8 +118,7 @@ namespace BPM.Web.Orders.API.Controllers
             try
             {
                 _logger.LogInformation("Processing purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
-                var currentUserId = UserId.Value;
-                var result = await _service.ProcessPurchaseOrderAsync(processPurchaseOrderDto, currentUserId);
+                var result = await _service.ProcessPurchaseOrderAsync(processPurchaseOrderDto, processPurchaseOrderDto.CurrentUserId.Value);
                 if (result == null)
                 {
                     _logger.LogWarning("Failed to process purchase order with Id: {Id}", processPurchaseOrderDto.PurchaseOrderId);
@@ -135,27 +134,6 @@ namespace BPM.Web.Orders.API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("validate-product-availability")]
-        public async Task<IActionResult> ValidateProductAvailability(ValidateProductAvailabilityDto dto)
-        {
-            try
-            {
-                _logger.LogInformation("Validating product availability for DrugId: {DrugId}, PackagingId: {PackagingId}", dto.DrugId, dto.PackagingId);
-                var result = await _service.ValidateProductAvailabilityAsync(dto.DrugId, dto.PackagingId, dto.Quantity);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid product availability request.");
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while validating product availability.");
-                return StatusCode(500, new { message = "An internal server error occurred." });
-            }
-        }
 
         [HttpPost]
         [Route("submit-purchase-order")]
@@ -164,8 +142,7 @@ namespace BPM.Web.Orders.API.Controllers
             try
             {
                 _logger.LogInformation("Submitting Purchase Order with Id: {Id}", dto.PurchaseOrderId);
-                var currentUserId = UserId.Value;
-                var result = await _service.SubmitPurchaseOrderAsync(dto, currentUserId);
+                var result = await _service.SubmitPurchaseOrderAsync(dto, dto.CurrentUserId.Value);
                 _logger.LogInformation("Purchase Order submitted successfully with Id: {Id}", dto.PurchaseOrderId);
                 return Ok(result);
             }
@@ -188,8 +165,7 @@ namespace BPM.Web.Orders.API.Controllers
             try
             {
                 _logger.LogInformation("Saving Purchase Order as Draft. OrderId: {OrderId}", dto.PurchaseOrderId);
-                var currentUserId = UserId.Value;
-                var result = await _service.SavePurchaseOrderDraftAsync(dto, currentUserId);
+                var result = await _service.SavePurchaseOrderDraftAsync(dto, dto.CurrentUserId.Value);
                 _logger.LogInformation("Purchase Order saved as Draft successfully. OrderId: {OrderId}", result.Id);
                 return Ok(result);
             }
@@ -229,7 +205,7 @@ namespace BPM.Web.Orders.API.Controllers
             try
             {
                 _logger.LogInformation("Deleting Draft Purchase Order with Id: {Id}", purchaseOrderId);
-                var currentUserId = UserId.Value;
+                var currentUserId = Guid.NewGuid();
                 var result = await _service.DeletePurchaseOrderDraftAsync(purchaseOrderId, currentUserId);
 
                 if (!result)
@@ -258,7 +234,7 @@ namespace BPM.Web.Orders.API.Controllers
             try
             {
                 _logger.LogInformation("Copying Purchase Order with Id: {Id}", purchaseOrderId);
-                var currentUserId = UserId.Value;
+                var currentUserId = Guid.NewGuid();
                 var result = await _service.CopyPurchaseOrderAsync(purchaseOrderId, currentUserId);
                 _logger.LogInformation("Purchase Order copied successfully with Id: {Id}", purchaseOrderId);
                 return Ok(result);
@@ -279,5 +255,5 @@ namespace BPM.Web.Orders.API.Controllers
                 return StatusCode(500, new { message = "An internal server error occurred." });
             }
         }
-    }*/
+    }
 }

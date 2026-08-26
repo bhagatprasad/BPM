@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace BPM.Web.Orders.API.Controllers
+namespace BPM.Web.Billing.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

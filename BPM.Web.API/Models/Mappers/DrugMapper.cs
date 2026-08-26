@@ -68,6 +68,8 @@ namespace BPM.Web.API.Models.Mappers
             };
         }
 
+
+
         public static List<DrugDto> ToDrugDtoList(this List<Drug> entities)
         {
             return entities.Select(drug => drug.DrugToDrugDto()).ToList();
