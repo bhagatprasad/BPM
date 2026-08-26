@@ -10,15 +10,15 @@ namespace BPM.Web.Drug.API.Models.Data
         {
         }
 
-        public DbSet<DrugEntity> Drugs { get; set; }
+        public DbSet<BPM.Web.Drug.API.Models.Entities.Drug> Drugs { get; set; }
 
-        public DbSet<DrugCategoryEntity> DrugCategories { get; set; }
+        public DbSet<DrugCategory> DrugCategories { get; set; }
 
         public DbSet<DrugFormEntity> DrugForms { get; set; }
 
-        public DbSet<DrugUomEntity> DrugUoms { get; set; }
+        public DbSet<DrugUom> DrugUoms { get; set; }
 
-        public DbSet<DrugPackagingEntity> DrugPackagings { get; set; }
+        public DbSet<DrugPackaging> DrugPackagings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,31 +50,31 @@ namespace BPM.Web.Drug.API.Models.Data
                     }
                 }
             }
-            modelBuilder.Entity<DrugUomEntity>()
+            modelBuilder.Entity<DrugUom>()
             .HasOne(u => u.Drug)
             .WithMany(d => d.DrugUoms)
             .HasForeignKey(u => u.DrugId)
             .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DrugPackagingEntity>()
+            modelBuilder.Entity<DrugPackaging>()
     .HasOne(p => p.Drug)
     .WithMany(d => d.DrugPackagings)
     .HasForeignKey(p => p.DrugId)
     .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DrugPackagingEntity>()
+            modelBuilder.Entity<DrugPackaging>()
     .HasOne(p => p.PackageUom)
     .WithMany()
     .HasForeignKey(p => p.PackageUomId)
     .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DrugPackagingEntity>()
+            modelBuilder.Entity<DrugPackaging>()
     .HasOne(p => p.ContainsUom)
     .WithMany()
     .HasForeignKey(p => p.ContainsUomId)
     .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DrugUomEntity>()
+            modelBuilder.Entity<DrugUom>()
     .HasOne(u => u.ParentUom)
     .WithMany()
     .HasForeignKey(u => u.ParentUomId)

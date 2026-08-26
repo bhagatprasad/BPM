@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BPM.Web.Drug.API.Models.Entities
 {
     [Table("drug_packaging")]
-    public class DrugPackagingEntity
+    public class DrugPackaging
     {
         [Key]
         [Column("packagingid")]
@@ -61,12 +61,12 @@ namespace BPM.Web.Drug.API.Models.Entities
 
         // Navigation Properties
         [ForeignKey(nameof(DrugId))]
-        public virtual DrugEntity? Drug { get; set; }
+        public virtual Drug? Drug { get; set; }
 
         [ForeignKey(nameof(PackageUomId))]
-        public virtual DrugUomEntity? PackageUom { get; set; }
+        public virtual DrugUom? PackageUom { get; set; }
 
         [ForeignKey(nameof(ContainsUomId))]
-        public virtual DrugUomEntity? ContainsUom { get; set; }
+        public virtual DrugUom? ContainsUom { get; set; }
     }
 }

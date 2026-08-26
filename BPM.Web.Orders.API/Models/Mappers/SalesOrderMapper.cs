@@ -1,6 +1,10 @@
-﻿namespace BPM.Web.Orders.API.Models.Mappers
+﻿using BPM.Web.Orders.API.Models.DTOs;
+using BPM.Web.Orders.API.Models.Entities;
+using BPM.Web.Orders.API.Models.Extensions;
+
+namespace BPM.Web.Orders.API.Models.Mappers
 {
-   /* public class SalesOrderMapper
+    public static class SalesOrderMapper
     {
         public static SalesOrderDto ToDto(this SalesOrder entity)
         {
@@ -58,8 +62,7 @@
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,
                 ModifiedBy = entity.ModifiedBy,
-                ModifiedOn = entity.ModifiedOn,
-                Drug = entity.Drug?.DrugToDrugDto()
+                ModifiedOn = entity.ModifiedOn
             };
         }
 
@@ -273,5 +276,5 @@
         {
             return $"SO-{DateTime.UtcNow:yyyyMM}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
         }
-    }*/
+    }
 }

@@ -1,11 +1,12 @@
-﻿using BPM.Web.Orders.API.Models.Data;
+﻿
+using BPM.Web.Orders.API.Models.Data;
 using BPM.Web.Orders.API.Models.DTOs;
 using BPM.Web.Orders.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.Orders.API.Repository
 {
-    /*public class PurchaseOrderRepository : IPurchaseOrderRepository
+    public class PurchaseOrderRepository : IPurchaseOrderRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -33,29 +34,22 @@ namespace BPM.Web.Orders.API.Repository
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersAllAsync()
         {
-            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.Supplier).Include(x => x.Dealer).Include(po => po.PurchaseOrderItems).ThenInclude(item => item.Drug).OrderByDescending(po => po.ModifiedOn).ToListAsync();
+            return await _dbContext.PurchaseOrders.Where(po => po.IsActive).Include(po => po.PurchaseOrderItems).OrderByDescending(po => po.ModifiedOn).ToListAsync();
         }
 
 
         public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(Guid id)
         {
             return await _dbContext.PurchaseOrders
-                .Include(po => po.Supplier)
-                .Include(po => po.Dealer)
                 .Include(po => po.PurchaseOrderItems)
-                .ThenInclude(item => item.Drug)
                 .Include(po => po.PurchaseOrderItems)
-                .ThenInclude(item => item.DrugPackaging)
                 .FirstOrDefaultAsync(po => po.Id == id && po.IsActive);
         }
 
         public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDealerAsync(Guid dealerId)
         {
             return await _dbContext.PurchaseOrders
-                .Include(po => po.Supplier)
-                .Include(po => po.Dealer)
                 .Include(po => po.PurchaseOrderItems)
-                .ThenInclude(item => item.Drug)
                 .Where(po => po.DealerId == dealerId && po.IsActive && po.Status != "Draft")
                 .OrderByDescending(po => po.OrderDate)
                 .ToListAsync();
@@ -70,30 +64,32 @@ namespace BPM.Web.Orders.API.Repository
 
         public async Task<ProductAvailabilityResponseDto> ValidateProductAvailabilityAsync(Guid drugId, Guid packagingId, int quantity)
         {
-            var inventory = await _dbContext.Inventories.AsNoTracking().FirstOrDefaultAsync(x => x.DrugId == drugId && x.PackagingId == packagingId && x.IsActive);
-            //// Read-only query; entity tracking is not required.
-            if (inventory == null)
-            {
-                return new ProductAvailabilityResponseDto
-                {
-                    DrugId = drugId,
-                    PackagingId = packagingId,
-                    RequestedQuantity = quantity,
-                    AvailableQuantity = 0,
-                    IsAvailable = false,
-                    Message = "Product is not available in inventory."
-                };
-            }
+            //var inventory = await _dbContext.Inventories.AsNoTracking().FirstOrDefaultAsync(x => x.DrugId == drugId && x.PackagingId == packagingId && x.IsActive);
+            ////// Read-only query; entity tracking is not required.
+            //if (inventory == null)
+            //{
+            //    return new ProductAvailabilityResponseDto
+            //    {
+            //        DrugId = drugId,
+            //        PackagingId = packagingId,
+            //        RequestedQuantity = quantity,
+            //        AvailableQuantity = 0,
+            //        IsAvailable = false,
+            //        Message = "Product is not available in inventory."
+            //    };
+            //}
 
-            return new ProductAvailabilityResponseDto
-            {
-                DrugId = drugId,
-                PackagingId = packagingId,
-                RequestedQuantity = quantity,
-                AvailableQuantity = inventory.AvailableQuantity,
-                IsAvailable = inventory.AvailableQuantity >= quantity,
-                Message = inventory.AvailableQuantity >= quantity ? "Product is available." : "Insufficient stock available."
-            };
+            //return new ProductAvailabilityResponseDto
+            //{
+            //    DrugId = drugId,
+            //    PackagingId = packagingId,
+            //    RequestedQuantity = quantity,
+            //    AvailableQuantity = inventory.AvailableQuantity,
+            //    IsAvailable = inventory.AvailableQuantity >= quantity,
+            //    Message = inventory.AvailableQuantity >= quantity ? "Product is available." : "Insufficient stock available."
+            //};
+
+            return new ProductAvailabilityResponseDto();
         }
 
         public async Task<PurchaseOrder> SubmitPurchaseOrderAsync(PurchaseOrder purchaseOrder)
@@ -140,7 +136,10 @@ namespace BPM.Web.Orders.API.Repository
 
         public async Task<IEnumerable<PurchaseOrder>> GetDraftPurchaseOrdersAsync(Guid dealerId)
         {
-            return await _dbContext.PurchaseOrders.Where(po => po.DealerId == dealerId && po.IsActive && po.Status == "Draft").Include(po => po.Supplier).Include(po => po.Dealer).Include(po => po.PurchaseOrderItems).ThenInclude(item => item.Drug).OrderByDescending(po => po.ModifiedOn).ToListAsync();
+            return await _dbContext.PurchaseOrders
+                .Where(po => po.DealerId == dealerId && po.IsActive && po.Status == "Draft")
+                .Include(po => po.PurchaseOrderItems)
+               .OrderByDescending(po => po.ModifiedOn).ToListAsync();
         }
 
         public async Task<bool> DeletePurchaseOrderDraftAsync(Guid purchaseOrderId)
@@ -191,31 +190,42 @@ namespace BPM.Web.Orders.API.Repository
             var now = DateTime.UtcNow;
 
             // Get the current supplier discount.
-            var supplierDiscount = await _dbContext.SupplierDiscounts
-                .AsNoTracking()
-                .Where(x => x.SupplierId == supplierId && x.IsActive && x.ValidFrom <= now && (!x.ValidTo.HasValue || x.ValidTo >= now))
-                .OrderByDescending(x => x.DiscountPercentage)
-                .Select(x => (decimal?)x.DiscountPercentage)
-                .FirstOrDefaultAsync() ?? 0;
+            //var supplierDiscount = await _dbContext.SupplierDiscounts
+            //    .AsNoTracking()
+            //    .Where(x => x.SupplierId == supplierId && x.IsActive && x.ValidFrom <= now && (!x.ValidTo.HasValue || x.ValidTo >= now))
+            //    .OrderByDescending(x => x.DiscountPercentage)
+            //    .Select(x => (decimal?)x.DiscountPercentage)
+            //    .FirstOrDefaultAsync() ?? 0;
 
-            // Get the applicable volume discount for the requested quantity.
-            var volumeDiscount = await _dbContext.VolumeDiscountTiers
-                .AsNoTracking()
-                .Where(x => x.SupplierId == supplierId && x.IsActive && x.MinQuantity <= quantity && (!x.MaxQuantity.HasValue || x.MaxQuantity >= quantity))
-                .OrderByDescending(x => x.DiscountPercentage)
-                .Select(x => (decimal?)x.DiscountPercentage)
-                .FirstOrDefaultAsync() ?? 0;
+            //// Get the applicable volume discount for the requested quantity.
+            //var volumeDiscount = await _dbContext.VolumeDiscountTiers
+            //    .AsNoTracking()
+            //    .Where(x => x.SupplierId == supplierId && x.IsActive && x.MinQuantity <= quantity && (!x.MaxQuantity.HasValue || x.MaxQuantity >= quantity))
+            //    .OrderByDescending(x => x.DiscountPercentage)
+            //    .Select(x => (decimal?)x.DiscountPercentage)
+            //    .FirstOrDefaultAsync() ?? 0;
 
-            // Get the current promotional offer applicable to the drug and packaging.
-            var promotionalDiscount = await _dbContext.PromotionalOffers
-                .AsNoTracking()
-                .Where(x => x.SupplierId == supplierId && x.IsActive && x.StartDate <= now && x.ExpiryDate >= now && (!x.DrugId.HasValue || x.DrugId == drugId) && (!x.PackagingId.HasValue || x.PackagingId == packagingId))
-                .OrderByDescending(x => x.DiscountPercentage)
-                .Select(x => (decimal?)x.DiscountPercentage)
-                .FirstOrDefaultAsync() ?? 0;
+            //// Get the current promotional offer applicable to the drug and packaging.
+            //var promotionalDiscount = await _dbContext.PromotionalOffers
+            //    .AsNoTracking()
+            //    .Where(x => x.SupplierId == supplierId && x.IsActive && x.StartDate <= now && x.ExpiryDate >= now && (!x.DrugId.HasValue || x.DrugId == drugId) && (!x.PackagingId.HasValue || x.PackagingId == packagingId))
+            //    .OrderByDescending(x => x.DiscountPercentage)
+            //    .Select(x => (decimal?)x.DiscountPercentage)
+            //    .FirstOrDefaultAsync() ?? 0;
 
             // Select the highest currently applicable discount.
-            return Math.Max(supplierDiscount, Math.Max(volumeDiscount, promotionalDiscount));
+            // return Math.Max(supplierDiscount, Math.Max(volumeDiscount, promotionalDiscount));
+
+            return 0;
         }
-    }*/
+
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersByDistributorAsync(Guid distributorId)
+        {
+            return await _dbContext.PurchaseOrders
+                .Include(po => po.PurchaseOrderItems)
+                .Where(po => po.DistributorId == distributorId && po.IsActive && po.Status != "Draft")
+                .OrderByDescending(po => po.OrderDate)
+                .ToListAsync();
+        }
+    }
 }

@@ -1,5 +1,4 @@
 ﻿using BPM.Web.Drug.API.Models.Data;
-using BPM.Web.Drug.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BPM.Web.Drug.API.Repositories
@@ -8,61 +7,62 @@ namespace BPM.Web.Drug.API.Repositories
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public DrugRepository(ApplicationDbContext applicationDbContext) 
+        public DrugRepository(ApplicationDbContext applicationDbContext)
         {
             _dbContext = applicationDbContext;
         }
         public async Task<bool> DeleteDrugAsync(Guid drugId)
         {
-           var drug= await _dbContext.Drugs.FirstOrDefaultAsync(a=>a.DrugId== drugId);
-            if (drug==null)
+            var drug = await _dbContext.Drugs.FirstOrDefaultAsync(a => a.DrugId == drugId);
+
+            if (drug == null)
             {
                 return false;
             }
+
             drug.IsActive = false;
-            return await _dbContext.SaveChangesAsync()>0;
+
+            return await _dbContext.SaveChangesAsync() > 0;
 
         }
 
-        public async Task<List<DrugEntity>> GetAllDrugsAsync()
+        public async Task<List<BPM.Web.Drug.API.Models.Entities.Drug>> GetAllDrugsAsync()
         {
-            return await _dbContext.Drugs.OrderBy(a=>a.DrugName).ToListAsync();
+            return await _dbContext.Drugs.OrderBy(a => a.DrugName).Include(x => x.DrugPackagings).Include(x => x.DrugUoms).ToListAsync();
         }
 
-        public async Task<DrugEntity?> GetDrugByIdAsync(Guid drugId)
+        public async Task<BPM.Web.Drug.API.Models.Entities.Drug?> GetDrugByIdAsync(Guid drugId)
         {
-            return await _dbContext.Drugs.FirstOrDefaultAsync(a=>a.DrugId== drugId);
+            return await _dbContext.Drugs.Where(a => a.DrugId == drugId).Include(x => x.DrugPackagings).Include(x => x.DrugUoms).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> InsertDrugAsync(DrugEntity drug)
+        public async Task<bool> InsertDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug)
         {
-            drug.DrugId = Guid.NewGuid();
-            drug.IsActive=true;
-            drug.CreatedOn = DateTime.UtcNow;
-
             await _dbContext.Drugs.AddAsync(drug);
-            return await _dbContext.SaveChangesAsync()>0;
+
+            return await _dbContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateDrugAsync(DrugEntity drug)
+        public async Task<bool> UpdateDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug)
         {
-           var existing= await _dbContext.Drugs.FirstOrDefaultAsync(a=>a.DrugId == drug.DrugId);
-            if (existing==null)
+            var existing = await _dbContext.Drugs.FirstOrDefaultAsync(a => a.DrugId == drug.DrugId);
+
+            if (existing == null)
             {
                 return false;
             }
             existing.DrugName = drug.DrugName;
-            existing.DrugCode= drug.DrugCode;
-            existing.GenericName= drug.GenericName;
-            existing.BrandName= drug.BrandName;
+            existing.DrugCode = drug.DrugCode;
+            existing.GenericName = drug.GenericName;
+            existing.BrandName = drug.BrandName;
             existing.Manufacturer = drug.Manufacturer;
-            existing.Category=drug.Category;
-            existing.HsnCode=drug.HsnCode;
-            existing.ScheduleType=drug.ScheduleType;
-            existing.Packing=drug.Packing;
-            existing.Strength=drug.Strength;
-            existing.IsActive=drug.IsActive;    
-            existing.ModifiedBy=drug.ModifiedBy;
+            existing.Category = drug.Category;
+            existing.HsnCode = drug.HsnCode;
+            existing.ScheduleType = drug.ScheduleType;
+            existing.Packing = drug.Packing;
+            existing.Strength = drug.Strength;
+            existing.IsActive = drug.IsActive;
+            existing.ModifiedBy = drug.ModifiedBy;
             existing.ModifiedOn = DateTime.UtcNow;
 
             return await _dbContext.SaveChangesAsync() > 0;

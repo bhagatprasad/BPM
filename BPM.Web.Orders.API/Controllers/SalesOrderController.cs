@@ -1,12 +1,13 @@
-﻿using BPM.Web.API.Models.DTOs.SalesOrder;
+﻿using BPM.Web.Orders.API.Models.DTOs;
+using BPM.Web.Orders.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Orders.API.Controllers
 {
-   /* [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class SalesOrderController : BaseController
+    public class SalesOrderController : ControllerBase
     {
         private readonly ISalesOrderService _service;
         private readonly ILogger<SalesOrderController> _logger;
@@ -77,7 +78,7 @@ namespace BPM.Web.Orders.API.Controllers
                     return BadRequest("Invalid Purchase Order Id.");
                 }
 
-                var salesOrder = await _service.CreateSalesOrderFromPurchaseOrderAsync(purchaseOrderId, UserId.Value);
+                var salesOrder = await _service.CreateSalesOrderFromPurchaseOrderAsync(purchaseOrderId, Guid.NewGuid());
 
                 return CreatedAtAction(nameof(GetAllSalesOrder), new { id = salesOrder.Id }, salesOrder);
             }
@@ -132,7 +133,7 @@ namespace BPM.Web.Orders.API.Controllers
                     return BadRequest("Invalid Sales Order Id.");
                 }
 
-                var currentUserId = UserId.Value;
+                var currentUserId = Guid.NewGuid();
 
                 var result = await _service.ProcessSalesOrderAsync(processSalesOrderDto, currentUserId);
 
@@ -156,6 +157,6 @@ namespace BPM.Web.Orders.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the Sales Order.");
             }
         }
-    }*/
+    }
 
 }

@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
+using BPM.Web.Orders.API.Integrations;
 using BPM.Web.Orders.API.Models.Data;
 using BPM.Web.Orders.API.Repository;
 using BPM.Web.Orders.API.Services;
 using Microsoft.EntityFrameworkCore;
-using Polly;
-using Polly.Extensions.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,37 +35,28 @@ builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =
     }
 });
 
-// ============================================================
-// REGISTER HTTPCLIENT TO CALL WEB.API
-// ============================================================
-var apiBaseUrl = builder.Configuration["Services:ApiBaseUrl"] ?? "https://localhost:7001";
+// Register Repositories
+builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
 
-// Register named HttpClient for calling Web.API
-builder.Services.AddHttpClient("WebApiClient", client =>
+// Register Services
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+
+// ============================================================
+// REGISTER DRUG SERVICE WITH SSL BYPASS
+// ============================================================
+builder.Services.AddHttpClient<IDrugService, DrugService>(client =>
 {
-    client.BaseAddress = new Uri(apiBaseUrl);
+    client.BaseAddress = new Uri("https://localhost:7021/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
 })
-.AddPolicyHandler(GetRetryPolicy())
-.AddPolicyHandler(GetCircuitBreakerPolicy());
-
-// Register Repositories (Orders only)
-builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
-builder.Services.AddScoped<IPurchaseOrderApprovalRepository, PurchaseOrderApprovalRepository>();
-builder.Services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
-
-// Register Services (Orders only)
-builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
-builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
-
-// Register HTTP Clients for specific services
-builder.Services.AddScoped<IUserServiceClient, UserServiceClient>();
-builder.Services.AddScoped<IInventoryServiceClient, InventoryServiceClient>();
-builder.Services.AddScoped<IDrugServiceClient, DrugServiceClient>();
-
-// Background Service
-builder.Services.AddHostedService<PurchaseOrderDraftCleanupService>();
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+});
 
 // CORS
 builder.Services.AddCors(options =>
@@ -97,25 +87,3 @@ app.UseCors("AllowAngular");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
-
-// ============================================================
-// POLLY POLICIES
-// ============================================================
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-        .WaitAndRetryAsync(
-            retryCount: 3,
-            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-}
-
-static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .CircuitBreakerAsync(
-            handledEventsAllowedBeforeBreaking: 5,
-            durationOfBreak: TimeSpan.FromSeconds(30));
-}

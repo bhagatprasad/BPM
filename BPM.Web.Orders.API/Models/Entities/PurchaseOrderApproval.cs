@@ -1,5 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPM.Web.Orders.API.Models.Entities
@@ -52,7 +51,5 @@ namespace BPM.Web.Orders.API.Models.Entities
         [ForeignKey(nameof(PurchaseOrderId))]
         public virtual PurchaseOrder? PurchaseOrder { get; set; }
 
-        [ForeignKey(nameof(ApproverId))]
-        public virtual User? Approver { get; set; }
     }
 }

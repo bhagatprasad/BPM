@@ -10,6 +10,7 @@
         public string? DeliveryTerms { get; set; }
         public string? Remarks { get; set; }
         public string? InternalNotes { get; set; }
+        public Guid? CurrentUserId { get; set; }
         public List<CreatePurchaseOrderItemDto> Items { get; set; } = new();
     }
 }

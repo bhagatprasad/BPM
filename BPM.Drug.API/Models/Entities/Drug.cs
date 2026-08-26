@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BPM.Web.Drug.API.Models.Entities
 {
     [Table("drug")]
-    public class DrugEntity
+    public class Drug
     {
         [Key]
         [Column("drugid")]
@@ -61,10 +61,10 @@ namespace BPM.Web.Drug.API.Models.Entities
         public string? ImageUrl { get; set; }
 
         // Navigation Properties
-        public virtual ICollection<DrugUomEntity> DrugUoms { get; set; }
-            = new List<DrugUomEntity>();
+        public virtual ICollection<DrugUom> DrugUoms { get; set; }
+            = new List<DrugUom>();
 
-        public virtual ICollection<DrugPackagingEntity> DrugPackagings { get; set; }
-            = new List<DrugPackagingEntity>();
+        public virtual ICollection<DrugPackaging> DrugPackagings { get; set; }
+            = new List<DrugPackaging>();
     }
 }

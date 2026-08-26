@@ -5,5 +5,6 @@
         public Guid PurchaseOrderId { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
+        public Guid? CurrentUserId { get; set; }
     }
 }

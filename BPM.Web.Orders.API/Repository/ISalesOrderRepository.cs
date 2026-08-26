@@ -1,4 +1,4 @@
-﻿using BPM.Web.API.Models.Entities;
+﻿using BPM.Web.Orders.API.Models.Entities;
 
 namespace BPM.Web.Orders.API.Repository
 {
