@@ -20,10 +20,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // DEPENDENCY INJECTION - REPOSITORIES
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
+builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
 
 
 // DEPENDENCY INJECTION - SERVICES
 builder.Services.AddScoped<IDrugService, DrugService>();
+builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
 
 
 // SWAGGER / API DOCUMENTATION
