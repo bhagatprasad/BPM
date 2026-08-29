@@ -63,32 +63,14 @@ builder.Services.AddHttpClient<IDrugService, DrugService>(client =>
     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
 });
 
-// ============================================================
-// REGISTER DISTRIBUTOR SERVICE WITH SSL BYPASS
-// ============================================================
-builder.Services.AddHttpClient<IDistributorService, DistributorService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:5067/api/");
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-})
-.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-{
-    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-});
-
-// CORS (optional - add if needed)
+// CORS - Fixed nested configuration
 builder.Services.AddCors(options =>
 {
-    // CORS
-    builder.Services.AddCors(options =>
+    options.AddPolicy("AllowAngular", policy =>
     {
-        options.AddPolicy("AllowAngular", policy =>
-        {
-            policy.WithOrigins("http://localhost:4200")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -103,7 +85,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Enable CORS (if added)
+// Enable CORS
 app.UseCors("AllowAngular");
 
 app.UseAuthorization();

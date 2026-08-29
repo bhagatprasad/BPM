@@ -12,7 +12,7 @@ namespace BPM.Web.InventoryManagement.API.Integrations
             _httpClient = httpClient;
         }
 
-        public async Task<List<ResponseDrugDto>> GetAllDrugsAsync()
+        public async Task<List<DrugDto>> GetAllDrugsAsync()
         {
             try
             {
@@ -27,17 +27,17 @@ namespace BPM.Web.InventoryManagement.API.Integrations
                         PropertyNameCaseInsensitive = true
                     };
 
-                    var drugs = JsonSerializer.Deserialize<List<ResponseDrugDto>>(responseContent, options);
+                    var drugs = JsonSerializer.Deserialize<List<DrugDto>>(responseContent, options);
 
-                    return drugs ?? new List<ResponseDrugDto>();
+                    return drugs ?? new List<DrugDto>();
                 }
 
-                return new List<ResponseDrugDto>();
+                return new List<DrugDto>();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                return new List<ResponseDrugDto>();
+                return new List<DrugDto>();
             }
         }
     }

@@ -71,5 +71,68 @@ namespace BPM.Web.InventoryManagement.API.Repository
                 .OrderByDescending(x => x.CreatedOn)
                 .ToListAsync();
         }
+
+        public async Task<StockMovement?> UpdateAsync(StockMovement stockMovement)
+        {
+            var existing = await _context.StockMovements.FindAsync(stockMovement.Id);
+            if (existing == null)
+            {
+                return null;
+            }
+
+            _context.Entry(existing).CurrentValues.SetValues(stockMovement);
+            await _context.SaveChangesAsync();
+
+            return existing;
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var stockMovement = await _context.StockMovements.FindAsync(id);
+            if (stockMovement == null)
+            {
+                return false;
+            }
+
+            _context.StockMovements.Remove(stockMovement);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<IEnumerable<StockMovement>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _context.StockMovements
+                .AsNoTracking()
+                .Where(x => x.CreatedOn >= startDate && x.CreatedOn <= endDate)
+                .OrderByDescending(x => x.CreatedOn)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<StockMovement>> GetByMovementTypeAsync(string movementType)
+        {
+            return await _context.StockMovements
+                .AsNoTracking()
+                .Where(x => x.MovementType == movementType)
+                .OrderByDescending(x => x.CreatedOn)
+                .ToListAsync();
+        }
+
+        public async Task<decimal> GetTotalQuantityByInventoryAsync(Guid inventoryId)
+        {
+            return await _context.StockMovements
+                .AsNoTracking()
+                .Where(x => x.InventoryId == inventoryId)
+                .SumAsync(x => x.Quantity);
+        }
+
+        public async Task<IEnumerable<StockMovement>> GetByInventoryAndDateRangeAsync(Guid inventoryId, DateTime startDate, DateTime endDate)
+        {
+            return await _context.StockMovements
+                .AsNoTracking()
+                .Where(x => x.InventoryId == inventoryId && x.CreatedOn >= startDate && x.CreatedOn <= endDate)
+                .OrderByDescending(x => x.CreatedOn)
+                .ToListAsync();
+        }
     }
 }

@@ -4,7 +4,7 @@ using BPM.Web.InventoryManagement.API.Repository;
 
 namespace BPM.Web.InventoryManagement.API.Services
 {
-  /*  public class InventoryService : IInventoryService
+    public class InventoryService : IInventoryService
     {
         private readonly IInventoryRepository _inventoryRepository;
         private readonly ILogger<InventoryService> _logger;
@@ -19,7 +19,7 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Creating inventory for DrugId: {DrugId}, WarehouseId: {WarehouseId}", dto.DrugId, dto.WarehouseId);
+                _logger.LogInformation("Creating inventory for drugId: {DrugId}, warehouseId: {WarehouseId}", dto.DrugId, dto.WarehouseId);
 
                 if (dto.ReservedQuantity > dto.Quantity)
                 {
@@ -31,15 +31,15 @@ namespace BPM.Web.InventoryManagement.API.Services
 
                 if (existingInventory != null)
                 {
-                    _logger.LogWarning("Inventory already exists for DrugId: {DrugId}, PackagingId: {PackagingId}, BatchId: {BatchId}, WarehouseId: {WarehouseId}", dto.DrugId, dto.PackagingId, dto.BatchId, dto.WarehouseId);
-                    throw new InvalidOperationException("Inventory already exists for the specified Drug, Packaging, Batch, and Warehouse.");
+                    _logger.LogWarning("Inventory already exists for drugId: {DrugId}, packagingId: {PackagingId}, batchId: {BatchId}, warehouseId: {WarehouseId}", dto.DrugId, dto.PackagingId, dto.BatchId, dto.WarehouseId);
+                    throw new InvalidOperationException("Inventory already exists for the specified drug, packaging, batch, and warehouse.");
                 }
 
                 var inventory = InventoryMapper.ToEntity(dto);
 
                 var createdInventory = await _inventoryRepository.CreateAsync(inventory);
 
-                _logger.LogInformation("Inventory created successfully with Id: {InventoryId}", createdInventory.Id);
+                _logger.LogInformation("Inventory created successfully with id: {InventoryId}", createdInventory.Id);
 
                 return InventoryMapper.ToDto(createdInventory);
             }
@@ -71,13 +71,13 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Getting inventory with Id: {InventoryId}", id);
+                _logger.LogInformation("Getting inventory with id: {InventoryId}", id);
 
                 var inventory = await _inventoryRepository.GetByIdAsync(id);
 
                 if (inventory == null || !inventory.IsActive)
                 {
-                    _logger.LogWarning("Inventory not found with Id: {InventoryId}", id);
+                    _logger.LogWarning("Inventory not found with id: {InventoryId}", id);
                     return null;
                 }
 
@@ -85,7 +85,7 @@ namespace BPM.Web.InventoryManagement.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting inventory with Id: {InventoryId}", id);
+                _logger.LogError(ex, "Error occurred while getting inventory with id: {InventoryId}", id);
                 throw;
             }
         }
@@ -94,7 +94,7 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Getting inventories for DistributorId: {DistributorId}", distributorId);
+                _logger.LogInformation("Getting inventories for distributorId: {DistributorId}", distributorId);
 
                 var inventories = await _inventoryRepository.GetByDistributorIdAsync(distributorId);
 
@@ -102,7 +102,7 @@ namespace BPM.Web.InventoryManagement.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting inventories for DistributorId: {DistributorId}", distributorId);
+                _logger.LogError(ex, "Error occurred while getting inventories for distributorId: {DistributorId}", distributorId);
                 throw;
             }
         }
@@ -111,7 +111,7 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Getting inventories for DrugId: {DrugId}", drugId);
+                _logger.LogInformation("Getting inventories for drugId: {DrugId}", drugId);
 
                 var inventories = await _inventoryRepository.GetByDrugIdAsync(drugId);
 
@@ -119,7 +119,7 @@ namespace BPM.Web.InventoryManagement.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting inventories for DrugId: {DrugId}", drugId);
+                _logger.LogError(ex, "Error occurred while getting inventories for drugId: {DrugId}", drugId);
                 throw;
             }
         }
@@ -128,7 +128,7 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Getting inventories for WarehouseId: {WarehouseId}", warehouseId);
+                _logger.LogInformation("Getting inventories for warehouseId: {WarehouseId}", warehouseId);
 
                 var inventories = await _inventoryRepository.GetByWarehouseIdAsync(warehouseId);
 
@@ -136,7 +136,7 @@ namespace BPM.Web.InventoryManagement.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting inventories for WarehouseId: {WarehouseId}", warehouseId);
+                _logger.LogError(ex, "Error occurred while getting inventories for warehouseId: {WarehouseId}", warehouseId);
                 throw;
             }
         }
@@ -145,13 +145,13 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Checking inventory availability for DrugId: {DrugId}, WarehouseId: {WarehouseId}", dto.DrugId, dto.WarehouseId);
+                _logger.LogInformation("Checking inventory availability for drugId: {DrugId}, warehouseId: {WarehouseId}", dto.DrugId, dto.WarehouseId);
 
                 var inventory = await _inventoryRepository.GetInventoryForAvailabilityAsync(dto.DrugId, dto.PackagingId, dto.BatchId, dto.WarehouseId);
 
                 if (inventory == null)
                 {
-                    _logger.LogWarning("Inventory not found for DrugId: {DrugId}, PackagingId: {PackagingId}, BatchId: {BatchId}, WarehouseId: {WarehouseId}", dto.DrugId, dto.PackagingId, dto.BatchId, dto.WarehouseId);
+                    _logger.LogWarning("Inventory not found for drugId: {DrugId}, packagingId: {PackagingId}, batchId: {BatchId}, warehouseId: {WarehouseId}", dto.DrugId, dto.PackagingId, dto.BatchId, dto.WarehouseId);
                     throw new KeyNotFoundException("Inventory not found.");
                 }
 
@@ -171,13 +171,13 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Updating inventory with Id: {InventoryId}", dto.Id);
+                _logger.LogInformation("Updating inventory with id: {InventoryId}", dto.Id);
 
                 var inventory = await _inventoryRepository.GetByIdAsync(dto.Id);
 
                 if (inventory == null || !inventory.IsActive)
                 {
-                    _logger.LogWarning("Inventory not found with Id: {InventoryId}", dto.Id);
+                    _logger.LogWarning("Inventory not found with id: {InventoryId}", dto.Id);
                     return null;
                 }
 
@@ -191,13 +191,13 @@ namespace BPM.Web.InventoryManagement.API.Services
 
                 await _inventoryRepository.UpdateAsync(updatedInventory);
 
-                _logger.LogInformation("Inventory updated successfully with Id: {InventoryId}", dto.Id);
+                _logger.LogInformation("Inventory updated successfully with id: {InventoryId}", dto.Id);
 
                 return InventoryMapper.ToDto(updatedInventory);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating inventory with Id: {InventoryId}", dto.Id);
+                _logger.LogError(ex, "Error occurred while updating inventory with id: {InventoryId}", dto.Id);
                 throw;
             }
         }
@@ -206,23 +206,23 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             try
             {
-                _logger.LogInformation("Deleting inventory with Id: {InventoryId}", id);
+                _logger.LogInformation("Deleting inventory with id: {InventoryId}", id);
 
                 var result = await _inventoryRepository.DeleteAsync(id);
 
                 if (!result)
                 {
-                    _logger.LogWarning("Inventory not found with Id: {InventoryId}", id);
+                    _logger.LogWarning("Inventory not found with id: {InventoryId}", id);
                     return false;
                 }
 
-                _logger.LogInformation("Inventory deleted successfully with Id: {InventoryId}", id);
+                _logger.LogInformation("Inventory deleted successfully with id: {InventoryId}", id);
 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting inventory with Id: {InventoryId}", id);
+                _logger.LogError(ex, "Error occurred while deleting inventory with id: {InventoryId}", id);
                 throw;
             }
         }
@@ -231,9 +231,9 @@ namespace BPM.Web.InventoryManagement.API.Services
         {
             var inventoryEntries = distributor.ToInventoryEntries(warehouse, drugs);
 
-            var inventorys = await _inventoryRepository.OnBoardingInventoryAsync(inventoryEntries);
+            var inventories = await _inventoryRepository.OnBoardingInventoryAsync(inventoryEntries);
 
-            return inventorys.ToDtoList();
+            return inventories.ToDtoList();
         }
-    }*/
+    }
 }

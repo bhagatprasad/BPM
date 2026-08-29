@@ -2,8 +2,11 @@
 
 namespace BPM.Web.InventoryManagement.API.Models.DTOs
 {
-    public class StockMovementCreateDto
+    public class StockMovementUpdateDto
     {
+        [Required]
+        public Guid Id { get; set; }
+
         [Required]
         public Guid InventoryId { get; set; }
 
@@ -45,7 +48,8 @@ namespace BPM.Web.InventoryManagement.API.Models.DTOs
         [MaxLength(500)]
         public string? Remarks { get; set; }
 
-        public Guid? CreatedBy { get; set; }
+        public Guid? UpdatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
     }
 }
-
