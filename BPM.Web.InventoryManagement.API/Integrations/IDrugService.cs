@@ -4,6 +4,6 @@ namespace BPM.Web.InventoryManagement.API.Integrations
 {
     public interface IDrugService
     {
-        Task<List<ResponseDrugDto>> GetAllDrugsAsync();
+        Task<List<DrugDto>> GetAllDrugsAsync();
     }
 }

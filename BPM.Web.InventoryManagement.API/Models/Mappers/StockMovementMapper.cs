@@ -29,6 +29,29 @@ namespace BPM.Web.InventoryManagement.API.Models.Mappers
             };
         }
 
+        public static StockMovement ToEntity(this StockMovementUpdateDto dto, StockMovement existingEntity)
+        {
+            if (existingEntity == null)
+                throw new ArgumentNullException(nameof(existingEntity));
+
+            existingEntity.InventoryId = dto.InventoryId;
+            existingEntity.DrugId = dto.DrugId;
+            existingEntity.PackagingId = dto.PackagingId;
+            existingEntity.BatchId = dto.BatchId;
+            existingEntity.WarehouseId = dto.WarehouseId;
+            existingEntity.DistributorId = dto.DistributorId;
+            existingEntity.MovementType = dto.MovementType;
+            existingEntity.Quantity = dto.Quantity;
+            existingEntity.QuantityBefore = dto.QuantityBefore;
+            existingEntity.QuantityAfter = dto.QuantityAfter;
+            existingEntity.ReferenceType = dto.ReferenceType;
+            existingEntity.ReferenceId = dto.ReferenceId;
+            existingEntity.UnitCost = dto.UnitCost;
+            existingEntity.Remarks = dto.Remarks;
+
+            return existingEntity;
+        }
+
         public static StockMovementResponseDto ToDto(this StockMovement entity)
         {
             return new StockMovementResponseDto
@@ -49,7 +72,7 @@ namespace BPM.Web.InventoryManagement.API.Models.Mappers
                 UnitCost = entity.UnitCost,
                 Remarks = entity.Remarks,
                 CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
+                CreatedOn = entity.CreatedOn,
             };
         }
 
@@ -57,5 +80,6 @@ namespace BPM.Web.InventoryManagement.API.Models.Mappers
         {
             return entities.Select(ToDto).ToList();
         }
+
     }
 }
