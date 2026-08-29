@@ -4,6 +4,7 @@
   <Project Path="BPM.Web.Billing.API/BPM.Web.Billing.API.csproj" Id="20423a9b-9dee-49b5-b2f4-f0d46a5387ba" />
   <Project Path="BPM.Web.Distributor.UI/BPM.Web.Distributor.UI.csproj" Id="00e42427-5ae3-4efd-bee7-a942767977a6" />
   <Project Path="BPM.Web.Identity.API/BPM.Web.Identity.API.csproj" Id="536d4c5e-a5d6-4b17-890c-dc025d34dac0" />
+  <Project Path="BPM.Web.InventoryManagement.API/BPM.Web.InventoryManagement.API.csproj" Id="d34b32a2-5410-4d5d-a25f-341b0ef4ea1b" />
   <Project Path="BPM.Web.Operations.UI/BPM.Web.Operations.UI.csproj" Id="9eb9862a-ecaa-40d2-803b-4df7d5a3c0a0" />
   <Project Path="BPM.Web.Orders.API/BPM.Web.Orders.API.csproj" Id="5b16591c-f813-4f98-bac6-569e2fdcd046" />
 </Solution>
