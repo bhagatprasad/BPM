@@ -1,0 +1,6 @@
+@BPM.Web.InventoryManagement.API_HostAddress = http://localhost:5048
+
+GET {{BPM.Web.InventoryManagement.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
