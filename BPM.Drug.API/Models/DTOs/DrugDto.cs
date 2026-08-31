@@ -4,100 +4,107 @@ namespace BPM.Web.Drug.API.Models.DTOs
 {
     public class DrugDto
     {
+        // CREATE DRUG DTO
 
-    }
+        public class CreateDrugDto
+        {
+            public Guid? FormId { get; set; }
+            [Required]
+            public string DrugCode { get; set; } = string.Empty;
 
-    // CREATE DRUG DTO
+            [Required]
+            public string DrugName { get; set; } = string.Empty;
 
-    public class CreateDrugDto
-    {
-        [Required]
-        public string DrugCode { get; set; } = string.Empty;
+            public string? GenericName { get; set; }
 
-        [Required]
-        public string DrugName { get; set; } = string.Empty;
+            public string? BrandName { get; set; }
 
-        public string? GenericName { get; set; }
+            public string? Manufacturer { get; set; }
 
-        public string? BrandName { get; set; }
+            public string? Category { get; set; }
 
-        public string? Manufacturer { get; set; }
+            public string? HSNCode { get; set; }
 
-        public string? Category { get; set; }
+            public string? ScheduleType { get; set; }
 
-        public string? HSNCode { get; set; }
+            public string? Packing { get; set; }
 
-        public string? ScheduleType { get; set; }
-
-        public string? Packing { get; set; }
-
-        public string? Strength { get; set; }
-    }
+            public string? Strength { get; set; }
+        }
 
 
-    // RESPONSE  DRUG DTO
+        // RESPONSE  DRUG DTO
 
-    public class ResponseDrugDto
-    {
-        public Guid DrugId { get; set; }
+        public class ResponseDrugDto
+        {
+            public Guid DrugId { get; set; }
 
-        public string DrugCode { get; set; } = string.Empty;
+            public string DrugCode { get; set; } = string.Empty;
 
-        public string DrugName { get; set; } = string.Empty;
+            public string DrugName { get; set; } = string.Empty;
 
-        public string? GenericName { get; set; }
+            public Guid? FormId { get; set; }
 
-        public string? BrandName { get; set; }
+            public string? FormCode { get; set; }
 
-        public string? Manufacturer { get; set; }
+            public string? FormName { get; set; }
 
-        public string? Category { get; set; }
+            public string? GenericName { get; set; }
 
-        public string? HSNCode { get; set; }
+            public string? BrandName { get; set; }
 
-        public string? ScheduleType { get; set; }
+            public string? Manufacturer { get; set; }
 
-        public string? Packing { get; set; }
+            public string? Category { get; set; }
 
-        public string? Strength { get; set; }
+            public string? HSNCode { get; set; }
 
-        public bool IsActive { get; set; }
+            public string? ScheduleType { get; set; }
 
-        public List<DrugUomDto> DrugUoms { get; set; } = new();
+            public string? Packing { get; set; }
 
-        public List<DrugPackagingDto> DrugPackagings { get; set; } = new();
-    }
+            public string? Strength { get; set; }
+
+            public bool IsActive { get; set; }
+
+            public List<DrugUomDto> DrugUoms { get; set; } = new();
+
+            public List<DrugPackagingDto> DrugPackagings { get; set; } = new();
+        }
 
 
-    // UPDATE DRUG DTO
+        // UPDATE DRUG DTO
 
-    public class UpdateDrugDto
-    {
-        [Required]
-        public Guid DrugId { get; set; }
+        public class UpdateDrugDto
+        {
+            [Required]
+            public Guid DrugId { get; set; }
 
-        [Required]
-        public string DrugCode { get; set; } = string.Empty;
+            public Guid? FormId { get; set; }
 
-        [Required]
-        public string DrugName { get; set; } = string.Empty;
+            [Required]
+            public string DrugCode { get; set; } = string.Empty;
 
-        public string? GenericName { get; set; }
+            [Required]
+            public string DrugName { get; set; } = string.Empty;
 
-        public string? BrandName { get; set; }
+            public string? GenericName { get; set; }
 
-        public string? Manufacturer { get; set; }
+            public string? BrandName { get; set; }
 
-        public string? Category { get; set; }
+            public string? Manufacturer { get; set; }
 
-        public string? HSNCode { get; set; }
+            public string? Category { get; set; }
 
-        public string? ScheduleType { get; set; }
+            public string? HSNCode { get; set; }
 
-        public string? Packing { get; set; }
+            public string? ScheduleType { get; set; }
 
-        public string? Strength { get; set; }
+            public string? Packing { get; set; }
 
-        public bool IsActive { get; set; }
+            public string? Strength { get; set; }
+
+            public bool IsActive { get; set; }
+        }
     }
 }

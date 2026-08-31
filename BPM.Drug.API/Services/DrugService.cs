@@ -15,7 +15,7 @@ namespace BPM.Web.Drug.API.Services
             _logger = logger;
         }
 
-        public async Task<List<ResponseDrugDto>> GetAllDrugsAsync()
+        public async Task<List<DrugDto.ResponseDrugDto>> GetAllDrugsAsync()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace BPM.Web.Drug.API.Services
             }
         }
 
-        public async Task<ResponseDrugDto?> GetDrugByIdAsync(Guid drugId)
+        public async Task<DrugDto.ResponseDrugDto?> GetDrugByIdAsync(Guid drugId)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace BPM.Web.Drug.API.Services
             }
         }
 
-        public async Task<bool> CreateDrugAsync(CreateDrugDto dto)
+        public async Task<bool> CreateDrugAsync(DrugDto.CreateDrugDto dto)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace BPM.Web.Drug.API.Services
             }
         }
 
-        public async Task<bool> UpdateDrugAsync(UpdateDrugDto dto)
+        public async Task<bool> UpdateDrugAsync(DrugDto.UpdateDrugDto dto)
         {
             try
             {

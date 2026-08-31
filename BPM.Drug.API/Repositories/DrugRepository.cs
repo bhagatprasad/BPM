@@ -1,5 +1,6 @@
 ﻿using BPM.Web.Drug.API.Models.Data;
 using Microsoft.EntityFrameworkCore;
+using DrugEntity = BPM.Web.Drug.API.Models.Entities.Drug;
 
 namespace BPM.Web.Drug.API.Repositories
 {
@@ -11,9 +12,12 @@ namespace BPM.Web.Drug.API.Repositories
         {
             _dbContext = applicationDbContext;
         }
+
+        // SOFT DELETE
         public async Task<bool> DeleteDrugAsync(Guid drugId)
         {
-            var drug = await _dbContext.Drugs.FirstOrDefaultAsync(a => a.DrugId == drugId);
+            var drug = await _dbContext.Drugs
+                .FirstOrDefaultAsync(a => a.DrugId == drugId);
 
             if (drug == null)
             {
@@ -21,36 +25,52 @@ namespace BPM.Web.Drug.API.Repositories
             }
 
             drug.IsActive = false;
+            drug.ModifiedOn = DateTime.UtcNow;
 
             return await _dbContext.SaveChangesAsync() > 0;
-
         }
 
-        public async Task<List<BPM.Web.Drug.API.Models.Entities.Drug>> GetAllDrugsAsync()
+        // GET ALL
+        public async Task<List<DrugEntity>> GetAllDrugsAsync()
         {
-            return await _dbContext.Drugs.OrderBy(a => a.DrugName).Include(x => x.DrugPackagings).Include(x => x.DrugUoms).ToListAsync();
+            return await _dbContext.Drugs
+                .Include(x => x.DrugForm)
+                .Include(x=>x.DrugUoms)
+                .Include(x=>x.DrugPackagings)
+                .OrderBy(a => a.DrugName)
+                .ToListAsync();
         }
 
-        public async Task<BPM.Web.Drug.API.Models.Entities.Drug?> GetDrugByIdAsync(Guid drugId)
+        // GET BY ID
+        public async Task<DrugEntity?> GetDrugByIdAsync(Guid drugId)
         {
-            return await _dbContext.Drugs.Where(a => a.DrugId == drugId).Include(x => x.DrugPackagings).Include(x => x.DrugUoms).FirstOrDefaultAsync();
+            return await _dbContext.Drugs
+                .Include(x => x.DrugForm)
+                .Include(x=>x.DrugUoms)
+                .Include(x=>x.DrugPackagings)
+                .FirstOrDefaultAsync(a => a.DrugId == drugId);
         }
 
-        public async Task<bool> InsertDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug)
+        // INSERT
+        public async Task<bool> InsertDrugAsync(DrugEntity drug)
         {
             await _dbContext.Drugs.AddAsync(drug);
 
             return await _dbContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateDrugAsync(BPM.Web.Drug.API.Models.Entities.Drug drug)
+        // UPDATE
+        public async Task<bool> UpdateDrugAsync(DrugEntity drug)
         {
-            var existing = await _dbContext.Drugs.FirstOrDefaultAsync(a => a.DrugId == drug.DrugId);
+            var existing = await _dbContext.Drugs
+                .FirstOrDefaultAsync(a => a.DrugId == drug.DrugId);
 
             if (existing == null)
             {
                 return false;
             }
+
+            existing.FormId = drug.FormId;
             existing.DrugName = drug.DrugName;
             existing.DrugCode = drug.DrugCode;
             existing.GenericName = drug.GenericName;

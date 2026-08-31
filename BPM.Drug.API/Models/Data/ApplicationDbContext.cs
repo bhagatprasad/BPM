@@ -1,6 +1,7 @@
 ﻿using BPM.Web.Drug.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using DrugEntity = BPM.Web.Drug.API.Models.Entities.Drug;
 
 namespace BPM.Web.Drug.API.Models.Data
 {
@@ -10,7 +11,7 @@ namespace BPM.Web.Drug.API.Models.Data
         {
         }
 
-        public DbSet<BPM.Web.Drug.API.Models.Entities.Drug> Drugs { get; set; }
+        public DbSet<DrugEntity> Drugs { get; set; }
 
         public DbSet<DrugCategory> DrugCategories { get; set; }
 
@@ -50,6 +51,13 @@ namespace BPM.Web.Drug.API.Models.Data
                     }
                 }
             }
+
+            modelBuilder.Entity<DrugEntity>()
+           .HasOne(d => d.DrugForm)
+           .WithMany(f => f.Drugs)
+           .HasForeignKey(d => d.FormId)
+           .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<DrugUom>()
             .HasOne(u => u.Drug)
             .WithMany(d => d.DrugUoms)
@@ -57,28 +65,28 @@ namespace BPM.Web.Drug.API.Models.Data
             .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DrugPackaging>()
-    .HasOne(p => p.Drug)
-    .WithMany(d => d.DrugPackagings)
-    .HasForeignKey(p => p.DrugId)
-    .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(p => p.Drug)
+            .WithMany(d => d.DrugPackagings)
+            .HasForeignKey(p => p.DrugId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DrugPackaging>()
-    .HasOne(p => p.PackageUom)
-    .WithMany()
-    .HasForeignKey(p => p.PackageUomId)
-    .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(p => p.PackageUom)
+            .WithMany()
+            .HasForeignKey(p => p.PackageUomId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DrugPackaging>()
-    .HasOne(p => p.ContainsUom)
-    .WithMany()
-    .HasForeignKey(p => p.ContainsUomId)
-    .OnDelete(DeleteBehavior.Restrict);
+           .HasOne(p => p.ContainsUom)
+           .WithMany()
+           .HasForeignKey(p => p.ContainsUomId)
+           .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DrugUom>()
-    .HasOne(u => u.ParentUom)
-    .WithMany()
-    .HasForeignKey(u => u.ParentUomId)
-    .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(u => u.ParentUom)
+            .WithMany(u=>u.ChildUoms)
+            .HasForeignKey(u => u.ParentUomId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         }
 

@@ -10,6 +10,9 @@ namespace BPM.Web.Drug.API.Models.Entities
         [Column("drugid")]
         public Guid DrugId { get; set; }
 
+        [Column("formid")]
+        public Guid? FormId { get; set; }
+
         [Required]
         [Column("drugcode")]
         public string DrugCode { get; set; } = string.Empty;
@@ -66,5 +69,7 @@ namespace BPM.Web.Drug.API.Models.Entities
 
         public virtual ICollection<DrugPackaging> DrugPackagings { get; set; }
             = new List<DrugPackaging>();
+
+        public virtual DrugFormEntity? DrugForm { get; set; }
     }
 }
