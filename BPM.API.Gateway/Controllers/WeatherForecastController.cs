@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BPM.Web.Drug.API.Controllers
+namespace BPM.API.Gateway.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

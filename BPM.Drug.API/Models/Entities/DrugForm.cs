@@ -36,5 +36,8 @@ namespace BPM.Web.Drug.API.Models.Entities
 
         [Column("modifiedon")]
         public DateTime? ModifiedOn { get; set; }
+
+        public virtual ICollection<Drug> Drugs { get; set; }
+    = new List<Drug>();
     }
 }

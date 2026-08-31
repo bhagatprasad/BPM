@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="BPM.API.Gateway/BPM.API.Gateway.csproj" Id="859bcc9c-e814-448e-b882-468489ac2288" />
   <Project Path="BPM.Drug.API/BPM.Web.Drug.API.csproj" Id="d6120be7-03b5-419a-b09a-c9e6c6b26ea7" />
   <Project Path="BPM.Web.API/BPM.Web.API.csproj" />
   <Project Path="BPM.Web.Billing.API/BPM.Web.Billing.API.csproj" Id="20423a9b-9dee-49b5-b2f4-f0d46a5387ba" />

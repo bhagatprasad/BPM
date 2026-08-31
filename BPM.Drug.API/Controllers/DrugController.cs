@@ -1,12 +1,14 @@
 ﻿using BPM.Web.Drug.API.Models.DTOs;
 using BPM.Web.Drug.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Drug.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DrugController : ControllerBase
+    [Authorize]
+    public class DrugController : BaseController
     {
         private readonly IDrugService _drugService;
         private readonly ILogger<DrugController> _logger;
@@ -59,7 +61,7 @@ namespace BPM.Web.Drug.API.Controllers
         }
 
         [HttpPost("create-drug")]
-        public async Task<IActionResult> CreateDrug(CreateDrugDto dto)
+        public async Task<IActionResult> CreateDrug(DrugDto.CreateDrugDto dto)
         {
             try
             {
@@ -82,7 +84,7 @@ namespace BPM.Web.Drug.API.Controllers
         }
 
         [HttpPut("update-drug")]
-        public async Task<IActionResult> UpdateDrug(UpdateDrugDto dto)
+        public async Task<IActionResult> UpdateDrug(DrugDto.UpdateDrugDto dto)
         {
             try
             {

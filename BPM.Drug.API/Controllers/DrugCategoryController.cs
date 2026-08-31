@@ -1,11 +1,13 @@
 ﻿using BPM.Web.Drug.API.Models.DTOs;
 using BPM.Web.Drug.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPM.Web.Drug.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DrugCategoryController : BaseController
     {
         private readonly IDrugCategoryService _drugCategoryService;

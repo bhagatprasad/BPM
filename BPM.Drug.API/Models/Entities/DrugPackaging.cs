@@ -10,63 +10,91 @@ namespace BPM.Web.Drug.API.Models.Entities
         [Column("packagingid")]
         public Guid PackagingId { get; set; }
 
+
+        // DRUG
+        [Required]
         [Column("drugid")]
         public Guid DrugId { get; set; }
 
+        [ForeignKey(nameof(DrugId))]
+        public Drug Drug { get; set; } = null!;
+
+
+        // PACKAGE UOM
+        [Required]
         [Column("package_uomid")]
         public Guid PackageUomId { get; set; }
 
+        [ForeignKey(nameof(PackageUomId))]
+        public DrugUom PackageUom { get; set; } = null!;
+
+
+        // CONTAINS UOM
+        [Required]
         [Column("contains_uomid")]
         public Guid ContainsUomId { get; set; }
 
+        [ForeignKey(nameof(ContainsUomId))]
+        public DrugUom ContainsUom { get; set; } = null!;
+
+
+        // QUANTITY
+        [Required]
         [Column("quantity")]
         public int Quantity { get; set; }
 
+
+        [Required]
         [Column("total_units")]
         public int TotalUnits { get; set; }
 
-        [Column("unit_price")]
+
+        // PRICING
+        [Required]
+        [Column("unit_price", TypeName = "numeric(18,2)")]
         public decimal UnitPrice { get; set; }
 
-        [Column("package_price")]
+
+        [Required]
+        [Column("package_price", TypeName = "numeric(18,2)")]
         public decimal PackagePrice { get; set; }
 
-        [Column("barcode")]
+
+        // BARCODE
         [MaxLength(100)]
+        [Column("barcode")]
         public string? Barcode { get; set; }
 
-        [Column("gross_weight")]
+
+        // WEIGHT
+        [Column("gross_weight", TypeName = "numeric(10,2)")]
         public decimal? GrossWeight { get; set; }
 
-        [Column("net_weight")]
+        [Column("net_weight", TypeName = "numeric(10,2)")]
         public decimal? NetWeight { get; set; }
 
-        [Column("length")]
+
+        // DIMENSIONS
+        [Column("length", TypeName = "numeric(10,2)")]
         public decimal? Length { get; set; }
 
-        [Column("width")]
+        [Column("width", TypeName = "numeric(10,2)")]
         public decimal? Width { get; set; }
 
-        [Column("height")]
+        [Column("height", TypeName = "numeric(10,2)")]
         public decimal? Height { get; set; }
 
+
+        // STATUS
         [Column("isactive")]
         public bool IsActive { get; set; } = true;
 
+
+        // AUDIT
         [Column("createdby")]
         public Guid? CreatedBy { get; set; }
 
         [Column("createdon")]
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
-
-        // Navigation Properties
-        [ForeignKey(nameof(DrugId))]
-        public virtual Drug? Drug { get; set; }
-
-        [ForeignKey(nameof(PackageUomId))]
-        public virtual DrugUom? PackageUom { get; set; }
-
-        [ForeignKey(nameof(ContainsUomId))]
-        public virtual DrugUom? ContainsUom { get; set; }
     }
 }

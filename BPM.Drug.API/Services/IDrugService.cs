@@ -4,13 +4,13 @@ namespace BPM.Web.Drug.API.Services
 {
     public interface IDrugService
     {
-        Task<List<ResponseDrugDto>> GetAllDrugsAsync();
+        Task<List<DrugDto.ResponseDrugDto>> GetAllDrugsAsync();
 
-        Task<ResponseDrugDto?> GetDrugByIdAsync(Guid drugId);
+        Task<DrugDto.ResponseDrugDto?> GetDrugByIdAsync(Guid drugId);
 
-        Task<bool> CreateDrugAsync(CreateDrugDto dto);
+        Task<bool> CreateDrugAsync(DrugDto.CreateDrugDto dto);
 
-        Task<bool> UpdateDrugAsync(UpdateDrugDto dto);
+        Task<bool> UpdateDrugAsync(DrugDto.UpdateDrugDto dto);
 
         Task<bool> DeleteDrugAsync(Guid drugId);
     }
