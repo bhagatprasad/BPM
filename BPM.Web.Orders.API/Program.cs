@@ -4,6 +4,7 @@ using BPM.Web.Orders.API.Models.Data;
 using BPM.Web.Orders.API.Repository;
 using BPM.Web.Orders.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,9 +62,11 @@ builder.Services.AddHttpClient<IDrugService, DrugService>(client =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy("Development", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(
+                          "https://localhost:7002", "http://localhost:5113" //Yarp GateWay
+                           )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -71,19 +74,36 @@ builder.Services.AddCors(options =>
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "BPM Orders API",
+        Description = "API for Order Management",
+        Contact = new OpenApiContact
+        {
+            Name = "BPM Team",
+            Email = "support@bpm.com"
+        }
+    });
+});
 
 var app = builder.Build();
 
 // Configure pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "BPM Web API v1");
+    });
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAngular");
+app.UseCors("Development");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

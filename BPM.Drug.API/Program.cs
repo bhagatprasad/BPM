@@ -12,10 +12,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // SERVICES
 builder.Services.AddControllers();
-
 
 // DATABASE CONFIGURATION - POSTGRESQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -24,22 +22,34 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-
 // DEPENDENCY INJECTION - REPOSITORIES
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IDrugCategoryRepository, DrugCategoryRepository>();
-builder.Services.AddScoped<IDrugFormRepository,DrugFormRepository>();
-builder.Services.AddScoped<IDrugUomRepository,DrugUomRepository>();
-builder.Services.AddScoped<IDrugPackagingRepository,DrugPackagingRepository>();
-
-
+builder.Services.AddScoped<IDrugFormRepository, DrugFormRepository>();
+builder.Services.AddScoped<IDrugUomRepository, DrugUomRepository>();
+builder.Services.AddScoped<IDrugPackagingRepository, DrugPackagingRepository>();
 
 // DEPENDENCY INJECTION - SERVICES
 builder.Services.AddScoped<IDrugService, DrugService>();
 builder.Services.AddScoped<IDrugCategoryService, DrugCategoryService>();
-builder.Services.AddScoped<IDrugFormService,DrugFormService>();
-builder.Services.AddScoped<IDrugUomService,DrugUomService>();
-builder.Services.AddScoped<IDrugPackagingService,DrugPackagingService>();
+builder.Services.AddScoped<IDrugFormService, DrugFormService>();
+builder.Services.AddScoped<IDrugUomService, DrugUomService>();
+builder.Services.AddScoped<IDrugPackagingService, DrugPackagingService>();
+
+// ========= CORS CONFIGURATION ==========
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Development", policy =>
+    {
+        policy.WithOrigins(
+            "https://localhost:7002"//Yarp GateWay...
+            
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+    });
+});
 
 // JWT AUTHENTICATION
 var tokenKey = builder.Configuration.GetValue<string>("Jwt:Key");
@@ -107,25 +117,29 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 // BUILD APPLICATION
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 app.ConfigureExceptionHandler(logger);
 
-
 // HTTP REQUEST PIPELINE
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "BPM Web API v1");
+    });
 }
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+// ========= CORS MIDDLEWARE ==========
+app.UseCors("Development");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

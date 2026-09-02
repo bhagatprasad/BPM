@@ -55,11 +55,14 @@ builder.Services.AddControllers()
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy("Development", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "https://localhost:7002",
+            "http://localhost:5113" //Yarp GateWay
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -69,6 +72,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
 
 builder.Services.AddScoped<BPMAuthorize>();
+
 // Repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRespository, UserRespository>();
@@ -103,8 +107,6 @@ builder.Services.AddHealthChecks().AddCheck<RabbitMQHealthCheck>("rabbitmq");
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddScoped<BPMAuthorize>();
-
 // ============================================================
 // JWT AUTHENTICATION
 // ============================================================
@@ -135,7 +137,6 @@ builder.Services.AddAuthentication(options =>
 // ============================================================
 // SWAGGER
 // ============================================================
-// In Program.cs - uncomment and fix the Swagger security configuration
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -150,7 +151,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // UNCOMMENT THIS
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token",
@@ -168,13 +168,12 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                   Id = "Bearer"
+                    Id = "Bearer"
                 }
             },
             new string[] {}
         }
     });
-
 });
 
 // ============================================================
@@ -200,7 +199,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAngular");
+app.UseCors("Development");
 app.UseAuthentication();
 app.UseAuthorization();
 

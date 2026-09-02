@@ -8,4 +8,5 @@
   <Project Path="BPM.Web.InventoryManagement.API/BPM.Web.InventoryManagement.API.csproj" Id="d34b32a2-5410-4d5d-a25f-341b0ef4ea1b" />
   <Project Path="BPM.Web.Operations.UI/BPM.Web.Operations.UI.csproj" Id="9eb9862a-ecaa-40d2-803b-4df7d5a3c0a0" />
   <Project Path="BPM.Web.Orders.API/BPM.Web.Orders.API.csproj" Id="5b16591c-f813-4f98-bac6-569e2fdcd046" />
+  <Project Path="BPM.Web.YarpGateway.API/BPM.Web.YarpGateway.csproj" Id="08eafa34-b955-45f7-8602-5c5e278430e4" />
 </Solution>

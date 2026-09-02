@@ -1,10 +1,14 @@
+using Yarp.ReverseProxy.Configuration;
 using Microsoft.OpenApi.Models;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Global SSL bypass for development - SIMPLEST AND MOST RELIABLE
+ServicePointManager.ServerCertificateValidationCallback +=
+    (sender, cert, chain, sslPolicyErrors) => true;
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -12,7 +16,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "BPM Web API",
-        Description = "API for Business Process Management",
+        Description = "API Gateway for Business Process Management",
         Contact = new OpenApiContact
         {
             Name = "BPM Team",
@@ -21,14 +25,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ========= CORS CONFIGURATION ==========
+// Add YARP
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
+// CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Development", policy =>
     {
         policy.WithOrigins(
-            "https://localhost:7002",
-            "http://localhost:5113" //Yarp GateWay
+            "http://localhost:4200",
+            "http://localhost:5177"
         )
         .AllowAnyMethod()
         .AllowAnyHeader()
@@ -38,7 +46,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -50,12 +57,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// ========= CORS MIDDLEWARE ==========
 app.UseCors("Development");
-
-app.UseAuthorization();
-
 app.MapControllers();
+app.MapReverseProxy();
 
 app.Run();
