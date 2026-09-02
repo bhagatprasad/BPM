@@ -3,6 +3,7 @@ using BPM.Web.InventoryManagement.API.Models.Data;
 using BPM.Web.InventoryManagement.API.Repository;
 using BPM.Web.InventoryManagement.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,20 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "BPM Web API",
+        Description = "API for Business Process Management",
+        Contact = new OpenApiContact
+        {
+            Name = "BPM Team",
+            Email = "support@bpm.com"
+        }
+    });
+});
 
 // Database Context - PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
@@ -63,14 +77,17 @@ builder.Services.AddHttpClient<IDrugService, DrugService>(client =>
     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
 });
 
-// CORS - Fixed nested configuration
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy("Development", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "https://localhost:7002",
+            "http://localhost:5113" //Yarp GateWay
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -79,14 +96,18 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "BPM Web API v1");
+    });
 }
 
 app.UseHttpsRedirection();
 
 // Enable CORS
-app.UseCors("AllowAngular");
+app.UseCors("Development");
 
 app.UseAuthorization();
 
